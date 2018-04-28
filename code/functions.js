@@ -38,3 +38,9 @@ $(function(){
 $("#top").click(function() {
    $("body").animate({ scrollTop: 0}, 1000); 
 });
+
+$(".nav h3").click(function() {
+    var index = $(this).index();
+    var element = $(".project").eq(index).offset().top;
+    $("body").animate({ scrollTop: element}, 1000);
+});
