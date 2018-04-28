@@ -1,0 +1,204 @@
+@import url('https://fonts.googleapis.com/css?family=Muli:300,400,600');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Muli', sans-serif;
+    text-align: center;
+    font-weight: 300;
+}
+
+h1 {
+    width: 100vw;
+    line-height: 60px;
+    background-color: #F1F1F1;
+    font-size: 26px;
+    text-align: center;
+}
+
+#landing {
+    position: relative;
+    width: 100vw;
+}
+
+h2 {
+    font-size: 6vmin;
+    padding-top: 15vmin;
+    margin-bottom: 2vmin;
+    animation: fadeIn 2s ease;
+}
+
+h3 {
+    font-size: 3vmin;
+    padding-bottom: 15vmin;
+    animation: fadeIn 10s ease;
+}
+
+#iconHolder {
+    position: absolute;
+    right: 2vmin;
+    top: 2vmin;
+}
+
+.icon {
+    position: relative;
+    height: 30px;
+    width: 30px;
+    max-height: 5vmin;
+    max-width: 5vmin;
+    margin-bottom: 1vmin;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+
+#insta {
+    background-image: url('https://www.shareicon.net/data/256x256/2016/07/08/117135_new_512x512.png');
+}
+
+#mail {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQH4Q5KvcD6RfmFrQOT7uhXrGFxSBPevGLIzfI6PQbjFw5iH3qP');
+}
+
+#info {
+    background-image: url('https://crunchbase-production-res.cloudinary.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco/v1447184176/gdeetz1swgkbgl6kkjyg.png');
+    transform: scaleX(-1);
+}
+
+#body {
+    position: relative;
+    width: calc(100vw - 200px);
+    left: 100px;
+    column-count: 3;
+    column-gap: 50px;
+    min-height: calc(100vw - 60px);
+}
+
+.item {
+    position: relative;
+    width: 100%;
+    background-color: #F1F1F1;
+    box-sizing: border-box;
+    padding: 40px;
+    display: inline-block;
+    margin-bottom: 44px;
+    cursor: pointer;
+    animation: fadeIn 0.5s ease;
+}
+
+img {
+    width: 100%;
+    display: block;
+    animation: fadeIn 2s ease;
+}
+
+.item a {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: calc(100% - 0vw);
+    width: 100%;
+    background-color: rgba(241,241,241,0.9);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    color: black;
+    text-decoration: none;
+}
+
+.item a:hover {
+    opacity: 1;
+}
+
+p {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 2vw;;
+    width: 90%;
+}
+
+#footer {
+    position: relative;
+    margin-top: 50px;
+}
+
+h4 {
+    line-height: 200px;
+    font-size: 30px;
+}
+
+#footer a {
+    text-decoration: underline;
+    color: black;
+    cursor: pointer;
+}
+
+h5 {
+    line-height: 50px;
+    background-color: #222;
+    color: white;
+    font-size: 12px;
+}
+
+h5 a {
+    color: white !important;
+}
+
+
+
+
+
+
+
+
+@media screen and (min-width: 1300px) {
+    #body {
+        column-count: 4;
+    }
+}
+
+@media screen and (max-width: 850px) and (min-width: 500px) {
+    #body {
+        column-count: 2;
+        column-gap: 20px;
+        width: calc(100vw - 80px);
+        left: 40px;
+    }
+    .item {
+        margin-bottom: 16px;
+    }
+    p {
+        font-size: 30px;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    #body {
+        column-count: 2;
+        column-gap: 10px;
+        width: calc(100vw - 40px);
+        left: 20px;
+    }
+    .item {
+        margin-bottom: 4px;
+        padding: 7vmin;
+    }
+    p {
+        font-size: 5vmin;
+    }
+}
+
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
