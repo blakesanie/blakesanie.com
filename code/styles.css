@@ -1,0 +1,274 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 500;
+}
+
+body {
+    background-color: #F5F5F5;
+}
+
+a {
+    color: #888;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+#landing {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+#cover {
+    position: absolute;
+    height: calc(100vh + 1.1vmin);
+    width: calc(100vw + 1.1vmin);
+    top: -0.55vmin;
+    left: -0.55vmin;
+    background-image: url('thirdImage.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: brightness(30%) blur(0.5vmin) saturate(200%);
+    background-color: #333;
+}
+
+#wrapper {
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+    width: 80vw;
+    max-width: 700px;
+}
+
+h1 {
+    font-size: 6vmin;
+    line-height: 10vmin;
+    color: white;
+}
+
+#nums {
+    position: absolute;
+    width: 5vmin;
+    word-break: break-all;
+    font-weight: 300;
+    border-right: 1px solid #666;
+    padding-right: 2vmin;
+    color: #666;
+}
+
+#hello {
+    margin-left: 15vmin;
+}
+
+#cursor {
+    animation: flash 1s linear infinite;
+}
+
+#comment {
+    color: #666;
+}
+
+h2 {
+    margin-top: 70px;
+    line-height: 36px;
+    text-align: center;
+    font-size: 22px;
+}
+
+.nav {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    margin-bottom: 70px;
+    justify-content: center;
+}
+
+h3 {
+    margin: 0 40px;
+    font-size: 18px;
+    line-height: 36px;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    text-align: center;
+}
+
+h3 a:hover {
+    color: white;
+}
+
+h3:hover {
+    color: black;
+}
+
+.project {
+    position: relative;
+    min-height: 100px;
+    width: calc(100vw - 80px);
+    margin: 0 40px 40px 40px;
+    background-color: white;
+    padding: 60px 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
+}
+
+.reverse {
+    flex-direction: row-reverse;
+}
+
+.textHolder, .imgHolder {
+    position: relative;
+}
+
+
+.textHolder {
+    width: 30vw;
+}
+
+.imgHolder {
+    /*max-width: 60vmin;
+    max-height: 40vmin;*/
+    width: 40vw;
+    height: 30vw;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    /*background-color: red;*/
+}
+
+.title {
+    font-size: 24px;
+    text-align: center;
+}
+
+.desc {
+    font-weight: 400;
+    text-indent: 40px;
+    margin-top: 30px;
+    color: #888;
+}
+
+#footer {
+    height: 100px;
+    background-color: #222;
+    margin: 0;
+}
+
+#footer h3 {
+    line-height: 100px;
+}
+
+#footer h3:hover {
+    color: white;
+}
+
+@keyframes flash {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+#proximity .imgHolder{
+    background-image: url('/code/proximity.jpg');
+}
+
+#bounce .imgHolder{
+    background-image: url('/code/bounce.jpg');
+}
+
+#planets .imgHolder{
+    background-image: url('/code/planets.jpg');
+}
+
+#photography .imgHolder{
+    background-image: url('/code/photography.jpg');
+}
+
+#screener .imgHolder {
+    background-image: url('/code/screener.jpg');
+}
+
+
+
+
+@media screen and (max-width: 850px) {
+    .textHolder, .imgHolder {
+        width: calc(100% - 80px);
+    }
+    .imgHolder {
+        margin-top: 40px;
+        height: 42vmin;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .textHolder, .imgHolder {
+        width: calc(100% - 14vmin);
+    }
+    .imgHolder {
+        margin-top: 7vmin;
+    }
+    .title {
+        font-size: 6vmin;
+    }
+    .desc {
+        font-size: 4vmin;
+        margin-top: 5vmin;
+    }
+    .project {
+        width: 86vmin;
+        margin: 0 7vmin 7vmin 7vmin;
+        padding: 7vmin 0;
+    }
+    h1 {
+        font-size: 6vmin;
+        line-height: 10vmin;
+    }
+    h2 {
+        width: 86vmin;
+        margin-left: 7vmin;
+        font-size: 7vmin;
+        line-height: 13vmin;
+        margin-top: 16vmin;
+    }
+    .nav {
+        margin-top: 16vmin;
+        margin-bottom: 16vmin;
+    }
+    h3 {
+        margin: 0;
+        width: 100%;
+        font-size: 6vmin;
+        line-height: 13vmin;
+    }
+    #footer {
+        height: 300px;
+    }
+}
+
+@media screen and (min-width: 1300px) {
+    #wrapper {
+        width: 800px;
+    }
+    h1 {
+        font-size: 50px;
+        line-height: 80px;
+    }
+}
