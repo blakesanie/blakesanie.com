@@ -113,8 +113,8 @@ particlesJS("particle-js", {
     "detect_on": "window",
     "events": {
       "onhover": {
-        "enable": false,
-        "mode": "repulse"
+        "enable": true,
+        "mode": "bubble"
       },
       "onclick": {
         "enable": true,
@@ -130,11 +130,11 @@ particlesJS("particle-js", {
         }
       },
       "bubble": {
-        "distance": 400,
-        "size": 40,
-        "duration": 2,
-        "opacity": 8,
-        "speed": 3
+        "distance": 300,
+        "size": 4,
+        "duration": 500,
+        "opacity": 1,
+        "speed": 30
       },
       "repulse": {
         "distance": 50,
