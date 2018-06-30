@@ -26,15 +26,24 @@ a {
 
 #cover {
     position: absolute;
-    height: calc(100vh + 2vmin);
-    width: calc(100vw + 2vmin);
-    top: -1vmin;
-    left: -1vmin;
-    background-image: url('thirdImage.jpg');
+    height: 100vh;
+    width: 100vw;
+    background-image: url('bg.jpg');
     background-size: cover;
     background-position: center;
-    filter: brightness(30%) blur(0.5vmin) saturate(200%);
-    background-color: #333;
+    background-color: #222;
+    filter:blur(2px);
+}
+
+#particle-js {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,25,51,0.87);
+    background-image: url("");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
 }
 
 #wrapper {
@@ -45,6 +54,7 @@ a {
     overflow: hidden;
     width: 80vw;
     max-width: 700px;
+    user-select: none;
 }
 
 h1 {
@@ -58,9 +68,9 @@ h1 {
     width: 5vmin;
     word-break: break-all;
     font-weight: 300;
-    border-right: 1px solid #666;
+    border-right: 1px solid rgba(255,255,255,0.3);
     padding-right: 2vmin;
-    color: #666;
+    color: rgba(255,255,255,0.3);
 }
 
 #hello {
@@ -72,7 +82,7 @@ h1 {
 }
 
 #comment {
-    color: #666;
+    color: rgba(255,255,255,0.3);
 }
 
 h2 {
@@ -147,6 +157,11 @@ h3:hover {
     /*background-color: red;*/
 }
 
+iframe {
+    width: 100%;
+    height: 100%;
+}
+
 .title {
     : 24px;
     text-align: center;
@@ -183,8 +198,20 @@ h3:hover {
     box-shadow: 0 0 0px 2px rgba(0,0,0,0.1);
 }
 
+h5 {
+    text-align: center;
+    color: black;
+    font-size: 30px;
+    line-height: 200px;
+    margin: 5vmin 0;
+    transition: color 0.5s ease;
+}
+
+h5:hover {
+    color: #AAA;
+}
+
 #footer {
-    height: 100px;
     background-color: #222;
     margin: 0;
 }
@@ -293,9 +320,6 @@ h3:hover {
         width: 100%;
         font-size: 6vmin;
         line-height: 13vmin;
-    }
-    #footer {
-        height: 400px;
     }
 }
 
