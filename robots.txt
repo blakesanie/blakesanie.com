@@ -1,6 +1,6 @@
 User-Agent: *
-Allow: /
-Allow: /photo
-Allow: /cs
+Allow: /index.html
+Allow: /photo/index.html
+Allow: /cs/index.html
 
 Sitemap: http://www.blakesanie.com/sitemap.xml
