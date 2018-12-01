@@ -13,11 +13,6 @@
         <priority>1.00</priority>
     </url>
     <url>
-        <loc>http://www.blakesanie.com/about/</loc>
-        <lastmod>2018-08-19T03:30:10+00:00</lastmod>
-        <priority>0.80</priority>
-    </url>
-    <url>
         <loc>http://www.blakesanie.com/resume/</loc>
         <lastmod>2018-08-19T03:30:10+00:00</lastmod>
         <priority>0.80</priority>
@@ -31,21 +26,6 @@
         <loc>http://www.blakesanie.com/photo/</loc>
         <lastmod>2018-08-19T03:30:10+00:00</lastmod>
         <priority>0.80</priority>
-    </url>
-    <url>
-        <loc>http://www.blakesanie.com/photo/gear/</loc>
-        <lastmod>2018-08-19T03:30:10+00:00</lastmod>
-        <priority>0.80</priority>
-    </url>
-    <url>
-        <loc>http://www.blakesanie.com/photo/wishlist/</loc>
-        <lastmod>2018-08-19T03:30:10+00:00</lastmod>
-        <priority>0.80</priority>
-    </url>
-    <url>
-        <loc>http://www.blakesanie.com/screener/</loc>
-        <lastmod>2018-08-19T03:30:10+00:00</lastmod>
-        <priority>0.64</priority>
     </url>
 
 
