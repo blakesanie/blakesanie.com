@@ -12,7 +12,7 @@
     min-width: 330px;
     height: auto;
     margin: 15px;
-    box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
+    box-shadow: 0 0 20px 0 rgba(0,0,0,0.1);
     padding: 40px;
     transition: transform 0.3s ease;
     cursor: pointer;
@@ -41,37 +41,37 @@
 
 
 .item:nth-of-type(1) .photo {
-    background-image: url('../images/gear/sonya7.jpg');
+    background-image: url('./gearImages/sonya7.jpg');
 }
 
 .item:nth-of-type(2) .photo {
-    background-image: url('../images/gear/28-70.jpg');
+    background-image: url('./gearImages/28-70.jpg');
 }
 
 .item:nth-of-type(3) .photo {
-   background-image: url('../images/gear/d3200.jpg');
+   background-image: url('./gearImages/d3200.jpg');
 }
 
 .item:nth-of-type(4) .photo {
-    background-image: url('../images/gear/18-105.jpg');
+    background-image: url('./gearImages/18-105.jpg');
 }
 
 .item:nth-of-type(5) .photo {
-    background-image: url('../images/gear/35.jpg');
+    background-image: url('./gearImages/35.jpg');
 }
 
 .item:nth-of-type(6) .photo {
-    background-image: url('../images/gear/joby.jpg');
+    background-image: url('./gearImages/joby.jpg');
 }
 
 .item:nth-of-type(7) .photo {
-    background-image: url('../images/gear/macbook.jpg');
+    background-image: url('./gearImages/macbook.jpg');
 }
 
 .item:nth-of-type(8) .photo {
-    background-image: url('../images/gear/iphone.jpg');
+    background-image: url('./gearImages/iphone.jpg');
 }
 
 .item:nth-of-type(9) .photo {
-    background-image: url('../images/gear/lr.jpg');
+    background-image: url('./gearImages/lr.jpg');
 }
