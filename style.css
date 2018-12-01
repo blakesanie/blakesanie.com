@@ -1,0 +1,49 @@
+#content {
+    background-image: url('DSC_1004.jpg');
+    background-size: cover;
+    background-position: 50% 70%;
+}
+
+#center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background-color: rgba(255,255,255,0.7);
+    padding: 40px 20px;
+    width: 400px;
+    max-width: 500px;
+    min-width: 250px;
+    border-radius: 10px;
+}
+
+#content h1 {
+    font-size: 60px;
+    line-height: 80px;
+}
+
+#content h2 {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+#particle-js {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.3);
+}
+
+@media screen and (max-width: 500px) {
+    #center {
+        padding: 8vmin;
+        width: auto;
+    }
+    #content h1 {
+        font-size: 15vmin
+    }
+    #content h2 {
+        font-size: 6vmin;
+    }
+}

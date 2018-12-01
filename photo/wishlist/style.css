@@ -1,0 +1,62 @@
+#gear {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0 60px 20px 60px;
+}
+
+.item {
+    position: relative;
+    display: block;
+    flex-grow: 1;
+    min-width: 350px;
+    height: auto;
+    margin: 15px;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
+    padding: 40px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.item:hover {
+    transform: scale(1.02);
+}
+
+.item h2 {
+    text-align: center;
+    font-size: 24px;
+    line-height: 30px;
+    margin-bottom: 30px;
+    font-weight: 400;
+}
+
+.photo {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: scale(0.9);
+}
+
+
+
+.item:nth-of-type(1) .photo {
+    background-image: url('https://www4.djicdn.com/assets/images/products/mavic-air/s2/white_unfold-e78e55c2702f5348e94e69319daa781e.png?from=cdnMap');
+}
+.item:nth-of-type(2) .photo {
+    background-image: url('https://i2.wp.com/www.dailycameranews.com/wp-content/uploads/2017/12/sony-a7r-iii-shipping-date.jpg?ssl=1');
+}
+.item:nth-of-type(3) .photo {
+    background-image: url('https://hnsgsfp.imgix.net/9/images/detailed/22/SONY_LENS_SEL1224G.jpg?fit=fill&bg=0FFF&w=1600&h=900&auto=format,compress');
+}
+.item:nth-of-type(4) .photo {
+    background-image: url('https://www.att.com/catalog/en/skus/Apple/Apple%20iPhone%20X/overview/326743-pdp-iphoneX-s8-2@2x.jpg');
+}
+.item:nth-of-type(5) .photo {
+    background-image: url('https://cdn.gearpatrol.com/wp-content/uploads/2018/03/MOMENT-FILMMAKER-COLLECTION-gear-patrol-full-lead-2.jpg');
+}
+.item:nth-of-type(6) .photo {
+    background-image: url('https://www.slrlounge.com/wp-content/uploads/2018/01/Osmo-Mobile-2.jpg');
+}

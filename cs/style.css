@@ -1,0 +1,230 @@
+#content h1 {
+  font-size: 30px;
+}
+
+body {
+  background-color: #f5f5f5;
+}
+
+.nav {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  margin-bottom: 70px;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+#content h3 {
+  margin: 0 20px;
+  font-size: 18px;
+  line-height: 36px;
+  color: #888;
+  cursor: pointer;
+  -webkit-transition: color 0.3s ease;
+  -o-transition: color 0.3s ease;
+  transition: color 0.3s ease;
+  text-align: center;
+  font-weight: 400;
+}
+
+#content h3 a:hover {
+  color: white;
+}
+
+#content h3:hover {
+  color: black;
+}
+
+.project {
+  position: relative;
+  min-height: 100px;
+  width: calc(100% - 80px);
+  margin: 0 40px 40px 40px;
+  background-color: white;
+  padding: 60px 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+          box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.project:nth-child(even) {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+      -ms-flex-direction: row-reverse;
+          flex-direction: row-reverse;
+}
+
+.textHolder,
+.imgHolder {
+  position: relative;
+}
+
+.textHolder {
+  width: 35%;
+}
+
+.imgHolder {
+  /*max-width: 60vmin;
+    max-height: 40vmin;*/
+  width: 40%;
+  height: 25vw;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  /*background-color: red;*/
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.title {
+  font-size: 24px;
+  text-align: center;
+}
+
+.desc {
+  text-indent: 40px;
+  margin-top: 30px;
+  color: #888;
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.git {
+  position: relative;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          -ms-transform: translateX(-50%);
+      transform: translateX(-50%);
+  margin-top: 30px;
+  display: inline-block;
+  font-size: 17px;
+  line-height: 30px;
+  width: 120px;
+  background-image: url("http://vectorlogofree.com/wp-content/uploads/2014/05/37318-github-logo-icon-vector-icon-vector-eps.png");
+  background-size: 40%;
+  background-repeat: no-repeat;
+  background-position: right;
+  padding: 14px;
+  -webkit-box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  -webkit-transition: -webkit-box-shadow 0.3s ease;
+  transition: -webkit-box-shadow 0.3s ease;
+  -o-transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease, -webkit-box-shadow 0.3s ease;
+}
+
+.git:hover {
+  -webkit-box-shadow: 0 0 0px 2px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 0 0px 2px rgba(0, 0, 0, 0.1);
+}
+
+#proximity .imgHolder {
+  background-image: url("proximity.jpg");
+}
+
+#headlines .imgHolder {
+  background-image: url("headlines.jpg");
+}
+
+#bounce .imgHolder {
+  background-image: url("bounce.jpg");
+}
+
+#planets .imgHolder {
+  background-image: url("planets.jpg");
+}
+
+#photography .imgHolder {
+  background-image: url("photography.jpg");
+}
+
+#screener .imgHolder {
+  background-image: url("screener.jpg");
+}
+
+#twitter .imgHolder {
+  background-image: url("twitter.jpg");
+}
+
+#calculess .imgHolder {
+  background-image: url("calculess.jpg");
+}
+
+#across .imgHolder {
+    background-image: url("AcrossTheAisle.jpg");
+}
+
+@media screen and (max-width: 900px) {
+  .textHolder,
+  .imgHolder {
+    width: calc(100% - 80px);
+  }
+  .imgHolder {
+    margin-top: 40px;
+    height: 42vmin;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .textHolder,
+  .imgHolder {
+    width: calc(100% - 14vmin);
+  }
+  .title {
+    font-size: 6vmin;
+  }
+  .desc {
+    font-size: 4.5vmin;
+    margin-top: 5vmin;
+  }
+  .git {
+    margin-top: 10vmin;
+    margin-bottom: 5vmin;
+    font-size: 5vmin;
+    line-height: 10vmin;
+    width: 40vmin;
+    background-size: 40%;
+    padding: 5vmin;
+  }
+  .project {
+    width: 86vmin;
+    margin: 0 7vmin 7vmin 7vmin;
+    padding: 7vmin 0;
+  }
+  #content h1 {
+    width: 70vmin;
+    margin: 10vmin auto;
+    font-size: 9vmin;
+    line-height: 12vmin;
+  }
+  .nav {
+    margin-bottom: 16vmin;
+  }
+  #content h3 {
+    margin: 0;
+    width: 100%;
+    font-size: 6vmin;
+    line-height: 13vmin;
+  }
+}

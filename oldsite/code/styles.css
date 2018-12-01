@@ -1,0 +1,444 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 400;
+}
+
+body {
+    background-color: #F5F5F5;
+}
+
+a {
+    color: #888;
+    text-decoration: none;
+    -webkit-transition: color 0.3s ease;
+    transition: color 0.3s ease;
+}
+
+#landing {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+#cover {
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    background-image: url('bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-color: #222;
+    -webkit-filter:blur(2px);
+    filter:blur(2px);
+}
+
+#particle-js {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,25,51,0.87);
+    background-image: url("");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+}
+
+#wrapper {
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+    width: 80vw;
+    max-width: 700px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+h1 {
+    font-size: 6vmin;
+    line-height: 10vmin;
+    color: white;
+}
+
+#nums {
+    position: absolute;
+    width: 5vmin;
+    word-break: break-all;
+    font-weight: 300;
+    border-right: 1px solid rgba(255,255,255,0.3);
+    padding-right: 2vmin;
+    color: rgba(255,255,255,0.2);
+}
+
+#hello {
+    margin-left: 13vmin;
+}
+
+#cursor {
+    -webkit-animation: flash 1s linear infinite;
+    animation: flash 1s linear infinite;
+}
+
+#comment {
+    color: rgba(255,255,255,0.2);
+}
+
+h2 {
+    margin: 60px 0 40px 0;
+    line-height: 40px;
+    text-align: center;
+    font-size: 22px;
+}
+
+h2 span {
+    color: #BBB;
+    font-size: 16px;
+    line-height: 60px;
+}
+
+table {
+    margin-left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    box-shadow: 0 0 21px 0px rgba(0,0,0,0.1);
+}
+
+td {
+    padding: 18px;
+    font-size: 22px;
+    line-height: 35px;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    background-color: rgba(0,255,160,0.3);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+td:nth-child(1) {
+    text-align: right;
+    border-right: 1px solid rgba(0,0,0,0.2);
+}
+
+td:nth-child(2) {
+    font-weight: 300;
+}
+
+tr:first-of-type td {
+    font-weight: 300;
+    border: none;
+    color: rgba(0,0,0,0.2);
+    font-size: 16px;
+    padding: 5px 20px;
+    background-color: transparent;
+}
+
+tr:last-of-type td {
+    border-bottom: none;
+}
+
+.nav {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    margin-bottom: 70px;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+h3 {
+    margin: 0 40px;
+    font-size: 18px;
+    line-height: 36px;
+    color: #888;
+    cursor: pointer;
+    -webkit-transition: color 0.3s ease;
+    transition: color 0.3s ease;
+    text-align: center;
+}
+
+h3 a:hover {
+    color: white;
+}
+
+h3:hover {
+    color: black;
+}
+
+.project {
+    position: relative;
+    min-height: 100px;
+    width: calc(100vw - 80px);
+    margin: 0 40px 40px 40px;
+    background-color: white;
+    padding: 60px 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-pack: space-evenly;
+    -ms-flex-pack: space-evenly;
+    justify-content: space-evenly;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
+}
+
+.reverse {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: reverse;
+    -ms-flex-direction: row-reverse;
+    flex-direction: row-reverse;
+}
+
+.textHolder, .imgHolder {
+    position: relative;
+}
+
+
+.textHolder {
+    width: 30vw;
+}
+
+.imgHolder {
+    /*max-width: 60vmin;
+    max-height: 40vmin;*/
+    width: 40vw;
+    height: 30vw;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    /*background-color: red;*/
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.title {
+    : 24px;
+    text-align: center;
+}
+
+.desc {
+    text-indent: 40px;
+    margin-top: 30px;
+    color: #888;
+}
+
+.git {
+    position: relative;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    margin-top: 30px;
+    display: inline-block;
+    font-size: 17px;
+    line-height: 30px;
+    width: 120px;
+    background-image: url('http://vectorlogofree.com/wp-content/uploads/2014/05/37318-github-logo-icon-vector-icon-vector-eps.png');
+    background-size: 40%;
+    background-repeat: no-repeat;
+    background-position: right;
+    padding: 14px;
+    -webkit-box-shadow: 0 0 10px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px 2px rgba(0,0,0,0.1);
+    cursor: pointer;
+    -webkit-transition: -webkit-box-shadow 0.3s ease;
+    transition: -webkit-box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, -webkit-box-shadow 0.3s ease;
+}
+
+.git:hover {
+    -webkit-box-shadow: 0 0 0px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 0 0px 2px rgba(0,0,0,0.1);
+}
+
+h5 {
+    text-align: center;
+    color: #888;
+    font-size: 26px;
+    margin: 15vmin auto;
+    -webkit-transition: color 0.5s ease;
+    transition: color 0.5s ease;
+    font-weight: 300;
+    max-width: 800px;
+}
+
+h5 a {
+    font-weight: 500;
+    color: black;
+}
+
+h5 a:hover {
+    text-decoration: underline;
+}
+
+#footer {
+    background-color: #222;
+    margin: 0;
+}
+
+#footer h3 {
+    line-height: 100px;
+}
+
+#footer h3:hover {
+    color: white;
+}
+
+@-webkit-keyframes flash {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes flash {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+#proximity .imgHolder{
+    background-image: url('proximity.jpg');
+}
+
+#bounce .imgHolder{
+    background-image: url('bounce.jpg');
+}
+
+#planets .imgHolder{
+    background-image: url('planets.jpg');
+}
+
+#photography .imgHolder{
+    background-image: url('photography.jpg');
+}
+
+#screener .imgHolder {
+    background-image: url('screener.jpg');
+}
+
+#twitter .imgHolder {
+    background-image: url('twitter.jpg');
+}
+
+
+
+@media screen and (max-width: 850px) {
+    .textHolder, .imgHolder {
+        width: calc(100% - 80px);
+    }
+    .imgHolder {
+        margin-top: 40px;
+        height: 42vmin;
+    }
+    h5 {
+        margin: 15vmin 10vmin;
+        font-size: 20px;
+    }
+    td {
+        white-space: normal;
+    }
+    table {
+        width: 80vw;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .textHolder, .imgHolder {
+        width: calc(100% - 14vmin);
+    }
+    .imgHolder {
+        margin-top: 7vmin;
+    }
+    .title {
+        font-size: 6vmin;
+    }
+    .desc {
+        font-size: 4vmin;
+        margin-top: 5vmin;
+    }
+    .git {
+        margin-top: 10vmin;
+        margin-bottom: 5vmin;
+        font-size: 5vmin;
+        line-height: 10vmin;
+        width: 40vmin;
+        background-size: 40%;
+        padding: 5vmin;
+    }
+    .project {
+        width: 86vmin;
+        margin: 0 7vmin 7vmin 7vmin;
+        padding: 7vmin 0;
+    }
+    h1 {
+        font-size: 6vmin;
+        line-height: 10vmin;
+    }
+    h2 {
+        width: 86vmin;
+        margin-left: 7vmin;
+        font-size: 7vmin;
+        line-height: 13vmin;
+        margin-top: 16vmin;
+    }
+    .nav {
+        margin-top: 16vmin;
+        margin-bottom: 16vmin;
+    }
+    h3 {
+        margin: 0;
+        width: 100%;
+        font-size: 6vmin;
+        line-height: 13vmin;
+    }
+    td {
+        padding: 3vmin;
+        font-size: 5vmin;
+    }
+    tr:first-of-type td {
+        font-size: 3vmin;
+    }
+}
+
+@media screen and (min-width: 1300px) {
+    #wrapper {
+        width: 800px;
+    }
+    h1 {
+        font-size: 50px;
+        line-height: 80px;
+    }
+}

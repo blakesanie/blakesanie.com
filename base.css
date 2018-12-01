@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css?family=Assistant:300,400,600');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    font-family: 'Assistant', sans-serif;
+}
+
+a, a:visited {
+    color: black;
+    text-decoration: none;
+}
+
+#header {
+    position: fixed;
+    background-color: #008AD3;
+    /* 008AD3 */
+    max-height: 100vh;
+    padding: 40px 30px;
+    overflow-y: scroll;
+    z-index: 99999;
+    min-height: 100%;
+}
+
+#header * {
+    width: 180px;
+    text-align: center;
+    color: white;
+}
+
+#header h1 {
+    font-size: 30px;
+    border: 2px dashed rgba(255,255,255,0.3);
+}
+
+#header h2 {
+    margin-top: 40px;
+    font-size: 15px;
+    opacity: 0.7;
+}
+
+#header #menuIcon {
+    display: none;
+    position: absolute;
+    height: 27px;
+    width: 30px !important;
+    top: 15px;
+    left: 15px;
+    opacity: 0.5;
+    cursor: pointer;
+    -webkit-transition: opacity 0.2s ease;
+    -o-transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease;
+}
+
+#header #menuIcon:hover {
+    opacity: 1;
+}
+
+#header .line {
+    position: absolute;
+    height: 12%;
+    width: 100%;
+    background-color: white;
+}
+
+#header .line:nth-of-type(2) {
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+}
+
+#header .line:nth-of-type(3) {
+    bottom: 0;
+}
+
+#header #nav {
+    display: block;
+    padding-top: 40px;
+    background-color: inherit;
+    z-index: 99;
+}
+
+#header h3 {
+    line-height: 40px;
+    font-size: 18px;
+}
+
+#header .category {
+    text-align: left !important;
+    margin-top: 10px;
+}
+
+#header a h3 {
+    opacity: 0.7;
+    cursor: pointer;
+    font-weight: 400;
+    -webkit-transition: opacity 0.2s ease;
+    -o-transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease;
+}
+
+#header a h3:hover {
+    opacity: 1;
+}
+
+sup {
+    font-size: 50%;
+}
+
+#header h4 {
+    margin-top: 40px;
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+#content {
+    position: absolute;
+    width: calc(100% - 240px);
+    right: 0;
+}
+
+@media screen and (max-width: 800px) {
+    #header {
+        position: fixed;
+        width: 100%;
+        height: 100px !important;
+        padding: 20px;
+        padding-bottom: 0;
+        overflow: visible;
+        transition: -webkit-transform 0.3s ease;
+        -webkit-transition: -webkit-transform 0.3s ease;
+        -o-transition: transform 0.3s ease;
+        transition: transform 0.3s ease;
+        transition: transform 0.3s ease, -webkit-transform 0.3s ease;
+        min-height: 0;
+    }
+    #header * {
+        width: 100%;
+    }
+    #header #menuIcon {
+        display: block;
+    }
+    #header #nav {
+        display: none;
+        width: 160px;
+        padding: 20px;
+        margin-left: -20px;
+        max-height: calc(100vh - 89px);
+        overflow-y: scroll;
+    }
+    #header h1 {
+        font-size: 28px;
+        width: 180px !important;
+        margin-left: 50%;
+        -webkit-transform: translateX(-50%);
+                -ms-transform: translateX(-50%);
+            transform: translateX(-50%);
+    }
+    #header h2 {
+        font-size: calc(4px + 1.2vw);
+        margin-top: 8px;
+        line-height: 20px;
+        width: calc(100vw - 20px);
+        -webkit-transform: translateX(-10px);
+                -ms-transform: translateX(-10px);
+            transform: translateX(-10px);
+    }
+    #header h3 {
+        line-height: 30px;
+        font-size: 15px;
+    }
+    #header h4 {
+        display: none;
+    }
+    #content {
+        width: 100%;
+        top: 100px;
+        height: auto;
+        min-height: calc(100vh - 100px);
+    }
+    #image {
+        width: calc(100% - 20px) !important;
+    }
+}
+
+@media screen and (min-width: 801px) {
+    #header #nav {
+        display: block !important;
+    }
+    #header {
+        -webkit-transition: none !important;
+        -o-transition: none !important;
+        transition: none !important;
+        -webkit-transform: none !important;
+                -ms-transform: none !important;
+            transform: none !important;
+    }
+}
+
+#content h1 {
+    text-align: center;
+    font-size: 40px;
+    line-height: 160px;
+    font-weight: 400;
+}
+
+#content {
+    -webkit-animation: fadeIn 1s ease;
+            animation: fadeIn 1s ease;
+}
+
+@-webkit-keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
