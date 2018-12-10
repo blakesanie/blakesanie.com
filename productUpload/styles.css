@@ -1,0 +1,35 @@
+* {
+  margin: 5px;
+  padding: 0;
+}
+
+.item {
+  border: 1px solid black;
+  padding: 20px;
+  margin: 20px;
+}
+
+input {
+  width: 100%;
+}
+
+.img {
+  width: 400px;
+  height: 300px;
+  display: none;
+  background-size: cover;
+  background-position: center;
+  margin: 20;
+  border: 20px solid white;
+  box-shadow: 0 0 24px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 30px;
+  background-color: red;
+}
+
+.videoThumb {
+  height: 225;
+}
+
+.code {
+  font-size: 20;
+}
