@@ -26,6 +26,17 @@ $(document).on("click", "div button", function() {
     .remove();
 });
 
+$(document).on("change", "#thumbUrl", function() {
+  $(this)
+    .parent()
+    .find("#thumbnail")
+    .find("#thumbImg")
+    .css({
+      display: "block",
+      "background-image": "url('" + $(this).val() + "')"
+    });
+});
+
 $(document).on("change", ".imageUrl", function() {
   $(this)
     .parent()
@@ -153,8 +164,22 @@ function submit() {
       minPrice +
       "&reviews=" +
       reviews,
-    success: function(result) {
-      alert("posted");
+    success: function(result, status, error) {
+      if (error) {
+        alert(error);
+      }
+      console.log(result);
+      console.log(status);
+      console.log(error);
+      if (result == "posted") {
+        alert("product posted");
+      }
+    },
+    error: function(xhr, status, error) {
+      alert(error);
+      console.log(xhr);
+      console.log(status);
+      console.log(error);
     }
   });
 }

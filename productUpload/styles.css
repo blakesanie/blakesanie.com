@@ -33,3 +33,25 @@ input {
 .code {
   font-size: 20;
 }
+
+#thumbnail {
+  position: relative;
+  height: 250;
+  width: 250;
+  background-color: white;
+  box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  margin: 20px;
+  border-radius: 50px;
+  box-sizing: border-box;
+}
+
+#thumbImg {
+  height: 216px;
+  width: 216px;
+  background-image: url("http://www.guitarstore.in/content/images/thumbs/0000321_Image_321.jpeg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  /*background-color: red;*/
+}
