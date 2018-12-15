@@ -145,6 +145,10 @@ function submit() {
   photos = JSON.stringify(photos);
   videos = JSON.stringify(videos);
   versions = JSON.stringify(versions);
+  var isGift = false;
+  if ($("#isGift").val() == "true") {
+    isGift = true;
+  }
   //console.log(versions);
   $.ajax({
     url:
@@ -163,7 +167,9 @@ function submit() {
       "&minPrice=" +
       minPrice +
       "&reviews=" +
-      reviews,
+      reviews +
+      "&isGift=" +
+      isGift,
     success: function(result, status, error) {
       if (error) {
         alert(error);
