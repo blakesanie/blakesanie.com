@@ -10,45 +10,15 @@
         <input type="text" id="name">
         <h1>Category</h1>
         <input type="text" id="category">
+        <h1>Tags</h1>
+        <input type="text" id="tags">
         <h1>Thumbnail Url</h1>
         <input type="text" id="thumbUrl">
         <div id="thumbnail">
             <div id="thumbImg"></div>
         </div>
-        <h1>Photos</h1>
-        <button onclick="addPhoto()" id="addPhotoButton">add photo</button>
-        <div class="photo item">
-            <p>url</p>
-            <input type="text" class="imageUrl">
-            <div class="img"></div>
-           <button class="remove">remove this photo</button>
-        </div>
-        <p>order</p>
-        <input type="text" class="order" id="photoOrder" placeholder="1,2,3,4,5">
-        <h1>Videos</h1>
-        <button onclick="addVideo()" id="addVideoButton">add video</button>
-        <div class="video item">
-            <p>Youtube ID</p>
-            <input type="text" class="youtubeId">
-            <div class="img videoThumb"></div>
-           <button class="remove">remove this video</button>
-        </div>
-        <p>order</p>
-        <input type="text" class="order" id="videoOrder" placeholder="1,2,3,4,5">
-        <h1 id="versions">Versions</h1>
-        <button onclick="addVersion()" id="addVersionButton">add version</button>
-        <div class="version item">
-            <p>title</p>
-            <input type="text" id="title">
-            <p>price</p>
-            <input type="number" id="price">
-            <p>amazon URL</p>
-            <input type="text" id="amazonURL">
-            <p>image URL</p>
-            <input type="text" class="imageUrl">
-            <div class="img"></div>
-            <button class="remove">remove this version</button>
-        </div>
+        <h1>Amazon Url</h1>
+        <input type="text" id="amazonUrl">
         <p>is gift?</p>
         <input type="text" id="isGift" placeholder="true / false">
         <button onclick="submit()">SUBMIT ITEM TO INDEX</button>
