@@ -45,7 +45,7 @@
         </div>
         <div id="content">
             <h1>Generating Optimal Keyboard Layouts with Node.js</h1>
-            <p>Today, the ubiquitous QWERTY keyboard is assumed to be the optimal layout for typing in the English language. Since QWERTY was developed in the 1870's, I challenged myself to use modern computer science to generate a more optimal keyboard.</p>
+            <p>Today, the ubiquitous <a href="https://en.wikipedia.org/wiki/QWERTY" target="_blank">QWERTY</a> keyboard is assumed to be the optimal layout for typing in the English language. Since QWERTY was developed in the 1870's, I challenged myself to use modern computer science to generate a more optimal keyboard.</p>
             <h2>Prerequisites</h2>
             <ul>
                 <li>Node.js</li>
@@ -78,18 +78,19 @@
             <code data-gist-id="c07d6e35b144d330eb2259c9753f37e9"  data-gist-line="87-121"></code>
             <p>Finally, console.log() the sequence of keys we have defined.</p>
             <code data-gist-id="c07d6e35b144d330eb2259c9753f37e9"  data-gist-line="123-126"></code>
+            <h3>Output:</h3>
             <code data-gist-id="92e69917066b13367ecd2ac9a5a9ab0c"></code>
             <h3 class="italics">This is our keyboard.</h3>
             <h3 class="center" id="keyboard">C W B M F G L D U Y</br>N H R O I S E T A</br>V Q J K X Z P</h3>
             <h2>Testing our Keyboard</h2>
             <p>Load in our keyboard and the QWERTY layout, as well as the finger required to press a key at that index (1 = left ring, 8 = right ring, no thumbs).</p>
-            <code data-gist-id="31894e3a12042ff4f00293ee95c8c809" data-gist-line="5-8"></code>
+            <code data-gist-id="31894e3a12042ff4f00293ee95c8c809" data-gist-line="5-15"></code>
             <p>Read in our sample text as a string, just as before</p>
-            <code data-gist-id="31894e3a12042ff4f00293ee95c8c809" data-gist-line="1-3,9-19,29"></code>
+            <code data-gist-id="31894e3a12042ff4f00293ee95c8c809" data-gist-line="1-3,16-26,37"></code>
             <p>As shown in the function above, each keyboard is assessed and given a score. getScore() is a simulation that retypes the sample text character by character, tracking the movement of each finger. Movements that alternate hands are given a score of 0.5, and movements with the same hand (more slow) are given a score of 1. Lower/faster is better.</p>
-            <code data-gist-id="31894e3a12042ff4f00293ee95c8c809" data-gist-line="31-52"></code>
+            <code data-gist-id="31894e3a12042ff4f00293ee95c8c809" data-gist-line="39-60"></code>
             <p>console.log() the result</p>
-            <code data-gist-id="31894e3a12042ff4f00293ee95c8c809" data-gist-line="20-28"></code>
+            <code data-gist-id="31894e3a12042ff4f00293ee95c8c809" data-gist-line="27-36"></code>
             <h3>Output:</h3>
             <h3 id="keyboard" class='center'>Me: 436200.5</br>QWERTY: 540294.5</br><span class="italics">124% efficiency</span></h3>
             <h2>Also</h2>
