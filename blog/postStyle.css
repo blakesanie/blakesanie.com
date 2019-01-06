@@ -13,16 +13,21 @@
 #content h1 {
   line-height: 60px;
   border-bottom: 1px solid #ddd;
-  margin-bottom: 50px;
 }
 
 #content h2 {
   font-size: 30px;
-  line-height: 90px;
+  /*line-height: 90px;*/
+  margin: 40px 0;
 }
 
 #content h3 {
   font-size: 26px;
+  line-height: 40px;
+}
+
+#content h4 {
+  font-size: 24px;
   line-height: 40px;
 }
 
@@ -48,6 +53,25 @@
 
 #content a {
   text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+#content a:hover {
+  opacity: 0.3;
+}
+
+#content img {
+  width: 80%;
+  min-width: 300px;
+  max-width: 600px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+#date {
+  opacity: 0.3;
+  font-style: italic;
+  margin-bottom: 50px !important;
 }
 
 .underline {
@@ -66,15 +90,19 @@
   text-align: center;
 }
 
+.tab {
+  padding-left: 40px;
+}
+
 @media screen and (max-width: 500px) {
   #content h1 {
     font-size: 8vmin;
     line-height: 11vmin;
-    margin-bottom: 10vmin;
   }
   #content h2 {
     font-size: 6vmin;
-    line-height: 16vmin;
+    line-height: 10vmin;
+    margin: 7vmin 0;
   }
   #content h3 {
     font-size: 5vmin;
@@ -87,5 +115,8 @@
   #content li {
     font-size: 4vmin;
     line-height: 9vmin;
+  }
+  #date {
+    margin-bottom: 5vmin;
   }
 }
