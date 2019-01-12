@@ -73,6 +73,10 @@
   margin-bottom: 50px !important;
 }
 
+#disqus_thread {
+  width: 100%;
+}
+
 .underline {
   text-decoration: underline;
 }

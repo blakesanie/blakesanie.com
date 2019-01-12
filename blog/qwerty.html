@@ -101,8 +101,21 @@
             <h3>Output:</h3>
             <h3 id="keyboard" class='center'>Me: 1109799</br>QWERTY: 1347859.5</br><span class="italics">121% efficiency</span></h3>
             <p>Success! It's too bad no keyboard layout will ever overthrow the infamous QWERTY. At least we can say we tried...</p>
+            <div id="disqus_thread"></div>
         </div>
-        <div id="disqus_thread"></div>
+        <script>
+        var disqus_config = function () {
+        this.page.url = "http://www.blakesanie.com/blog/qwerty.html";
+        this.page.identifier = "qwerty";
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://blakesanie-com.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
         <script src="../main.js"></script>
         <script src="functions.js"></script>
     </body>

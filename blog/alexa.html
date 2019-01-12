@@ -108,8 +108,21 @@
             <img src="https://cdn.dribbble.com/users/1063469/screenshots/2982811/dribbbleloop_v4.gif" />
             <h2>More</h2>
             <p>This project represents the most bare-bones Alexa Skill. You can do so much more inside the Amazon Developer Console and AWS, such as process user input (from speech) and save data to memory/storge. I encourage you to build an Alexa Skill that's particularly helpful in your life, and share it with me! Cheers.</p>
+            <div id="disqus_thread"></div>
         </div>
-        <div id="disqus_thread"></div>
+        <script>
+        var disqus_config = function () {
+        this.page.url = "http://www.blakesanie.com/blog/alexa.html";
+        this.page.identifier = "alexa";
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://blakesanie-com.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
         <script src="../main.js"></script>
         <script src="functions.js"></script>
     </body>
