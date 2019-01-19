@@ -2,7 +2,6 @@ User-Agent: *
 Disallow: /
 Allow: /index.html
 Allow: /cs
-Allow: /resume
 Allow: /photo
 Allow: /blog
 
