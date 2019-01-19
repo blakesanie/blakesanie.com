@@ -50,25 +50,27 @@
             <p>At my high school, AP Computer Science Principals is rumorred to be the easiest AP class. As a TA for the class, I see why. Students easily share and plagarize code without being caught. In an effort to regulate academic integrety, we have written a program to determine the originality of every script turned in by the students.</br></br>The students write their projects using <a target="_blank" href="https://snap.berkeley.edu">Snap</a>, a drag-and-drop programming platform developed by UC Berkeley. Since these projects are hosted on the web, students can distribute their project URL's, allowing other students to copy this work. This cheating occurs on <span class="italics">weekly assignments</span> as well as <span class="italics">unit tests</span>.</p>
             <h2>Plan</h2>
             <ol>
-                <li>Obtain list of project URL's (students, answer key, etc.)</li>
-                <li>Scrape XML content (student script) from each URL</li>
+                <li>Obtain list of project URL's from <a href="https://www.canvaslms.com/" target="_blank">Canvas LMS</a> (students, answer key, etc.)</li>
+                <li>Scrape <a href="https://en.wikipedia.org/wiki/XML" target="_blank">XML</a> content (student script) from each URL</li>
                 <li>Perform a <a href="https://en.wikipedia.org/wiki/Diff" target="_blank">diff</a> between all projects</li>
-                <li>Flag students with a suspiciously low originality percentage</li>
+                <li>Flag students with a suspiciously high similarity percentage</li>
             </ol>
             <h2>Preparing Files for Differencing</h2>
-            <p>Create a folder containing the html files for all projects you wish to compare. These html files will redirect to the Snap project's webpage.</p>
-            <p>As each file path is parsed, our we will scrape the file's html link and fetch the <a href="https://en.wikipedia.org/wiki/XML" target="_blank">XML</a> that contains the student's code and project metadata.</p>
-            <code data-gist-id="71de8b83c56fb314ddb9adefd401406b"  data-gist-line="13-23"></code>
-            <code data-gist-id="44b0796e87bf76c5c36a019f4bc0ba3f"  data-gist-line="12-22"></code>
-            <p>Once we receive the response, we validate if the response is the XML we are looking for. If not, then the file will not participate in comparison.</p>
-            <code data-gist-id="fd6d88c6599f234b4d83a1c10542c20c"  data-gist-line="8-18"></code>
-            <p>Since each project's XML is extremely similar in format and schema, so comparing XML directly will yield very high similarity percentages. To compare only unique values (the project's code itself), we create a custom class that extracts certain information from the XML and generates a projct report. These reports, not the original XML, will be compared to eachother.</p>
-            <code data-gist-id="d5670ffdfe48cf8feafb78699fedd11f"  data-gist-line="7-17"></code>
+            <p>Create a folder containing the Canvas LMS html files for all projects you wish to compare. These html files redirect to the Snap project's webpage.</p>
+            <p>First, because the user can input either directories and/or files, we parse the user's input; PathParser's parse() method returns all the files that need to be compared.</p>
+            <code data-gist-id="71de8b83c56fb314ddb9adefd401406b"  data-gist-line="73-80,83-98,104"></code>
+            <p>Also, we validate that the user has either inputed Snap XML filepaths or Cavans html filepaths.</p>
+            <code data-gist-id="fd6d88c6599f234b4d83a1c10542c20c"  data-gist-line="38,39,41,42,44-47,49-51,53-62"></code>
+            <p>After each html file path is parsed, <a href="https://github.com/dmontgrmry/codediff/blob/master/src/scraper.py" target="_blank">scraper.py</a> parses the file for the html link and scrapes the XML that contains the student's code and project metadata.</p>
+            <code data-gist-id="44b0796e87bf76c5c36a019f4bc0ba3f"  data-gist-line="19-33"></code>
+            <code data-gist-id="44b0796e87bf76c5c36a019f4bc0ba3f"  data-gist-line="43-58,65-70"></code>
+            <p>Since each project's XML is extremely similar in format and schema, comparing the XML as ASCII will yield very high similarity percentages and is computationally inefficient. To compare only unique values (the project's code itself), we parse the XML DOM, extracting certain information, and initializing a SnapReport object. These reports, which encapuslate XML DOM data, will be compared to eachother.</p>
+            <code data-gist-id="71de8b83c56fb314ddb9adefd401406b"  data-gist-line="52-70"></code>
             <h2>The Diff Algorithm</h2>
             <p>It's time to compare every file against the others. We iterate from the top of the list down, comparing each file to the files below it. This way, no two files will be compared to each other twice. Here's the pseudo code:</p>
             <h4><span class="comment">// files numbered 0 to n</span></br>for i in 0 to n :</br><span class="tab">for j in i + 1 to n :</span></br><span class="tab"><span class="tab">compare files i and j</span></span></h4>
-            <p>The diff algorithm computes the number of changes (additions and subtractions) needed to transform one report into anther. The ratio of unchanged to total values is outputted as a percentage of originality. Percentages near 100% signal likely plagarized code.</p>
-            <code data-gist-id="08cd70601e4550a5929576728f804cfb"  data-gist-line="43-53"></code>
+            <p>The diff algorithm computes the number of changes (additions and subtractions) needed to transform one report into another. The ratio of unchanged to total values is outputted as a percentage of originality. Percentages near 100% signal likely plagarized code.</p>
+            <code data-gist-id="08cd70601e4550a5929576728f804cfb"  data-gist-line="48-52,54-58,60-66,68-73,75-80,82-87,89-99"></code>
             <!--<p>The traditional diff algorithm counts the number of changes (additions and subtractions) needed to transform one file into another. Similarity percentage can be defined as the ratio of unchanged lines to total lines. However, much of the Snap XML is fixed (common structure and metadata), so all comparisions would yield high similarity percentages. To avoid this outcome, each project's unique features are extracted into individual <span class="italics">classes</span>. Then, these <span class="italics">classes</span> are fed to python's <a href="https://docs.python.org/2/library/difflib.html" target="_blank">difflib</a> algorithm.</p>-->
             <p>To find the potential culprits, we sort all comparisons by similarity percentage and output to the computer's terminal.</p>
             <code data-gist-id="16eb40dd9148171cc373ec0f382a07cd"  data-gist-line="77-84"></code>
@@ -77,7 +79,7 @@
             <p>$ ./codediff canvas_files/</p>
             <code data-gist-id="a844b36d1b32ec070b883821ecc25231"  data-gist-line="1-5,4301-4306"></code>-->
             <h2>Running the Program</h2>
-            <p>Using the executable ./codediff, we can parse and compare the projects in the canvas_files directory</p>
+            <p>Using the executable ./codediff, we can parse and compare the Snap XML projects in the canvas_files directory.</p>
             <img src="./images/terminalOutput.gif"/>
             <p>Looks like the class has to do their own work, now. Cheaters never win!</p>
             <h2>Use for Yourself</h2>
