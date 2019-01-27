@@ -4,5 +4,6 @@ Allow: /index.html
 Allow: /cs
 Allow: /photo
 Allow: /blog
+Allow: /blog/
 
 Sitemap: http://www.blakesanie.com/sitemap.xml

@@ -22,7 +22,7 @@ function submit() {
   }
   $.ajax({
     url:
-      "https://mobile-store-blakesanie.herokuapp.com/postproduct?name=" +
+      "localhost:3000/postproduct?name=" +
       name +
       "&cat=" +
       category +
@@ -60,12 +60,12 @@ function submit() {
       category +
       "&thumbUrl=" +
       thumbUrl +
-      "&amazonUrl=" + 
+      "&amazonUrl=" +
       amazonUrl +
-      "&tags=" + 
+      "&tags=" +
       tags +
       "&price=" +
-      price + 
+      price +
       "&isGift=" +
       isGift,
       */
