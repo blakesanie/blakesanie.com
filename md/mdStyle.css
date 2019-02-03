@@ -179,3 +179,15 @@
   padding: 0;
   box-sizing: content-box;
 }
+
+#output pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+  margin-bottom: 0;
+  word-break: normal;
+  margin-top: 0;
+}

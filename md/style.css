@@ -42,7 +42,8 @@ body {
   /* margin-left: -10px; */
 }
 
-#editor * {
+#editor *,
+#output pre {
   font-family: "Source Code Pro", monospace;
   font-weight: 300;
 }
@@ -50,8 +51,7 @@ body {
 #header {
   position: relative;
   width: 100%;
-  min-width: 300px;
-
+  min-width: 500px;
   padding-bottom: 30px;
   padding-right: 20px;
   display: flex;
@@ -62,13 +62,14 @@ body {
 h1 {
   color: white;
   line-height: 50px;
+  font-size: 29px;
 }
 
 h6 {
   color: white;
-  font-size: 14px;
+  font-size: 12px;
   margin-top: 22px;
-  margin-left: 10px;
+  margin-left: 6px;
   text-decoration: underline;
   color: #777;
   transition: color 0.2s ease;
@@ -97,7 +98,7 @@ h6:hover {
 
 #ace {
   flex: 1;
-  min-width: 300px;
+  min-width: 500px;
   line-height: 24px;
 }
 
