@@ -11,7 +11,7 @@ $("#generate").click(async function() {
   while (true) {
     var height = Math.floor(width * aspectRatio);
     var numTiles = width * height;
-    if (numTiles > 1000 /*albumCovers.length*/) {
+    if (numTiles > $("#slider").val()) {
       width--;
       break;
     }
