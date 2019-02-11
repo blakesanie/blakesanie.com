@@ -1,0 +1,214 @@
+@import url("https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700");
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Quicksand", sans-serif;
+  font-weight: 400;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100vw;
+  height: 100vh;
+}
+
+#left,
+#right {
+  position: relative;
+  height: 100%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: scroll;
+}
+
+#left {
+  padding: 150px 50px 50px 50px;
+  border-right: 1px solid black;
+}
+
+#right {
+  padding: 20px;
+}
+
+h1 {
+  position: absolute;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  padding: 20px;
+}
+
+#cover {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  transition: opacity 1s ease;
+  background-color: green;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#login,
+#loading {
+  background-color: #ffffffff;
+  font-size: 20px;
+  padding: 30px;
+  border-radius: 500px;
+}
+
+#login {
+  cursor: pointer;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.2s ease;
+}
+
+#login:hover {
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.3);
+}
+
+#person {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+#profilePic {
+  height: 100px;
+  width: 100px;
+  background-color: blue;
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
+}
+
+#name {
+  font-size: 30px;
+  padding-left: 30px;
+}
+
+.label {
+  font-size: 16px;
+  margin: 40px 0;
+}
+
+#playlists {
+  pointer-events: all;
+}
+
+.playlist {
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  padding: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.playlist:hover {
+  background-color: #f4f4f4;
+}
+
+.playlist > * {
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+.playlistCover {
+  height: 100px;
+  width: 100px;
+  background-size: cover;
+  background-position: center;
+  /* background-color: green; */
+  background-color: #ddd;
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.2);
+}
+
+.playlist:last-of-type {
+  border-bottom: none;
+}
+
+.playlistName {
+  font-size: 20px;
+  padding-left: 30px;
+}
+
+.selected > * {
+  opacity: 1;
+}
+
+#generate {
+  font-size: 20px;
+  color: white;
+  background-color: green;
+  line-height: 30px;
+  padding: 12px 30px;
+  border-radius: 27px;
+  margin-top: 50px;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+#generate:hover {
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
+}
+
+#samplePic,
+#mosaic {
+  width: 450px;
+  height: auto !imporant;
+}
+
+input {
+  margin: 20px 0;
+}
+
+#canvas {
+  height: 300px;
+  width: 300px;
+  display: none;
+}
+
+#mosaicCanvas {
+  height: 400px;
+  width: 300px;
+}
+
+#mosaic {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-bottom: 50px !important;
+}
+
+.pixel {
+}
+
+@media screen and (max-width: 800px) {
+  body {
+    flex-direction: column;
+  }
+  #left,
+  #right {
+    flex: none;
+    width: 100%;
+    height: auto;
+    border-right: none;
+  }
+  #left {
+    min-height: 100vh;
+  }
+}
