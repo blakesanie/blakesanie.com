@@ -61,6 +61,7 @@ if (access_token && (state == null || state !== storedState)) {
         $("#cover").append("<p id='login'>First, login With Spotify</p>");
       },
       success: async function(response) {
+        console.log(response);
         data.username = response.display_name;
         data.userId = response.id;
         data.profilePic = response.images[0]
@@ -120,7 +121,6 @@ function setLoadingMessage(text) {
 }
 
 function fillInUI() {
-  console.log(data.playlists[0].image);
   $("#cover").css({
     opacity: "0"
   });
