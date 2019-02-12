@@ -63,7 +63,7 @@ if (access_token && (state == null || state !== storedState)) {
       success: async function(response) {
         data.username = response.display_name;
         data.userId = response.id;
-        data.profilePic = response.images[0].url;
+        data.profilePic = response.images[0].url || "noImage";
         await $.ajax({
           url: "https://api.spotify.com/v1/me/playlists",
           headers: {
