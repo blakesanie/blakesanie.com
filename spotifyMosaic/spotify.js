@@ -151,6 +151,9 @@ async function getAlbumCoversForPlaylist(id) {
     headers: {
       Authorization: "Bearer " + access_token
     },
+    error: function(jqXHR, status, err) {
+      console.log(err);
+    },
     success: function(res) {
       for (var song of res.items) {
         var album = song.track.album;
