@@ -81,12 +81,15 @@ if (access_token && (state == null || state !== storedState)) {
               setLoadingMessage(
                 "Analyzing " + i + "/ " + res.items.length + " playlists"
               );
+              console.log();
               data.playlists = data.playlists.concat([
                 {
                   name: playlist.name,
                   length: playlist.tracks.total,
                   id: playlist.id,
-                  image: playlist.images[1].url || "noUrl",
+                  image:
+                    playlist.images[Math.min(playlist.images.length, 1)].url ||
+                    "noUrl",
                   selected: false,
                   albumCovers: await getAlbumCoversForPlaylist(playlist.id)
                 }
