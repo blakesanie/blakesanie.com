@@ -88,8 +88,8 @@ if (access_token && (state == null || state !== storedState)) {
                   length: playlist.tracks.total,
                   id: playlist.id,
                   image:
-                    playlist.images[Math.min(playlist.images.length, 1)].url ||
-                    "noUrl",
+                    playlist.images[Math.min(playlist.images.length - 1, 1)]
+                      .url || "noUrl",
                   selected: false,
                   albumCovers: await getAlbumCoversForPlaylist(playlist.id)
                 }
