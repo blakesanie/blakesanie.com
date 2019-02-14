@@ -202,12 +202,13 @@ function getAverageRGB(imgEl) {
   return rgb;
 }
 
-$("input").change(function(e) {
+$("#fileInput").change(function(e) {
   for (var i = 0; i < e.originalEvent.srcElement.files.length; i++) {
     var file = e.originalEvent.srcElement.files[i];
     var reader = new FileReader();
     reader.onloadend = function() {
       $("#samplePic").attr("src", reader.result);
+      sizeImages();
     };
     reader.readAsDataURL(file);
   }
@@ -227,6 +228,11 @@ $("input").change(function(e) {
 //   }
 // }
 
+$("#slider").on("input", function(slider) {
+  var currentVal = slider.currentTarget.value;
+  $("#numTiles").text("Max # Tiles: " + currentVal);
+});
+
 $(window).resize(function() {
   sizeImages();
 });
@@ -234,20 +240,20 @@ $(window).resize(function() {
 sizeImages();
 
 function sizeImages() {
-  var sampleHeight = $("#samplePic").height();
-  var sampleWidth = $("#samplePic").width();
+  var sampleHeight = Math.max($("#samplePic").height(), 1);
+  var sampleWidth = Math.max($("#samplePic").width(), 1);
   var newWidth;
   if (
-    (($("#right").width() - 40) / sampleWidth) * sampleHeight >
-    $(window).height() * 0.6
+    (($(window).height() - 60) / sampleHeight) * sampleWidth <
+    $(window).width() / 2 - 50
   ) {
-    newWidth = (($(window).height() * 0.6) / sampleHeight) * sampleWidth;
+    newWidth = (($(window).height() - 60) / sampleHeight) * sampleWidth;
   } else {
-    newWidth = $("#right").width() - 40;
+    newWidth = $(window).width() / 2 - 50;
   }
   var css = {
-    height: "auto",
     width: newWidth + "px"
+    //height: "auto !important" //(newWidth / sampleWidth) * sampleHeight + "px"
   };
   $("#samplePic").css(css);
   $("#mosaic").css(css);

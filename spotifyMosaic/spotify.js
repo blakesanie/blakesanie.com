@@ -31,7 +31,7 @@ var access_token = params.access_token,
 
 $(document).on("click", "#login", async function() {
   var client_id = "ea58eca152454aed8601582fd602ce90"; // Your client id
-  var redirect_uri = "http://www.blakesanie.com/spotifyMosaic/"; // Your redirect uri
+  var redirect_uri = "http://localhost:8888/"; //"http://www.blakesanie.com/spotifyMosaic/"; // Your redirect uri
   var state = generateRandomString(16);
   await localStorage.setItem(stateKey, state);
   // var scope = "user-read-private user-read-email";
@@ -73,29 +73,28 @@ if (access_token && (state == null || state !== storedState)) {
             Authorization: "Bearer " + access_token
           },
           success: async function(res) {
-            console.log(data);
+            console.log("new res");
             console.log(res);
             data.playlists = [];
             var i = 1;
             for (var playlist of res.items) {
               setLoadingMessage(
-                "Analyzing " + i + "/ " + res.items.length + " playlists"
+                "Analyzing " + i + " / " + res.items.length + " playlists"
               );
-              console.log();
               data.playlists = data.playlists.concat([
                 {
                   name: playlist.name,
                   length: playlist.tracks.total,
                   id: playlist.id,
                   image:
-                    playlist.images[playlist.images.length - 1].url || "noUrl",
+                    playlist.images[Math.min(playlist.images.length - 1, 1)]
+                      .url || "noUrl",
                   selected: false,
                   albumCovers: await getAlbumCoversForPlaylist(playlist.id)
                 }
               ]);
               i++;
             }
-            console.log(data);
             fillInUI();
           }
         });
@@ -123,6 +122,8 @@ function setLoadingMessage(text) {
 }
 
 function fillInUI() {
+  console.log("data");
+  console.log(data);
   $("#cover").css({
     opacity: "0"
   });
@@ -132,6 +133,7 @@ function fillInUI() {
   $("#profilePic").css({
     "background-image": "url('" + data.profilePic + "')"
   });
+  $("#name").text(data.username);
   for (var playlist of data.playlists) {
     var newElement =
       "<div class='playlist'><div class='playlistCover' style='background-image: url(" +
