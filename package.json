@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/blakesanie/blakesanie.com#readme",
   "dependencies": {
-    "express": "^4.16.4"
+    "bluebird": "^3.5.3",
+    "canvas": "^2.3.1",
+    "express": "^4.16.4",
+    "request": "^2.88.0"
   }
 }

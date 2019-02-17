@@ -1,3 +1,8 @@
+var largeImages = [];
+var pixelData;
+var mosaic = document.getElementById("mosaic");
+var mosaicCtx;
+
 var width;
 $("#generate").click(async function() {
   var albumCovers = await getAllAlbumCovers();
@@ -5,7 +10,6 @@ $("#generate").click(async function() {
     alert("Select at least one playlist to create your mosaic.");
     return;
   }
-  console.log(albumCovers);
   var aspectRatio = $("img").height() / $("img").width();
   width = 1;
   while (true) {
@@ -18,7 +22,9 @@ $("#generate").click(async function() {
     width++;
   }
   var height = Math.floor(width * aspectRatio);
-  console.log(width, height);
+  mosaic.width = width * 64;
+  mosaic.height = height * 64;
+  mosaicCtx = mosaic.getContext("2d");
   var img = new Image();
   img.crossOrigin = "";
   img.src = $("img").attr("src");
@@ -28,8 +34,7 @@ $("#generate").click(async function() {
   var ctx = canvas.getContext("2d");
   img.onload = function() {
     ctx.drawImage(img, 0, 0, width, height);
-    rawPixelData = ctx.getImageData(0, 0, width, height).data;
-    console.log(rawPixelData);
+    var rawPixelData = ctx.getImageData(0, 0, width, height).data;
     pixelData = [];
     for (i = 0; i < rawPixelData.length; i += 4) {
       var obj = {
@@ -39,48 +44,24 @@ $("#generate").click(async function() {
       };
       pixelData.push(obj);
     }
-    console.log(pixelData);
-    $("#mosaic").empty();
-    // for (var pixel of pixelData) {
-    //   $("#mosaic").append(
-    //     "<div class='pixel' style='background-color: rgb(" +
-    //       pixel.r +
-    //       "," +
-    //       pixel.g +
-    //       "," +
-    //       pixel.b +
-    //       ")'></div>"
-    //   );
-    // }
-    setTileSize();
-    for (var pixel of pixelData) {
+    sizeImages();
+    for (var i = 0; i < pixelData.length; i++) {
+      var pixel = pixelData[i];
+      //var pixel of pixelData
       var indexOfClosest = getIndexOfClosestAc(pixel, albumCovers);
-      addImageToMosaic(albumCovers[indexOfClosest].small.url, width);
+      //largeImages.push(albumCovers[indexOfClosest].large.url);
+      addImageToMosaic(albumCovers[indexOfClosest].small.url, i);
     }
-    setTileSize();
+    console.log("width: " + width + ", height: " + height);
+    var out = "[";
+    for (var url of largeImages) {
+      out += "'" + url + "',";
+    }
+    console.log(out + "]");
     // createMosaic(pixelData, width, height, albumCovers);
   };
+  formatLargeImages();
 });
-
-// async function createMosaic(pixelData, width, height, albumCovers) {
-//   var canvas = document.getElementById("mosaicCanvas");
-//   canvas.width = width * 64; //img.naturalWidth;
-//   canvas.height = height * 64; //img.naturalHeight;
-//   var ctx = canvas.getContext("2d");
-//   var i = 0;
-//   for (var pixel of pixelData) {
-//     var indexOfClosest = getIndexOfClosestAc(pixel, albumCovers);
-//     var img = new Image();
-//     img.crossOrigin = "";
-//     img.src = albumCovers[indexOfClosest].small.url;
-//     var y = Math.floor(i / width) * 64;
-//     var x = i - y * width * 64;
-//     img.onLoad = function() {
-//       ctx.drawImage(img, x, y, 64, 64);
-//     };
-//     i++;
-//   }
-// }
 
 function getIndexOfClosestAc(pixel, albumCovers) {
   var recordDeviation = getColorDeviation(pixel, albumCovers[0].color);
@@ -103,8 +84,34 @@ function getColorDeviation(color1, color2) {
   );
 }
 
-function addImageToMosaic(url, width) {
-  $("#mosaic").append("<img class='pixel' src='" + url + "'/>");
+var imagesRendered = 0;
+function addImageToMosaic(url, index) {
+  var yOffset = Math.floor(index / width);
+  var xOffset = index - yOffset * width;
+  var img = new Image();
+  img.crossOrigin = "";
+  img.src = url;
+  img.onload = function() {
+    mosaicCtx.drawImage(img, xOffset * 64, yOffset * 64, 64, 64);
+    imagesRendered++;
+    if (imagesRendered == pixelData.length) {
+      console.log(imagesRendered);
+      console.log(pixelData);
+      setUpDownload();
+    }
+  };
+  //$("#mosaic").append("<img class='pixel' src='" + url + "'/>");
+}
+//
+// $("#download").click(function() {
+//   setUpDownload();
+// });
+
+function setUpDownload() {
+  imagesRendered = 0;
+  console.log("done rendering");
+  var dataURL = mosaic.toDataURL("image/png");
+  $("#download").attr("href", dataURL);
 }
 
 async function getAllAlbumCovers() {
@@ -251,19 +258,13 @@ function sizeImages() {
   } else {
     newWidth = $(window).width() / 2 - 50;
   }
-  var css = {
+  $("#samplePic").css({
     width: newWidth + "px"
-    //height: "auto !important" //(newWidth / sampleWidth) * sampleHeight + "px"
-  };
-  $("#samplePic").css(css);
-  $("#mosaic").css(css);
-  setTileSize();
-}
-
-function setTileSize() {
-  var mosaicWidth = $("#mosaic").width();
-  $(".pixel").css({
-    width: mosaicWidth / width + "px",
-    height: mosaicWidth / width + "px"
+  });
+  $("#mosaic").css({
+    width: newWidth + "px",
+    height: (newWidth / sampleWidth) * sampleHeight + "px"
   });
 }
+
+function formatLargeImages() {}

@@ -31,7 +31,9 @@ var access_token = params.access_token,
 
 $(document).on("click", "#login", async function() {
   var client_id = "ea58eca152454aed8601582fd602ce90"; // Your client id
-  var redirect_uri = "http://www.blakesanie.com/spotifyMosaic/"; // Your redirect uri
+  //var redirect_uri = "http://www.blakesanie.com/spotifyMosaic/"; // Your redirect uri
+  var redirect_uri = "http://localhost:8888/"; // Your redirect uri
+
   var state = generateRandomString(16);
   await localStorage.setItem(stateKey, state);
   // var scope = "user-read-private user-read-email";
