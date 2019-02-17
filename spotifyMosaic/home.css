@@ -16,7 +16,7 @@ body {
   align-items: center;
   justify-content: center;
   background-image: url("./Unknown.png");
-  background-position: center;
+  background-position: 50% 45%;
   background-size: cover;
   background-attachment: fixed;
 }
