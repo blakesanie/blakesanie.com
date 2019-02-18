@@ -16,6 +16,7 @@ $("#generate").click(async function() {
     var height = Math.floor(width * aspectRatio);
     var numTiles = width * height;
     if (numTiles > $("#slider").val()) {
+      //default slider val is 1000
       width--;
       break;
     }
@@ -29,8 +30,8 @@ $("#generate").click(async function() {
   img.crossOrigin = "";
   img.src = $("img").attr("src");
   var canvas = document.getElementById("canvas");
-  canvas.width = width; //img.naturalWidth;
-  canvas.height = height; //img.naturalHeight;
+  canvas.width = width;
+  canvas.height = height;
   var ctx = canvas.getContext("2d");
   img.onload = function() {
     ctx.drawImage(img, 0, 0, width, height);
@@ -47,20 +48,10 @@ $("#generate").click(async function() {
     sizeImages();
     for (var i = 0; i < pixelData.length; i++) {
       var pixel = pixelData[i];
-      //var pixel of pixelData
       var indexOfClosest = getIndexOfClosestAc(pixel, albumCovers);
-      //largeImages.push(albumCovers[indexOfClosest].large.url);
       addImageToMosaic(albumCovers[indexOfClosest].small.url, i);
     }
-    console.log("width: " + width + ", height: " + height);
-    var out = "[";
-    for (var url of largeImages) {
-      out += "'" + url + "',";
-    }
-    console.log(out + "]");
-    // createMosaic(pixelData, width, height, albumCovers);
   };
-  formatLargeImages();
 });
 
 function getIndexOfClosestAc(pixel, albumCovers) {
@@ -95,17 +86,10 @@ function addImageToMosaic(url, index) {
     mosaicCtx.drawImage(img, xOffset * 64, yOffset * 64, 64, 64);
     imagesRendered++;
     if (imagesRendered == pixelData.length) {
-      console.log(imagesRendered);
-      console.log(pixelData);
       setUpDownload();
     }
   };
-  //$("#mosaic").append("<img class='pixel' src='" + url + "'/>");
 }
-//
-// $("#download").click(function() {
-//   setUpDownload();
-// });
 
 function setUpDownload() {
   imagesRendered = 0;
@@ -137,15 +121,6 @@ async function getAllAlbumCovers() {
   }
   return albumCovers;
 }
-
-// var img = new Image();
-// img.crossOrigin = "";
-// img.src = $("img").attr("src");
-// img.onload = function() {
-//   var canvas = document.getElementById("canvas");
-//   var ctx = canvas.getContext("2d");
-//   ctx.drawImage(img, 50, 50);
-// };
 
 async function getImageColor(url) {
   return new Promise((resolve, reject) => {
@@ -221,20 +196,6 @@ $("#fileInput").change(function(e) {
   }
 });
 
-// function changeSampleImage(image) {
-//   console.log(image);
-//   if (input.files && input.files[0]) {
-//     var reader = new FileReader();
-//
-//     reader.onload = function(e) {
-//       console.log(e);
-//       $("#samplePic").attr("src", e.target.result);
-//     };
-//
-//     reader.readAsDataURL(input.files[0]);
-//   }
-// }
-
 $("#slider").on("input", function(slider) {
   var currentVal = slider.currentTarget.value;
   $("#numTiles").text("Max # Tiles: " + currentVal);
@@ -266,5 +227,3 @@ function sizeImages() {
     height: (newWidth / sampleWidth) * sampleHeight + "px"
   });
 }
-
-function formatLargeImages() {}

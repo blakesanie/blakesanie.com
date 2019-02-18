@@ -102,6 +102,12 @@
   opacity: 0.5;
 }
 
+.gist * {
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier,
+    monospace;
+  font-weight: 300;
+}
+
 @media screen and (max-width: 500px) {
   #content h1 {
     font-size: 8vmin;
