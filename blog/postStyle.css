@@ -86,6 +86,41 @@
   white-space: pre-wrap;
 }
 
+.gist tbody * {
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier,
+    monospace !important;
+  font-weight: 400;
+  font-size: 12px !important;
+}
+
+code * {
+  border: none !important;
+  margin: 0;
+  padding: 0;
+}
+
+code {
+  border: 2px dashed #ddd;
+  padding: 10px;
+}
+
+.gist-meta {
+  /* font-size: 8px !important;
+  background-color: transparent !important;
+  margin-top: -30px;
+  height: 30px !important; */
+  display: none;
+}
+
+.gist {
+  max-width: calc(100vw - 20px);
+  margin-bottom: -15px;
+}
+
+.gist .blob-num {
+  padding-left: 0 !important;
+}
+
 .italics {
   font-style: italic;
 }
@@ -100,12 +135,6 @@
 
 .comment {
   opacity: 0.5;
-}
-
-.gist * {
-  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier,
-    monospace;
-  font-weight: 300;
 }
 
 @media screen and (max-width: 500px) {
