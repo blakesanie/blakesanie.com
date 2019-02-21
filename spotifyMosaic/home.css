@@ -57,16 +57,16 @@ h2 {
 #try {
   font-size: 3vmin;
   padding: 3vmin 5vmin;
-  background-color: green;
+  background-color: #148f46;
   border-radius: 1000px;
   margin-top: 5vmin;
   color: white !important;
-  border: 1px solid green;
+  border: 1px solid #148f46;
   transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 #try:hover {
-  color: green !important;
+  color: #148f46 !important;
   background-color: white;
 }
 
