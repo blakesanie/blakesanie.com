@@ -6,5 +6,6 @@ Allow: /photo
 Allow: /blog
 Allow: /blog/
 Allow: /md/
+Allow: /spotifyMosaic
 
 Sitemap: http://www.blakesanie.com/sitemap.xml
