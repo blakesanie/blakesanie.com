@@ -42,7 +42,7 @@ h1 {
 }
 
 #cover {
-  width: 50vw;
+  width: 80vw;
   max-width: 500px;
   top: 30%;
 }
@@ -65,13 +65,15 @@ h2 {
 }
 
 h3 {
-  font-size: 24px;
+  font-size: 28px;
   display: inline;
   margin: 0 50px;
+  text-align: center;
 }
 
 .section img {
-  width: 300px;
+  width: 40vw;
+  max-width: 300px;
 }
 
 .reverse {
@@ -91,4 +93,37 @@ h5 {
   margin: 100px 0;
   font-size: 50px;
   box-shadow: 0 10px 40px 0px rgba(0, 0, 0, 0.3);
+}
+
+@media screen and (max-width: 700px) {
+  h1 {
+    font-size: 8vmin;
+  }
+  h2 {
+    font-size: 7vmin;
+    margin: 10vmin 0;
+  }
+  .section {
+    flex-wrap: wrap;
+    padding: 0 20px;
+  }
+  h3 {
+    font-size: 6vmin;
+  }
+  .section img {
+    margin: 10vmin 0;
+  }
+  h4 {
+    font-size: 6vmin;
+    padding: 0 40px;
+    text-align: center;
+    margin-top: 10vmin;
+  }
+  h5 {
+    padding: 8vmin 10vmin;
+    border-radius: 3vmin;
+    margin: 15vmin 0;
+    font-size: 8vmin;
+    box-shadow: 0 10px 40px 0px rgba(0, 0, 0, 0.3);
+  }
 }
