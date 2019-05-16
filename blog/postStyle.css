@@ -44,11 +44,17 @@
   line-height: 30px;
   padding-left: 10px;
   font-weight: 400;
+  white-space: nowrap;
 }
 
 #keyboard {
   margin-bottom: 70px;
   font-weight: 400;
+}
+
+.equation {
+  max-width: 200px !important;
+  border: none !important;
 }
 
 #content a {
