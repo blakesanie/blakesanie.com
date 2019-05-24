@@ -8,7 +8,9 @@ ul {
     right: 20px;
     width: 140px;
     z-index: 999;
-    box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 5px 15px 0 rgba(0,0,0,0.15);
+    border-radius: 9px;
+    overflow: hidden;
 }
 
 li {
@@ -32,11 +34,6 @@ li:first-of-type {
 
 li:nth-child(n+2):hover {
     color: black;
-}
-
-ul:hover li:nth-child(n+2) {
-    line-height: 30px;
-    opacity: 1;
 }
 
 img {
