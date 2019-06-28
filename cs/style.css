@@ -11,11 +11,11 @@ body {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
   margin-bottom: 70px;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
 }
 
 #content h3 {
@@ -47,27 +47,27 @@ body {
   background-color: white;
   padding: 60px 0;
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
   -webkit-box-pack: space-evenly;
-      -ms-flex-pack: space-evenly;
-          justify-content: space-evenly;
+  -ms-flex-pack: space-evenly;
+  justify-content: space-evenly;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-          box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 }
 
 .project:nth-child(even) {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: reverse;
-      -ms-flex-direction: row-reverse;
-          flex-direction: row-reverse;
+  -ms-flex-direction: row-reverse;
+  flex-direction: row-reverse;
 }
 
 .textHolder,
@@ -112,8 +112,8 @@ iframe {
   position: relative;
   left: 50%;
   -webkit-transform: translateX(-50%);
-          -ms-transform: translateX(-50%);
-      transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
   margin-top: 30px;
   display: inline-block;
   font-size: 17px;
@@ -125,7 +125,7 @@ iframe {
   background-position: right;
   padding: 14px;
   -webkit-box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
-          box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   -webkit-transition: -webkit-box-shadow 0.3s ease;
   transition: -webkit-box-shadow 0.3s ease;
@@ -136,7 +136,7 @@ iframe {
 
 .git:hover {
   -webkit-box-shadow: 0 0 0px 2px rgba(0, 0, 0, 0.1);
-          box-shadow: 0 0 0px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0px 2px rgba(0, 0, 0, 0.1);
 }
 
 #proximity .imgHolder {
@@ -172,7 +172,12 @@ iframe {
 }
 
 #across .imgHolder {
-    background-image: url("AcrossTheAisle.jpg");
+  background-image: url("AcrossTheAisle.jpg");
+}
+
+#poetryBot .imgHolder {
+  background-image: url("TwitterPoetryBot.png");
+  border: 1px solid #ddd;
 }
 
 @media screen and (max-width: 900px) {
