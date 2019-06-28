@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>Building a Custom Alexa Skill</title>
-        <meta name="description" content="Creating our own Amazon Alexa skill from scratch with AWS and Node.js" />
+        <meta name="description" content="Creating our own Amazon Alexa skill from scratch with AWS and Node.js"/>
         <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
@@ -12,10 +12,14 @@
         <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
+        <meta property="og:image" content="/siteThumb.png">
+        <meta property="og:image:type" content="image/png">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="627">
         <link rel="stylesheet" href="../base.css" type="text/css">
         <link rel="stylesheet" href="postStyle.css" type="text/css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.7.1/gist-embed.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.7.1/gist-embed.min.js"></script>
     </head>
     <body>
         <div id="header">
@@ -27,33 +31,72 @@
                 <div class="line"></div>
             </div>
             <div id="nav">
-                <a href="../"><h3>Home</h3></a>
-                <a href="../about"><h3>About</h3></a>
+                <a href="../">
+                    <h3>Home</h3>
+                </a>
+                <a href="../about">
+                    <h3>About</h3>
+                </a>
                 <h3 class="category">Computer Science</h3>
-                <a href="../resume"><h3>Résumé</h3></a>
-                <a href="../cs"><h3>Projects</h3></a><a href="../blog"><h3>Blog</h3></a>
-                <a href="https://github.com/blakesanie" target="_blank"><h3>GitHub <sup>↗</sup></h3></a>
+                <a href="../resume">
+                    <h3>Résumé</h3>
+                </a>
+                <a href="../cs">
+                    <h3>Projects</h3>
+                </a>
+                <a href="../blog">
+                    <h3>Blog</h3>
+                </a>
+                <a href="https://github.com/blakesanie" target="_blank">
+                    <h3>GitHub
+                        <sup>↗</sup>
+                    </h3>
+                </a>
                 <h3 class="category">Photography</h3>
-                <a href="../photo"><h3>Portfolio</h3></a>
-                <a href="../photo/gear"><h3>Gear</h3></a>
-                <h3 class="category">Personal </h3>
-                <a href="mailto:blake@sanie.com"><h3>Email <sup>↗</sup></h3></a>
-                <a href="https://www.linkedin.com/in/blake-sanie-77733116a/" target="_blank"><h3>LinkedIn <sup>↗</sup></h3></a>
-                <a href="https://www.instagram.com/blake_sanie/" target="_blank"><h3>Instagram <sup>↗</sup></h3></a>
-                <a href="https://accounts.snapchat.com/accounts/snapcodes" target="_blank"><h3>Snapchat <sup>↗</sup></h3></a>
+                <a href="../photo">
+                    <h3>Portfolio</h3>
+                </a>
+                <a href="../photo/gear">
+                    <h3>Gear</h3>
+                </a>
+                <h3 class="category">Personal
+                </h3>
+                <a href="mailto:blake@sanie.com">
+                    <h3>Email
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <a href="https://www.linkedin.com/in/blake-sanie-77733116a/" target="_blank">
+                    <h3>LinkedIn
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <a href="https://www.instagram.com/blake_sanie/" target="_blank">
+                    <h3>Instagram
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <a href="https://accounts.snapchat.com/accounts/snapcodes" target="_blank">
+                    <h3>Snapchat
+                        <sup>↗</sup>
+                    </h3>
+                </a>
             </div>
             <h4>made by Blake Sanie with ♥</h4>
         </div>
         <div id="content">
             <h1>Building a Custom Alexa Skill</h1>
             <p id="date">Jan 6, 2019</p>
-            <p>Every morning, I immediately check the stocks on my phone. This is a habit I would like to break out of. I happen to have an <a href="https://www.amazon.com/all-new-amazon-echo-speaker-with-wifi-alexa-dark-charcoal/dp/B06XCM9LJ4" target="_blank">Amazon Echo</a>, but honestly, it's not that smart. It doesn't know anything about which stocks I own, let alone what I'm saying, half the time. Lets make it easy for ourselves, and by easy, I mean coding an Alexa skill from scratch.</p>
+            <p>Every morning, I immediately check the stocks on my phone. This is a habit I would like to break out of. I happen to have an
+                <a href="https://www.amazon.com/all-new-amazon-echo-speaker-with-wifi-alexa-dark-charcoal/dp/B06XCM9LJ4" target="_blank">Amazon Echo</a>, but honestly, it's not that smart. It doesn't know anything about which stocks I own, let alone what I'm saying, half the time. Lets make it easy for ourselves, and by easy, I mean coding an Alexa skill from scratch.</p>
             <h2>Prerequisites</h2>
             <ul>
                 <li>Node.js</li>
                 <li>API Requests</li>
                 <li>Asynchronous Programming</li>
-                <a href="https://aws.amazon.com" target="_blank"><li>Amazon Web Services</li></a>
+                <a href="https://aws.amazon.com" target="_blank">
+                    <li>Amazon Web Services</li>
+                </a>
             </ul>
             <h2>Plan</h2>
             <ol>
@@ -64,66 +107,75 @@
                 <li>Test</li>
             </ol>
             <h2>Handling Stock Info</h2>
-            <p>The source for our stock information is <a href="https://www.alphavantage.co" target-"_blank">Alpha Vantage</a>. They provide an API we can use to remotely obtain data for a given stock. Let's write a function that will call this api and recieve prices for the last 100 days. Since this process is asynchronous, we will wrap our request inside a Promise.</p>
-            <code data-gist-id="27c2c414d94ce576445fa721d393cf03"  data-gist-line="1,45-59,67-74"></code>
+            <p>The source for our stock information is
+                <a href="https://www.alphavantage.co" target-"_blank"="target-"_blank"">Alpha Vantage</a>. They provide an API we can use to remotely obtain data for a given stock. Let's write a function that will call this api and recieve prices for the last 100 days. Since this process is asynchronous, we will wrap our request inside a Promise.</p>
+            <code data-gist-id="27c2c414d94ce576445fa721d393cf03" data-gist-line="1,45-59,67-74"></code>
             <p>Using the first two data points, we can compute the stock's latest gain or loss as a percentage</p>
-            <code data-gist-id="27c2c414d94ce576445fa721d393cf03"  data-gist-line="60-66"></code>
+            <code data-gist-id="27c2c414d94ce576445fa721d393cf03" data-gist-line="60-66"></code>
             <p>Since I own multiple stocks, we can iterate through these symbols and create a new array of each symbol's price change.</p>
-            <code data-gist-id="27c2c414d94ce576445fa721d393cf03"  data-gist-line="3,36-44"></code>
+            <code data-gist-id="27c2c414d94ce576445fa721d393cf03" data-gist-line="3,36-44"></code>
             <p>Now, all we have to do is form a sentence out this array. The time of day, number of symbols, are their performance are taken into consideration. This string is the value we will pass to Alexa as speech input</p>
-            <code data-gist-id="27c2c414d94ce576445fa721d393cf03"  data-gist-line="5-35"></code>
+            <code data-gist-id="27c2c414d94ce576445fa721d393cf03" data-gist-line="5-35"></code>
             <h2>Setting Up Skill in the Cloud</h2>
-            <p>Navigate to the <a href="https://developer.amazon.com/alexa" target="_blank">Alexa Developer Console</a> and login with your Alexa account. Click "Create Alexa Skills","Start a Skill", then "Create Skill."</p>
+            <p>Navigate to the
+                <a href="https://developer.amazon.com/alexa" target="_blank">Alexa Developer Console</a>
+                and login with your Alexa account. Click "Create Alexa Skills","Start a Skill", then "Create Skill."</p>
             <p>Give your skill a name and opt to use a custom model. Click "Create Skill" when done.</p>
-            <img src="images/createANewSkill.png" />
+            <img src="images/createANewSkill.png"/>
             <p>Our template will be "fact skill." This will make it super easy to plug in our own functions in just a couple lines.</p>
-            <img src="images/chooseATemplate.png" />
+            <img src="images/chooseATemplate.png"/>
             <p>Set your invocation name. To run the app, we'll say "open" then the invocation name ("open stocks").</p>
-            <img src="images/invocation.png" />
+            <img src="images/invocation.png"/>
             <h2>Uploading our Code to AWS</h2>
-            <p>Login to your AWS account, and create a new <a href="https://aws.amazon.com/free/" target="_blank">Lambda Function</a>, which can be found under the free tier. Choose "AWS Serverless Application Repository," which will be "alexa-skills-kit-nodejs-factskill."</p>
-            <img src="images/createFunction.png" />
+            <p>Login to your AWS account, and create a new
+                <a href="https://aws.amazon.com/free/" target="_blank">Lambda Function</a>, which can be found under the free tier. Choose "AWS Serverless Application Repository," which will be "alexa-skills-kit-nodejs-factskill."</p>
+            <img src="images/createFunction.png"/>
             <p>Give your function a name and deploy it. This may take a few minutes.</p>
-            <img src="images/applicationSettings.png" />
+            <img src="images/applicationSettings.png"/>
             <p>Once the function is deployed, click "Test app."</p>
-            <img src="images/deploymentStatus.png" />
+            <img src="images/deploymentStatus.png"/>
             <p>We are met with a code editor. This is where our code will live.</p>
-            <img src="images/functionCode.png" />
+            <img src="images/functionCode.png"/>
             <p>Let's create a new file, stocks.js, and paste in our code from earlier</p>
-            <img src="images/saveAs.png" />
+            <img src="images/saveAs.png"/>
             <p>Since we need to import our code into index.js, we need to wrap getResponse() inside module.exports.</p>
-            <code data-gist-id="a99f11f84cad0ae6ce2ac79a7e4b0025"  data-gist-line="5-6,36-37"></code>
+            <code data-gist-id="a99f11f84cad0ae6ce2ac79a7e4b0025" data-gist-line="5-6,36-37"></code>
             <p>Back in index.js, require stocks.js, comment out the defualt handler output, and pass our own output to speak().</p>
-            <code data-gist-id="2e2e5727c22d92611ec1d3b36c414809"  data-gist-line=""></code>
+            <code data-gist-id="2e2e5727c22d92611ec1d3b36c414809" data-gist-line=""></code>
             <h2>Connecting Lambda to Alexa</h2>
             <p>Let's select and copy the ARN value at the top of our function. This is a referrence Alexa will use to access our new skill.</p>
-            <img src="images/arn.png" />
+            <img src="images/arn.png"/>
             <p>Navigate back to the Alexa Developer Console and past this code under the endpoints tab</p>
-            <img src="images/endpoints.png" />
+            <img src="images/endpoints.png"/>
             <p>Go back to the Invocation tab (from earlier) and click "Save Model" and "Build Model"</p>
-            <img src="images/buildModel.png" />
+            <img src="images/buildModel.png"/>
             <p>Now, let's navigate to the "Test" and invoke our skill with "open stocks." As you can see, Alexa completed our task asynchronously without any errors!</p>
-            <img src="images/testSkill.png" />
+            <img src="images/testSkill.png"/>
             <h2>Transfering Skill to Amazon Echo Device</h2>
-            <p>On the <a href="https://itunes.apple.com/us/app/amazon-alexa/id944011620?mt=8" target="_blank">Alexa App</a>, link the account you made your skill with to the Echo Device. All skills / apps are automatically carried over. I've found that the best practice is to share your Alexa Developer and AWS accounts under the same email.</p>
-            <img src="https://cdn.dribbble.com/users/1063469/screenshots/2982811/dribbbleloop_v4.gif" />
+            <p>On the
+                <a href="https://itunes.apple.com/us/app/amazon-alexa/id944011620?mt=8" target="_blank">Alexa App</a>, link the account you made your skill with to the Echo Device. All skills / apps are automatically carried over. I've found that the best practice is to share your Alexa Developer and AWS accounts under the same email.</p>
+            <img src="https://cdn.dribbble.com/users/1063469/screenshots/2982811/dribbbleloop_v4.gif"/>
             <h2>More</h2>
-            <p>This project represents the most bare-bones Alexa Skill. You can do so much more inside the Amazon Developer Console and AWS, such as process user input (from speech) and save data to memory/storge. I encourage you to build an Alexa Skill that's particularly helpful in your life, and share it with me! Cheers.</p>
+            <p>This project represents the most bare-bones Alexa Skill. You can do so much more inside the Amazon Developer Console and AWS, such as process user input (from speech) and save data to memory/storge. I encourage you to build an Alexa Skill that's
+                particularly helpful in your life, and share it with me! Cheers.</p>
             <div id="disqus_thread"></div>
         </div>
         <script>
-        var disqus_config = function () {
-        this.page.url = "http://www.blakesanie.com/blog/alexa.html";
-        this.page.identifier = "alexa";
-        };
-        (function() { // DON'T EDIT BELOW THIS LINE
-        var d = document, s = d.createElement('script');
-        s.src = 'https://blakesanie-com.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-        })();
+            var disqus_config = function () {
+                this.page.url = "http://www.blakesanie.com/blog/alexa.html";
+                this.page.identifier = "alexa";
+            };
+            (function () { // DON'T EDIT BELOW THIS LINE
+                var d = document,
+                    s = d.createElement('script');
+                s.src = 'https://blakesanie-com.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', + new Date());
+                (d.head || d.body).appendChild(s);
+            })();
         </script>
-        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
         <script src="../main.js"></script>
         <script src="functions.js"></script>
     </body>

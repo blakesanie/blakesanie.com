@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>Creating Photo Mosaics from Spotify Album Covers</title>
-        <meta name="description" content="Recreating images out of album covers in a user's Spotify playlists." />
+        <meta name="description" content="Recreating images out of album covers in a user's Spotify playlists."/>
         <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
@@ -12,10 +12,14 @@
         <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
+        <meta property="og:image" content="/siteThumb.png">
+        <meta property="og:image:type" content="image/png">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="627">
         <link rel="stylesheet" href="../base.css" type="text/css">
         <link rel="stylesheet" href="postStyle.css" type="text/css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.7.1/gist-embed.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.7.1/gist-embed.min.js"></script>
     </head>
     <body>
         <div id="header">
@@ -27,40 +31,83 @@
                 <div class="line"></div>
             </div>
             <div id="nav">
-                <a href="../"><h3>Home</h3></a>
-                <a href="../about"><h3>About</h3></a>
+                <a href="../">
+                    <h3>Home</h3>
+                </a>
+                <a href="../about">
+                    <h3>About</h3>
+                </a>
                 <h3 class="category">Computer Science</h3>
-                <a href="../resume"><h3>Résumé</h3></a>
-                <a href="../cs"><h3>Projects</h3></a><a href="../blog"><h3>Blog</h3></a>
-                <a href="https://github.com/blakesanie" target="_blank"><h3>GitHub <sup>↗</sup></h3></a>
+                <a href="../resume">
+                    <h3>Résumé</h3>
+                </a>
+                <a href="../cs">
+                    <h3>Projects</h3>
+                </a>
+                <a href="../blog">
+                    <h3>Blog</h3>
+                </a>
+                <a href="https://github.com/blakesanie" target="_blank">
+                    <h3>GitHub
+                        <sup>↗</sup>
+                    </h3>
+                </a>
                 <h3 class="category">Photography</h3>
-                <a href="../photo"><h3>Portfolio</h3></a>
-                <a href="../photo/gear"><h3>Gear</h3></a>
-                <h3 class="category">Personal </h3>
-                <a href="mailto:blake@sanie.com"><h3>Email <sup>↗</sup></h3></a>
-                <a href="https://www.linkedin.com/in/blake-sanie-77733116a/" target="_blank"><h3>LinkedIn <sup>↗</sup></h3></a>
-                <a href="https://www.instagram.com/blake_sanie/" target="_blank"><h3>Instagram <sup>↗</sup></h3></a>
-                <a href="https://accounts.snapchat.com/accounts/snapcodes" target="_blank"><h3>Snapchat <sup>↗</sup></h3></a>
+                <a href="../photo">
+                    <h3>Portfolio</h3>
+                </a>
+                <a href="../photo/gear">
+                    <h3>Gear</h3>
+                </a>
+                <h3 class="category">Personal
+                </h3>
+                <a href="mailto:blake@sanie.com">
+                    <h3>Email
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <a href="https://www.linkedin.com/in/blake-sanie-77733116a/" target="_blank">
+                    <h3>LinkedIn
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <a href="https://www.instagram.com/blake_sanie/" target="_blank">
+                    <h3>Instagram
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <a href="https://accounts.snapchat.com/accounts/snapcodes" target="_blank">
+                    <h3>Snapchat
+                        <sup>↗</sup>
+                    </h3>
+                </a>
             </div>
             <h4>made by Blake Sanie with ♥</h4>
         </div>
         <div id="content">
             <h1>Generating Photo Mosaics out of Album Covers (from Spotify!)</h1>
             <p id="date">Feb 17, 2019</p>
-            <p>One day, I had the thought of creating a giant poster of iconic album covers. I already began to figure out how to stitch images together onto a single canvas with JavaScript. However, I realized I would be the only one to use my software. Wanting others to use this artistic tool for themselves, I converted my algorithms into a web app. For an extra touch of personalization, the album cover pool used to compose mosaics come directly from the user's spotify playlists! Here's an example of my own music used to represent the Golden Gate Bridge:</p>
+            <p>One day, I had the thought of creating a giant poster of iconic album covers. I already began to figure out how to stitch images together onto a single canvas with JavaScript. However, I realized I would be the only one to use my software. Wanting
+                others to use this artistic tool for themselves, I converted my algorithms into a web app. For an extra touch of personalization, the album cover pool used to compose mosaics come directly from the user's spotify playlists! Here's an example of my
+                own music used to represent the Golden Gate Bridge:</p>
             <img src="./images/sampleMosaic.png"/>
             <p>Wow 😍. I needed to keep working on this project.</p>
             <h2>Prerequisites</h2>
             <ol>
-                <li>Javascript/<a href="https://en.wikipedia.org/wiki/JQuery" target="_blank">jQuery</a></li>
-                <li><a href="https://en.wikipedia.org/wiki/Canvas_element" target="_blank">HTML5 Canvas</a></li>
+                <li>Javascript/<a href="https://en.wikipedia.org/wiki/JQuery" target="_blank">jQuery</a>
+                </li>
+                <li>
+                    <a href="https://en.wikipedia.org/wiki/Canvas_element" target="_blank">HTML5 Canvas</a>
+                </li>
                 <li>API Requests</li>
                 <li>Iteration/Selection</li>
                 <li>Good Music Taste</li>
             </ol>
             <h2>Plan</h2>
             <ol>
-                <li>Authenticate user with <a href="https://www.spotify.com" target="_blank">Spotify</a></li>
+                <li>Authenticate user with
+                    <a href="https://www.spotify.com" target="_blank">Spotify</a>
+                </li>
                 <li>Obtain album covers from playlists</li>
                 <li>Select image to be recreated</li>
                 <li>Generate photo mosaic</li>
@@ -68,58 +115,75 @@
             </ol>
             <p>This walkthrough will focus less on the UI, and more on the app's underlying functions.</p>
             <h2>Launching the Website</h2>
-            <p>All operations will be made from localhost. Our website's source files will be served through this simple http server made with Node.js and Express. Upon typing "$ node simpleServer.js" into the command line, we can find index.html at http://localhost:8888/.</p>
+            <p>All operations will be made from localhost. Our website's source files will be served through this simple http server made with Node.js and Express. Upon typing "$ node simpleServer.js" into the command line, we can find index.html at
+                http://localhost:8888/.</p>
             <code data-gist-id="3df6c3fc148dd3cf0e520cb90fd7346d"></code>
             <h2>Spotify Authentication Flow</h2>
-            <p>First, let's set up an app on Spotify's <a href="https://www.developer.spotify.com" target="_blank">developer site</a>. There, we can obtain our client key: a string that allows us access to the services API. We can also set a whitelist of redirect urls for when the user has successfully signed in. I whitelisted multiple urls for production (domain) and development (localhost:port#).</p>
+            <p>First, let's set up an app on Spotify's
+                <a href="https://www.developer.spotify.com" target="_blank">developer site</a>. There, we can obtain our client key: a string that allows us access to the services API. We can also set a whitelist of redirect urls for when the user has successfully
+                signed in. I whitelisted multiple urls for production (domain) and development (localhost:port#).</p>
             <h4>Signing into Spotify</h4>
-            <p>Clicking on an element $("#login") will redirect the user to Spotify's authentication page. Inserted into the url are parameters containing our desired redirect url (same page), client key, and state string. Spotify's servers use this state string to ensure security across API calls. The front end sends a unique string to Spotify's back end. If the response does not contains the same state value, we know that the response is not intended for us or was tampered with.</p>
-            <code data-gist-id="3b0de58f83577c0188f1cea8b33e2dbe"  data-gist-line="32-44"></code>
+            <p>Clicking on an element $("#login") will redirect the user to Spotify's authentication page. Inserted into the url are parameters containing our desired redirect url (same page), client key, and state string. Spotify's servers use this state string
+                to ensure security across API calls. The front end sends a unique string to Spotify's back end. If the response does not contains the same state value, we know that the response is not intended for us or was tampered with.</p>
+            <code data-gist-id="3b0de58f83577c0188f1cea8b33e2dbe" data-gist-line="32-44"></code>
             <p>When the user returns from the spotify login page, the location url has hash params containing an access token and the state key. Let's save these values for the next step.</p>
-            <code data-gist-id="3b0de58f83577c0188f1cea8b33e2dbe"  data-gist-line="3-12,25-30"></code>
+            <code data-gist-id="3b0de58f83577c0188f1cea8b33e2dbe" data-gist-line="3-12,25-30"></code>
             <h4>Loading User Information</h4>
-            <p>Now, we can compare the returned state to the value we sent. If the values are identical, we can use our access token to query Spotify's API for the user's profile information. We'll save all user data under a global variable for use everywhere throughout the project.</p>
-            <code data-gist-id="3b0de58f83577c0188f1cea8b33e2dbe"  data-gist-line="24,45-49,52-56,61-64"></code>
+            <p>Now, we can compare the returned state to the value we sent. If the values are identical, we can use our access token to query Spotify's API for the user's profile information. We'll save all user data under a global variable for use everywhere
+                throughout the project.</p>
+            <code data-gist-id="3b0de58f83577c0188f1cea8b33e2dbe" data-gist-line="24,45-49,52-56,61-64"></code>
             <h4>Processing Playlist and Track Data</h4>
             <p>We can also query Spotify for the user's playlists. At the same time, let's traverse each playlist's tracks and create an array of unique album covers. Again, information is saved to the global data value.</p>
-            <code data-gist-id="3b0de58f83577c0188f1cea8b33e2dbe"  data-gist-line="65-73,77-88,90-91,138-145,149-172"></code>
+            <code data-gist-id="3b0de58f83577c0188f1cea8b33e2dbe" data-gist-line="65-73,77-88,90-91,138-145,149-172"></code>
             <h2>Generating the Mosaic</h2>
-            <p>In the UI, the user has selected which playlists it wants to include in the mosaic. We can iterate across these playlists and compile an array of unique album covers. Also, let's calculate each photo's average color <span class="italics">now</span> to save time later.</p>
-            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c"  data-gist-line="7-8,54,98-121"></code>
+            <p>In the UI, the user has selected which playlists it wants to include in the mosaic. We can iterate across these playlists and compile an array of unique album covers. Also, let's calculate each photo's average color
+                <span class="italics">now</span>
+                to save time later.</p>
+            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c" data-gist-line="7-8,54,98-121"></code>
             <p>Then, we compute the mosaic's tile dimensions. Our algorithm maximizes the number of tiles without going over the user-set maximum value.</p>
-            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c"  data-gist-line="6,9-24"></code>
+            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c" data-gist-line="6,9-24"></code>
             <p>Using a canvas element, let's resize the target image to the tile dimensions we just calculated.</p>
-            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c"  data-gist-line="28-36,53"></code>
+            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c" data-gist-line="28-36,53"></code>
             <p>At the same time, let's set up our mosaic canvas, which we will draw album covers onto and display to the user. Each album cover's width is 64 pixels.</p>
-            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c"  data-gist-line="3-4,25-27"></code>
+            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c" data-gist-line="3-4,25-27"></code>
             <h4>Finding the Right Album Covers</h4>
-            <p>This is where the code gets interesting. Canvas has a method that allows us to extract pixel data as a one-dimensional array. Every four values follow the repeating pattern {r, g, b, a}. For our pursposes, let's create a new array of pixel objects. We can ignore the alpha chanel.</p>
-            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c"  data-gist-line="37-46"></code>
-            <p>At this point, the computer's fans might start to spin. For each pixel, we try to find the album cover with the closest average color, according to a least-mean-square formula. </p>
-            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c"  data-gist-line="48-50,52"></code>
+            <p>This is where the code gets interesting. Canvas has a method that allows us to extract pixel data as a one-dimensional array. Every four values follow the repeating pattern {r, g, b, a}. For our pursposes, let's create a new array of pixel
+                objects. We can ignore the alpha chanel.</p>
+            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c" data-gist-line="37-46"></code>
+            <p>At this point, the computer's fans might start to spin. For each pixel, we try to find the album cover with the closest average color, according to a least-mean-square formula.
+            </p>
+            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c" data-gist-line="48-50,52"></code>
             <h4>Presenting Mosaic to User</h4>
-            <p>Drawing album covers onto our mosaic canvas uses the same drawing method from earlier. Once we calculate the image's x and y offset, we can essentially paste the album cover onto the canvas, one at a time. When all images are rendered, we prepare the canvas for an image download.</p>
-            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c"  data-gist-line="51,76-91"></code>
+            <p>Drawing album covers onto our mosaic canvas uses the same drawing method from earlier. Once we calculate the image's x and y offset, we can essentially paste the album cover onto the canvas, one at a time. When all images are rendered, we prepare
+                the canvas for an image download.</p>
+            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c" data-gist-line="51,76-91"></code>
             <p>The canvas' data is extracted as a PNG and formatted as a dataURL. We can attatch this url to the UI's download button, which will take the user to a new tab with just the image (downloadable).</p>
-            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c"  data-gist-line="93-97"></code>
+            <code data-gist-id="0b73834ac9c9ea091ca1688f60b9ba8c" data-gist-line="93-97"></code>
             <h2>Create Your Album Cover Masterpiece</h2>
-            <a href="http://www.blakesanie.com/spotifyMosaic"><h4>Visit the site here</h4></a>
-            <p> I'd LOVE to see what you come up with. Share your mosaics with <a href="https://www.instagram.com/blake_sanie/" target="_blank">me on Instagram</a>.</p>
+            <a href="http://www.blakesanie.com/spotifyMosaic">
+                <h4>Visit the site here</h4>
+            </a>
+            <p>
+                I'd LOVE to see what you come up with. Share your mosaics with
+                <a href="https://www.instagram.com/blake_sanie/" target="_blank">me on Instagram</a>.</p>
             <div id="disqus_thread"></div>
         </div>
         <script>
-        var disqus_config = function () {
-        this.page.url = "http://www.blakesanie.com/blog/mosaic.html";
-        this.page.identifier = "mosaic";
-        };
-        (function() { // DON'T EDIT BELOW THIS LINE
-        var d = document, s = d.createElement('script');
-        s.src = 'https://blakesanie-com.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-        })();
+            var disqus_config = function () {
+                this.page.url = "http://www.blakesanie.com/blog/mosaic.html";
+                this.page.identifier = "mosaic";
+            };
+            (function () { // DON'T EDIT BELOW THIS LINE
+                var d = document,
+                    s = d.createElement('script');
+                s.src = 'https://blakesanie-com.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', + new Date());
+                (d.head || d.body).appendChild(s);
+            })();
         </script>
-        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
         <script src="../main.js"></script>
         <script src="functions.js"></script>
     </body>

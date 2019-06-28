@@ -87,5 +87,13 @@ function setNotes() {
 }
 
 function setIframe(noteName) {
-  $("iframe").attr("src", data[className][noteName]);
+  $("iframe").attr(
+    "src",
+
+    "https://drive.google.com/file/d/" +
+      data[className][noteName] +
+      "/preview?usp=drivesdk"
+  );
 }
+//
+// "https://drive.google.com/file/d/" + data[className][noteName] + "/preview"
