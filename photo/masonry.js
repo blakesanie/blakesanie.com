@@ -110,6 +110,22 @@ $("ul").hover(
   }
 );
 
+$("ul").click(function() {
+  expandCats();
+});
+
+$("body").click(function(e) {
+  var x = e.originalEvent.x;
+  var y = e.originalEvent.y;
+  var ulMinX = $("ul").offset().left;
+  var ulMaxX = ulMinX + $("ul").width();
+  var ulMinY = $("ul").offset().top;
+  var ulMaxY = ulMinY + $("ul").height();
+  if (x < ulMinX || x > ulMaxX || y < ulMinY || y > ulMaxY) {
+    closeCats();
+  }
+});
+
 function expandCats() {
   $("li:nth-child(n+2)").css({
     opacity: 1,
