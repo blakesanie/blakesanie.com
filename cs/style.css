@@ -180,6 +180,11 @@ iframe {
   border: 1px solid #ddd;
 }
 
+#stockAnalysis .imgHolder {
+  background-image: url("stockAnalysis.png");
+  /* border: 1px solid #ddd; */
+}
+
 @media screen and (max-width: 900px) {
   .textHolder,
   .imgHolder {
