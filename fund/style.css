@@ -1,0 +1,23 @@
+* {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+#landing {
+  height: 100vh;
+  width: 100vw;
+  background-color: red;
+}
+
+#chartHolder {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  right: 30px;
+  top: 100px;
+  background-color: green;
+}
+
+#myChart {
+}
