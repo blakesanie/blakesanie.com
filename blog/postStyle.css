@@ -88,6 +88,10 @@
   text-decoration: underline;
 }
 
+.equation {
+  font-size: 30px !important;
+}
+
 .gist .blob-code-inner {
   white-space: pre-wrap;
 }
