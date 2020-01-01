@@ -119,14 +119,21 @@
             <p>Not exactly, but we can represent complex numbers through their real and imaginary components (a + bi becomes a,b as x,y). Computations with each component are done separately, meaning we can omit the i if we think ahead.</p>
             <h4>How do I square complex numbers?</h4>
             <p>Take an arbitrary complex number, a + bi</p>
-            <p>(a + bi)^2</p>
-            <p>a^2 + 2abi - b^2</p>
-            <p>(a^2 - b^2) + (2ab)i</p>
-            <p>Really, the square of (a + bi) is another imaginary number, where the new a is (a^2 - b^2) and the new b is (2ab). This concept is crucial to this project's calculations.</p>
+            <p class="equation">(a + bi)<sup>2</sup>
+            </p>
+            <p class="equation">a<sup>2</sup>
+                + 2abi - b<sup>2</sup>
+            </p>
+            <p class="equation">(a<sup>2</sup>
+                - b<sup>2</sup>) + (2ab)i</p>
+            <p>Really, the square of (a + bi) is another imaginary number, where the new a is (a<sup>2</sup>
+                - b<sup>2</sup>) and the new b is (2ab). This concept is crucial to this project's calculations.</p>
             <h4>How do I know when the function diverges?</h4>
             <p>It is known that if the function's complex solution is ever greater than two, the function must diverge. In cartesian terms, this means that the function diverges when the distance from the origin is greater than two. Using the
                 <a href="https://en.wikipedia.org/wiki/Pythagorean_theorem" target="_blank">Pythagorian theorem</a>, we can define this case as:</p>
-            <p>x^2 + y^2 > 4</p>
+            <p>x<sup>2</sup>
+                + y<sup>2</sup>
+                > 4</p>
             <h2>Setting Up the Program</h2>
             <p>Let's take this step by step.</p>
             <p>First, we import our dependencies and modules.
