@@ -1,6 +1,6 @@
 startingPeriod = 360;
 animationDuration = 4000;
-font = "abel";
+font = "Dosis";
 
 i = 0;
 initialInterval = setInterval(
@@ -37,7 +37,36 @@ var chart = new CanvasJS.Chart("myChart", {
   animationDuration: animationDuration,
   backgroundColor: "transparent",
   toolTip: {
-    enabled: false
+    enabled: false,
+    shared: true,
+    borderColor: "transparent",
+    fontFamily: font,
+    backgroundColor: "white",
+    cornerRadius: 10,
+    contentFormatter: function(e) {
+      console.log(e);
+      var content = "<div id='myToolTip'>";
+      datasets = ["Sanie", "S&P 500"];
+      console.log(e.entries[0].dataPoint.x);
+      var date = new Date(e.entries[0].dataPoint.x);
+      content +=
+        "<p id='pointDate'>" +
+        (date.getMonth() + 1) +
+        "/" +
+        date.getDate() +
+        "/" +
+        date.getFullYear() +
+        "</p><table id='pointTable' cellspacing='0'>";
+      for (var i = 0; i < e.entries.length; i++) {
+        content +=
+          "<tr><td>" +
+          datasets[i] +
+          "</td><td>" +
+          e.entries[i].dataPoint.y +
+          "%</td></tr>";
+      }
+      return content + "</table></div>";
+    }
   },
   axisX: {
     valueFormatString: "YYYY",
@@ -115,17 +144,62 @@ function addDataToGraph() {
   }
 
   // moveMarkers();
-  chart.render();
-  if (myPointsToDisplay.length >= myPoints.length) {
-    $(".action").addClass("appearRise");
-    console.log("cancel interval");
-    clearInterval(interval);
+  console.log($(window).scrollTop());
+  if (
+    myPointsToDisplay.length == myPoints.length ||
+    $(window).scrollTop() < $(window).height()
+  ) {
+    chart.render();
+    if (myPointsToDisplay.length == myPoints.length) {
+      $(".action").addClass("appearRise");
+      console.log("cancel interval");
+      clearInterval(interval);
+    }
   }
 }
 
 function formatNumbers(num) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+$(".info").click(function() {
+  overlay = $(this).siblings(".greekOverlay");
+  if (overlay.css("opacity") < 1) {
+    overlay.css({
+      opacity: 1,
+      "pointer-events": "all"
+    });
+  } else if (overlay.css("opacity") > 0) {
+    overlay.css({
+      opacity: 0,
+      "pointer-events": "none"
+    });
+  }
+});
+
+$(".action").click(function() {
+  $("html").animate(
+    {
+      scrollTop: $("h3")
+        .eq(0)
+        .offset().top
+    },
+    500
+  );
+});
+
+// $(".info").hover(
+//   function() {
+//     $(this)
+//       .siblings(".greekOverlay")
+//       .css("opacity", 1);
+//   },
+//   function() {
+//     $(this)
+//       .siblings(".greekOverlay")
+//       .css("opacity", 0);
+//   }
+// );
 
 // setTimeout(function() {
 //   $(".action").addClass("appearRise");
