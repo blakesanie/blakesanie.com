@@ -174,6 +174,11 @@ $(".info").click(function() {
       opacity: 0,
       "pointer-events": "none"
     });
+    $(this).css({
+      "background-color": "white",
+      color: "black",
+      "border-color": "rgba(0, 0, 0, 0.2)"
+    });
   }
 });
 

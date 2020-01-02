@@ -291,9 +291,9 @@ img {
 }
 
 .info:hover {
-  border-color: black;
-  background-color: black;
-  color: white;
+  border-color: black !important;
+  background-color: black !important;
+  color: white !important;
 }
 
 .infoText {
