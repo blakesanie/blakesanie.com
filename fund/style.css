@@ -1,23 +1,172 @@
+@import url("https://fonts.googleapis.com/css?family=Abel|Cairo:300,400|Comfortaa:300,400|Quicksand:300,400,500&display=swap");
+
 * {
   position: relative;
   margin: 0;
   padding: 0;
+  font-family: "Abel", sans-serif;
+  /* font-family: 'Cairo', sans-serif; */
+  /* font-family: 'Comfortaa', cursive; */
+  /* font-family: 'Quicksand', sans-serif; */
 }
 
 #landing {
   height: 100vh;
   width: 100vw;
-  background-color: red;
+  background-color: #9198e5;
+}
+
+h1 {
+  color: black;
+  top: 20px;
+  left: 20px;
+  font-size: 30px;
+  z-index: 999;
+}
+
+#improve {
+  position: absolute;
+  top: 45%;
+  left: 40%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  max-width: 600px;
+  text-align: center;
+  animation: appear 8s ease-in;
+}
+
+h2 {
+  font-size: 42px;
+}
+
+.emphasize {
+  filter: invert(100%);
+}
+
+table {
+  margin: 0 auto;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+td {
+  border-color: white;
+  padding: 0px 10px;
+  width: 200px;
+  font-size: 42px;
+}
+
+td:nth-child(1) {
+  text-align: right;
+  border-right: 1px solid white;
+}
+
+td:nth-child(2) {
+  text-align: left;
+  border-left: 1px solid white;
+}
+
+.asterisk {
+  color: white;
+  font-size: 16px;
+  opacity: 0.5;
+}
+
+.action {
+  top: 40px;
+  color: white;
+  padding: 10px 20px;
+  width: 120px;
+  margin: 0 auto;
+  font-size: 24px;
+  border-radius: 12px;
+  border: 1px solid white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, opacity 2s ease-in,
+    transform 2s ease-in-out;
+  opacity: 0;
+  transform: translateY(20%);
+}
+
+.appearRise {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.action:hover {
+  background-color: white;
+  color: #8cafce;
+}
+
+#gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 22px;
+  background: linear-gradient(#54e4a6, #9198e5);
 }
 
 #chartHolder {
   position: absolute;
-  bottom: 30px;
-  left: 30px;
-  right: 30px;
-  top: 100px;
-  background-color: green;
+  bottom: 0px;
+  left: 10px;
+  right: 10px;
+  top: 10px;
 }
 
 #myChart {
+  height: 100%;
+  width: 100%;
+}
+
+#censor {
+  position: absolute;
+  width: 100%;
+  height: 12px;
+  background-color: #9198e5;
+  z-index: 99999;
+  bottom: 0;
+}
+
+/* #markerHolder {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 3%;
+  left: 0;
+  right: 0;
+  bottom: calc(24px);
+}
+
+.marker {
+  position: absolute;
+  color: white;
+  right: 20px;
+  bottom: -40px;
+  transform-origin: left top;
+  background-color: red;
+  height: 1%;
+  transition: transform 0.3s ease;
+} */
+
+/* #hoverHelper {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  background-color: white;
+  top: -120px;
+  left: -120px;
+  transform-origin: right bottom;
+  transition: transform 0.3s ease;
+  display: none;
+} */
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+  }
+  ,
+  100% {
+    opacity: 1;
+  }
 }

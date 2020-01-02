@@ -17,8 +17,8 @@ with open(filename) as file:
            myReturns.append(myReturn)
            spyReturns.append(spyReturn)
 
-myReturns = [(item / myReturns[0] - 1) * 100 for item in myReturns]
-spyReturns = [(item / spyReturns[0] - 1) * 100 for item in spyReturns]
+myReturns = [round((item / myReturns[0] - 1) * 100, 1) for item in myReturns]
+spyReturns = [round((item / spyReturns[0] - 1) * 100, 1) for item in spyReturns]
 dates = ["new Date({},{},{})".format(item[0], item[1], item[2]) for item in dates]
 
 myPoints = ["{{x: {},y: {}}}".format(dates[i], myReturns[i]) for i in range(len(dates))]
