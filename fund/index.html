@@ -34,8 +34,8 @@
             </div>
             <div id="gradient"></div>
             <div id="chartHolder">
-                <div id="censor"></div>
-                <div id="myChart"></div>
+                <div class="censor"></div>
+                <div id="myChart" class="chart handsOff"></div>
                 <!-- <div id="markerHolder"> <p class="marker" id="myPercent">1000%</p> <p class="marker" id="spyPercent">1000%</p> </div> -->
                 <!-- <div id="hoverHelper"></div> -->
             </div>
@@ -59,7 +59,7 @@
                     <p class="riskMetric">
                         .37
                     </p>
-                    <div class="greekOverlay">
+                    <div class="greekOverlay handsOff">
                         <p class="description">
                             The Sanie Strategy earned a 37% annual return on top of the S&P 500's growth
                         </p>
@@ -77,7 +77,7 @@
                     <p class="riskMetric">
                         .51
                     </p>
-                    <div class="greekOverlay">
+                    <div class="greekOverlay handsOff">
                         <p class="description">
                             The Sanie Strategy grew with only 51% of the risk experienced by the S&P 500
                         </p>
@@ -95,7 +95,7 @@
                     <p class="riskMetric">
                         .97
                     </p>
-                    <div class="greekOverlay">
+                    <div class="greekOverlay handsOff">
                         <p class="description">
                             Ratio of risk-free returns to excess returns.
                             <br/>
@@ -109,9 +109,41 @@
                     </div>
                 </div>
             </div>
-
+            <h3>
+                Weekly Returns
+            </h3>
+            <h4>Distribution of Weekly Returns, Split into .5% Intervals</h4>
+            <div id="histogramHolder">
+                <div class="censor"></div>
+                <div id="histogram" class="chart"></div>
+            </div>
+            <!-- <div id="normalHolder" class="handsOff"> <div class="censor"></div> <div id="normal" class="chart"></div> </div> -->
+            <h3>Statistical Significance</h3>
+            <p class="step">
+                Assume:<br/>μ<sub>Sanie</sub>
+                - μ<sub>S&P 500</sub>
+                = 0
+            </p>
+            <p class="step">
+                Hyporthesize:<br/>μ<sub>Sanie</sub>
+                - μ<sub>S&P 500</sub>
+                > 0
+            </p>
+            <p class="step">
+                Conduct:<br/>
+                <a href="http://www.stat.yale.edu/Courses/1997-98/101/meancomp.htm" target="_blank">Two-Sample t-Test for Difference in Means</a>
+            </p>
+            <!-- <p class="step"> Calculate:<br/>(μ<sub>Sanie</sub> - μ<sub>S&P 500</sub>)<br/>/ (σ<sub>Sanie</sub> <sup>2</sup> + σ<sub>S&P 500</sub> <sup>2</sup>) <sup>.5</sup> <br/>* (n<sub>shared</sub>) <sup>.5</sup> </p> -->
+            <div id="tTestGraphHolder" class="handsOff">
+                <div class="censor"></div>
+                <div id="tTestGraph" class="chart"></div>
+            </div>
+            <p class="description">
+                With an effective p-value of 0.0, we can be 100.0% confident that the Sanie Fund outperforms the S&P 500 on a weekly basis. These findings are highly unlikely due to chance.
+            </p>
         </div>
         <script src="data.js" type="text/javascript"></script>
+        <script src="landing.js" type="text/javascript"></script>
         <script src="functions.js" type="text/javascript"></script>
     </body>
 </html>

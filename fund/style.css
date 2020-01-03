@@ -5,11 +5,11 @@
   margin: 0;
   padding: 0;
   font-family: "Abel", sans-serif;
-  font-family: "Cairo", sans-serif;
+  /* font-family: "Cairo", sans-serif; */
   /* font-family: 'Comfortaa', cursive; */
-  /* font-family: "Quicksand", sans-serif; */
-  font-family: "Dosis", sans-serif;
-  /* font-family: "Barlow", sans-serif; */
+  font-family: "Quicksand", sans-serif;
+  /* font-family: "Dosis", sans-serif; */
+  font-family: "Barlow", sans-serif;
   font-weight: 200;
   box-sizing: border-box;
 }
@@ -114,7 +114,7 @@ h2 {
 
 .action {
   top: 40px;
-  color: white;
+  color: #8cafce;
   padding: 10px 0;
   margin: 0 auto;
   width: 170px;
@@ -127,6 +127,7 @@ h2 {
   opacity: 0;
   transform: translateY(20%);
   pointer-events: none;
+  background-color: white;
 }
 
 .appearRise {
@@ -136,8 +137,8 @@ h2 {
 }
 
 .action:hover {
-  background-color: white;
-  color: #8cafce;
+  background-color: transparent;
+  color: white;
 }
 
 #gradient {
@@ -158,11 +159,14 @@ h2 {
 }
 
 #myChart {
+}
+
+.chart {
   height: 100%;
   width: 100%;
 }
 
-#censor {
+.censor {
   position: absolute;
   width: 100%;
   height: 12px;
@@ -171,20 +175,25 @@ h2 {
   bottom: 0;
 }
 
-.canvasjs-chart-tooltip {
+.canvasjs-chart-tooltip,
+.canvasjs-chart-tooltip > div {
   box-shadow: none !important;
+  overflow: visible;
+  padding: 0 !important;
 }
 
 #myToolTip {
-  padding: 4px 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
 #myToolTip > * {
-  font-size: 16px;
+  font-size: 18px;
 }
 
-#pointDate {
-  margin-bottom: 4px;
+#toolTipHeader {
+  margin-bottom: 6px;
   text-align: center;
 }
 
@@ -192,11 +201,11 @@ h2 {
 }
 
 #pointTable td:nth-child(1) {
-  padding-right: 1px;
+  padding-right: 6px;
 }
 
 #pointTable td:nth-child(2) {
-  padding-left: 1px;
+  padding-left: 6px;
   text-align: right;
   font-weight: bolder;
 }
@@ -205,12 +214,11 @@ h2 {
   width: 100%;
   height: 200px;
   background: linear-gradient(#9198e5, white);
-  margin-bottom: 150px;
 }
 
 #content {
   display: flex;
-  padding: 0 100px 100px 100px;
+  padding: 0 50px 100px 50px;
   flex-direction: column;
   margin: 0 auto;
   max-width: 1400px;
@@ -220,7 +228,7 @@ h2 {
 h3 {
   font-size: 46px;
   text-align: center;
-  padding: 100px 0;
+  margin: 150px 0 50px 0;
 }
 
 .description {
@@ -235,7 +243,7 @@ img {
 }
 
 #greeks {
-  box-shadow: 0 25px 50px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 25px 50px 0px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   display: flex;
   flex-direction: row;
@@ -254,22 +262,21 @@ img {
 }
 
 .letter {
-  font-size: 60px;
+  font-size: 40px;
 }
 
 .riskMetric {
-  font-size: 40px;
-  margin-top: 20px;
+  font-size: 34px;
+  margin: 50px;
 }
 
 .greekOverlay {
   position: absolute;
   top: 0;
   width: 100%;
-  height: 160px;
+  height: 180px;
   background-color: white;
   opacity: 0;
-  pointer-events: none;
   transition: opacity 0.3s ease;
   display: flex;
   align-items: center;
@@ -283,7 +290,6 @@ img {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 26px;
   background-color: white;
   cursor: pointer;
   transition: color 0.3s ease, border-color 0.3s ease,
@@ -300,34 +306,144 @@ img {
   font-size: 20px;
 }
 
-/* #markerHolder {
-  position: absolute;
-  background-color: rgba(0, 0, 0, 0.5);
-  top: 3%;
-  left: 0;
-  right: 0;
-  bottom: calc(24px);
+h4 {
+  font-size: 24px;
+  margin-bottom: 50px;
 }
 
-.marker {
-  position: absolute;
-  color: white;
-  right: 20px;
-  bottom: -40px;
-  transform-origin: left top;
-  background-color: red;
-  height: 1%;
-  transition: transform 0.3s ease;
-} */
+#histogramHolder,
+#normalHolder {
+  width: 100%;
+  height: 600px;
+  margin-right: 20px; /* to offset invisible axis */
+}
 
-/* #hoverHelper {
-  position: absolute;
-  height: 100px;
-  width: 100px;
-  background-color: white;
-  top: -120px;
-  left: -120px;
-  transform-origin: right bottom;
-  transition: transform 0.3s ease;
-  display: none;
-} */
+#content .censor {
+  background: white;
+}
+
+.handsOff {
+  pointer-events: none;
+}
+
+sub,
+sup {
+  font-size: 50%;
+}
+
+.step {
+  font-size: 32px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.step a {
+  font-size: 20px;
+}
+
+#tTestGraphHolder {
+  width: 100%;
+  height: 200px;
+  margin-top: -50px;
+  margin-bottom: 50px;
+}
+
+@media screen and (max-height: 500px), (max-width: 600px) {
+  h1 {
+    font-size: 6vmin;
+  }
+  #improve > *,
+  #returnsTable td {
+    font-size: 6vmin;
+  }
+  .asterisk {
+    font-size: 3vmin !important;
+  }
+  #returnsTable {
+    margin-top: 3vmin;
+    margin-bottom: 1vmin;
+  }
+  .action {
+    top: 4vmin;
+    padding: 2vmin 0;
+    width: 40vmin;
+  }
+  #gradientFade {
+    height: 20vh;
+  }
+  #content {
+    padding: 0 5vmin 10vmin 5vmin;
+  }
+  h3 {
+    font-size: 40px;
+    margin: 20vmin 0 10vmin 0;
+  }
+  h4 {
+    font-size: 20px;
+    margin-bottom: 5vmin;
+  }
+  #histogramHolder {
+    height: 85vh;
+  }
+  #histogram {
+    left: calc(-13vmin - 5px);
+    width: calc(100% + 21vmin + 18px);
+  }
+  .description {
+    font-size: 20px;
+  }
+  .step {
+    font-size: 6vmin;
+  }
+  #tTestGraphHolder {
+    margin-top: 0vmin;
+    margin-bottom: 10vmin;
+    height: 14vh;
+  }
+  #tTestGraph {
+    left: -10vmin;
+    width: calc(100% + 20vmin);
+  }
+  .censor {
+    width: 200%;
+    left: -100px;
+  }
+  #greeks {
+    width: 75%;
+  }
+  .greek {
+    margin: 3vmin;
+    min-width: 90%;
+  }
+  .letter {
+    font-size: 34px;
+  }
+  .riskMetric {
+    margin: 5vmin;
+    font-size: 30px;
+  }
+  .greekOverlay {
+    height: calc(50px + 15vmin);
+  }
+  .greekOverlay p {
+    font-size: 3.5vmin;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  #histogramHolder {
+    pointer-events: none;
+  }
+  #chartHolder {
+    overflow: invisible;
+    left: 0;
+    top: 0;
+    right: -50px;
+    bottom: -25px;
+  }
+  #chartHolder .censor {
+    display: none;
+  }
+  #myChart {
+  }
+}
