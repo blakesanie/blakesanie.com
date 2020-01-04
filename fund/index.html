@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>Blake Sanie Fund</title>
+        <link href="https://fonts.googleapis.com/css?family=Barlow:200,400&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="style.css" type="text/css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
@@ -28,7 +29,7 @@
                 <p class="asterisk">
                     Returns from 2003-2020
                 </p>
-                <p class="action">
+                <p class="action buried">
                     Learn More
                 </p>
             </div>
@@ -42,16 +43,11 @@
         </div>
         <div id="gradientFade"></div>
         <div id="content">
-            <h3>A New Age of Finance</h3>
-            <p class="description">
-                sn fmsnd fsm fsd f sdnf sdmf nsd ksvknsdvnvjd vksnd vskdn vsdnv sndv skndv sdkn vskdm vksdm vksdmf sdkmf skdmf ksd fksd fsdnf snd vlsjd vlsjdnv sdjnv sjlnv sljdnf vlsdnv lsnv lsdn vljsnd fvsdnj vdsflv d.
-            </p>
-            <img src="https://pvoodoo.files.wordpress.com/2017/08/f954b-writeconv.jpg"/>
-            <p class="description">
-                sn fmsnd fsm fsd f sdnf sdmf nsd ksvknsdvnvjd vksnd vskdn vsdnv sndv skndv sdkn vskdm vksdm vksdmf sdkmf skdmf ksd fksd fsdnf snd vlsjd vlsjdnv sdjnv sjlnv sljdnf vlsdnv lsnv lsdn vljsnd fvsdnj vdsflv d.
-            </p>
+            <!-- <h3>A New Age of Finance</h3> <p class="description"> sn fmsnd fsm fsd f sdnf sdmf nsd ksvknsdvnvjd vksnd vskdn vsdnv sndv skndv sdkn vskdm vksdm vksdmf sdkmf skdmf ksd fksd fsdnf snd vlsjd vlsjdnv sdjnv sjlnv sljdnf vlsdnv lsnv lsdn vljsnd
+            fvsdnj vdsflv d. </p> <img src="https://pvoodoo.files.wordpress.com/2017/08/f954b-writeconv.jpg"/> <p class="description"> sn fmsnd fsm fsd f sdnf sdmf nsd ksvknsdvnvjd vksnd vskdn vsdnv sndv skndv sdkn vskdm vksdm vksdmf sdkmf skdmf ksd fksd fsdnf
+            snd vlsjd vlsjdnv sdjnv sjlnv sljdnf vlsdnv lsnv lsdn vljsnd fvsdnj vdsflv d. </p> -->
             <h3>Risk vs. Reward</h3>
-            <div id="greeks">
+            <div id="greeks" class="buried">
                 <div class="greek">
                     <p class="letter">
                         α
@@ -139,11 +135,24 @@
                 <div id="tTestGraph" class="chart"></div>
             </div>
             <p class="description">
-                With an effective p-value of 0.0, we can be 100.0% confident that the Sanie Fund outperforms the S&P 500 on a weekly basis. These findings are highly unlikely due to chance.
+                With an effective p-value of 0.0033, we can be 99.67% confident that the Sanie Fund outperforms the S&P 500 on a weekly basis. These findings are highly unlikely due to chance.
             </p>
-        </div>
-        <script src="data.js" type="text/javascript"></script>
-        <script src="landing.js" type="text/javascript"></script>
-        <script src="functions.js" type="text/javascript"></script>
-    </body>
-</html>
+            <h3>Jump Onboard</h3>
+            <div id="underConstruction" class="buried">
+                <p class="linkAccount">
+                    Link your brokerage account
+                </p>
+                <div id="brokers"><img class="broker" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Toronto-Dominion_Bank_logo.svg/670px-Toronto-Dominion_Bank_logo.svg.png"/>
+                    <img class="broker" src="https://cdn.theorg.com/c6da4f72-74d4-452d-a751-095d5c025042_small.jpg"/>
+                    <img class="broker" src="https://miro.medium.com/fit/c/256/256/0*XpLHydifDlM4j7TO.png"/>
+                    <img class="broker" src="https://pbs.twimg.com/profile_images/878278929789976576/32Nkc_Co_400x400.jpg"/>
+                    <img class="broker" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqp8XeioXqbwXYjnFEvex9WJJYf8uaUi-0QWSU137D0JX1BrpE&s"/></div>
+                <p class="cautionTape">
+                    Under Construction
+                </p>
+                <script src="data.js" type="text/javascript"></script>
+                <script src="landing.js" type="text/javascript"></script>
+                <script src="functions.js" type="text/javascript"></script>
+                <script src="scroll.js" type="text/javascript"></script>
+            </body>
+        </html>

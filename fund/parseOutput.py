@@ -1,6 +1,6 @@
 import csv
 import numpy as np
-from scipy.stats import norm
+from scipy.stats import norm, ttest_ind
 import math
 
 filename = './quantopianOutput.txt'
@@ -94,18 +94,17 @@ for i, y in enumerate(spyNormalPoints):
     x = round(x, 2)
     spyNormalPointsFormatted.append("{{x: {},y: {}}}".format(x, -y * normalScale))
 # spyNormalPointsFormatted = ["{{x: {},y: {}}}".format(round(normalStart + i * normalInterval, 2), spyNormalPointsFormatted[i]) for i in range(len(spyNormalPointsFormatted))]
-meanDiff = (myMean - spyMean)
-stdError = math.sqrt(myStd * myStd + spyStd * spyStd)
-t = meanDiff / stdError * math.sqrt(len(myWeeklyReturns))
-tY = norm.pdf(t,meanDiff,stdError)
-p = 1 - norm.cdf(t, meanDiff, stdError)
-print(p)
-yOffset = 0.5
-width = round(t * 1.4, 2)
-tTestX = np.arange(-0.2, width, 0.02)
-tTestY = norm.pdf(tTestX,meanDiff,stdError)
+meanDiff = (myMean - spyMean) * 100
+stdError = math.sqrt(myStd * myStd * 10000 + spyStd * spyStd * 10000)
+t, p = ttest_ind(myWeeklyReturns, spyWeeklyReturns, equal_var=False)
+print(t,p)
+# raise Exception("stop")
+tY = norm.pdf(t,0,1)
+yOffset = 0.02
+tTestX = np.arange(-3, 5.2, 0.3)
+tTestY = norm.pdf(tTestX,0,1)
 insignificantPoints = []
-significantPoints = ["{{x: {},y: {}, }}".format(t, tY + yOffset)]
+significantPoints = ["{{x: {},y: {}, indexLabel: \"t = {}, p = {}\",  markerColor: \"black\", markerSize: 8}}".format(t, tY + yOffset, round(t,2), round(p, 4))]
 for i in range(len(tTestX)):
     x = round(tTestX[i],2)
     y = tTestY[i]
@@ -114,7 +113,7 @@ for i in range(len(tTestX)):
         insignificantPoints.append(point)
     else:
         significantPoints.append(point)
-insignificantPoints.append("{{x: {},y: {}, indexLabel: \"t = {}, p = {}\",  markerColor: \"black\", markerSize: 8}}".format(t, tY + yOffset, round(t,2), round(p, 7)))
+insignificantPoints.append("{{x: {},y: {}, }}".format(t, tY + yOffset))
 
 
 

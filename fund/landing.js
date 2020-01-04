@@ -150,7 +150,7 @@ function addDataToGraph() {
   ) {
     chart.render();
     if (myPointsToDisplay.length == myPoints.length) {
-      $(".action").addClass("appearRise");
+      $(".action").addClass("arisen");
       console.log("cancel interval");
       clearInterval(interval);
     }

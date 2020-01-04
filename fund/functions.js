@@ -131,7 +131,6 @@ var histogram = new CanvasJS.Chart("histogram", {
     }
   ]
 });
-histogram.render();
 
 var tTest = new CanvasJS.Chart("tTestGraph", {
   animationEnabled: true,
@@ -155,8 +154,8 @@ var tTest = new CanvasJS.Chart("tTestGraph", {
     lineThickness: 0,
     tickThickness: 0,
     valueFormatString: "",
-    // maximum: 6.5,
-    minimum: -0.7
+    minimum: 0,
+    maximum: 0.42
   },
   data: [
     {
@@ -175,9 +174,7 @@ var tTest = new CanvasJS.Chart("tTestGraph", {
       markerSize: 0,
       dataPoints: significantPoints,
       indexLabelFontSize: 20,
-      indexLabelFontFamily: font,
-      indexLabelPlacement: "outside"
+      indexLabelFontFamily: font
     }
   ]
 });
-tTest.render();
