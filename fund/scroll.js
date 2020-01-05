@@ -1,3 +1,4 @@
+var showingCompareData = false;
 var showingHistorgramData = false;
 var showingNormalData = false;
 var showingGreeks = false;
@@ -7,6 +8,10 @@ $(document).scroll(handleScroll);
 
 function handleScroll() {
   scrollTop = $(window).scrollTop() + $(window).height();
+  if (!showingCompareData && scrollTop > $("#compareChart").offset().top + 20) {
+    showingCompareData = true;
+    compareChart.render();
+  }
   if (!showingHistorgramData && scrollTop > $("#histogram").offset().top + 20) {
     showingHistorgramData = true;
     histogram.render();

@@ -42,6 +42,85 @@ function removeBeforeDecimal(num) {
   return num;
 }
 
+var compareChart = new CanvasJS.Chart("compareChart", {
+  animationEnabled: true,
+  animationDuration: 2000,
+  zoomEnabled: true,
+  backgroundColor: "transparent",
+  toolTip: {
+    enabled: true,
+    shared: true,
+    borderColor: "transparent",
+    fontFamily: font,
+    backgroundColor: "white",
+    cornerRadius: 10,
+    contentFormatter: function(e) {
+      console.log(e);
+      var content = "<div id='myToolTip'>";
+      datasets = ["Sanie", "S&P 500"];
+      console.log(e.entries[0].dataPoint.x);
+      var date = new Date(e.entries[0].dataPoint.x);
+      content +=
+        "<p id='toolTipHeader'>" +
+        (date.getMonth() + 1) +
+        "/" +
+        date.getDate() +
+        "/" +
+        date.getFullYear() +
+        "</p><table id='pointTable' cellspacing='0'>";
+      for (var i = 0; i < e.entries.length; i++) {
+        content +=
+          "<tr><td>" +
+          datasets[i] +
+          "</td><td>" +
+          e.entries[i].dataPoint.y +
+          "%</td></tr>";
+      }
+      return content + "</table></div>";
+    }
+  },
+  axisX: {
+    valueFormatString: "MM/YYYY",
+    labelFontSize: 12,
+    labelFontColor: "#00000080",
+    labelFontFamily: font,
+    lineThickness: 0,
+    tickThickness: 0
+  },
+  axisY2: {
+    gridThickness: 0,
+    minimum: -30,
+    labelFontSize: 12,
+    labelFontColor: "#00000080",
+    labelFontFamily: font,
+    lineThickness: 0,
+    tickThickness: 0,
+    margin: 0,
+    valueFormatString: "###,###,##0",
+    suffix: "%"
+    // interval: 10000
+  },
+  data: [
+    {
+      type: "splineArea",
+      // mousemove: chartHovered,
+      axisYType: "secondary",
+      color: "#54e4a630",
+      lineColor: "#54e4a6",
+      markerSize: 0,
+      dataPoints: myPoints
+    },
+    {
+      type: "splineArea",
+      axisYType: "secondary",
+      color: "#9198e530",
+      lineColor: "#9198e5",
+      markerSize: 0,
+      dataPoints: spyPoints
+    }
+  ]
+});
+
 var histogram = new CanvasJS.Chart("histogram", {
   animationEnabled: true,
   animationDuration: 2000,
