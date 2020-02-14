@@ -87,13 +87,14 @@ a:visited {
 }
 
 #header h3 {
-  line-height: 40px;
+  line-height: 34px;
   font-size: 18px;
 }
 
 #header .category {
-  text-align: left !important;
-  margin-top: 10px;
+  /* text-align: left !important; */
+  margin-top: 22px;
+  font-size: 20px;
 }
 
 #header a h3 {
@@ -153,6 +154,7 @@ sup {
     margin-left: -20px;
     max-height: calc(100vh - 89px);
     overflow-y: scroll;
+    border-bottom-right-radius: 8px;
   }
   #header h1 {
     font-size: 28px;
