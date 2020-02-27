@@ -1,6 +1,6 @@
 iframe {
   position: absolute;
-  width: calc(100vw - 240px);
+  width: calc(100vw - 220px);
   height: 100vh;
   padding: 0;
   border: none;

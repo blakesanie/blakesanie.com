@@ -24,27 +24,30 @@
     <body>
         <div id="header">
             <h1>Blake Sanie</h1>
-            <h2>Student. Aspiring computer scientist. Photography enthusiast. Baseball fan. Optimist.</h2>
+            <h2>Inquisitive student.<br/>Aspiring computer scientist.<br/>Photography enthusiast.<br/>Curious stock trader.</h2>
             <div id="menuIcon">
                 <div class="line"></div>
                 <div class="line"></div>
                 <div class="line"></div>
             </div>
             <div id="nav">
-                <a href="../">
+                <a href="/">
                     <h3>Home</h3>
                 </a>
-                <a href="../about">
+                <a href="/about">
                     <h3>About</h3>
                 </a>
-                <h3 class="category">Computer Science</h3>
-                <a href="../resume">
+                <h3 class="category">Engineering</h3>
+                <a href="/resume">
                     <h3>Résumé</h3>
                 </a>
-                <a href="../cs">
+                <a href="/cs">
                     <h3>Projects</h3>
                 </a>
-                <a href="../blog">
+                <a href="/fund" target="_blank">
+                    <h3>Stock Fund</h3>
+                </a>
+                <a href="/blog">
                     <h3>Blog</h3>
                 </a>
                 <a href="https://github.com/blakesanie" target="_blank">
@@ -53,10 +56,10 @@
                     </h3>
                 </a>
                 <h3 class="category">Photography</h3>
-                <a href="../photo">
+                <a href="/photo">
                     <h3>Portfolio</h3>
                 </a>
-                <a href="../photo/gear">
+                <a href="/photo/gear">
                     <h3>Gear</h3>
                 </a>
                 <h3 class="category">Personal
@@ -108,7 +111,7 @@
             </ol>
             <h2>Handling Stock Info</h2>
             <p>The source for our stock information is
-                <a href="https://www.alphavantage.co" target-"_blank"="target-"_blank"">Alpha Vantage</a>. They provide an API we can use to remotely obtain data for a given stock. Let's write a function that will call this api and recieve prices for the last 100 days. Since this process is asynchronous, we will wrap our request inside a Promise.</p>
+                <a href="https://www.alphavantage.co" target-"_blank"="target-" _blank""="_blank""">Alpha Vantage</a>. They provide an API we can use to remotely obtain data for a given stock. Let's write a function that will call this api and recieve prices for the last 100 days. Since this process is asynchronous, we will wrap our request inside a Promise.</p>
             <code data-gist-id="27c2c414d94ce576445fa721d393cf03" data-gist-line="1,45-59,67-74"></code>
             <p>Using the first two data points, we can compute the stock's latest gain or loss as a percentage</p>
             <code data-gist-id="27c2c414d94ce576445fa721d393cf03" data-gist-line="60-66"></code>

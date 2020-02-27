@@ -20,7 +20,7 @@ a:visited {
   background-color: #008ad3;
   /* 008AD3 */
   max-height: 100vh;
-  padding: 40px 30px;
+  padding: 40px 20px;
   overflow-y: scroll;
   z-index: 99999;
   min-height: 100%;
@@ -111,7 +111,8 @@ a:visited {
 }
 
 sup {
-  font-size: 50%;
+  font-size: 40%;
+  margin-left: -3px;
 }
 
 #header h4 {
@@ -122,7 +123,7 @@ sup {
 
 #content {
   position: absolute;
-  width: calc(100% - 240px);
+  width: calc(100% - 220px);
   right: 0;
 }
 
