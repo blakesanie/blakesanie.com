@@ -1,7 +1,6 @@
 #content {
-  background-image: url("DSC_1004.jpg");
   background-size: cover;
-  background-position: 50% 70%;
+  background-position: center;
   max-height: 100vh;
   overflow-y: hidden;
 }

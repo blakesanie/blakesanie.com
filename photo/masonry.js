@@ -1,3 +1,19 @@
+function shuffle(a) {
+  var j, x, i;
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    x = a[i];
+    a[i] = a[j];
+    a[j] = x;
+  }
+  return a;
+}
+
+filenames = shuffle(filenames);
+for (var i = 0; i < filenames.length; i++) {
+  $("#masonry").append("<img src='/images/thumbnails/" + filenames[i] + "'>");
+}
+
 var indexOfSelected = 0;
 
 var lyout = $("#masonry").isotope({
