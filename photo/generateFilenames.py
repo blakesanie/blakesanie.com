@@ -8,7 +8,7 @@ landscapeFilenames = []
 portraitFilenames = []
 
 for filename in os.listdir(basePath):
-    if filename.endswith(".jpg"):
+    if filename.endswith(".jpeg"):
         filenames.append(filename)
         image = Image.open("{}/{}".format(basePath, filename))
         width, height = image.size
