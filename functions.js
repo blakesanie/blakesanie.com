@@ -3,7 +3,7 @@ if (window.screen.width > window.screen.height) {
     landscapeFilenames[Math.floor(Math.random() * landscapeFilenames.length)];
 } else {
   randomImage =
-    portraitFilenames[Math.floor(Math.random() * portaitFilenames.length)];
+    portraitFilenames[Math.floor(Math.random() * portraitFilenames.length)];
 }
 
 $("#content").css(
