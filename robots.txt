@@ -3,10 +3,13 @@ Disallow: /
 Allow: /index.html
 Allow: /cs
 Allow: /photo
+Allow: /photo/
 Allow: /blog
 Allow: /blog/
 Allow: /md/
 Allow: /spotifyMosaic
 Allow: /spotifyMosaic/
+Allow: /fund
+Allow: /about
 
 Sitemap: http://www.blakesanie.com/sitemap.xml
