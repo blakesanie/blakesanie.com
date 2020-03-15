@@ -3,7 +3,7 @@ import numpy as np
 from scipy.stats import norm, ttest_ind
 import math
 
-filename = './quantopianOutput.txt'
+filename = './quantopianOutput2.txt'
 
 myTotalReturns = []
 spyTotalReturns = []
@@ -101,7 +101,7 @@ print(t,p)
 # raise Exception("stop")
 tY = norm.pdf(t,0,1)
 yOffset = 0.02
-tTestX = np.arange(-3, 5.2, 0.3)
+tTestX = np.arange(-3, 6.2, 0.3)
 tTestY = norm.pdf(tTestX,0,1)
 insignificantPoints = []
 significantPoints = ["{{x: {},y: {}, indexLabel: \"t = {}, p = {}\",  markerColor: \"black\", markerSize: 8}}".format(t, tY + yOffset, round(t,2), round(p, 4))]

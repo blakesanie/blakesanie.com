@@ -21,9 +21,10 @@ $(".info").click(function() {
 $(".action").click(function() {
   $("html").animate(
     {
-      scrollTop: $("h3")
-        .eq(0)
-        .offset().top
+      scrollTop:
+        $("h3")
+          .eq(0)
+          .offset().top - 50
     },
     500
   );

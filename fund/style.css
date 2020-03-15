@@ -22,6 +22,15 @@ body > * {
   overflow: hidden;
 }
 
+#content {
+  max-width: 1200px;
+  padding: 0 20px 80px 20px !important;
+}
+/* #content * {
+  max-width: 1200px;
+  padding: 0 40px;
+} */
+
 .buried {
   opacity: 0;
   pointer-events: none;
@@ -364,6 +373,12 @@ h4 {
   margin-bottom: 50px;
 }
 
+#works {
+  max-width: 1000px;
+  text-indent: 70px;
+  margin-bottom: 0;
+}
+
 #compareHolder,
 #histogramHolder,
 #normalHolder {
@@ -549,6 +564,14 @@ sup {
     font-size: 6vmin;
     margin-top: 3vmin;
     padding: 10vmin 0;
+  }
+  .key {
+    border: 7px solid white;
+  }
+  .key td {
+    font-size: 12px !important;
+    padding: 0;
+    min-width: 30px;
   }
 }
 
