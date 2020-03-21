@@ -1,0 +1,177 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-align: center;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  position: relative;
+}
+
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: #f4f4f4;
+}
+
+h1 {
+  /* text-align: left; */
+  font-size: 60px;
+  /* font-weight: 600; */
+  margin-top: 100px;
+  /* top: 10px;
+  left: 20px; */
+}
+
+h2 {
+  margin-top: 0px;
+  font-size: 24px;
+}
+
+#amazonLogo {
+  display: inline-block;
+  height: 32px;
+  width: 96px;
+  top: 15px;
+  left: 3px;
+  background-image: url("https://www.lyricalhair.com/img/amazon.png");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+h3 {
+  position: absolute;
+  top: -90px;
+  right: 10px;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+h3 a {
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+h3 a:hover {
+  opacity: 1;
+}
+
+#controls {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: 80px;
+  margin-bottom: -20px;
+}
+
+input,
+h4 {
+  padding: 10px 30px;
+  font-size: 26px;
+  outline: none;
+  border-radius: 14px;
+  margin: 20px 20px;
+}
+
+input {
+  background-color: inherit;
+  border: none;
+  width: 500px;
+  box-shadow: inset 6px 6px 12px rgba(0, 0, 0, 0.05),
+    inset -6px -6px 12px #ffffff;
+}
+
+#sorts {
+  display: flex;
+  flex-direction: row;
+}
+
+h4 {
+  cursor: pointer;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.05), -10px -10px 20px white;
+  transition: box-shadow 0.3s ease;
+  width: 180px;
+}
+
+h4:hover {
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.05), -3px -3px 6px white;
+}
+
+.buttonPressed {
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.05);
+  pointer-events: none;
+}
+
+a {
+  text-decoration: none !important;
+  color: black !important;
+  font-weight: inherit;
+}
+
+#products {
+  width: 100%;
+  max-width: 1500px;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 20px;
+  justify-content: center;
+  align-items: center;
+  margin: 100px auto;
+}
+
+.product {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 300px;
+  padding: 20px;
+  border-radius: 14px;
+  margin: 20px;
+  box-shadow: 14px 14px 28px rgba(0, 0, 0, 0.05), -14px -14px 28px white;
+  transition: transform 0.3s ease;
+}
+
+.product:hover {
+  transform: scale(1.02);
+}
+
+img {
+  height: 240px;
+  max-width: 400px;
+  object-fit: contain;
+  padding: 20px;
+  filter: brightness(0.957);
+}
+
+p {
+  max-width: 400px;
+  padding: auto 0;
+}
+
+.titleHolder {
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.title {
+  font-size: 18px;
+}
+
+.price {
+  font-size: 30px;
+  margin: 20px 0;
+}
+
+.price span {
+  text-decoration: line-through;
+  opacity: 0.3;
+  margin-left: 10px;
+  font-size: 70%;
+}
