@@ -1,5 +1,9 @@
 images/Photo\ Portfolio
 
+# big files
+*.psd
+*.zip
+
 # Logs
 logs
 *.log

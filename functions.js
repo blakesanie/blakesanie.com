@@ -13,12 +13,18 @@
 
 $(window).scroll(function() {
   var amountScrolled = $(document).scrollTop();
+  // if ($(window).width() < 500) {
+  //   amountScrolled -= $("#header").height();
+  // }
+  // if (amountScrolled < 0) {
+  //   $("#content")
+  //     .find("h1,h2,h1 span")
+  //     .css("transform", "none");
+  //   return;
+  // }
   $(".section").each(function() {
     if (amountScrolled > $(this).offset().top - $(window).height()) {
       var offset = amountScrolled - $(this).offset().top;
-      // if ($(this).offset().top != 0) {
-      //   offset += $(this).height();
-      // }
       $(this)
         .find("h1")
         .css({
@@ -29,11 +35,11 @@ $(window).scroll(function() {
         .css({
           transform: "translateY(" + offset * -0.3 + "px)"
         });
-      $(this)
-        .find("h1 span")
-        .css({
-          transform: "translateY(" + offset * 0.25 + "px)"
-        });
+      // $(this)
+      //   .find("h1 span")
+      //   .css({
+      //     transform: "translateY(" + offset * 0.25 + "px)"
+      //   });
       $(this)
         .find(".bg")
         .css({
