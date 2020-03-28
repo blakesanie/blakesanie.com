@@ -1,39 +1,127 @@
-#content {
-  background-size: cover;
-  background-position: center;
-  max-height: 100vh;
-  overflow-y: hidden;
+html {
+  background-color: black;
 }
 
-#center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.section {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 20px;
   text-align: center;
+}
+
+#header {
+  background-color: black;
+  transition: background-color 0.2s ease !important;
+}
+
+#header:hover {
+  background-color: #111;
+}
+
+#content {
+}
+
+.section > * {
+  z-index: 3;
+}
+
+.bg {
+  position: absolute;
+  width: inherit;
+  height: inherit;
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+  /* background-attachment: fixed; */
+  /* transform: translateY(100px); */
+}
+
+.buttons {
+  margin-top: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.buttons a {
+  font-size: 24px;
+  line-height: 40px;
+  padding: 8px 30px;
+  font-weight: 400;
+  border-radius: 12px;
   background-color: rgba(255, 255, 255, 0.7);
-  padding: 40px 20px;
-  width: 400px;
-  max-width: 500px;
-  min-width: 250px;
-  border-radius: 10px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  margin: 20px 20px;
+}
+
+.buttons a:hover {
+  background-color: white;
+}
+
+.landing .bg {
+  background-image: url("/images/mac1.jpg");
 }
 
 #content h1 {
-  font-size: 60px;
+  font-size: 80px;
   line-height: 80px;
+  height: 120px;
+}
+
+#content h1 span {
+  font-size: 24px;
+  line-height: 40px;
+  font-weight: 400;
+  display: block;
+}
+
+.tech .bg {
+  background-image: url("/images/crosland.jpg");
+  /* filter: brightness(0.7); */
 }
 
 #content h2 {
-  font-size: 20px;
-  font-weight: 400;
+  font-size: 50px;
+}
+
+.engineer .bg {
+  background-image: url("/images/mac5.jpg");
+  background-position: center right;
+  /* filter: brightness(0.7); */
+}
+
+.stock .bg {
+  background-image: url("/images/stock.png");
+}
+
+.hobby .bg {
+  background-image: url("/images/full/DSC_0935.jpeg");
+}
+
+.venture .bg {
+  background-image: url("/images/mandel1.png");
+}
+
+.professional .bg {
+  background-image: url("/images/startup.jpg");
+}
+
+.connect .bg {
+  background-image: url("/images/iphone1.jpg");
 }
 
 #particle-js {
-  position: relative;
+  position: absolute;
   width: 100%;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid red;
 }
 
 @media screen and (max-width: 500px) {
