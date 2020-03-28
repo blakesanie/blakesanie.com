@@ -1,0 +1,23 @@
+var strings = [
+  "5,7,9 Where has this trend been all my life?",
+  "4,2,-3 I hope you used a stop-loss",
+  "3,3,3 I should start planning what I'll do during retirment",
+  "2,3,4 Let's hope this isnt the top",
+  "1,2,4 Dang! I knew last week was the time to invest!",
+  "1,1,1 Slow and steady wins the race",
+  "0.5,2,0.5 A small loss after a big gain? I'll take it.",
+  "0.5,0.5,0.5 Same old same old...",
+  "0.3,0.3,0.3 Might as well have stayed in bed",
+  "0.1,0.1,0.1 The calm before the storm...",
+  "0,0,0 Could be better, could be worse",
+  "-.2,0.2,-0.2 Come on Wall St, bring me either absolute pride or suffering",
+  "-1,-1,-1 A slow, however effective death",
+  "-2,3,-4 Honestly, flip a coin at this point",
+  "-2,0,3 Last night took an L, but tonight I bounce back",
+  "-2,-2,-3 My dog didn't invest. Why can't I be like my dog?",
+  "-3,-3,0 Come on! I've got my retirement sitting on this",
+  "-3,-5,-7 Why did I even invest in the first place?",
+  "-4,0,4 Let's hope that was the bottom",
+  "-4,-4,-5 Like Belfort once said, I'm not fucking leaving!",
+  "-8,-8,-8 Party like its 2008!"
+];
