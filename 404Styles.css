@@ -1,0 +1,58 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+
+body {
+    height: 100vh;
+    width: 100vmin;
+    background-color: black;
+    overflow: hidden;
+}
+
+#bg {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    background-image: url('https://ak2.picdn.net/shutterstock/videos/18774452/thumb/1.jpg');
+    background-size: 15vmax;
+    background-position: center;
+    opacity: 0.5;
+}
+
+h1 {
+  font-size: 1.2vmin;
+  font-family: Monospace;
+  font-weight: 900;
+  color: yellow;
+  transform: perspective(24vmin) rotateX(30deg);
+  margin-top: -4.5vmin;
+}
+
+h1 pre {
+    margin-bottom: 0.5vmin;
+}
+
+h2 {
+  font-size: 0.9vmin;
+  font-family: Monospace;
+  font-weight: 900;
+  color: yellow;
+  transform: perspective(24vmin) rotateX(30deg);
+  margin-top: 5vmin;
+}
+
+h2 pre {
+    margin-top: 3vmin;
+}
+
+body *:not(h1,h2,pre, div) {
+    display: none;
+}
