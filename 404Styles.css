@@ -32,12 +32,19 @@ body {
     line-height: 2.2vmax;
 }
 
+span {
+    display: inline;
+}
+
+h1,h2,a {
+    font-family: Monospace;
+    font-weight: 900;
+    color: yellow;
+    transform: perspective(24vmin) rotateX(20deg);
+}
+
 h1 {
   font-size: 1.2vmin;
-  font-family: Monospace;
-  font-weight: 900;
-  color: yellow;
-  transform: perspective(24vmin) rotateX(20deg);
   margin-top: -4.5vmin;
 }
 
@@ -47,9 +54,6 @@ h1 pre {
 
 h2 {
   font-size: 0.9vmin;
-  font-weight: 900;
-  color: yellow;
-  transform: perspective(24vmin) rotateX(20deg);
   margin-top: 5vmin;
 }
 
@@ -57,6 +61,22 @@ h2 pre {
     margin-top: 3vmin;
 }
 
-body *:not(h1,h2,pre, div,p) {
+a {
+    color: yellow;
+    font-size: 0.76vmin;
+    margin-top: 8vmin;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+a:hover {
+    opacity: 0.5;
+}
+
+a pre {
+    margin-top: 1vmin;
+}
+
+script {
     display: none;
 }
