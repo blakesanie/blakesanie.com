@@ -127,7 +127,7 @@ iframe {
   font-size: 16px;
   line-height: 20px;
   width: 114px;
-  background-image: url("http://vectorlogofree.com/wp-content/uploads/2014/05/37318-github-logo-icon-vector-icon-vector-eps.png");
+  background-image: url("./techUsed/github.png");
   background-size: 30%;
   background-repeat: no-repeat;
   background-position: 89% center;
@@ -157,14 +157,26 @@ iframe {
 
 .techIconHolder img {
   height: 30px;
-  margin: 5px;
+  margin: 6px;
   border-radius: 4px;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
 
+img.wider {
+  height: 24px;
+  border-radius: 0;
+  align-self: center;
+}
+
+img.widest {
+  height: 18px;
+  border-radius: 0;
+  align-self: center;
+}
+
 .techIconHolder img:hover {
-  transform: scale(1.1);
+  transform: scale(1.4);
 }
 
 .techIconName {
@@ -246,9 +258,6 @@ iframe {
   .imgHolder {
     width: calc(100% - 14vmin);
   }
-  .textHolder {
-    padding-bottom: 400px !important;
-  }
   .title {
     font-size: 6vmin;
   }
@@ -257,12 +266,12 @@ iframe {
     margin-top: 5vmin;
   }
   .git {
-    margin-top: 10vmin;
-    margin-bottom: 5vmin;
+    margin-top: 8vmin;
+    margin-bottom: 0vmin;
     font-size: 5vmin;
-    line-height: 10vmin;
-    width: 40vmin;
-    background-size: 40%;
+    line-height: 6vmin;
+    width: 36vmin;
+    background-size: 30%;
     padding: 5vmin;
   }
   .project {
@@ -284,5 +293,21 @@ iframe {
     width: 100%;
     font-size: 6vmin;
     line-height: 13vmin;
+  }
+  .techIconHolder img {
+    height: 10vmin;
+    margin: 2.5vmin;
+  }
+  img.widest {
+    height: 6vmin;
+  }
+  .techIconName {
+    font-size: 4vmin;
+    margin-top: 1vmin;
+    margin-bottom: -2vmin;
+  }
+  .imgHolder {
+    height: 50vmin;
+    margin-top: 30px;
   }
 }
