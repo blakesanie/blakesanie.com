@@ -8,7 +8,8 @@ var interval = 30;
 
 function getData() {
   $.ajax({
-    url: "https://financialmodelingprep.com/api/v3/historical-chart/30min/DJI",
+    url:
+      "https://financialmodelingprep.com/api/v3/historical-chart/30min/%5EGSPC",
     success: function(result) {
       console.log(result);
       for (var i = 1; i < result.length; i++) {

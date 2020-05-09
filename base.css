@@ -114,7 +114,7 @@ a:visited {
 
 sup {
   font-size: 40%;
-  margin-left: -3px;
+  margin-left: 0px;
 }
 
 #header h4 {
@@ -127,6 +127,11 @@ sup {
   position: absolute;
   width: calc(100% - 220px);
   right: 0;
+}
+
+/* width */
+::-webkit-scrollbar {
+
 }
 
 @media screen and (max-width: 800px) {

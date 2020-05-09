@@ -124,9 +124,9 @@ iframe {
   transform: translateX(-50%);
   margin-top: 30px;
   display: inline-block;
-  font-size: 17px;
-  line-height: 30px;
-  width: 120px;
+  font-size: 16px;
+  line-height: 20px;
+  width: 114px;
   background-image: url("http://vectorlogofree.com/wp-content/uploads/2014/05/37318-github-logo-icon-vector-icon-vector-eps.png");
   background-size: 30%;
   background-repeat: no-repeat;
@@ -146,6 +146,34 @@ iframe {
 .git:hover {
   -webkit-box-shadow: 0 0 0px 2px rgba(0, 0, 0, 0.1);
   box-shadow: 0 0 0px 2px rgba(0, 0, 0, 0.1);
+}
+
+.techIconHolder {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.techIconHolder img {
+  height: 30px;
+  margin: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.techIconHolder img:hover {
+  transform: scale(1.1);
+}
+
+.techIconName {
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 300;
+  margin-top: 5px;
+  height: 10px;
 }
 
 #proximity .imgHolder {
@@ -217,6 +245,9 @@ iframe {
   .textHolder,
   .imgHolder {
     width: calc(100% - 14vmin);
+  }
+  .textHolder {
+    padding-bottom: 400px !important;
   }
   .title {
     font-size: 6vmin;
