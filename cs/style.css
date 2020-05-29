@@ -1,6 +1,7 @@
 #content h1 {
   font-size: 30px;
-  margin: 50px 0;
+  margin: 20px 0;
+  padding: 0;
 }
 
 body {
@@ -179,6 +180,10 @@ img.widest {
   transform: scale(1.4);
 }
 
+img.widest:hover {
+  transform: scale(1.25);
+}
+
 .techIconName {
   width: 100%;
   text-align: center;
@@ -281,8 +286,8 @@ img.widest {
   }
   #content h1 {
     width: 70vmin;
-    margin: 10vmin auto;
-    font-size: 9vmin;
+    margin: 12vmin auto;
+    font-size: 8vmin;
     line-height: 12vmin;
   }
   .nav {

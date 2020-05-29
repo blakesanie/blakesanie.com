@@ -10,6 +10,5 @@ Allow: /md/
 Allow: /spotifyMosaic
 Allow: /spotifyMosaic/
 Allow: /fund
-Allow: /about
 
 Sitemap: http://www.blakesanie.com/sitemap.xml
