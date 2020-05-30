@@ -1,5 +1,5 @@
 #content {
-  padding: 0 40px 100px 40px;
+  padding: 0 0px 100px 0px;
 }
 
 #content h2 {
@@ -9,7 +9,7 @@
 }
 
 #thumbs {
-  margin: 50px 0;
+  margin: 50px 40px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
