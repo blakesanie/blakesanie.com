@@ -16,11 +16,10 @@ html {
 
 #header {
   background-color: black;
-  transition: background-color 0.2s ease !important;
 }
 
 #header:hover {
-  background-color: #111;
+  background-color: #222;
 }
 
 #content {

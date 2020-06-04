@@ -26,13 +26,17 @@ function positionHeader() {
     if (current <= 100 && current >= 0) {
       if (!(showing && rate < 0)) {
         $("#header").css({
-          transition: "none",
+          transition: "background-color 0.2s ease",
           transform: "translateY(" + -current + "px)"
         });
         showing = false;
       }
     } else {
-      $("#header").css("transition", "transform 0.3s ease");
+      console.log("should enable transition");
+      $("#header").css(
+        "transition",
+        "transform 0.3s ease, background-color 0.2s ease"
+      );
       if (rate > 0 && current >= 200) {
         $("#header").css("transform", "translateY(-100%)");
         showing = false;
