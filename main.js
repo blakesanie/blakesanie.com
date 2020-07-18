@@ -1,3 +1,7 @@
+if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+ $("#contactCard").remove();
+}
+
 var menuExpanded = false;
 var menuAltered = false;
 
