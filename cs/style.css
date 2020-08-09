@@ -79,6 +79,10 @@ body {
 }
 
 .textHolder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 35%;
 }
 
@@ -117,36 +121,30 @@ iframe {
   font-size: 18px;
 }
 
-.git {
+.action {
   position: relative;
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-  -ms-transform: translateX(-50%);
-  transform: translateX(-50%);
   margin-top: 30px;
   display: inline-block;
   font-size: 16px;
   line-height: 20px;
-  width: 114px;
+  padding: 14px 20px;
+  box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border-radius: 8px;
+}
+
+.git {
   background-image: url("./techUsed/github.png");
   background-size: 30%;
   background-repeat: no-repeat;
   background-position: 89% center;
-  padding: 14px;
-  -webkit-box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
-  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  -webkit-transition: -webkit-box-shadow 0.3s ease;
-  transition: -webkit-box-shadow 0.3s ease;
-  -o-transition: box-shadow 0.3s ease;
-  transition: box-shadow 0.3s ease;
-  transition: box-shadow 0.3s ease, -webkit-box-shadow 0.3s ease;
-  border-radius: 8px;
+
+  min-width: 122px;
 }
 
-.git:hover {
-  -webkit-box-shadow: 0 0 0px 2px rgba(0, 0, 0, 0.1);
-  box-shadow: 0 0 0px 2px rgba(0, 0, 0, 0.1);
+.action:hover {
+  transform: scale(1.07);
 }
 
 .techIconHolder {
@@ -154,6 +152,7 @@ iframe {
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 30px;
+  width: 100%;
 }
 
 .techIconHolder img {
@@ -165,7 +164,7 @@ iframe {
 }
 
 img.wider {
-  height: 24px;
+  height: 22px;
   border-radius: 0;
   align-self: center;
 }
@@ -177,7 +176,7 @@ img.widest {
 }
 
 .techIconHolder img:hover {
-  transform: scale(1.4);
+  transform: scale(1.3);
 }
 
 img.widest:hover {
@@ -247,6 +246,10 @@ img.widest:hover {
   background-image: url("spotify.png");
 }
 
+#investivision .imgHolder {
+  background-image: url("investivision.png");
+}
+
 @media screen and (max-width: 900px) {
   .textHolder,
   .imgHolder {
@@ -270,14 +273,16 @@ img.widest:hover {
     font-size: 4.5vmin;
     margin-top: 5vmin;
   }
-  .git {
+  .action {
     margin-top: 8vmin;
     margin-bottom: 0vmin;
     font-size: 5vmin;
     line-height: 6vmin;
     width: 36vmin;
-    background-size: 30%;
     padding: 5vmin;
+  }
+  .git {
+    background-size: 30%;
   }
   .project {
     width: 86vmin;
