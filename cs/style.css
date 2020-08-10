@@ -132,6 +132,8 @@ iframe {
   cursor: pointer;
   transition: transform 0.2s ease;
   border-radius: 8px;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .git {
