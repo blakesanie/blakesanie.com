@@ -1,0 +1,91 @@
+.project {
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.05);
+  margin-bottom: 40px;
+  padding: 50px 25px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.project:nth-of-type(2n) {
+  flex-direction: row-reverse;
+}
+
+.project .image {
+  position: relative;
+  width: max(40%, 300px);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0 25px;
+}
+
+/* .iframeWrapper {
+  position: relative;
+  padding-bottom: 56.25% !important;
+  height: 0;
+} */
+
+.youtube {
+  max-height: 400px;
+}
+
+/* .project:nth-of-type(2n) img {
+    margin-left: 0;
+    margin-right: 70px;
+    } */
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 300px;
+  flex: 1;
+  margin: 0 25px;
+}
+
+.project h2 {
+  font-size: 25px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.project h3 {
+  text-indent: 40px;
+  font-size: 19px;
+  font-weight: 400;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.linksContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.linksContainer a {
+  color: black;
+  padding: 14px 24px;
+  margin: 15px;
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.07);
+  transition: box-shadow 0.1s ease;
+  white-space: nowrap;
+  border-radius: 8px;
+  margin-bottom: 40px;
+  font-size: 18px;
+}
+
+.linksContainer a:hover {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.07);
+}
+
+.github {
+  padding-right: 56px !important;
+  background-size: 26%;
+  background-repeat: no-repeat;
+  background-position: 83% center;
+}

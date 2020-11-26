@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito:300,400,600');
+
+* {
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #222;
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+#header {
+    position: relative;
+    height: 150px;
+}
+
+h1 {
+    position: absolute;
+    margin: 0;
+    font-size: 16px;
+    color: #666;
+    margin-left: 16px;
+    margin-top: 16px;
+}
+
+#white {
+    color: white;
+}
+
+a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: white;
+}
+
+input {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 60px;
+    width: 200px;
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 15px;
+    border: none;
+    font-size: 32px;
+    text-align: center;
+    color: white;
+    text-transform: uppercase;
+}
+
+input:focus {
+}
+
+h6 {
+    position: absolute;
+    right: 20px;
+    margin: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    line-height: 24px;;
+    text-align: right;
+}
+
+h6 span {
+    color: #666;
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+h6 span:hover {
+    color: white;
+}
+
+#intraday {
+    color: white;
+}
+
+#chart {
+    position: relative;
+    height: calc(100vh - 140px);
+    width: calc(100vw - 20px);
+    margin-left: 10px;
+}
+
+canvas {
+    position: relative;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+p {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: default;
+    color: white;
+    font-size: 20px;
+    line-height: 30px;
+    margin: 0;
+    font-weight: 600;
+    animation: flash 2s linear infinite;
+}
+
+#searchResults {
+    position: absolute;
+    height: 70vh;
+    width: 100vw;
+    top: 30vh;
+    background-color: rgba(0,0,0,0.9);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+}
+
+.result {
+    position: relative;
+    height: 13vmin;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid #222;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.result:hover {
+    background-color: rgba(255,255,255,0.05);
+}
+
+h5 {
+    line-height: 13vmin;
+    max-width: 300px;
+    flex: 1;
+    text-align: center;
+    font-size: 3vmin;
+    color: white;
+}
+
+
+@keyframes flash {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
