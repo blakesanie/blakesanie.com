@@ -94,16 +94,18 @@
   .image {
     width: min(80%, 400px) !important;
   }
+  .content.cs {
+    padding: 0 20px !important;
+  }
   .info {
-    min-width: 200px;
+    min-width: 40vw;
     width: 100%;
   }
   .project h3 {
     font-size: calc(12px + 1vmin);
   }
-  .content {
-    padding-left: 20px !important;
-    padding-right: 20px !important;
+  .content .projects {
+    padding: 0 20px !important;
   }
   .project {
     margin-bottom: 20px;

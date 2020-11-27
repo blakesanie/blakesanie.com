@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import "./styles.css";
 import filenames from "./filenames.js";
 import Masonry from "react-masonry-component";
@@ -47,6 +47,11 @@ export default function Photo(props) {
     };
   }, []);
 
+  useEffect(() => {
+    document.getElementsByTagName("html")[0].style.backgroundColor = "white";
+    document.getElementsByTagName("header")[0].classList.remove("dark");
+  }, []);
+
   const prevImage = () => {
     if (selectedPhoto > 0) {
       setSelectedPhoto(selectedPhoto - 1);
@@ -60,7 +65,7 @@ export default function Photo(props) {
   };
 
   return (
-    <div className="content">
+    <div className="content photo">
       <h1>Photo</h1>
       <Masonry
         className={"masonry"} // default ''
@@ -105,7 +110,7 @@ export default function Photo(props) {
         <div className="half" onClick={prevImage}></div>
         <div className="half" onClick={nextImage}></div>
         <p
-          class="exit"
+          className="exit"
           onClick={() => {
             setSelectedPhoto(undefined);
           }}

@@ -149,8 +149,12 @@ const projects = [
 ];
 
 export default function CS(props) {
+  useEffect(() => {
+    document.getElementsByTagName("html")[0].style.backgroundColor = "white";
+    document.getElementsByTagName("header")[0].classList.remove("dark");
+  }, []);
   return (
-    <div className="content">
+    <div className="content cs">
       <h1>Projects</h1>
       {projects.map((project, i) => {
         return (

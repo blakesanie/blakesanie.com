@@ -53,8 +53,8 @@
   .fullScreen {
     left: 0;
   }
-  .content {
-    padding: 0 14px !important;
+  .content.photo {
+    padding: 0 14px;
   }
 }
 
