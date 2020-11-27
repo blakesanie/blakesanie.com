@@ -1,5 +1,4 @@
 .masonry img {
-  width: 200px;
   /* transition: opacity 0.2s ease; */
   border-radius: 0px;
   cursor: pointer;
@@ -54,4 +53,13 @@
   .fullScreen {
     left: 0;
   }
+  .content {
+    padding: 0 14px !important;
+  }
 }
+
+/* @media screen and (max-width: 340px) {
+  .content {
+    padding: 0 20px !important;
+  }
+} */

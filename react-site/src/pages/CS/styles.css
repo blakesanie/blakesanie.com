@@ -89,3 +89,29 @@
   background-repeat: no-repeat;
   background-position: 83% center;
 }
+
+@media screen and (max-width: 800px) {
+  .image {
+    width: min(80%, 400px) !important;
+  }
+  .info {
+    min-width: 200px;
+    width: 100%;
+  }
+  .project h3 {
+    font-size: calc(12px + 1vmin);
+  }
+  .content {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  .project {
+    margin-bottom: 20px;
+    padding: 30px 16px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.07);
+  }
+  .youtube {
+    min-height: min(40vw, 225px) !important;
+    height: min(40vw, 225px) !important;
+  }
+}

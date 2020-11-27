@@ -18,41 +18,30 @@ a {
   overflow-x: hidden;
 }
 
-.bannerBlur {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 80px;
-  backdrop-filter: blur(12px);
-  display: none;
-}
-
 header {
   position: fixed;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
   padding: 30px 0;
-  padding-bottom: 20px;
+  padding-bottom: 30px;
   background-color: rgba(0, 126, 204, 0.8);
   color: white;
   overflow-y: scroll;
-  overflow-x: visible;
   width: 220px;
   height: 100vh;
   z-index: 99999;
 }
-
 header.dark {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
 header h1 {
   color: white;
-  padding: 5px 17px;
+  padding: 5px 0;
   border: 2px dashed rgba(255, 255, 255, 0.2);
   font-size: 28px;
+  max-width: 180px;
+  margin: 0 auto;
+  text-align: center;
+  /* background-color: blue !important; */
 }
 
 header h2 {
@@ -60,7 +49,7 @@ header h2 {
   text-align: center;
   line-height: 20px;
   margin-top: 30px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   opacity: 0.5;
 }
 
@@ -71,15 +60,15 @@ h2 span {
 
 nav {
   display: flex;
-  flex-direction: column;
-  text-align: center;
-  padding: 20px 30px;
-  border-bottom-right-radius: 12px;
-  /* transition: opacity 0.2s ease; */
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  /* border: 1px solid red; */
 }
 
-.transitionable {
-  transition: opacity 0.2s ease;
+header.transitionable {
+  transition: height 0.2s ease, transform 0.4s ease;
 }
 
 .invisible {
@@ -87,13 +76,24 @@ nav {
   pointer-events: none;
 }
 
+.navSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid white; */
+  padding: 10px 10px;
+  height: auto;
+  flex: 1;
+}
+
 nav a {
   color: white;
   opacity: 0.7;
   transition: opacity 0.2s ease;
-  padding: 4px 0;
   font-size: 18px;
   font-weight: 400;
+  padding: 2px 0;
 }
 
 nav a:hover {
@@ -101,8 +101,8 @@ nav a:hover {
 }
 
 nav h3 {
-  margin: 20px 0 10px 0;
   font-size: 20px;
+  margin-bottom: 10px;
 }
 
 .page {
@@ -125,17 +125,20 @@ nav h3 {
 }
 
 #hamburger {
-  width: 20px;
-  height: 18px;
+  /* border: 1px solid red; */
+  width: 52px;
+  height: 48px;
+  padding: 16px;
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
+  z-index: 9999999999;
 }
 
 .rotated {
@@ -154,10 +157,12 @@ nav h3 {
 }
 
 .madeBy {
-  margin-top: 30px;
+  margin-top: 10px;
+  padding: 0 30px;
   padding-bottom: 0px;
-  opacity: 0.5;
+  opacity: 0.2;
   font-size: 14px;
+  text-align: center;
 }
 
 .madeBy a {
@@ -174,43 +179,36 @@ nav h3 {
 }
 
 @media screen and (max-width: 800px) {
-  .bannerBlur {
-    display: block;
-  }
   header {
     padding: 0;
     padding: 10px 10px;
     width: 100%;
-    overflow-y: visible;
     height: 80px;
-    transition: transform 0.5s ease-in-out;
+    overflow-y: hidden;
+    /* height: auto; */
+    backdrop-filter: blur(12px);
   }
   header h1 {
     font-size: 22px;
     margin-bottom: 7px;
-    padding: 2px 20px;
+    padding: 2px 0;
+    width: 160px;
   }
   header h2 {
     font-size: 12px;
     padding: 0;
-    margin-bottom: 4px;
+    margin-bottom: 10px;
     line-height: 14px;
-    margin-top: 0px;
+    margin-top: 7px;
   }
   header h2 span {
     display: inline;
   }
-  nav {
-    position: absolute;
-    top: 100%;
-    z-index: 100000;
-    left: 0;
-    background-color: inherit;
-    backdrop-filter: blur(12px);
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  nav h3 {
+    font-size: 18px;
   }
-  nav.dark {
-    border-top: 1px solid #222222;
+  nav a {
+    font-size: 16px;
   }
   #hamburger {
     opacity: 0.5;
@@ -221,6 +219,31 @@ nav h3 {
     left: 0;
     width: 100%;
     padding-top: 80px;
+  }
+  .madeBy {
+    margin-top: 4px;
+    font-size: 12px;
+    padding: 0;
+  }
+  .madeBy img {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media screen and (max-width: 470px) {
+  header h2 {
+    display: none;
+  }
+  header h1 {
+    font-size: 24px;
+    padding: 6px 0;
+    margin-top: 6px;
+  }
+  #hamburger {
+    height: 80px;
+    width: 60px;
+    padding: 32px 20px;
   }
 }
 

@@ -4,10 +4,28 @@ import CS from "./pages/CS";
 import Resume from "./pages/Resume";
 import Photo from "./pages/Photo";
 import Gear from "./pages/Photo/Gear";
-import NotFound from "./pages/NotFound";
+import ExternalRedirect from "./pages/Redirect";
 import "./root.css";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import useDocumentScrollThrottled from "./hooks/useDocumentScrollThrottled";
+
+const redirects = [
+  {
+    path: "/github",
+    href: "https://github.com/blakesanie",
+    external: true,
+  },
+  {
+    path: "/instagram",
+    href: "https://www.instagram.com/blake_sanie/",
+    external: true,
+  },
+  {
+    path: "/linkedin",
+    href: "https://www.linkedin.com/in/blakesanie",
+    external: true,
+  },
+];
 
 export default function Root(props) {
   const [menuExpanded, setMenuExpanded] = useState(false);
@@ -18,14 +36,14 @@ export default function Root(props) {
   );
 
   const toggleMenu = () => {
-    alert(menuExpanded);
+    // alert(menuExpanded);
     setMenuExpanded(!menuExpanded);
   };
 
   let currentTimeout;
 
   const updatePageWidth = () => {
-    //console.log(transitionable);
+    console.log(transitionable);
     if (window.innerWidth <= 800) {
       currentTimeout = setTimeout(() => {
         setTransitionable(true);
@@ -56,26 +74,26 @@ export default function Root(props) {
   document.getElementsByTagName("html")[0].style.backgroundColor =
     window.location.pathname == "/" ? "black" : "white";
 
-  let headerStyles = {
-    transform: `translateY(${
-      headerVisible || menuExpanded || window.innerWidth > 800 ? 0 : -100
-    }%)`,
+  const getIdealHeaderHeight = () => {
+    if (window.innerWidth >= 440) {
+      return 248;
+    }
+    return 372;
   };
-  //   if (window.innerWidth <= 800) {
-  //     if (scroll < 0) {
-  //     } else if (scroll < 80) {
-  //       headerStyles.transform = `translateY(${-scroll}px)`;
-  //     } else {
-  //       headerStyles.transform = `translateY(-100%)`;
-  //     }
-  //   }
+
+  let headerStyles = {};
+  if (window.innerWidth <= 800) {
+    headerStyles.height = menuExpanded ? `${getIdealHeaderHeight()}px` : "80px";
+    headerStyles.transform = `translateY(${headerVisible ? 0 : "-100"}%)`;
+  }
   return (
     <BrowserRouter>
       <header
+        className={`${window.location.pathname == "/" ? "dark" : ""} ${
+          transitionable ? "transitionable" : ""
+        }`}
         style={headerStyles}
-        className={window.location.pathname == "/" ? "dark" : ""}
       >
-        <div className="bannerBlur"></div>
         <div
           id="hamburger"
           className={`${menuExpanded ? "rotated" : ""}`}
@@ -95,63 +113,71 @@ export default function Root(props) {
           <span>Curious stock trader.</span>
         </h2>
         <nav
-          className={`${pageWidth > 800 || menuExpanded ? "" : "invisible"} ${
-            transitionable ? "transitionable" : ""
-          }`}
+        // className={`${pageWidth > 800 || menuExpanded ? "" : "invisible"} ${
+        //   transitionable ? "transitionable" : ""
+        // }`}
         >
-          <a href="/">Home</a>
-          <h3>Engineering</h3>
-          <a href="/resume">Résumé</a>
-          <a href="/cs">Projects</a>
-          <a href="/fund" target="_blank">
-            Stock Fund
-          </a>
-          <a href="https://investivision.com" target="_blank">
-            Investivision
-          </a>
-          <a href="/blog">Blog</a>
-          <a href="/github" target="_blank">
-            Github
-          </a>
-          <h3>Photography</h3>
-          <a href="/photo">Portfolio</a>
-          <a href="/photo/gear">Gear</a>
-          <h3>Personal</h3>
-          <a href="/linkedin" target="_blank">
-            LinkedIn
-          </a>
-          <a href="mailto:blake@sanie.com">Email</a>
-          <a href="/instagram" target="_blank">
-            Instagram
-          </a>
-          <p className="madeBy">
-            Built by Blake Sanie with<br></br>
-            <a href="https://reactjs.org/" target="_blank">
-              <img
-                src="https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/react-512.png"
-                style={{
-                  filter: `invert(100%)`,
-                }}
-              ></img>
+          <div className="navSection">
+            <h3>Engineering</h3>
+            <a href="/resume">Résumé</a>
+            <a href="/cs">Projects</a>
+            <a href="/github" target="_blank">
+              Github
             </a>
-            ,
-            <a href="https://pages.github.com/" target="_blank">
-              <img
-                src="https://www.flaticon.com/svg/static/icons/svg/25/25231.svg"
-                style={{
-                  filter: `invert(100%)`,
-                }}
-              ></img>
+          </div>
+          <div className="navSection">
+            <h3>Ventures</h3>
+            <a href="/fund" target="_blank">
+              Stock Fund
             </a>
-            , and
+            <a href="https://investivision.com" target="_blank">
+              Investivision
+            </a>
+            <a href="/blog">Blog</a>
+          </div>
+          <div className="navSection">
+            <h3>Photography</h3>
+            <a href="/photo">Portfolio</a>
+            <a href="/photo/gear">Gear</a>
+          </div>
+          <div className="navSection">
+            <h3>Personal</h3>
+            <a href="/linkedin" target="_blank">
+              LinkedIn
+            </a>
+            <a href="mailto:blake@sanie.com">Email</a>
+            <a href="/instagram" target="_blank">
+              Instagram
+            </a>
+          </div>
+        </nav>
+        <p className="madeBy">
+          Built by Blake Sanie with
+          <a href="https://reactjs.org/" target="_blank">
             <img
-              src="https://cdn2.iconfinder.com/data/icons/pittogrammi/142/80-512.png"
+              src="https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/react-512.png"
               style={{
                 filter: `invert(100%)`,
               }}
             ></img>
-          </p>
-        </nav>
+          </a>
+          ,
+          <a href="https://pages.github.com/" target="_blank">
+            <img
+              src="https://www.flaticon.com/svg/static/icons/svg/25/25231.svg"
+              style={{
+                filter: `invert(100%)`,
+              }}
+            ></img>
+          </a>
+          , and
+          <img
+            src="https://cdn2.iconfinder.com/data/icons/pittogrammi/142/80-512.png"
+            style={{
+              filter: `invert(100%)`,
+            }}
+          ></img>
+        </p>
       </header>
       <div className="page">
         <Switch>
@@ -159,25 +185,32 @@ export default function Root(props) {
           <Route exact path="/resume" component={Resume} />
           <Route exact path="/photo" component={Photo} />
           <Route exact path="/photo/gear" component={Gear} />
-          <Route
-            exact
-            path="/linkedin"
-            component={() => {
-              window.location.href = "https://linkedin.com/in/blakesanie";
-              return null;
-            }}
-          />
-          <Route
-            exact
-            path="/github"
-            component={() => {
-              window.location.href = "https://github.com/blakesanie";
-              return null;
-            }}
-          />
-
+          <Route exact path="/blog">
+            <Redirect to="/" />
+          </Route>
+          {redirects.map((redirect) => {
+            return (
+              <Route
+                key={redirect.path}
+                exact
+                path={redirect.path}
+                component={() => {
+                  return (
+                    <ExternalRedirect
+                      href={redirect.href}
+                      external={redirect.external}
+                    />
+                  );
+                }}
+              />
+            );
+          })}
           <Route exact path="/" component={Home} />
-          <Route component={NotFound} />
+          <Route
+            component={() => {
+              return <ExternalRedirect href="/404.html" />;
+            }}
+          />
         </Switch>
       </div>
     </BrowserRouter>

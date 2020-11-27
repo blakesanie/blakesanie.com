@@ -71,7 +71,7 @@ const data = [
 
 export default function Gear(props) {
   return (
-    <div className="content">
+    <div className="content gear">
       <h1>Gear</h1>
       <div className="gearContainer">
         {data.map((item) => {

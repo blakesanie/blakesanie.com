@@ -26,7 +26,10 @@ export default function Photo(props) {
       contentWidth -= 220;
     }
     let usableWidth = contentWidth - 40 * 2;
-    let numCols = Math.floor(usableWidth / 300);
+    if (window.innerWidth <= 800) {
+      usableWidth = contentWidth - 2 * gutter;
+    }
+    let numCols = Math.floor(usableWidth / 230);
     return usableWidth / numCols - (gutter * (numCols - 1)) / numCols;
   };
 

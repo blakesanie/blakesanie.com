@@ -38,3 +38,21 @@
 .product img {
   height: 200px;
 }
+
+@media screen and (max-width: 450px) {
+  .gear .content {
+    padding: 0 20px 40px 20px !important;
+  }
+  .product {
+    width: 100%;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.07);
+    margin: 10px;
+  }
+  .product h2 {
+    font-size: calc(14px + 3vw);
+  }
+  .product img {
+    width: 60vw;
+    height: auto;
+  }
+}

@@ -59,7 +59,7 @@ h2 {
   border-radius: 8px;
   border: 2px dashed rgba(255, 255, 255, 0.9);
   transition: background-color 0.2s ease;
-  margin: 20px;
+  margin: 24px 20px 0 20px;
 }
 
 .frame a:hover {
@@ -69,5 +69,8 @@ h2 {
 @media screen and (max-width: 800px) {
   .frame:first-child {
     height: calc(100vh - 80px);
+  }
+  .frame h2 {
+    font-size: calc(24px + 3vmin) !important;
   }
 }
