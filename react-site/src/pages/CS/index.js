@@ -113,6 +113,39 @@ const projects = [
     ],
     youtube: "https://www.youtube.com/embed/hBg4gOlOH6w",
   },
+  {
+    name: "Trending Twitter Links",
+    desc:
+      "A full-stack project using Node.js and jQuery. The back-end listens to Twitter's stream of incoming tweets. The program continuously parses them for URLs, and algorithmically tracks their popularity. Popular links are sent to the front-end with an API using the Express framework. On the website, users can interact with the moment's most trending links on Twitter",
+    links: [
+      {
+        github: "https://github.com/blakesanie/Trending-Twitter-Links",
+      },
+    ],
+    imageUrl: "/images/cs/twitter.jpg",
+  },
+  {
+    name: "Proximity",
+    desc:
+      "A map application like no other. It uses iPhone's GPS, gyroscrope, and a connection to Google's Places API to locate and identify locations within a certain radius of the user's current position. Then, when you select one of these locations, its relative direction and distance are projected over the device's live camera feed, effectively tracking the location in real time.",
+    links: [
+      {
+        github: "https://github.com/blakesanie/Proximity",
+      },
+    ],
+    imageUrl: "/images/cs/proximity.jpg",
+  },
+  {
+    name: "Bounce",
+    desc:
+      "A simple arcade game app for casual players of all ages. The game's objective is to protect the black square from the red balls at all times. Strategically orient the square in order to ricochet the blue ball into the red, pushing it away from the square. If the red ball ever touches the square, one of the three lives is lost. How long will you last?",
+    links: [
+      {
+        github: "https://github.com/blakesanie/Bounce",
+      },
+    ],
+    imageUrl: "images/cs/bounce.jpg",
+  },
 ];
 
 export default function CS(props) {

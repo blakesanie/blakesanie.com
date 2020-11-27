@@ -84,7 +84,9 @@ export default function Root(props) {
   let headerStyles = {};
   if (window.innerWidth <= 800) {
     headerStyles.height = menuExpanded ? `${getIdealHeaderHeight()}px` : "80px";
-    headerStyles.transform = `translateY(${headerVisible ? 0 : "-100"}%)`;
+    headerStyles.transform = `translateY(${
+      headerVisible || menuExpanded ? 0 : "-100"
+    }%)`;
   }
   return (
     <BrowserRouter>
