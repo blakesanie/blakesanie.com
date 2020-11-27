@@ -50,7 +50,10 @@
       "/cs/",
       "/photo/",
       "/gear/",
-      "/resume/"
+      "/resume/",
+      "/instagram/",
+      "/linkedin/",
+      "/github/"
     ],
     "exclude": [
       "/signup",

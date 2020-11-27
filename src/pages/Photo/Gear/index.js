@@ -76,9 +76,15 @@ export default function Gear(props) {
       <div className="gearContainer">
         {data.map((item) => {
           return (
-            <a className="product" href={item.url} target="_blank">
+            <a
+              key={item.name}
+              className="product"
+              href={item.url}
+              target="_blank"
+              rel="noreferrer"
+            >
               <h2>{item.name}</h2>
-              <img src={`/images/gear/${item.imageUrl}`}></img>
+              <img src={`/images/gear/${item.imageUrl}`} alt={item.name}></img>
             </a>
           );
         })}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./styles.css";
 
 const projects = [
@@ -165,6 +165,7 @@ export default function CS(props) {
                       <a
                         href={link.github}
                         target="_blank"
+                        rel="noreferrer"
                         className="github"
                         style={{
                           backgroundImage: `url("../images/cs/techUsed/github.png")`,
@@ -177,7 +178,7 @@ export default function CS(props) {
                   return (
                     <a
                       href={link.url}
-                      target={link.external == true ? "_blank" : "_self"}
+                      target={link.external === true ? "_blank" : "_self"}
                     >
                       {link.text}
                     </a>
@@ -187,6 +188,7 @@ export default function CS(props) {
             </div>
             {project.youtube ? (
               <iframe
+                title={project.name}
                 src={project.youtube}
                 frameborder="0"
                 allow="autoplay; encrypted-media"
@@ -197,7 +199,11 @@ export default function CS(props) {
                 }}
               ></iframe>
             ) : (
-              <img src={project.imageUrl} className="image"></img>
+              <img
+                src={project.imageUrl}
+                className="image"
+                alt={project.name}
+              ></img>
             )}
           </div>
         );

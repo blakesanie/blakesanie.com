@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import Home from "./pages/Home";
 import CS from "./pages/CS";
 import Resume from "./pages/Resume";
@@ -6,14 +6,7 @@ import Photo from "./pages/Photo";
 import Gear from "./pages/Photo/Gear";
 import ExternalRedirect from "./pages/Redirect";
 import "./root.css";
-import {
-  HashRouter,
-  BrowserRouter,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
-import useDocumentScrollThrottled from "./hooks/useDocumentScrollThrottled";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 
 const redirects = [
   {
@@ -35,7 +28,6 @@ const redirects = [
 
 export default function Root(props) {
   const [menuExpanded, setMenuExpanded] = useState(false);
-  const [pageWidth, setPageWidth] = useState(window.innerWidth);
   const [headerVisible, setHeaderVisible] = useState(window.innerWidth <= 800);
   const [transitionable, setTransitionable] = useState(
     window.innerWidth >= 800
@@ -61,7 +53,6 @@ export default function Root(props) {
       }
       setTransitionable(false);
     }
-    setPageWidth(window.innerWidth);
   };
 
   const handleScroll = () => {
@@ -76,10 +67,10 @@ export default function Root(props) {
       window.removeEventListener("resize", updatePageWidth);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  });
 
   document.getElementsByTagName("html")[0].style.backgroundColor =
-    window.location.pathname == "/" ? "black" : "white";
+    window.location.pathname === "/" ? "black" : "white";
 
   const getIdealHeaderHeight = () => {
     if (window.innerWidth >= 440) {
@@ -98,7 +89,7 @@ export default function Root(props) {
   return (
     <BrowserRouter>
       <header
-        className={`${window.location.pathname == "/" ? "dark" : ""} ${
+        className={`${window.location.pathname === "/" ? "dark" : ""} ${
           transitionable ? "transitionable" : ""
         }`}
         style={headerStyles}
@@ -121,11 +112,7 @@ export default function Root(props) {
           <span>Photography enthusiast.</span>
           <span>Curious stock trader.</span>
         </h2>
-        <nav
-        // className={`${pageWidth > 800 || menuExpanded ? "" : "invisible"} ${
-        //   transitionable ? "transitionable" : ""
-        // }`}
-        >
+        <nav>
           <div className="navSection">
             <h3>Engineering</h3>
             <a href="/resume">Résumé</a>
@@ -139,7 +126,11 @@ export default function Root(props) {
             <a href="/fund" target="_blank">
               Stock Fund
             </a>
-            <a href="https://investivision.com" target="_blank">
+            <a
+              href="https://investivision.com"
+              target="_blank"
+              rel="noreferrer"
+            >
               Investivision
             </a>
             <a href="/blog">Blog</a>
@@ -162,8 +153,9 @@ export default function Root(props) {
         </nav>
         <p className="madeBy">
           Built by Blake Sanie with
-          <a href="https://reactjs.org/" target="_blank">
+          <a href="https://reactjs.org/" target="_blank" rel="noreferrer">
             <img
+              alt=""
               src="https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/react-512.png"
               style={{
                 filter: `invert(100%)`,
@@ -171,8 +163,9 @@ export default function Root(props) {
             ></img>
           </a>
           ,
-          <a href="https://pages.github.com/" target="_blank">
+          <a href="https://pages.github.com/" target="_blank" rel="noreferrer">
             <img
+              alt=""
               src="https://www.flaticon.com/svg/static/icons/svg/25/25231.svg"
               style={{
                 filter: `invert(100%)`,
@@ -181,6 +174,7 @@ export default function Root(props) {
           </a>
           , and
           <img
+            alt=""
             src="https://cdn2.iconfinder.com/data/icons/pittogrammi/142/80-512.png"
             style={{
               filter: `invert(100%)`,

@@ -45,7 +45,7 @@ export default function Photo(props) {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  });
 
   const prevImage = () => {
     if (selectedPhoto > 0) {
@@ -76,6 +76,7 @@ export default function Photo(props) {
           return (
             <img
               key={filename}
+              alt="Copyright Blake Sanie"
               src={`/images/thumbnails/${filename}`}
               style={{
                 marginBottom: gutter,
@@ -90,7 +91,7 @@ export default function Photo(props) {
       </Masonry>
       <div
         className={`fullScreen ${
-          selectedPhoto == undefined ? "invisible" : ""
+          selectedPhoto === undefined ? "invisible" : ""
         }`}
         style={{
           padding: gutter,
