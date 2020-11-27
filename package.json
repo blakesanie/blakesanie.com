@@ -20,7 +20,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && react-snapshot",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -44,5 +44,18 @@
   },
   "devDependencies": {
     "gh-pages": "^3.1.0"
+  },
+  "reactSnapshot": {
+    "include": [
+      "/cs/",
+      "/photo/",
+      "/gear/",
+      "/resume/"
+    ],
+    "exclude": [
+      "/signup",
+      "/other-path/exclude-me/**"
+    ],
+    "snapshotDelay": 300
   }
 }

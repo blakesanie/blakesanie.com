@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import "./styles.css";
 import filenames from "./filenames.js";
 import Masonry from "react-masonry-component";
@@ -45,11 +45,6 @@ export default function Photo(props) {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
-
-  useEffect(() => {
-    document.getElementsByTagName("html")[0].style.backgroundColor = "white";
-    document.getElementsByTagName("header")[0].classList.remove("dark");
   }, []);
 
   const prevImage = () => {

@@ -2,8 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import reportWebVitals from "./reportWebVitals";
 import Root from "./Root";
+import { render } from "react-snapshot";
 
-ReactDOM.render(
+render(
   <React.StrictMode>
     <Root></Root>
   </React.StrictMode>,

@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
+import React, { useState, useLayoutEffect, useRef } from "react";
 import "./styles.css";
 import Typed from "react-typed";
 import "react-typed/dist/animatedCursor.css";
+import { Link } from "react-router-dom";
 
 export default function Home(props) {
   const [scroll, setScroll] = useState(0);
@@ -137,14 +138,14 @@ export default function Home(props) {
               {item.links ? (
                 <div className="buttonContainer">
                   {item.links.map((link) => {
-                    return (
-                      <a
-                        href={link.url}
-                        target={link.external === true ? "_blank" : "_self"}
-                      >
-                        {link.label}
-                      </a>
-                    );
+                    if (link.external) {
+                      return (
+                        <a href={link.url} target={"_blank"}>
+                          {link.label}
+                        </a>
+                      );
+                    }
+                    return <Link to={link.url}>{link.label}</Link>;
                   })}
                 </div>
               ) : null}

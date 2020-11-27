@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./styles.css";
 
 const data = [
@@ -70,10 +70,6 @@ const data = [
 ];
 
 export default function Gear(props) {
-  useEffect(() => {
-    document.getElementsByTagName("html")[0].style.backgroundColor = "white";
-    document.getElementsByTagName("header")[0].classList.remove("dark");
-  }, []);
   return (
     <div className="content gear">
       <h1>Gear</h1>

@@ -12,7 +12,6 @@ import {
   Switch,
   Route,
   Redirect,
-  Link,
 } from "react-router-dom";
 import useDocumentScrollThrottled from "./hooks/useDocumentScrollThrottled";
 
@@ -42,17 +41,9 @@ export default function Root(props) {
     window.innerWidth >= 800
   );
 
-  const isRoot = () => {
-    return window.location.hash == "#/";
-  };
-
   const toggleMenu = () => {
     // alert(menuExpanded);
     setMenuExpanded(!menuExpanded);
-  };
-
-  const handleScroll = () => {
-    setHeaderVisible(window.scrollY < window.innerHeight);
   };
 
   let currentTimeout;
@@ -73,6 +64,10 @@ export default function Root(props) {
     setPageWidth(window.innerWidth);
   };
 
+  const handleScroll = () => {
+    setHeaderVisible(window.scrollY < window.innerHeight);
+  };
+
   useLayoutEffect(() => {
     updatePageWidth();
     window.addEventListener("resize", updatePageWidth);
@@ -83,9 +78,8 @@ export default function Root(props) {
     };
   }, []);
 
-  document.getElementsByTagName("html")[0].style.backgroundColor = isRoot()
-    ? "black"
-    : "white";
+  document.getElementsByTagName("html")[0].style.backgroundColor =
+    window.location.pathname == "/" ? "black" : "white";
 
   const getIdealHeaderHeight = () => {
     if (window.innerWidth >= 440) {
@@ -102,9 +96,9 @@ export default function Root(props) {
     }%)`;
   }
   return (
-    <HashRouter>
+    <BrowserRouter>
       <header
-        className={`${isRoot() ? "dark" : ""} ${
+        className={`${window.location.pathname == "/" ? "dark" : ""} ${
           transitionable ? "transitionable" : ""
         }`}
         style={headerStyles}
@@ -134,9 +128,9 @@ export default function Root(props) {
         >
           <div className="navSection">
             <h3>Engineering</h3>
-            <Link to="/resume">Résumé</Link>
-            <Link to="/cs">Projects</Link>
-            <a href="#/github" target="_blank">
+            <a href="/resume">Résumé</a>
+            <a href="/cs">Projects</a>
+            <a href="/github" target="_blank">
               Github
             </a>
           </div>
@@ -152,16 +146,16 @@ export default function Root(props) {
           </div>
           <div className="navSection">
             <h3>Photography</h3>
-            <Link to="/photo">Portfolio</Link>
-            <Link to="/photo/gear">Gear</Link>
+            <a href="/photo">Portfolio</a>
+            <a href="/photo/gear">Gear</a>
           </div>
           <div className="navSection">
             <h3>Personal</h3>
-            <a href="#/linkedin" target="_blank">
+            <a href="/linkedin" target="_blank">
               LinkedIn
             </a>
             <a href="mailto:blake@sanie.com">Email</a>
-            <a href="#/instagram" target="_blank">
+            <a href="/instagram" target="_blank">
               Instagram
             </a>
           </div>
@@ -200,9 +194,9 @@ export default function Root(props) {
           <Route exact path="/resume" component={Resume} />
           <Route exact path="/photo" component={Photo} />
           <Route exact path="/photo/gear" component={Gear} />
-          {/* <Route exact path="/blog">
+          <Route exact path="/blog">
             <Redirect to="/" />
-          </Route> */}
+          </Route>
           {redirects.map((redirect) => {
             return (
               <Route
@@ -228,6 +222,6 @@ export default function Root(props) {
           />
         </Switch>
       </div>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
