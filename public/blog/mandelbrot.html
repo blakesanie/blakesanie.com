@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Visualizing the Mandelbrot Set with Python</title>
+        <meta name="description" content="Generating high resolution renders of the famous Mandelbrot Set."/>
+        <link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="/favicons/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/favicons/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/favicons/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="/favicons/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
+        <link rel="manifest" href="/favicons/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="/favicons/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+        <meta property="og:image" content="/siteThumb.png">
+        <meta property="og:image:type" content="image/png">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="1200">
+        <link rel="stylesheet" href="../base.css" type="text/css">
+        <link rel="stylesheet" href="postStyle.css" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.7.1/gist-embed.min.js"></script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-164774604-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'UA-164774604-1');
+        </script>
+
+    </head>
+
+    <body>
+        <div id="header">
+            <h1>Blake Sanie</h1>
+            <h2>Inquisitive student. >Aspiring engineer. Photography enthusiast. Curious stock trader.</h2>
+            <div id="menuIcon">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <div id="nav">
+                <a href="/">
+                    <h3>Home</h3>
+                </a>
+                <h3 class="category">Engineering</h3>
+                <a href="/resume">
+                    <h3>Résumé</h3>
+                </a>
+                <a href="/cs">
+                    <h3>Projects</h3>
+                </a>
+                <a href="/fund" target="_blank">
+                    <h3>Stock Fund</h3>
+                </a>
+                <a href="http://www.investivision.com" target="_blank">
+                    <h3>Investivision
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <a href="/blog">
+                    <h3>Blog</h3>
+                </a>
+                <a href="https://github.com/blakesanie" target="_blank">
+                    <h3>GitHub
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <h3 class="category">Photography</h3>
+                <a href="/photo">
+                    <h3>Portfolio</h3>
+                </a>
+                <a href="/photo/gear">
+                    <h3>Gear</h3>
+                </a>
+                <h3 class="category">Personal
+                </h3>
+                <a class="contactCardDownload" href="/blakesanie.vcf" download="download">
+                    <h3>Contact Card</h3>
+                </a>
+                <a href="mailto:blake@sanie.com">
+                    <h3>Email
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <a href="https://www.linkedin.com/in/blake-sanie-77733116a/" target="_blank">
+                    <h3>LinkedIn
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <a href="https://www.instagram.com/blake_sanie/" target="_blank">
+                    <h3>Instagram
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+            </div>
+            <h4>made by Blake Sanie with ♥</h4>
+        </div>
+        <div id="content">
+            <h1>Visualizing the Mandelbrot Set Using Python</h1>
+            <p id="date">May 14, 2019</p>
+            <p>The
+                <a href="https://en.wikipedia.org/wiki/Mandelbrot_set" target="_blank">Mandelbrot Set</a>
+                is known to be one of the most beautiful fractals in mathematics. Though first discovered at the beginning of the 20th century, we can use computers to create detailed renderings of the infinately self-similar image.</p>
+            <img src="./images/mandel1.png"/>
+            <p>Equally as beautiful is the fact that we can render the Mandelbrot set with less than 50 lines of Python.</p>
+            <h2>Prerequisites</h2>
+            <ol>
+                <li>Python</li>
+                <li>That's it</li>
+            </ol>
+            <h2>Plan</h2>
+            <ol>
+                <li>Understand underlying math</li>
+                <li>Impliment rendering algorithm</li>
+            </ol>
+            <h2>What even is the Mandelbrot Set?</h2>
+            <p>The formal definition of the Mandelbrot Set is "set of values of c in the complex plane for which the orbit of 0 under iteration of the quadratic map</p>
+            <img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/ea17613cecf92dbe8bb5f464a3862b08678ecd08" class="equation"/>
+            <p>remains bounded..."</p>
+            <h4>What does this mean?</h4>
+            <p>Basically, take a complex number
+                <span class="italics">a + bi</span>, square it, then add itself. Now take the solution, square it, then add the original number. As you repeat this process, the solution may approach infinity (diverge). On the other hand, the solution after continual
+                iteration may stay bounded to finite numbers.</p>
+            <p>The black regions of the Mandelbrot Set are the complex numbers that when iterated over by the function, stay bounded. Where the Mandelbrot set gets really interesting is understanding the behavior near these points by
+                <span class="italics">visualizing at what rate the function diverges.</span></p>
+            <h2>Math Breakdown</h2>
+            <h4>Can computers even understand complex numbers?</h4>
+            <p>Not exactly, but we can represent complex numbers through their real and imaginary components (a + bi becomes a,b as x,y). Computations with each component are done separately, meaning we can omit the i if we think ahead.</p>
+            <h4>How do I square complex numbers?</h4>
+            <p>Take an arbitrary complex number, a + bi</p>
+            <p class="equation">(a + bi)<sup>2</sup>
+            </p>
+            <p class="equation">a<sup>2</sup>
+                + 2abi - b<sup>2</sup>
+            </p>
+            <p class="equation">(a<sup>2</sup>
+                - b<sup>2</sup>) + (2ab)i</p>
+            <p>Really, the square of (a + bi) is another imaginary number, where the new a is (a<sup>2</sup>
+                - b<sup>2</sup>) and the new b is (2ab). This concept is crucial to this project's calculations.</p>
+            <h4>How do I know when the function diverges?</h4>
+            <p>It is known that if the function's complex solution is ever greater than two, the function must diverge. In cartesian terms, this means that the function diverges when the distance from the origin is greater than two. Using the
+                <a href="https://en.wikipedia.org/wiki/Pythagorean_theorem" target="_blank">Pythagorian theorem</a>, we can define this case as:</p>
+            <p>x<sup>2</sup>
+                + y<sup>2</sup>
+                > 4</p>
+            <h2>Setting Up the Program</h2>
+            <p>Let's take this step by step.</p>
+            <p>First, we import our dependencies and modules.
+                <a href="https://pillow.readthedocs.io" target="_blank">Pillow</a>
+                is Python's well known image processing library. Colorsys and math are modules we'll use in our calculations. Finally, we can access os to open the image file once written.</p>
+            <code data-gist-id="ac7928c38764f7d9cc04b7f1db096d8e" data-gist-line="1-4"></code>
+            <p>Next, we define the frame for our image. Variable meanings are self explanatory. "Precision" is the threshold (max number of iterations) we will use in termining if a point diverges under iteration. Increasing this value will create more accurate
+                calculations and images, while increase processing time.</p>
+            <code data-gist-id="ac7928c38764f7d9cc04b7f1db096d8e" data-gist-line="6-13"></code>
+            <p>Based on the previous parameters, we can compute basic information we'll need later on.</p>
+            <code data-gist-id="ac7928c38764f7d9cc04b7f1db096d8e" data-gist-line="15-20"></code>
+            <p>Time to create our Image object. Using PIL's Image class, we can create a new image with desired dimensions and a black background. Then, we extract the pixels into an array we can directly manipulate with color changes.</p>
+            <code data-gist-id="ac7928c38764f7d9cc04b7f1db096d8e" data-gist-line="22-23"></code>
+            <h2>Mandelbrot Rendering Algorithm</h2>
+            <p>This algorithm is often called the "escape time algorithm," since we find how many iterations are needed for a point to definitively diverge. Then, we color the image based on this value.</p>
+            <p>We loop through the image's pixels, and map each pixel to a cartesian point (x,y). The original x and y values are stored for later use.</p>
+            <code data-gist-id="ac7928c38764f7d9cc04b7f1db096d8e" data-gist-line="35-40"></code>
+            <p>Them, we can iterate through the Mandelbrot Set's core function, waiting for when the distance from the origin is greater than 2. If the number of iterations, i, is equal to precision, then we can assume that the function remains bounded at the
+                point. If i is less than precision, the function diverges.</p>
+            <code data-gist-id="ac7928c38764f7d9cc04b7f1db096d8e" data-gist-line="41-47"></code>
+            <p>If a point does diverges under iteration, the corresponding pixel's color will be a dependent on how far iteration was conducted. We can compute the number of successful iterations as a proportion of our threshold, and feed this value to a color
+                generator. Finally, we set that rgb color to the value of the pixel in the pixels array.</p>
+            <code data-gist-id="ac7928c38764f7d9cc04b7f1db096d8e" data-gist-line="48-51"></code>
+            <p>I created two coloring algorithms, though there are endless directions in which coloring can be taken. I made one coloring method that uses a log function, and one that uses a power function. Both functions take multiple parameters for ultimate
+                customizability.</p>
+            <code data-gist-id="ac7928c38764f7d9cc04b7f1db096d8e" data-gist-line="25-33"></code>
+            <p>All that's left to do is to write the file, and then open it through the operating system.</p>
+            <code data-gist-id="ac7928c38764f7d9cc04b7f1db096d8e" data-gist-line="55-56"></code>
+            <h2>Put it all together</h2>
+            <code data-gist-id="ac7928c38764f7d9cc04b7f1db096d8e"></code>
+            <p>Run the program, and gaze.</p>
+            <img src="images/mandel2.png"/>
+
+            <div id="disqus_thread"></div>
+        </div>
+        <script>
+            var disqus_config = function () {
+                this.page.url = "http://www.blakesanie.com/blog/mandelbrot.html";
+                this.page.identifier = "mandelbrot";
+            };
+            (function () { // DON'T EDIT BELOW THIS LINE
+                var d = document,
+                    s = d.createElement('script');
+                s.src = 'https://blakesanie-com.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', + new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+        <script src="../main.js"></script>
+        <script src="functions.js"></script>
+    </body>
+
+</html>

@@ -24,6 +24,11 @@ const redirects = [
     href: "https://www.linkedin.com/in/blakesanie",
     external: true,
   },
+  {
+    path: "/blog",
+    href: "https://blakesanie.medium.com",
+    external: true,
+  },
 ];
 
 export default function Root(props) {
@@ -133,7 +138,9 @@ export default function Root(props) {
             >
               Investivision
             </a>
-            <a href="/blog">Blog</a>
+            <a href="/blog" target="_blank">
+              Blog
+            </a>
           </div>
           <div className="navSection">
             <h3>Photography</h3>
