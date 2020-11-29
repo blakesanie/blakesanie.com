@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Catching Cheaters in AP Computer Science</title>
+        <meta name="description" content="Using Python to scrape and diff Snap projects for the sake of academic integrity. In Collaboration with Daniel Montgomery and Cole Mediratta"/>
+        <link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="/favicons/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/favicons/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/favicons/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="/favicons/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
+        <link rel="manifest" href="/favicons/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="/favicons/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+        <meta property="og:image" content="/siteThumb.png">
+        <meta property="og:image:type" content="image/png">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="1200">
+        <link rel="stylesheet" href="../base.css" type="text/css">
+        <link rel="stylesheet" href="postStyle.css" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.7.1/gist-embed.min.js"></script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-164774604-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'UA-164774604-1');
+        </script>
+
+    </head>
+    <body>
+        <div id="header">
+            <h1>Blake Sanie</h1>
+            <h2>Inquisitive student. Aspiring engineer. Photography enthusiast. Curious stock trader.</h2>
+            <div id="menuIcon">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <div id="nav">
+                <a href="/">
+                    <h3>Home</h3>
+                </a>
+                <h3 class="category">Engineering</h3>
+                <a href="/resume">
+                    <h3>Résumé</h3>
+                </a>
+                <a href="/cs">
+                    <h3>Projects</h3>
+                </a>
+                <a href="/fund" target="_blank">
+                    <h3>Stock Fund</h3>
+                </a>
+                <a href="http://www.investivision.com" target="_blank">
+                    <h3>Investivision
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <a href="/blog">
+                    <h3>Blog</h3>
+                </a>
+                <a href="https://github.com/blakesanie" target="_blank">
+                    <h3>GitHub
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <h3 class="category">Photography</h3>
+                <a href="/photo">
+                    <h3>Portfolio</h3>
+                </a>
+                <a href="/photo/gear">
+                    <h3>Gear</h3>
+                </a>
+                <h3 class="category">Personal
+                </h3>
+                <a class="contactCardDownload" href="/blakesanie.vcf" download="download">
+                    <h3>Contact Card</h3>
+                </a>
+                <a href="mailto:blake@sanie.com">
+                    <h3>Email
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <a href="https://www.linkedin.com/in/blake-sanie-77733116a/" target="_blank">
+                    <h3>LinkedIn
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+                <a href="https://www.instagram.com/blake_sanie/" target="_blank">
+                    <h3>Instagram
+                        <sup>↗</sup>
+                    </h3>
+                </a>
+            </div>
+            <h4>made by Blake Sanie with ♥</h4>
+        </div>
+        <div id="content">
+            <h1>Catching Cheaters in AP Computer Science</h1>
+            <h2 class="center">In collaboration with
+                <a target="_blank" href="https://github.com/dmontgrmry">Daniel Montgomery</a>
+                and
+                <a target="_blank" href="https://github.com/cmediratta">Cole Mediratta</a>
+            </h2>
+            <p id="date">Jan 19, 2019</p>
+            <p>At my high school, AP Computer Science Principals is rumorred to be the easiest AP class. As a TA for the class, I see why. Students easily share and plagarize code without being caught. In an effort to regulate academic integrety, we have written
+                a program to determine the originality of every script turned in by the students.</br>
+        </br>The students write their projects using
+        <a target="_blank" href="https://snap.berkeley.edu">Snap</a>, a drag-and-drop programming platform developed by UC Berkeley. Since these projects are hosted on the web, students can distribute their project URL's, allowing other students to copy this work. This cheating occurs on
+        <span class="italics">weekly assignments</span>
+        as well as
+        <span class="italics">unit tests</span>.</p>
+    <h2>Prerequisites</h2>
+    <ol>
+        <li>Python</li>
+        <li>Web Scraping</li>
+        <li>Iteration/Selection</li>
+    </ol>
+    <h2>Plan</h2>
+    <ol>
+        <li>Obtain list of project URL's from
+            <a href="https://www.canvaslms.com/" target="_blank">Canvas LMS</a>
+            (students, answer key, etc.)</li>
+        <li>Scrape
+            <a href="https://en.wikipedia.org/wiki/XML" target="_blank">XML</a>
+            content (student script) from each URL</li>
+        <li>Perform a
+            <a href="https://en.wikipedia.org/wiki/Diff" target="_blank">diff</a>
+            between all projects</li>
+        <li>Flag students with a suspiciously high similarity percentage</li>
+    </ol>
+    <h2>Preparing Files for Differencing</h2>
+    <p>Create a folder containing the Canvas LMS html files for all projects you wish to compare. These html files redirect to the Snap project's webpage.</p>
+    <p>First, because the user can input either directories and/or files, we parse the user's input; PathParser's parse() method returns all the files that need to be compared.</p>
+    <code data-gist-id="71de8b83c56fb314ddb9adefd401406b" data-gist-line="73-80,83-98,104"></code>
+    <p>Also, we validate that the user has either inputed Snap XML filepaths or Cavans html filepaths.</p>
+    <code data-gist-id="fd6d88c6599f234b4d83a1c10542c20c" data-gist-line="38,39,41,42,44-47,49-51,53-62"></code>
+    <p>After each html file path is parsed,
+        <a href="https://github.com/dmontgrmry/codediff/blob/master/src/scraper.py" target="_blank">scraper.py</a>
+        parses the file for the html link and scrapes the XML that contains the student's code and project metadata.</p>
+    <code data-gist-id="44b0796e87bf76c5c36a019f4bc0ba3f" data-gist-line="19-33"></code>
+    <code data-gist-id="44b0796e87bf76c5c36a019f4bc0ba3f" data-gist-line="43-58,65-70"></code>
+    <p>Since each project's XML is extremely similar in format and schema, comparing the XML as ASCII will yield very high similarity percentages and is computationally inefficient. To compare only unique values (the project's code itself), we parse the
+        XML DOM, extracting certain information, and initializing a SnapReport object. These reports, which encapuslate XML DOM data, will be compared to eachother.</p>
+    <code data-gist-id="71de8b83c56fb314ddb9adefd401406b" data-gist-line="52-70"></code>
+    <h2>The Diff Algorithm</h2>
+    <p>It's time to compare every file against the others. We iterate from the top of the list down, comparing each file to the files below it. This way, no two files will be compared to each other twice. Here's the pseudo code:</p>
+    <h4>
+        <span class="comment">// files numbered 0 to n</span></br>for i in 0 to n :</br>
+<span class="tab">for j in i + 1 to n :</span></br><span class="tab"><span class="tab">compare files i and j</span></span></h4>
+<p>The diff algorithm computes the number of changes (additions and subtractions) needed to transform one report into another. The ratio of unchanged to total values is outputted as a percentage of originality. Percentages near 100% signal likely
+plagarized code.</p>
+<code data-gist-id="08cd70601e4550a5929576728f804cfb" data-gist-line="48-52,54-58,60-66,68-73,75-80,82-87,89-99"></code>
+<!--<p>The traditional diff algorithm counts the number of changes (additions and subtractions) needed to transform one file into another. Similarity percentage can be defined as the ratio of unchanged lines to total lines. However, much of the Snap
+XML is fixed (common structure and metadata), so all comparisions would yield high similarity percentages. To avoid this outcome, each project's unique features are extracted into individual <span class="italics">classes</span>. Then, these <span
+class="italics">classes</span> are fed to python's <a href="https://docs.python.org/2/library/difflib.html" target="_blank">difflib</a> algorithm.</p>-->
+<p>To find the potential culprits, we sort all comparisons by similarity percentage and output to the computer's terminal.</p>
+<code data-gist-id="16eb40dd9148171cc373ec0f382a07cd" data-gist-line="77-84"></code>
+
+<!--<h2>Output</h2> <p>$ ./codediff canvas_files/</p> <code data-gist-id="a844b36d1b32ec070b883821ecc25231" data-gist-line="1-5,4301-4306"></code>-->
+<h2>Running the Program</h2>
+<p>Using the executable ./codediff, we can parse and compare the Snap XML projects in the canvas_files directory.</p>
+<!-- <img src="./images/terminalOutput.gif"/> <p>Looks like the class has to do their own work, now. Cheaters never win!</p> -->
+<h2>Use for Yourself</h2>
+<p>Follow the instructions on
+<a href="https://github.com/dmontgrmry/codediff" target="_blank">Daniel Montgomery's Github Repository</a>.</p>
+<div id="disqus_thread"></div>
+<!-- GIST ID's Snap report: <script src="https://gist.github.com/blakesanie/d5670ffdfe48cf8feafb78699fedd11f.js"></script> Validators: <script src="https://gist.github.com/blakesanie/fd6d88c6599f234b4d83a1c10542c20c.js"></script> utils: <script
+src="https://gist.github.com/blakesanie/16eb40dd9148171cc373ec0f382a07cd.js"></script> scraper: <script src="https://gist.github.com/blakesanie/44b0796e87bf76c5c36a019f4bc0ba3f.js"></script> parser: <script
+src="https://gist.github.com/blakesanie/71de8b83c56fb314ddb9adefd401406b.js"></script> matcher: <script src="https://gist.github.com/blakesanie/08cd70601e4550a5929576728f804cfb.js"></script> -->
+</div>
+<script>
+var disqus_config = function () {
+this.page.url = "http://www.blakesanie.com/blog/cheating.html";
+this.page.identifier = "cheating";
+};
+(function () { // DON'T EDIT BELOW THIS LINE
+var d = document,
+s = d.createElement('script');
+s.src = 'https://blakesanie-com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', + new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the
+<a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+<script src="../main.js"></script>
+<script src="functions.js"></script>
+</body>
+</html>
