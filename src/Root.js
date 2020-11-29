@@ -195,9 +195,6 @@ export default function Root(props) {
           <Route exact path="/resume" component={Resume} />
           <Route exact path="/photo" component={Photo} />
           <Route exact path="/photo/gear" component={Gear} />
-          <Route exact path="/blog">
-            <Redirect to="/" />
-          </Route>
           {redirects.map((redirect) => {
             return (
               <Route
