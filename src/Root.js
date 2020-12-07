@@ -29,6 +29,12 @@ const redirects = [
     href: "https://blakesanie.medium.com",
     external: true,
   },
+  {
+    path: "/sheet",
+    href:
+      "https://docs.google.com/spreadsheets/d/1W8S2c7igI-jNjOgErO4AmXAF0h66T7fAqDgNhPbklOM/edit?usp=sharing",
+    external: true,
+  },
 ];
 
 export default function Root(props) {

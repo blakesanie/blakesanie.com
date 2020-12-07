@@ -7,6 +7,7 @@
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.2.2",
+    "next": "^10.0.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-masonry-component": "^6.2.1",
@@ -53,12 +54,10 @@
       "/resume/",
       "/instagram/",
       "/linkedin/",
-      "/github/"
+      "/github/",
+      "/sheet/"
     ],
-    "exclude": [
-      "/signup",
-      "/other-path/exclude-me/**"
-    ],
+    "exclude": [],
     "snapshotDelay": 300
   }
 }
