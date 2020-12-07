@@ -8,13 +8,12 @@
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.2.2",
     "react": "^17.0.1",
-    "react-device-detect": "^1.14.0",
     "react-div-100vh": "^0.5.6",
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0",
     "react-masonry-component": "^6.2.1",
-    "react-pdf": "^5.0.0",
     "react-router-dom": "^5.2.0",
+    "react-router-sitemap": "^1.2.0",
     "react-scripts": "4.0.0",
     "react-snapshot": "^1.3.0",
     "react-typed": "^1.2.0",
@@ -64,6 +63,6 @@
       "/signup",
       "/other-path/exclude-me/**"
     ],
-    "snapshotDelay": 50
+    "snapshotDelay": 100
   }
 }
