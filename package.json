@@ -52,7 +52,7 @@
     "include": [
       "/cs/",
       "/photo/",
-      "/gear/",
+      "/photo/gear/",
       "/resume/",
       "/instagram/",
       "/linkedin/",
