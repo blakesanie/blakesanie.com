@@ -85,7 +85,7 @@ export default function Root(props) {
     if (window.innerWidth >= 440) {
       return 248;
     }
-    return 372;
+    return 382;
   };
 
   let headerStyles = {};

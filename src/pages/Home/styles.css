@@ -1,5 +1,5 @@
 .frame {
-  height: 100vh;
+  /* height: 100vh; */
   overflow: hidden;
   width: 100%;
   display: flex;
@@ -67,8 +67,11 @@ h2 {
 }
 
 @media screen and (max-width: 800px) {
-  .frame:first-child {
+  /* .frame:first-child {
     height: calc(100vh - 80px);
+  } */
+  .frame:first-child {
+    margin-top: -40px;
   }
   .frame h2 {
     font-size: calc(24px + 3vmin) !important;
