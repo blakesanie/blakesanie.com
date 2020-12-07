@@ -233,7 +233,7 @@ nav h3 {
   }
 }
 
-@media screen and (min-width: 800px) and (min-height: 1200px) {
+/* @media screen and (min-width: 800px) and (min-height: 1200px) {
   header {
     padding-top: 20px;
     height: 260px;
@@ -244,7 +244,7 @@ nav h3 {
   .page {
     padding-top: 260px;
   }
-}
+} */
 
 /* @media screen and (min-width: 800px) and (min-height: 1200px) {
   header {

@@ -36,11 +36,13 @@ const redirects = [
 ];
 
 export default function Root(props) {
+  const shouldBeMenuBar = () => {
+    return window.innerWidth <= 800 || window.innerHeight > 1200;
+  };
+
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(window.innerWidth <= 800);
-  const [transitionable, setTransitionable] = useState(
-    window.innerWidth >= 800
-  );
+  const [transitionable, setTransitionable] = useState(shouldBeMenuBar());
 
   const toggleMenu = () => {
     // alert(menuExpanded);
@@ -51,7 +53,7 @@ export default function Root(props) {
 
   const updatePageWidth = () => {
     console.log(transitionable);
-    if (window.innerWidth <= 800) {
+    if (shouldBeMenuBar()) {
       handleScroll();
       currentTimeout = setTimeout(() => {
         setTransitionable(true);
@@ -65,7 +67,9 @@ export default function Root(props) {
   };
 
   const handleScroll = () => {
-    setHeaderVisible(window.scrollY < window.innerHeight);
+    setHeaderVisible(
+      window.scrollY < window.innerHeight || window.innerHeight > 1200
+    );
   };
 
   useLayoutEffect(() => {
@@ -89,7 +93,7 @@ export default function Root(props) {
   };
 
   let headerStyles = {};
-  if (window.innerWidth <= 800) {
+  if (shouldBeMenuBar()) {
     headerStyles.height = menuExpanded ? `${getIdealHeaderHeight()}px` : "80px";
     headerStyles.transform = `translateY(${
       headerVisible || menuExpanded ? 0 : "-100"

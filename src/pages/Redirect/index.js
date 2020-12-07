@@ -2,7 +2,6 @@ import React from "react";
 import "./styles.css";
 import { Helmet } from "react-helmet";
 export default function Redirect(props) {
-  window.location.href = props.href;
   return (
     <React.Fragment>
       <Helmet>
