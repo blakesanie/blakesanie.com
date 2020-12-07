@@ -2,6 +2,7 @@ import React, { useState, useLayoutEffect } from "react";
 import "./styles.css";
 import filenames from "./filenames.js";
 import Masonry from "react-masonry-component";
+import { Helmet } from "react-helmet";
 
 var didShuffle = false;
 
@@ -22,14 +23,14 @@ export default function Photo(props) {
 
   const getImageWidth = () => {
     let contentWidth = window.innerWidth;
-    if (contentWidth > 800) {
+    if (contentWidth > 800 && window.innerHeight < 1200) {
       contentWidth -= 220;
     }
     let usableWidth = contentWidth - 40 * 2;
     if (window.innerWidth <= 800) {
       usableWidth = contentWidth - 2 * gutter;
     }
-    let numCols = Math.floor(usableWidth / 230);
+    let numCols = Math.floor(usableWidth / 260);
     return usableWidth / numCols - (gutter * (numCols - 1)) / numCols;
   };
 
@@ -61,6 +62,13 @@ export default function Photo(props) {
 
   return (
     <div className="content photo">
+      <Helmet>
+        <title>Photography | Blake Sanie</title>
+        <meta
+          name="description"
+          content="View my comprehensive photo portfolio, dating back from 2015."
+        />
+      </Helmet>
       <h1>Photo</h1>
       <Masonry
         className={"masonry"} // default ''

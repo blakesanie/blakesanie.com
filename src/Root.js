@@ -11,21 +11,25 @@ import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 const redirects = [
   {
     path: "/github",
+    name: "GitHub",
     href: "https://github.com/blakesanie",
     external: true,
   },
   {
     path: "/instagram",
+    name: "Instagram",
     href: "https://www.instagram.com/blake_sanie/",
     external: true,
   },
   {
     path: "/linkedin",
+    name: "LinkedIn",
     href: "https://www.linkedin.com/in/blakesanie",
     external: true,
   },
   {
     path: "/blog",
+    name: "Blog",
     href: "https://blakesanie.medium.com",
     external: true,
   },
@@ -206,6 +210,7 @@ export default function Root(props) {
                     <ExternalRedirect
                       href={redirect.href}
                       external={redirect.external}
+                      name={redirect.name}
                     />
                   );
                 }}

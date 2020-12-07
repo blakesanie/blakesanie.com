@@ -1,5 +1,6 @@
 import React from "react";
 import "./styles.css";
+import { Helmet } from "react-helmet";
 
 const projects = [
   {
@@ -151,6 +152,13 @@ const projects = [
 export default function CS(props) {
   return (
     <div className="content cs">
+      <Helmet>
+        <title>Projects | Blake Sanie</title>
+        <meta
+          name="description"
+          content="Explore my vast array of projects, including apps, websites, and other creations."
+        />
+      </Helmet>
       <h1>Projects</h1>
       {projects.map((project, i) => {
         return (

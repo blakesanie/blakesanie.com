@@ -2,6 +2,7 @@ import React, { useState, useLayoutEffect } from "react";
 import "./styles.css";
 import Typed from "react-typed";
 import "react-typed/dist/animatedCursor.css";
+import { Helmet } from "react-helmet";
 
 export default function Home(props) {
   const [scroll, setScroll] = useState(0);
@@ -105,54 +106,65 @@ export default function Home(props) {
       ],
     },
   ];
-  return data.map((item, i) => {
-    let offset = scroll - window.innerHeight * i;
-    return (
-      <div className="frame" key={i}>
-        <img
-          alt=""
-          src={`/images/${item.imageUrl}`}
-          style={{
-            opacity: 1 - Math.abs(offset) / window.innerHeight,
-          }}
-        ></img>
-        <div
-          className="center"
-          style={{
-            transform: `translateY(${offset * -0.2}px)`,
-          }}
-        >
-          {i === 0 ? (
-            <Typed
-              strings={item.text}
-              typeSpeed={50}
-              backSpeed={40}
-              loop
+  return (
+    <React.Fragment>
+      <Helmet>
+        <title>Blake Sanie</title>
+        <meta
+          name="description"
+          content="Inquisitive student. Aspiring engineer. Photography enthusiast. Curious stock trader. Come see what I'm up to!"
+        />
+      </Helmet>
+      {data.map((item, i) => {
+        let offset = scroll - window.innerHeight * i;
+        return (
+          <div className="frame" key={i}>
+            <img
+              alt=""
+              src={`/images/${item.imageUrl}`}
               style={{
-                fontSize: 70,
+                opacity: 1 - Math.abs(offset) / window.innerHeight,
               }}
-            ></Typed>
-          ) : (
-            <React.Fragment>
-              <h2>{item.text[0]}</h2>
-              {item.links ? (
-                <div className="buttonContainer">
-                  {item.links.map((link) => {
-                    return (
-                      <a
-                        href={link.url}
-                        target={link.external === true ? "_blank" : "_self"}
-                      >
-                        {link.label}
-                      </a>
-                    );
-                  })}
-                </div>
-              ) : null}
-            </React.Fragment>
-          )}
-        </div>
-      </div>
-    );
-  });
+            ></img>
+            <div
+              className="center"
+              style={{
+                transform: `translateY(${offset * -0.2}px)`,
+              }}
+            >
+              {i === 0 ? (
+                <Typed
+                  strings={item.text}
+                  typeSpeed={50}
+                  backSpeed={40}
+                  loop
+                  style={{
+                    fontSize: 70,
+                  }}
+                ></Typed>
+              ) : (
+                <React.Fragment>
+                  <h2>{item.text[0]}</h2>
+                  {item.links ? (
+                    <div className="buttonContainer">
+                      {item.links.map((link) => {
+                        return (
+                          <a
+                            href={link.url}
+                            target={link.external === true ? "_blank" : "_self"}
+                          >
+                            {link.label}
+                          </a>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+                </React.Fragment>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </React.Fragment>
+  );
 }

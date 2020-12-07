@@ -1,5 +1,6 @@
 import React from "react";
 import "./styles.css";
+import { Helmet } from "react-helmet";
 
 const data = [
   {
@@ -72,6 +73,13 @@ const data = [
 export default function Gear(props) {
   return (
     <div className="content gear">
+      <Helmet>
+        <title>Gear | Blake Sanie</title>
+        <meta
+          name="description"
+          content="My complete photography arsenal, from field to post-processing."
+        />
+      </Helmet>
       <h1>Gear</h1>
       <div className="gearContainer">
         {data.map((item) => {
