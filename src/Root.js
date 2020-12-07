@@ -7,6 +7,7 @@ import Gear from "./pages/Photo/Gear";
 import ExternalRedirect from "./pages/Redirect";
 import "./root.css";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import { isMobile } from "react-device-detect";
 
 const redirects = [
   {
@@ -160,7 +161,11 @@ export default function Root(props) {
             <a href="/linkedin" target="_blank">
               LinkedIn
             </a>
-            <a href="mailto:blake@sanie.com">Email</a>
+            {isMobile ? (
+              <a href="/blakesanie.vcf">Contact Card</a>
+            ) : (
+              <a href="mailto:blake@sanie.com">Email</a>
+            )}
             <a href="/instagram" target="_blank">
               Instagram
             </a>

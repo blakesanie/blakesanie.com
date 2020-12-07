@@ -4,6 +4,7 @@ import Typed from "react-typed";
 import "react-typed/dist/animatedCursor.css";
 import { Helmet } from "react-helmet";
 import Div100vh, { use100vh } from "react-div-100vh";
+import { isMobile } from "react-device-detect";
 
 export default function Home(props) {
   const [scroll, setScroll] = useState(0);
@@ -115,6 +116,12 @@ export default function Home(props) {
       ],
     },
   ];
+  if (isMobile) {
+    data[data.length - 1].links.push({
+      url: "/blakesanie.vcf",
+      label: "Contact Card",
+    });
+  }
   return (
     <React.Fragment>
       <Helmet>

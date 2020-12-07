@@ -9,4 +9,4 @@ Allow: /spotifyMosaic
 Allow: /spotifyMosaic/
 Allow: /fund
 
-Sitemap: http://www.blakesanie.com/sitemap.xml
+Sitemap: https://www.blakesanie.com/sitemap.xml
