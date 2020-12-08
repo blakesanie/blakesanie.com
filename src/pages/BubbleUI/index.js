@@ -1,5 +1,6 @@
 import React, { useState, useLayoutEffect } from "react";
-import BubbleElement from "./BubbleUI.js";
+import BubbleUI from "./BubbleUI";
+import Bubble from "./BubbleElement";
 import "./styles.css";
 
 function getRandomColor() {
@@ -11,27 +12,29 @@ function getRandomColor() {
   return color;
 }
 
-export default function BubbleUI(props) {
+const colors = [];
+for (var i = 0; i < 200; i++) {
+  colors.push(getRandomColor());
+}
+
+export default function (props) {
   let components = [];
   for (var i = 0; i < 200; i++) {
-    components.push(
-      <div
-        className="bubbleComp"
-        style={{
-          backgroundColor: getRandomColor(),
-          borderRadius: `50%`,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <h5 key={i}>{i}</h5>
-      </div>
-    );
+    // const theme = useContext(ThemeContext);
+    components.push(<Bubble color={colors[i]} />);
   }
   return (
-    <BubbleElement shouldTranslate roundCorners={false}>
+    <BubbleUI
+      shouldTranslate
+      roundCorners={false}
+      gutter={5}
+      width={12}
+      innerRadius={320}
+      outerRadius={600}
+      translationFactor={0.35}
+      provideProps
+    >
       {components}
-    </BubbleElement>
+    </BubbleUI>
   );
 }

@@ -1,4 +1,5 @@
-import React, { useState, useLayoutEffect, useRef } from "react";
+import React, { useState, useLayoutEffect, useRef, useContext } from "react";
+import SizeContext from "./SizeProvider";
 import "./styles.css";
 
 export default function BubbleElement(props) {
@@ -6,9 +7,10 @@ export default function BubbleElement(props) {
   const minSize = props.minSize || 10;
   const minProportion = minSize / size;
   const gutter = props.gutter || 10;
-  const shouldTranslate = props.shouldTranslate || false;
+  const translationFactor = props.translationFactor || 0;
+  const provideProps = props.provideProps || false;
   const numCols = Math.min(
-    props.width || 5,
+    props.width || 12,
     props.children ? props.children.length : Infinity
   );
 
@@ -34,7 +36,7 @@ export default function BubbleElement(props) {
   }
   if (rows.length > 1) {
     if (rows[rows.length - 1].length % 2 == rows[rows.length - 2].length % 2) {
-      rows[rows.length - 1].push(<p>Dummy</p>);
+      rows[rows.length - 1].push(<div></div>); // dummy bubble
     }
   }
 
@@ -73,13 +75,19 @@ export default function BubbleElement(props) {
     const yOffset = (size * 0.866 + gutter) * row - innerRadius / 1.414;
     const xOffset =
       (size + gutter) * col +
-      (row % 2 == 0 ? size / 2 : 0) -
+      ((numCols - rows[row].length) * size) / 2 -
       innerRadius / 1.414;
+
     const dy = yOffset - scrollTop;
     const dx = xOffset - scrollLeft;
     const distance = Math.sqrt(dx * dx + dy * dy);
     if (distance < innerRadius) {
-      return { bubbleSize: 1, translateX: 0, translateY: 0 };
+      return {
+        bubbleSize: 1,
+        translateX: 0,
+        translateY: 0,
+        distance: distance,
+      };
     }
     let theta = Math.atan(dy / dx);
     if (dx < 0) theta += Math.PI;
@@ -90,12 +98,11 @@ export default function BubbleElement(props) {
             ((distance - innerRadius) / (outerRadius - innerRadius)) *
               (1 - minProportion)
           : minProportion,
-      translateX: shouldTranslate
-        ? -(distance - innerRadius) * Math.cos(theta) * 0.45
-        : 0,
-      translateY: shouldTranslate
-        ? -(distance - innerRadius) * Math.sin(theta) * 0.45
-        : 0,
+      translateX:
+        -(distance - innerRadius) * Math.cos(theta) * translationFactor,
+      translateY:
+        -(distance - innerRadius) * Math.sin(theta) * translationFactor,
+      distance: distance,
     };
   };
 
@@ -128,10 +135,12 @@ export default function BubbleElement(props) {
                 }}
               >
                 {row.map((comp, j) => {
-                  const { bubbleSize, translateX, translateY } = getBubbleSize(
-                    i,
-                    j
-                  );
+                  const {
+                    bubbleSize,
+                    translateX,
+                    translateY,
+                    distance,
+                  } = getBubbleSize(i, j);
                   return (
                     <div
                       key={j}
@@ -152,7 +161,12 @@ export default function BubbleElement(props) {
                           borderRadius: `50%`,
                         }}
                       >
-                        {comp}
+                        {provideProps
+                          ? React.cloneElement(comp, {
+                              bubbleSize: bubbleSize * size,
+                              distanceToCenter: distance,
+                            })
+                          : comp}
                       </div>
                     </div>
                   );
