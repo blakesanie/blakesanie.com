@@ -4,6 +4,7 @@ import CS from "./pages/CS";
 import Resume from "./pages/Resume";
 import Photo from "./pages/Photo";
 import Gear from "./pages/Photo/Gear";
+import BubbleUI from "./pages/BubbleUI";
 import ExternalRedirect from "./pages/Redirect";
 import "./root.css";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
@@ -208,6 +209,7 @@ export default function Root(props) {
           <Route exact path="/resume" component={Resume} />
           <Route exact path="/photo" component={Photo} />
           <Route exact path="/photo/gear" component={Gear} />
+          <Route exact path="/bubbleUI" component={BubbleUI} />
           {redirects.map((redirect) => {
             return (
               <Route

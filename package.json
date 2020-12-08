@@ -62,8 +62,7 @@
       "/blog/"
     ],
     "exclude": [
-      "/signup",
-      "/other-path/exclude-me/**"
+      "/bubbleUI"
     ],
     "snapshotDelay": 100
   }
