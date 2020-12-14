@@ -6,13 +6,34 @@ const projects = [
   {
     name: "Investivision",
     desc:
-      "Intelligent stock market investing tools for the long-term. View the market's top investments at a glance, browse our vast array of rankings, and construct your personal portfolio with optimal growth versus volatility characteristics. Available on web, and soon mobile",
+      "Intelligent stock market investing tools for the long-term. View the market's top investments at a glance, browse our vast array of rankings, and construct your personal portfolio with optimal growth versus volatility characteristics. Available on web, and soon mobile!",
     imageUrl: "/images/cs/investivision.png",
     links: [
       {
         text: "Visit Website",
         url: "https://investivision.com",
         external: true,
+      },
+    ],
+  },
+  {
+    name: "React Bubble UI",
+    desc:
+      "A highly configurable Bubble UI React.js component, similar to the iconic Apple Watch app layout. This custom element provides a playful and curious feel that trumps dull grid-based webpage layouts. Download this open source package or contribute to GitHub today!",
+    imageUrl: "/images/cs/bubble.png",
+    links: [
+      {
+        text: "Demo",
+        url: "https://bubbleui.blakesanie.com",
+        external: true,
+      },
+      {
+        text: "Download",
+        url: "https://www.npmjs.com/package/react-bubble-ui",
+        external: true,
+      },
+      {
+        github: "https://github.com/blakesanie/React-Bubble-UI",
       },
     ],
   },
@@ -32,7 +53,7 @@ const projects = [
   {
     name: "Across the Aisle",
     desc:
-      "An app that tries to unite a politically divided America. By housing discussion threads for a variety of controversial political topics, Americans from all over the politcal spectrum can understand each other's perspectives. Awarded as finalist in 2018 Congressional App Challenge.",
+      "An app that tries to unite a politically divided America. By housing discussion threads for a variety of controversial political topics, Americans from all over the political spectrum can understand each other's perspectives. Awarded as finalist in 2018 Congressional App Challenge.",
     imageUrl: "/images/cs/AcrossTheAisle.jpg",
     links: [
       {
@@ -45,7 +66,7 @@ const projects = [
   {
     name: "Regression-Based Stock Analysis",
     desc:
-      "An investment-assisting tool that utilizes statistcal models to infer and visualize trends in S&P 500 stocks. For each symbol in the index, the program parses historical timerseries data and quantifies the stock's growth potential and volatility. Findings are outputted to CSV and a public, interactive website.",
+      "An investment-assisting tool that utilizes statistical models to infer and visualize trends in S&P 500 stocks. For each symbol in the index, the program parses historical time series data and quantifies the stock's growth potential and volatility. Findings are outputted to CSV and a public, interactive website.",
     imageUrl: "/images/cs/stockAnalysis.png",
     links: [
       {
@@ -66,7 +87,7 @@ const projects = [
   },
   {
     name: "Twitter Poetry Detection",
-    desc: `A NLP-driven bot with an appreciation for poetry. The bot listens to Twitter's tweet stream, continously searching for updates that contain the subject "life" and maintain a rhyming scheme when reformatted into a quadrain. Selected tweets are automatically retweeted, giving accidental poets a shoutout on the platform.`,
+    desc: `A NLP-driven bot with an appreciation for poetry. The bot listens to Twitter's tweet stream, continuously searching for updates that contain the subject "life" and maintain a rhyming scheme when reformatted into a quatrain. Selected tweets are automatically retweeted, giving accidental poets a shoutout on the platform.`,
     imageUrl: "/images/cs/TwitterPoetryBot.png",
     links: [
       {
@@ -106,7 +127,7 @@ const projects = [
   {
     name: "Qwerty, Revisited",
     desc:
-      "An experiment in which a new, optimal keyboard for the english language is created and compared directly to QWERTY. The keyboard is generated using Node.js by reading specified text files, developing a markov chain, and using letter-to-letter trends to algorithmically design the key layout. In the end, my keyboard performed with 124% Qwerty's efficiency.",
+      "An experiment in which a new, optimal keyboard for the english language is created and compared directly to QWERTY. The keyboard is generated using Node.js by reading specified text files, developing a markov chain, and using letter-to-letter trends to algorithmically design the key layout. In the end, my keyboard performed with 124% QWERTY's efficiency.",
     links: [
       {
         github: "https://github.com/blakesanie/Qwerty-Revisited",
@@ -128,7 +149,7 @@ const projects = [
   {
     name: "Proximity",
     desc:
-      "A map application like no other. It uses iPhone's GPS, gyroscrope, and a connection to Google's Places API to locate and identify locations within a certain radius of the user's current position. Then, when you select one of these locations, its relative direction and distance are projected over the device's live camera feed, effectively tracking the location in real time.",
+      "A map application like no other. It uses iPhone's GPS, gyroscope, and a connection to Google's Places API to locate and identify locations within a certain radius of the user's current position. Then, when you select one of these locations, its relative direction and distance are projected over the device's live camera feed, effectively tracking the location in real time.",
     links: [
       {
         github: "https://github.com/blakesanie/Proximity",
