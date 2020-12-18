@@ -1,14 +1,16 @@
 import React, { useState, useLayoutEffect } from "react";
-import Home from "./pages/Home";
-import CS from "./pages/CS";
-import Resume from "./pages/Resume";
-import Photo from "./pages/Photo";
-import Gear from "./pages/Photo/Gear";
-import BubbleUI from "./pages/BubbleUI";
-import ExternalRedirect from "./pages/Redirect";
+import loadable from "@loadable/component";
 import "./root.css";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { isMobile } from "react-device-detect";
+
+//  import Home from "./pages/Home";
+const Home = loadable(() => import("./pages/Home"));
+const CS = loadable(() => import("./pages/CS"));
+const Resume = loadable(() => import("./pages/Resume"));
+const Photo = loadable(() => import("./pages/Photo"));
+const Gear = loadable(() => import("./pages/Photo/Gear"));
+const ExternalRedirect = loadable(() => import("./pages/Redirect"));
 
 const redirects = [
   {
@@ -36,10 +38,6 @@ const redirects = [
     external: true,
   },
 ];
-
-console.log(
-  "Looks like you're in the web inspector! We'll get along just fine."
-);
 
 export default function Root(props) {
   const shouldBeMenuBar = () => {
@@ -78,6 +76,9 @@ export default function Root(props) {
   };
 
   useLayoutEffect(() => {
+    console.log(
+      "Looks like you're in the web inspector! We'll get along just fine."
+    );
     updatePageWidth();
     window.addEventListener("resize", updatePageWidth);
     window.addEventListener("scroll", handleScroll);
@@ -85,7 +86,7 @@ export default function Root(props) {
       window.removeEventListener("resize", updatePageWidth);
       window.removeEventListener("scroll", handleScroll);
     };
-  });
+  }, []);
 
   document.getElementsByTagName("html")[0].style.backgroundColor =
     window.location.pathname === "/" ? "black" : "white";
@@ -212,7 +213,6 @@ export default function Root(props) {
           <Route exact path="/resume" component={Resume} />
           <Route exact path="/photo" component={Photo} />
           <Route exact path="/photo/gear" component={Gear} />
-          <Route exact path="/bubbleUI" component={BubbleUI} />
           {redirects.map((redirect) => {
             return (
               <Route
