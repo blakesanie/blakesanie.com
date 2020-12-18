@@ -1,2 +1,0 @@
-(this["webpackJsonpblakesanie.com"]=this["webpackJsonpblakesanie.com"]||[]).push([[12],{365:function(e,n,t){},444:function(e,n,t){"use strict";t.r(n),t.d(n,"default",(function(){return a}));var r=t(1),s=t(0),c=t.n(s),i=(t(365),t(55));function a(e){return Object(r.jsxs)(c.a.Fragment,{children:[Object(r.jsx)(i.a,{children:Object(r.jsx)("title",{children:"R\xe9sum\xe9 | Blake Sanie"})}),Object(r.jsx)("iframe",{src:"./resume.pdf",frameborder:"0",title:"resume"})]})}}}]);
-//# sourceMappingURL=12.a1295fa0.chunk.js.map
