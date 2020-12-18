@@ -4,7 +4,7 @@ var mosaic = document.getElementById("mosaic");
 var mosaicCtx;
 
 var width;
-$("#generate").click(async function() {
+$("#generate").click(async function () {
   var albumCovers = await getAllAlbumCovers();
   if (albumCovers.length == 0) {
     alert("Select at least one playlist to create your mosaic.");
@@ -33,7 +33,7 @@ $("#generate").click(async function() {
   canvas.width = width;
   canvas.height = height;
   var ctx = canvas.getContext("2d");
-  img.onload = function() {
+  img.onload = function () {
     ctx.drawImage(img, 0, 0, width, height);
     var rawPixelData = ctx.getImageData(0, 0, width, height).data;
     pixelData = [];
@@ -41,7 +41,7 @@ $("#generate").click(async function() {
       var obj = {
         r: rawPixelData[i],
         g: rawPixelData[i + 1],
-        b: rawPixelData[i + 2]
+        b: rawPixelData[i + 2],
       };
       pixelData.push(obj);
     }
@@ -82,7 +82,7 @@ function addImageToMosaic(url, index) {
   var img = new Image();
   img.crossOrigin = "";
   img.src = url;
-  img.onload = function() {
+  img.onload = function () {
     mosaicCtx.drawImage(img, xOffset * 64, yOffset * 64, 64, 64);
     imagesRendered++;
     if (imagesRendered == pixelData.length) {
@@ -93,7 +93,6 @@ function addImageToMosaic(url, index) {
 
 function setUpDownload() {
   imagesRendered = 0;
-  console.log("done rendering");
   var dataURL = mosaic.toDataURL("image/png");
   $("#download").attr("href", dataURL);
 }
@@ -127,11 +126,11 @@ async function getImageColor(url) {
     let img = new Image();
     img.crossOrigin = "";
     img.src = url;
-    img.onload = function() {
+    img.onload = function () {
       color = getAverageRGB(img);
       resolve(color);
     };
-    img.onerror = function() {
+    img.onerror = function () {
       reject(new Error("image load failed"));
     };
   });
@@ -184,11 +183,11 @@ function getAverageRGB(imgEl) {
   return rgb;
 }
 
-$("#fileInput").change(function(e) {
+$("#fileInput").change(function (e) {
   for (var i = 0; i < e.originalEvent.srcElement.files.length; i++) {
     var file = e.originalEvent.srcElement.files[i];
     var reader = new FileReader();
-    reader.onloadend = function() {
+    reader.onloadend = function () {
       $("#samplePic").attr("src", reader.result);
       sizeImages();
     };
@@ -196,12 +195,12 @@ $("#fileInput").change(function(e) {
   }
 });
 
-$("#slider").on("input", function(slider) {
+$("#slider").on("input", function (slider) {
   var currentVal = slider.currentTarget.value;
   $("#numTiles").text("Max # Tiles: " + currentVal);
 });
 
-$(window).resize(function() {
+$(window).resize(function () {
   sizeImages();
 });
 
@@ -220,10 +219,10 @@ function sizeImages() {
     newWidth = $(window).width() / 2 - 50;
   }
   $("#samplePic").css({
-    width: newWidth + "px"
+    width: newWidth + "px",
   });
   $("#mosaic").css({
     width: newWidth + "px",
-    height: (newWidth / sampleWidth) * sampleHeight + "px"
+    height: (newWidth / sampleWidth) * sampleHeight + "px",
   });
 }

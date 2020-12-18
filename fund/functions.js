@@ -1,30 +1,27 @@
-$(".info").click(function() {
+$(".info").click(function () {
   overlay = $(this).siblings(".greekOverlay");
   if (overlay.css("opacity") < 1) {
     overlay.css({
       opacity: 1,
-      "pointer-events": "all"
+      "pointer-events": "all",
     });
   } else if (overlay.css("opacity") > 0) {
     overlay.css({
       opacity: 0,
-      "pointer-events": "none"
+      "pointer-events": "none",
     });
     $(this).css({
       "background-color": "white",
       color: "black",
-      "border-color": "rgba(0, 0, 0, 0.2)"
+      "border-color": "rgba(0, 0, 0, 0.2)",
     });
   }
 });
 
-$(".action").click(function() {
+$(".action").click(function () {
   $("html").animate(
     {
-      scrollTop:
-        $("h3")
-          .eq(0)
-          .offset().top - 50
+      scrollTop: $("h3").eq(0).offset().top - 50,
     },
     500
   );
@@ -55,11 +52,9 @@ var compareChart = new CanvasJS.Chart("compareChart", {
     fontFamily: font,
     backgroundColor: "white",
     cornerRadius: 10,
-    contentFormatter: function(e) {
-      console.log(e);
+    contentFormatter: function (e) {
       var content = "<div id='myToolTip'>";
       datasets = ["Sanie", "S&P 500"];
-      console.log(e.entries[0].dataPoint.x);
       var date = new Date(e.entries[0].dataPoint.x);
       content +=
         "<p id='toolTipHeader'>" +
@@ -78,7 +73,7 @@ var compareChart = new CanvasJS.Chart("compareChart", {
           "%</td></tr>";
       }
       return content + "</table></div>";
-    }
+    },
   },
   axisX: {
     valueFormatString: "MM/YYYY",
@@ -86,7 +81,7 @@ var compareChart = new CanvasJS.Chart("compareChart", {
     labelFontColor: "#00000080",
     labelFontFamily: font,
     lineThickness: 0,
-    tickThickness: 0
+    tickThickness: 0,
   },
   axisY2: {
     gridThickness: 0,
@@ -98,7 +93,7 @@ var compareChart = new CanvasJS.Chart("compareChart", {
     tickThickness: 0,
     margin: 0,
     valueFormatString: "###,###,##0",
-    suffix: "%"
+    suffix: "%",
     // interval: 10000
   },
   data: [
@@ -109,7 +104,7 @@ var compareChart = new CanvasJS.Chart("compareChart", {
       color: "#54e4a630",
       lineColor: "#54e4a6",
       markerSize: 0,
-      dataPoints: myPoints
+      dataPoints: myPoints,
     },
     {
       type: "splineArea",
@@ -117,9 +112,9 @@ var compareChart = new CanvasJS.Chart("compareChart", {
       color: "#9198e530",
       lineColor: "#9198e5",
       markerSize: 0,
-      dataPoints: spyPoints
-    }
-  ]
+      dataPoints: spyPoints,
+    },
+  ],
 });
 
 var histogram = new CanvasJS.Chart("histogram", {
@@ -133,7 +128,7 @@ var histogram = new CanvasJS.Chart("histogram", {
     fontFamily: font,
     backgroundColor: "white",
     cornerRadius: 10,
-    contentFormatter: function(e) {
+    contentFormatter: function (e) {
       var content = "<div id='myToolTip'>";
       datasets = ["Sanie", "S&P 500"];
       lower = e.entries[0].dataPoint.x;
@@ -154,7 +149,7 @@ var histogram = new CanvasJS.Chart("histogram", {
           "% of weeks</td></tr>";
       }
       return content + "</table></div>";
-    }
+    },
   },
   axisX: {
     valueFormatString: "#####0",
@@ -163,7 +158,7 @@ var histogram = new CanvasJS.Chart("histogram", {
     labelFontColor: "#00000080",
     labelFontFamily: font,
     lineThickness: 0,
-    tickThickness: 0
+    tickThickness: 0,
     // interval: 2
   },
   axisY: {
@@ -173,7 +168,7 @@ var histogram = new CanvasJS.Chart("histogram", {
     tickThickness: 0,
     valueFormatString: "",
     minimum: -18,
-    maximum: 13
+    maximum: 13,
   },
   data: [
     {
@@ -181,13 +176,13 @@ var histogram = new CanvasJS.Chart("histogram", {
       color: "#54e4a6",
       markerSize: 0,
       dataPoints: myHistogramPoints,
-      lineThickness: 0
+      lineThickness: 0,
     },
     {
       type: "stackedColumn",
       color: "#9198e5",
       markerSize: 0,
-      dataPoints: spyHistogramPoints
+      dataPoints: spyHistogramPoints,
     },
     {
       type: "splineArea",
@@ -197,7 +192,7 @@ var histogram = new CanvasJS.Chart("histogram", {
       dataPoints: myNormalPoints,
       indexLabelFontSize: 20,
       indexLabelFontFamily: font,
-      indexLabelPlacement: "outside"
+      indexLabelPlacement: "outside",
     },
     {
       type: "splineArea",
@@ -207,9 +202,9 @@ var histogram = new CanvasJS.Chart("histogram", {
       dataPoints: spyNormalPoints,
       indexLabelFontSize: 20,
       indexLabelFontFamily: font,
-      indexLabelPlacement: "outside"
-    }
-  ]
+      indexLabelPlacement: "outside",
+    },
+  ],
 });
 
 var tTest = new CanvasJS.Chart("tTestGraph", {
@@ -217,7 +212,7 @@ var tTest = new CanvasJS.Chart("tTestGraph", {
   animationDuration: 2000,
   backgroundColor: "transparent",
   toolTip: {
-    enabled: false
+    enabled: false,
   },
   axisX: {
     valueFormatString: "#####0.##",
@@ -226,7 +221,7 @@ var tTest = new CanvasJS.Chart("tTestGraph", {
     labelFontColor: "#00000080",
     labelFontFamily: font,
     lineThickness: 0,
-    tickThickness: 0
+    tickThickness: 0,
   },
   axisY: {
     gridThickness: 0,
@@ -235,7 +230,7 @@ var tTest = new CanvasJS.Chart("tTestGraph", {
     tickThickness: 0,
     valueFormatString: "",
     minimum: 0,
-    maximum: 0.42
+    maximum: 0.42,
   },
   data: [
     {
@@ -245,7 +240,7 @@ var tTest = new CanvasJS.Chart("tTestGraph", {
       markerSize: 0,
       dataPoints: insignificantPoints,
       indexLabelFontSize: 20,
-      indexLabelFontFamily: font
+      indexLabelFontFamily: font,
     },
     {
       type: "splineArea",
@@ -254,7 +249,7 @@ var tTest = new CanvasJS.Chart("tTestGraph", {
       markerSize: 0,
       dataPoints: significantPoints,
       indexLabelFontSize: 20,
-      indexLabelFontFamily: font
-    }
-  ]
+      indexLabelFontFamily: font,
+    },
+  ],
 });
