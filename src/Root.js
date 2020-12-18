@@ -9,6 +9,14 @@ import "./root.css";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 
+//  import Home from "./pages/Home";
+const Home = loadable(() => import("./pages/Home"));
+const CS = loadable(() => import("./pages/CS"));
+const Resume = loadable(() => import("./pages/Resume"));
+const Photo = loadable(() => import("./pages/Photo"));
+const Gear = loadable(() => import("./pages/Photo/Gear"));
+const ExternalRedirect = loadable(() => import("./pages/Redirect"));
+
 const redirects = [
   {
     path: "/github",
