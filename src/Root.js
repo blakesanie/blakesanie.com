@@ -37,6 +37,10 @@ const redirects = [
   },
 ];
 
+console.log(
+  "Looks like you're in the web inspector! We'll get along just fine."
+);
+
 export default function Root(props) {
   const shouldBeMenuBar = () => {
     return window.innerWidth <= 800 || window.innerHeight > 1200;
@@ -54,7 +58,6 @@ export default function Root(props) {
   let currentTimeout;
 
   const updatePageWidth = () => {
-    console.log(transitionable);
     if (shouldBeMenuBar()) {
       handleScroll();
       currentTimeout = setTimeout(() => {

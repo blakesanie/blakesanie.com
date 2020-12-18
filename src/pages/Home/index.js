@@ -175,9 +175,10 @@ export default function Home(props) {
                   <h2>{item.text[0]}</h2>
                   {item.links ? (
                     <div className="buttonContainer">
-                      {item.links.map((link) => {
+                      {item.links.map((link, i) => {
                         return (
                           <a
+                            key={i}
                             href={link.url}
                             target={link.external === true ? "_blank" : "_self"}
                           >

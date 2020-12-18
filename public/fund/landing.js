@@ -43,11 +43,9 @@ var chart = new CanvasJS.Chart("myChart", {
     fontFamily: font,
     backgroundColor: "white",
     cornerRadius: 10,
-    contentFormatter: function(e) {
-      console.log(e);
+    contentFormatter: function (e) {
       var content = "<div id='myToolTip'>";
       datasets = ["Sanie", "S&P 500"];
-      console.log(e.entries[0].dataPoint.x);
       var date = new Date(e.entries[0].dataPoint.x);
       content +=
         "<p id='pointDate'>" +
@@ -66,7 +64,7 @@ var chart = new CanvasJS.Chart("myChart", {
           "%</td></tr>";
       }
       return content + "</table></div>";
-    }
+    },
   },
   axisX: {
     valueFormatString: "YYYY",
@@ -74,7 +72,7 @@ var chart = new CanvasJS.Chart("myChart", {
     labelFontColor: "white",
     labelFontFamily: font,
     lineThickness: 0,
-    tickThickness: 0
+    tickThickness: 0,
   },
   axisY2: {
     gridThickness: 0,
@@ -86,7 +84,7 @@ var chart = new CanvasJS.Chart("myChart", {
     tickThickness: 0,
     margin: 0,
     valueFormatString: "###,###,##0",
-    suffix: "%"
+    suffix: "%",
     // interval: 10000
   },
   data: [
@@ -97,7 +95,7 @@ var chart = new CanvasJS.Chart("myChart", {
       color: "#ffffff30",
       lineColor: "white",
       markerSize: 0,
-      dataPoints: myPointsToDisplay
+      dataPoints: myPointsToDisplay,
     },
     {
       type: "splineArea",
@@ -105,14 +103,14 @@ var chart = new CanvasJS.Chart("myChart", {
       color: "black",
       lineColor: "black",
       markerSize: 0,
-      dataPoints: spyPointsToDisplay
-    }
-  ]
+      dataPoints: spyPointsToDisplay,
+    },
+  ],
 });
 chart.render();
 
 var interval;
-setTimeout(function() {
+setTimeout(function () {
   interval = setInterval(addDataToGraph, 0);
 }, animationDuration);
 
@@ -151,7 +149,6 @@ function addDataToGraph() {
     chart.render();
     if (myPointsToDisplay.length == myPoints.length) {
       $(".action").addClass("arisen");
-      console.log("cancel interval");
       clearInterval(interval);
     }
   }

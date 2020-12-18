@@ -29,7 +29,7 @@ var access_token = params.access_token,
   state = params.state,
   storedState = localStorage.getItem(stateKey);
 
-$(document).on("click", "#login", async function() {
+$(document).on("click", "#login", async function () {
   var client_id = "ea58eca152454aed8601582fd602ce90"; // faked for tutorial
   var redirect_uri = "http://www.blakesanie.com/spotifyMosaic/app.html";
   //var redirect_uri = "http://localhost:8888/app.html"; // development
@@ -52,14 +52,13 @@ if (access_token && (state == null || state !== storedState)) {
     $.ajax({
       url: "https://api.spotify.com/v1/me",
       headers: {
-        Authorization: "Bearer " + access_token
+        Authorization: "Bearer " + access_token,
       },
-      error: function(jqXHR, status, err) {
+      error: function (jqXHR, status, err) {
         $("#loading").remove();
         $("#cover").append("<p id='login'>First, login With Spotify</p>");
       },
-      success: async function(response) {
-        console.log(response);
+      success: async function (response) {
         data.username = response.display_name;
         data.userId = response.id;
         data.profilePic = response.images[0]
@@ -68,9 +67,9 @@ if (access_token && (state == null || state !== storedState)) {
         await $.ajax({
           url: "https://api.spotify.com/v1/me/playlists",
           headers: {
-            Authorization: "Bearer " + access_token
+            Authorization: "Bearer " + access_token,
           },
-          success: async function(res) {
+          success: async function (res) {
             data.playlists = [];
             var i = 1;
             for (var playlist of res.items) {
@@ -86,20 +85,20 @@ if (access_token && (state == null || state !== storedState)) {
                     playlist.images[Math.min(playlist.images.length - 1, 1)]
                       .url || "noUrl",
                   selected: false,
-                  albumCovers: await getAlbumCoversForPlaylist(playlist.id)
-                }
+                  albumCovers: await getAlbumCoversForPlaylist(playlist.id),
+                },
               ]);
               i++;
             }
             fillInUI();
-          }
+          },
         });
-      }
+      },
     });
   }
 }
 
-$(document).on("click", ".playlist", function() {
+$(document).on("click", ".playlist", function () {
   var index = $(this).index();
   var newStatus = !data.playlists[index].selected;
   data.playlists[index].selected = newStatus;
@@ -115,16 +114,14 @@ function setLoadingMessage(text) {
 }
 
 function fillInUI() {
-  console.log("data");
-  console.log(data);
   $("#cover").css({
-    opacity: "0"
+    opacity: "0",
   });
-  setTimeout(function() {
+  setTimeout(function () {
     $("#cover").remove();
   }, 1000);
   $("#profilePic").css({
-    "background-image": "url('" + data.profilePic + "')"
+    "background-image": "url('" + data.profilePic + "')",
   });
   $("#name").text(data.username);
   for (var playlist of data.playlists) {
@@ -146,12 +143,12 @@ async function getAlbumCoversForPlaylist(id) {
   await $.ajax({
     url: "https://api.spotify.com/v1/playlists/" + id + "/tracks",
     headers: {
-      Authorization: "Bearer " + access_token
+      Authorization: "Bearer " + access_token,
     },
-    error: function(jqXHR, status, err) {
+    error: function (jqXHR, status, err) {
       console.log(err);
     },
-    success: function(res) {
+    success: function (res) {
       for (var song of res.items) {
         var album = song.track.album;
         var isDuplicate = false;
@@ -166,12 +163,12 @@ async function getAlbumCoversForPlaylist(id) {
             id: album.id,
             small: album.images[2],
             large: album.images[1],
-            name: album.name
+            name: album.name,
           };
           albumCovers.push(obj);
         }
       }
-    }
+    },
   });
   return albumCovers;
 }
