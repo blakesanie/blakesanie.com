@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/pages/Resume/styles.css"],"names":[],"mappings":"AAAA,aACE,UAAW,CACX,YACF","file":"12.fed57aa6.chunk.css","sourcesContent":[".page iframe {\n  width: 100%;\n  height: 100vh;\n}\n"]}
