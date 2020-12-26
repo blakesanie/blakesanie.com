@@ -72,17 +72,19 @@
 .linksContainer {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 40px;
 }
 
 .linksContainer a {
   color: black;
   padding: 14px 24px;
-  margin: 15px;
-  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.07);
+  margin: 10px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.07);
   transition: box-shadow 0.1s ease;
   white-space: nowrap;
   border-radius: 8px;
-  margin-bottom: 40px;
   font-size: 18px;
 }
 
