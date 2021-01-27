@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: blakesanie.com
+Token: b63192585f437c2b7c0fddd9fed7400f98930e23f8bdf56de7c1414bf0b4e509

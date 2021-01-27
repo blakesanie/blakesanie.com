@@ -164,7 +164,7 @@ export default function Root(props) {
               LinkedIn
             </a>
             {isMobile ? (
-              <a href="/blakesanie.vcf">Contact Card</a>
+              <a href="/contact.vcf">Contact Card</a>
             ) : (
               <a href="mailto:blake@sanie.com">Email</a>
             )}

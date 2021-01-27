@@ -120,7 +120,7 @@ export default function Home(props) {
   ];
   if (isMobile) {
     data[data.length - 1].links.push({
-      url: "/blakesanie.vcf",
+      url: "/contact.vcf",
       label: "Contact Card",
     });
   }
