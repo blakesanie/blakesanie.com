@@ -228,7 +228,7 @@ export default function Root(props) {
               />
             );
           })}
-          <Route exact path="/" component={Home} />
+          <Route path="/" component={Home} />
           <Route
             component={() => {
               return <ExternalRedirect href="/404.html" />;
