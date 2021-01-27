@@ -1,6 +1,7 @@
 import React from "react";
 import "./styles.css";
 import { Helmet } from "react-helmet";
+import TechUsed from "./TechUsed";
 
 const projects = [
   {
@@ -14,6 +15,28 @@ const projects = [
         url: "https://investivision.com",
         external: true,
       },
+    ],
+    techUsed: [
+      "js",
+      "html",
+      "css",
+      "nodejs",
+      "IFTTT",
+      "firebase",
+      "keras",
+      "heroku",
+      "jQuery",
+      "github",
+      "python",
+      "yahooFinance",
+      "tensorflow",
+      "selenium",
+      "stripe",
+      "googleCloudPlatform",
+      "reactNative",
+      "expo",
+      "postgreSQL",
+      "express",
     ],
   },
   {
@@ -36,6 +59,7 @@ const projects = [
         github: "https://github.com/blakesanie/React-Bubble-UI",
       },
     ],
+    // techUsed: ["nodejs", "reactNative", "npm", "github"],
   },
   {
     name: "Stock Bot",
@@ -49,6 +73,7 @@ const projects = [
         external: true,
       },
     ],
+    // techUsed: ["python", "keras", "alpaca", "tensorflow", "firebase"],
   },
   {
     name: "Across the Aisle",
@@ -187,6 +212,7 @@ export default function CS(props) {
             <div className="info">
               <h2>{project.name}</h2>
               <h3>{project.desc}</h3>
+              {/* <TechUsed techUsed={project.techUsed || []} /> */}
               <div className="linksContainer">
                 {project.links.map((link) => {
                   if (link.github) {

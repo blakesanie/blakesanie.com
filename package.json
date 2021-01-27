@@ -61,7 +61,8 @@
       "/instagram/",
       "/linkedin/",
       "/github/",
-      "/blog/"
+      "/blog/",
+      "/.well-known/"
     ],
     "exclude": [
       "/bubbleUI"
