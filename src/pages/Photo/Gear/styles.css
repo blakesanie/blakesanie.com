@@ -1,7 +1,3 @@
-.content {
-  padding-bottom: 40px !important;
-}
-
 .gearContainer {
   display: flex;
   flex-direction: row;
@@ -40,9 +36,9 @@
 }
 
 @media screen and (max-width: 450px) {
-  .content.gear {
+  /* .content.gear {
     padding: 0 20px 40px 20px !important;
-  }
+  } */
   .product {
     width: 100%;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.07);

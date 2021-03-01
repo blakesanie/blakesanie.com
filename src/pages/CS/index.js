@@ -2,6 +2,7 @@ import React from "react";
 import "./styles.css";
 import { Helmet } from "react-helmet";
 import TechUsed from "./TechUsed";
+import Copyright from "../../Copyright";
 
 const projects = [
   {
@@ -263,6 +264,7 @@ export default function CS(props) {
           </div>
         );
       })}
+      <Copyright />
     </div>
   );
 }

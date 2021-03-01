@@ -7,6 +7,7 @@ import Div100vh, { use100vh } from "react-div-100vh";
 import { isMobile } from "react-device-detect";
 import Particles from "react-particles-js";
 import { particlesParams } from "./particlesParams.js";
+import CopyRight from "../../Copyright";
 
 export default function Home(props) {
   const [scroll, setScroll] = useState(0);
@@ -133,6 +134,13 @@ export default function Home(props) {
           content="Inquisitive student. Aspiring engineer. Photography enthusiast. Curious stock trader. Come see what I'm up to!"
         />
       </Helmet>
+      <CopyRight
+        style={{
+          position: "absolute",
+          bottom: 0,
+          zIndex: 9999,
+        }}
+      />
       {data.map((item, i) => {
         let offset = scroll - windowHeight * i;
         return (

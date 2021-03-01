@@ -3,6 +3,7 @@ import "./styles.css";
 import filenames from "./filenames.js";
 import Masonry from "react-masonry-component";
 import { Helmet } from "react-helmet";
+import Copyright from "../../Copyright";
 
 var didShuffle = false;
 
@@ -122,6 +123,7 @@ export default function Photo(props) {
           Back
         </p>
       </div>
+      <Copyright />
     </div>
   );
 }

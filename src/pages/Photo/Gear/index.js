@@ -1,6 +1,7 @@
 import React from "react";
 import "./styles.css";
 import { Helmet } from "react-helmet";
+import Copyright from "../../../Copyright";
 
 const data = [
   {
@@ -97,6 +98,7 @@ export default function Gear(props) {
           );
         })}
       </div>
+      <Copyright />
     </div>
   );
 }
