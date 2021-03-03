@@ -36,6 +36,24 @@ export default function Copyright(props) {
       >
         Source
       </a>
+      {props.links
+        ? props.links.map((link) => {
+            return (
+              <>
+                {" | "}
+                <a
+                  href={link.url}
+                  target="_blank"
+                  style={{
+                    color: "inherit",
+                  }}
+                >
+                  {link.title}
+                </a>
+              </>
+            );
+          })
+        : null}
     </p>
   );
 }

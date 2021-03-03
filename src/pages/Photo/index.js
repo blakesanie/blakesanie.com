@@ -123,7 +123,14 @@ export default function Photo(props) {
           Back
         </p>
       </div>
-      <Copyright />
+      <Copyright
+        links={[
+          {
+            url: "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+            title: "Photo License",
+          },
+        ]}
+      />
     </div>
   );
 }
