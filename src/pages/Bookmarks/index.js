@@ -1,22 +1,22 @@
-import React from "react";
-import "./styles.css";
+import React, { useState, useRef } from "react";
+import styles from "./Bookmarks.module.css";
 
 const links = [
   {
     title: "GitHub",
-    url: "https://github.com",
+    url: "https://blakesanie.github.com",
   },
   {
     title: "Blake Sanie",
-    url: "https://blakesanie.com",
+    url: "/",
   },
   {
     title: "Reddit",
-    url: "https://reddit.com",
+    url: "https://www.reddit.com/user/Sheev_For_Senate",
   },
   {
     title: "Medium",
-    url: "https://medium.com",
+    url: "https://blakesanie.medium.com",
   },
   {
     title: "Yahoo Finance",
@@ -24,7 +24,7 @@ const links = [
   },
   {
     title: "LinkedIn",
-    url: "https://linkedin.com",
+    url: "https://linkedin.com/blakesanie",
   },
   {
     title: "Robinhood",
@@ -90,6 +90,10 @@ const links = [
     title: "Heroku",
     url: "https://www.heroku.com",
   },
+  {
+    title: "Investivision",
+    url: "https://investivision.com",
+  },
 ].sort((a, b) => {
   a = a.title.replace(/\W/g, "").toLowerCase();
   b = b.title.replace(/\W/g, "").toLowerCase();
@@ -103,15 +107,34 @@ const links = [
 });
 
 export default function Gear(props) {
+  const [query, setQuery] = useState("");
+
+  const textInput = useRef();
   return (
-    <>
-      {links.map((link) => {
-        return (
-          <a href={link.url} target="_blank" key={link.url}>
-            {link.title}
-          </a>
-        );
-      })}
-    </>
+    <div>
+      <input
+        type="text"
+        placeholder="Search"
+        className="search"
+        ref={textInput}
+        onChange={(event) => {
+          setQuery(event.target.value);
+        }}
+      ></input>
+      {links
+        .filter((item) => {
+          return (
+            query.length == 0 ||
+            item.title.toLowerCase().includes(query.toLowerCase())
+          );
+        })
+        .map((link) => {
+          return (
+            <a href={link.url} key={link.url} className={styles.a}>
+              {link.title}
+            </a>
+          );
+        })}
+    </div>
   );
 }
