@@ -2,10 +2,17 @@ import React from "react";
 import reportWebVitals from "./reportWebVitals";
 import Root from "./Root";
 import { render } from "react-snapshot";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import Bookmarks from "./pages/Bookmarks";
 
 render(
   <React.StrictMode>
-    <Root></Root>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/bookmarks" component={Bookmarks} />
+        <Route component={Root} />
+      </Switch>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
 );
