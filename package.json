@@ -63,7 +63,7 @@
       "/linkedin/",
       "/github/",
       "/blog/",
-      "/bookmarks"
+      "/bookmarks/"
     ],
     "exclude": [
       "/bubbleUI"
