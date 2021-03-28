@@ -74,7 +74,20 @@ export default function Root(props) {
 
   useLayoutEffect(() => {
     console.log(
-      "Looks like you're in the web inspector! We'll get along just fine."
+      `
+ _    _      _                          _ 
+| |  | |    | |                        | |
+| |  | | ___| | ___ ___  _ __ ___   ___| |
+| |/\\| |/ _ \\ |/ __/ _ \\| '_ \` _ \\ / _ \\ |
+\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|
+ \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)
+
+Look's like you're in the web inspector! We'll get along just fine.
+
+Let's talk @ https://www.linkedin.com/in/blakesanie/
+
+View source @ https://github.com/blakesanie/blakesanie.com
+      `
     );
     updatePageWidth();
     window.addEventListener("resize", updatePageWidth);
