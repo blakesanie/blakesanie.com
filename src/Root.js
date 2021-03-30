@@ -9,6 +9,23 @@ import "./root.css";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 
+class SiteDirectory {
+  routes = {
+    "/": "Homepage",
+    "/cs": "Computer Science Projects",
+    "/photo": {
+      "/": "Photography Portfolio",
+      "/gear": "Photography Equipment and Tools",
+    },
+    "/resume": "Professional Résumé",
+    "/linkedin": "LinkedIn Profile",
+    "/github": "Github Profile",
+    "/fund": "The Blake Sanie Fund",
+    "/blog": "Medium Blog Page",
+    "/instagram": "Instagram Profile",
+  };
+}
+
 const redirects = [
   {
     path: "/github",
@@ -75,23 +92,44 @@ export default function Root(props) {
   useLayoutEffect(() => {
     console.log(
       `
- _    _      _                          _ 
+%c _    _      _                          _ 
 | |  | |    | |                        | |
 | |  | | ___| | ___ ___  _ __ ___   ___| |
 | |/\\| |/ _ \\ |/ __/ _ \\| '_ \` _ \\ / _ \\ |
 \\  /\\  /  __/ | (_| (_) | | | | | |  __/_|
  \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)
-
-Look's like you're in the web inspector! We'll get along just fine.
-
-Let's talk @ https://www.linkedin.com/in/blakesanie/
-
-View source @ https://github.com/blakesanie/blakesanie.com
-      `
+      `,
+      "font-family: monospace; font-weight: 1000;"
     );
     console.log(
-      "%c    ",
-      "font-size:200px; background:url(https://i.imgur.com/pzw4C8l.gif) no-repeat; background-size: contain;"
+      `
+Look's like you're in the web inspector! We'll get along just fine.
+
+Say Hi @ https://www.linkedin.com/in/blakesanie/
+
+View source @ https://github.com/blakesanie/blakesanie.com
+
+Site Directory: %O
+
+`,
+      {
+        "/": "Homepage",
+        "/cs": "Computer Science Projects",
+        "/photo": {
+          "/": "Photography Portfolio",
+          "/gear": "Photography Equipment and Tools",
+        },
+        "/resume": "Professional Résumé",
+        "/linkedin": "LinkedIn Profile",
+        "/github": "Github Profile",
+        "/fund": "The Blake Sanie Fund",
+        "/blog": "Medium Blog Page",
+        "/instagram": "Instagram Profile",
+      }
+    );
+    console.log(
+      "%c ",
+      "font-size:200px; padding: 0 150px; background:url(https://i.imgur.com/pzw4C8l.gif) no-repeat; background-size: cover; background-repeat: no-repeat; background-position: center; "
     );
     updatePageWidth();
     window.addEventListener("resize", updatePageWidth);
