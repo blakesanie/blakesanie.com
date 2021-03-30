@@ -99,11 +99,11 @@ export default function Root(props) {
 \\  /\\  /  __/ | (_| (_) | | | | | |  __/_|
  \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)
       `,
-      "font-family: monospace; font-weight: 1000;"
+      "font-family: monospace; font-weight: 1000; font-size: 12px"
     );
     console.log(
       `
-Look's like you're in the web inspector! We'll get along just fine.
+%cLook's like you're in the web inspector! We'll get along just fine.
 
 Say Hi @ https://www.linkedin.com/in/blakesanie/
 
@@ -112,6 +112,7 @@ View source @ https://github.com/blakesanie/blakesanie.com
 Site Directory: %O
 
 `,
+      "font-size: 12px;",
       {
         "/": "Homepage",
         "/cs": "Computer Science Projects",
