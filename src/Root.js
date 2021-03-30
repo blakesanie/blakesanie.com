@@ -89,6 +89,10 @@ Let's talk @ https://www.linkedin.com/in/blakesanie/
 View source @ https://github.com/blakesanie/blakesanie.com
       `
     );
+    console.log(
+      "%c    ",
+      "font-size:200px; background:url(https://i.imgur.com/pzw4C8l.gif) no-repeat; background-size: contain;"
+    );
     updatePageWidth();
     window.addEventListener("resize", updatePageWidth);
     window.addEventListener("scroll", handleScroll);
