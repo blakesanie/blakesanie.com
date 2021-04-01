@@ -3,9 +3,7 @@
 ├── 404Functions.js
 ├── 404Styles.css
 ├── CNAME
-├── chrome
 ├── contact.vcf
-├── dotfiles
 ├── favicons
 │   ├── android-icon-144x144.png
 │   ├── android-icon-192x192.png
@@ -105,4 +103,4 @@
 │   └── style.css
 └── tree.txt
 
-17 directories, 88 files
+15 directories, 88 files
