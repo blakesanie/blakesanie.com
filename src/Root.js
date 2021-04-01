@@ -1,5 +1,6 @@
 import React, { useState, useLayoutEffect } from "react";
 import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
 import CS from "./pages/CS";
 import Resume from "./pages/Resume";
 import Photo from "./pages/Photo";
@@ -8,50 +9,44 @@ import ExternalRedirect from "./pages/Redirect";
 import "./root.css";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { isMobile } from "react-device-detect";
+import { routes } from "./routes";
 
-class SiteDirectory {
-  routes = {
-    "/": "Homepage",
-    "/cs": "Computer Science Projects",
-    "/photo": {
-      "/": "Photography Portfolio",
-      "/gear": "Photography Equipment and Tools",
-    },
-    "/resume": "Professional Résumé",
-    "/linkedin": "LinkedIn Profile",
-    "/github": "Github Profile",
-    "/fund": "The Blake Sanie Fund",
-    "/blog": "Medium Blog Page",
-    "/instagram": "Instagram Profile",
-  };
-}
+const redirects = Object.entries(routes)
+  .filter((pair) => {
+    return Object.keys(pair[1]).length > 0;
+  })
+  .map((pair) => {
+    let data = pair[1];
+    data.path = pair[0];
+    return data;
+  });
 
-const redirects = [
-  {
-    path: "/github",
-    name: "GitHub",
-    href: "https://github.com/blakesanie",
-    external: true,
-  },
-  {
-    path: "/instagram",
-    name: "Instagram",
-    href: "https://www.instagram.com/blake_sanie/",
-    external: true,
-  },
-  {
-    path: "/linkedin",
-    name: "LinkedIn",
-    href: "https://www.linkedin.com/in/blakesanie",
-    external: true,
-  },
-  {
-    path: "/blog",
-    name: "Blog",
-    href: "https://blakesanie.medium.com",
-    external: true,
-  },
-];
+// const redirects = [
+//   {
+//     path: "/github",
+//     name: "GitHub",
+//     href: "https://github.com/blakesanie",
+//     external: true,
+//   },
+//   {
+//     path: "/instagram",
+//     name: "Instagram",
+//     href: "https://www.instagram.com/blake_sanie/",
+//     external: true,
+//   },
+//   {
+//     path: "/linkedin",
+//     name: "LinkedIn",
+//     href: "https://www.linkedin.com/in/blakesanie",
+//     external: true,
+//   },
+//   {
+//     path: "/blog",
+//     name: "Blog",
+//     href: "https://blakesanie.medium.com",
+//     external: true,
+//   },
+// ];
 
 export default function Root(props) {
   const shouldBeMenuBar = () => {
@@ -90,6 +85,12 @@ export default function Root(props) {
   };
 
   useLayoutEffect(() => {
+    if (props.notFound) {
+      window.history.pushState({}, null, "/");
+      setTimeout(() => {
+        alert("Sorry, that page doesn't appear to exist!");
+      }, 500);
+    }
     console.log(
       `
 %c _    _      _                          _ 
@@ -142,7 +143,7 @@ Site Directory: %O
   }, []);
 
   document.getElementsByTagName("html")[0].style.backgroundColor =
-    window.location.pathname === "/" ? "black" : "white";
+    window.location.pathname === "/" || props.notFound ? "black" : "white";
 
   const getIdealHeaderHeight = () => {
     if (window.innerWidth >= 440) {
@@ -161,9 +162,9 @@ Site Directory: %O
   return (
     <BrowserRouter>
       <header
-        className={`${window.location.pathname === "/" ? "dark" : ""} ${
-          transitionable ? "transitionable" : ""
-        }`}
+        className={`${
+          window.location.pathname === "/" || props.notFound ? "dark" : ""
+        } ${transitionable ? "transitionable" : ""}`}
         style={headerStyles}
       >
         <div
@@ -285,11 +286,6 @@ Site Directory: %O
             );
           })}
           <Route path="/" component={Home} />
-          <Route
-            component={() => {
-              return <ExternalRedirect href="/404.html" />;
-            }}
-          />
         </Switch>
       </div>
     </BrowserRouter>

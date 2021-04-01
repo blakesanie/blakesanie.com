@@ -4,13 +4,22 @@ import Root from "./Root";
 import { render } from "react-snapshot";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Bookmarks from "./pages/Bookmarks";
+import { routes } from "./routes";
+
+let paths = new Set(Object.keys(routes));
+paths.delete("/");
+paths = Array.from(paths);
 
 render(
   <React.StrictMode>
     <BrowserRouter>
       <Switch>
         <Route exact path="/bookmarks" component={Bookmarks} />
-        <Route component={Root} />
+        <Route path={paths} component={Root} />
+        <Route exact path="/" component={Root} />
+        <Route path="/">
+          <Root notFound />
+        </Route>
       </Switch>
     </BrowserRouter>
   </React.StrictMode>,
