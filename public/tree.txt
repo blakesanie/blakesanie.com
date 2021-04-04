@@ -1,7 +1,4 @@
 .
-├── 404.html
-├── 404Functions.js
-├── 404Styles.css
 ├── CNAME
 ├── contact.vcf
 ├── favicons
@@ -103,4 +100,4 @@
 │   └── style.css
 └── tree.txt
 
-15 directories, 88 files
+15 directories, 85 files

@@ -277,7 +277,6 @@ Site Directory: %O
                   return (
                     <ExternalRedirect
                       href={redirect.href}
-                      external={redirect.external}
                       name={redirect.name}
                     />
                   );
@@ -285,6 +284,9 @@ Site Directory: %O
               />
             );
           })}
+          <Route path="/redirect">
+            <ExternalRedirect />
+          </Route>
           <Route path="/" component={Home} />
         </Switch>
       </div>

@@ -15,9 +15,9 @@ render(
     <BrowserRouter>
       <Switch>
         <Route exact path="/bookmarks" component={Bookmarks} />
-        <Route path={paths} component={Root} />
+        <Route path={paths.concat(["/redirect"])} component={Root} />
         <Route exact path="/" component={Root} />
-        <Route path="/">
+        <Route path={["/", "/404"]}>
           <Root notFound />
         </Route>
       </Switch>
