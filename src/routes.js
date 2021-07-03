@@ -20,4 +20,8 @@ module.exports.routes = {
     name: "Blog",
     href: "https://blakesanie.medium.com",
   },
+  "/balance": {
+    name: "Balance on Apple Music",
+    href: "https://music.apple.com/us/album/balance/1478925861",
+  },
 };

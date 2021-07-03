@@ -6,6 +6,7 @@
   justify-content: center;
   align-items: center;
   text-align: center;
+  flex-direction: column;
   color: white;
 }
 
@@ -41,6 +42,7 @@ h2 {
   align-items: center;
   flex-direction: column;
   padding: 30px;
+  width: 100%;
 }
 
 .buttonContainer {
@@ -74,6 +76,15 @@ h2 {
   height: 100%;
 }
 
+.wwdcImage {
+  position: static !important;
+  width: 140px !important;
+  height: auto !important;
+  margin-bottom: 20px;
+  margin-top: calc(-20px + 6vh);
+  z-index: 10;
+}
+
 @media screen and (max-width: 800px) {
   /* .frame:first-child {
     height: calc(100vh - 80px);
@@ -83,5 +94,8 @@ h2 {
   }
   .frame h2 {
     font-size: calc(24px + 3vmin) !important;
+  }
+  .wwdcImage {
+    margin-top: calc(-80px + 9vh);
   }
 }

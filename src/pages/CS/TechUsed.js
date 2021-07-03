@@ -57,12 +57,13 @@ export default function TechUsed(props) {
     <div style={props.style} className="techUsed">
       <div className="techRow">
         {props.techUsed.map((name) => {
+          let split = name.split("-");
+          name = split[0];
+          const secondary = split.length > 1 ? split[1] : "";
           return (
-            <div
-              className={`imgContainer ${wideImages.has(name) ? "wide" : ""}`}
-            >
+            <div className={`imgContainer ${secondary}`}>
               <img
-                src={`/images/cs/techUsed/${filenames[name]}`}
+                src={`/images/cs/techUsed/${name}.png`}
                 onMouseEnter={() => {
                   setCurrent(name);
                 }}

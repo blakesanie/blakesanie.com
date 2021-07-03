@@ -31,8 +31,8 @@ export default function Home(props) {
   //(scroll);
   const data = [
     {
-      text: ["^500 Hi, ^500I'm Blake ^2000", "^500 Scroll for more ^1000"],
-      imageUrl: "mac3.jpg",
+      text: ["^500 Hi, ^500I'm Blake ^2000", "^500 Scroll to learn more ^1000"],
+      imageUrl: "macbook3.jpeg",
       links: [],
     },
     {
@@ -153,62 +153,108 @@ export default function Home(props) {
                 (window.innerWidth <= 800 || window.innerHeight > 1200)
                   ? windowHeight - 80
                   : "none",
+              justifyContent: i == 0 ? "flex-start" : "center",
             }}
           >
-            <img
-              alt=""
-              src={`/images/${item.imageUrl}`}
-              style={{
-                opacity: 1 - Math.abs(offset) / windowHeight,
-              }}
-            ></img>
-            <div
-              className="center"
-              style={{
-                transform: `translateY(${offset * -0.2}px)`,
-              }}
-            >
-              {i === 0 ? (
-                <Typed
-                  strings={item.text}
-                  typeSpeed={50}
-                  backSpeed={40}
-                  loop
-                  style={{
-                    fontSize: 70,
-                  }}
-                ></Typed>
-              ) : (
-                <React.Fragment>
-                  <h2>{item.text[0]}</h2>
-                  {item.links ? (
-                    <div className="buttonContainer">
-                      {item.links.map((link, i) => {
-                        return (
-                          <a
-                            key={i}
-                            href={link.url}
-                            target={link.external === true ? "_blank" : "_self"}
-                          >
-                            {link.label}
-                          </a>
-                        );
-                      })}
-                    </div>
-                  ) : null}
-                </React.Fragment>
-              )}
-            </div>
             {i == 0 ? (
-              <div
-                className="particles"
-                style={{
-                  opacity: 1 - Math.abs(offset) / windowHeight,
-                }}
-              >
-                <Particles className="particles" params={particlesParams} />
-              </div>
-            ) : null}
+              <>
+                <div
+                  className="center"
+                  style={{
+                    zIndex: 5,
+                  }}
+                >
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: `50%`,
+                      transform: "translateX(-100px)",
+                      top: 20,
+                      width: 200,
+                      height: 200,
+                      background: `radial-gradient(closest-side, #ffa00060 0%, #00000000 100%)`,
+                    }}
+                  ></div>
+                  <img
+                    src="/images/wwdc_blake.png"
+                    className="wwdcImage"
+                    style={{
+                      transform: `translateY(${offset * -0.2}px)`,
+                    }}
+                  />
+
+                  <Typed
+                    strings={item.text}
+                    typeSpeed={50}
+                    backSpeed={40}
+                    loop
+                    style={{
+                      fontSize: 50,
+                      height: 60,
+
+                      transform: `translateY(${offset * -0.1}px)`,
+                    }}
+                  ></Typed>
+                </div>
+                <div
+                  style={{
+                    flex: 1,
+                    width: "100%",
+                    opacity: 1 - Math.abs(offset) / windowHeight,
+                    transform: `translateY(${offset * 0.1}px)`,
+                    backgroundImage: `url(/images/${item.imageUrl})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center top",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                ></div>
+                <div
+                  className="particles"
+                  style={{
+                    opacity: 1 - Math.abs(offset) / windowHeight,
+                  }}
+                >
+                  <Particles className="particles" params={particlesParams} />
+                </div>
+              </>
+            ) : (
+              <>
+                <img
+                  alt=""
+                  src={`/images/${item.imageUrl}`}
+                  style={{
+                    opacity: 1 - Math.abs(offset) / windowHeight,
+                  }}
+                ></img>
+                <div
+                  className="center"
+                  style={{
+                    transform: `translateY(${offset * -0.2}px)`,
+                  }}
+                >
+                  <React.Fragment>
+                    <h2>{item.text[0]}</h2>
+                    {item.links ? (
+                      <div className="buttonContainer">
+                        {item.links.map((link, i) => {
+                          return (
+                            <a
+                              key={i}
+                              href={link.url}
+                              target={
+                                link.external === true ? "_blank" : "_self"
+                              }
+                            >
+                              {link.label}
+                            </a>
+                          );
+                        })}
+                      </div>
+                    ) : null}
+                  </React.Fragment>
+                </div>
+              </>
+            )}
           </Div100vh>
         );
       })}
