@@ -18,7 +18,7 @@ export default function Redirect(props) {
         href = hashRedirects[hash].href;
         name = hashRedirects[hash].name;
       } else {
-        href = "/";
+        href = "/404.html";
         name = "Home";
       }
     }
