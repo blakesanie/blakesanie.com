@@ -1,0 +1,256 @@
+@import url('https://fonts.googleapis.com/css?family=Droid+Sans');
+
+body {
+  background-color: black;
+  margin: 0;
+  overflow: hidden;
+    font-family: 'Droid Sans', sans-serif;
+}
+
+h1 {
+    color: rgba(255,255,255,0.5);
+    position: absolute;
+    margin: 0;
+    font-size: 16px;
+    line-height: 24px;
+    top: 16px;
+    left: 16px;
+}
+
+span {
+  position: absolute;
+  height: 0.3vw;
+  width: 0.3vw;
+  background-color: white;
+  border-radius: 50%;
+}
+
+#sun {
+  width: 120vw;
+  height: 120vw;
+  background-color: rgb(255, 170, 0);
+  position: absolute;
+  top: 50%;
+  left: -119vw;
+  transform: translateY(-50%);
+  border-radius: 50%;
+}
+
+#gradient {
+  position: absolute;
+  height: 219vw;
+  width: 219vw;
+  left: -159.5vw;
+  background: radial-gradient(farthest-side, rgba(255, 93, 40, 0.6) 54%, rgba(0, 147, 255, 0.2) 80%, transparent 100%);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#container {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.planetHolder {
+  position: relative;
+  height: 125vh;
+  margin-top: 0;
+  flex-basis: auto;
+  box-sizing: border-box;
+  width: 1px;
+  transition: all 0.8s ease;
+  padding: 0;
+}
+
+.four {
+  flex-grow: 2.5;
+}
+
+.one {
+  flex-grow: 1;
+}
+
+.oneFive {
+  flex-grow: 1.5;
+}
+
+.five {
+  flex-grow: 5;
+}
+
+.planetHolder > div {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+#mercury, #venus, #earth, #mars {
+  transition: all 0.8s ease;
+}
+
+#mercury {
+  height: 1vw;
+  width: 1vw;
+  background-color: #C4B5B5;
+}
+
+#venus {
+  height: 1.5vw;
+  width: 1.5vw;
+  background-color: #ECA11E;
+}
+
+#earth {
+  height: 2vw;
+  width: 2vw;
+  background-color: #1BE2C4;
+}
+
+#moonHolder {
+  position: absolute;
+  height: 220%;
+  left: -60%;
+  width: 220%;
+  top: -60%;
+  animation: moon 7s linear infinite;
+}
+
+#moon {
+  height: 15%;
+  width: 15%;
+  border-radius: 50%;
+  background-color: #C8C8C8;
+}
+
+#mars {
+  height: 1.8vw;
+  width: 1.8vw;
+  background-color: #E96C5B;
+}
+
+#jupiter {
+  height: 15vw;
+  width: 15vw;
+  background: linear-gradient(#AC896D 0%, #EFD7BB 15%, #DF946E 25%, #EDB682 35%, #EDB682 45%, #AB6145 55%, #EFD7BB 75%, #AC896D 90%);
+}
+
+#eye {
+  position: absolute;
+  height: 30%;
+  width: 45%;
+  top: 56%;
+  left: 48%;
+  background: radial-gradient(closest-side, #853D21 40%, rgba(210, 190, 166, 0.9) 60%, rgba(210, 190, 166, 0.0) 100%);
+  border-radius: 50%;
+}
+
+#satRings {
+  width: 30vw;
+  height: 7vw;
+  background: radial-gradient(farthest-side, transparent 49%, #C2AAA1 55%, #C2AAA1 75%, transparent 78%, #97867D 85%, #97867D 92%, transparent);
+}
+
+#saturn {
+  position: absolute;
+  height: 12vw;
+  width: 12vw;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: linear-gradient(#524E49, #D8B47C 10%, #D8B47C 35%, #AF905C 40%, #FBCD87 50%, #D3B17F 80%, #524E49);
+}
+
+#satRings > .bottomHalf {
+  position: absolute;
+  width: 100%;
+  height: 3.5vw;
+  top: 50%;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+#satRings > .bottomHalf > #satRings {
+  position: absolute;
+  top: -100%;
+  background: radial-gradient(farthest-side, transparent 51%, #C2AAA1 55%, #C2AAA1 75%, transparent 77%, transparent 81%, #97867D 85%, #97867D 92%, transparent 97%);
+}
+
+#urRings {
+  width: 15vw;
+  height: 3vw;
+  background: radial-gradient(farthest-side, transparent 50%, #4D2400 85%, #4D2400 88%, #E08433 93%, transparent 100%);
+  transform: translate(-50%, -50%) rotateZ(-60deg);
+}
+
+#uranus {
+  position: absolute;
+  height: 7vw;
+  width: 7vw;
+  background: linear-gradient(#1AA79C, #A7DBDF 15%, #1B9DD0 40%, #53B6D8 52%, #1B9DD0 70%, #15859E 85%);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%)
+}
+
+#urRings > .bottomHalf {
+  position: relative;
+  width: 100%;
+  top: 50%;
+  height: 1.5vw;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+#urRings > .bottomHalf > #urRings {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateZ(0deg);
+}
+
+#neptune {
+  height: 7vw;
+  width: 7vw;
+  background: linear-gradient(#2D317B, #4E82FC 35%, #4E82FC 40%, #2D317B 85%);
+}
+
+.planetHolder:hover {
+  background-color: rgba(255,255,255, 0.1);
+  width: 30vw;
+  margin-top: -25vh;
+}
+
+@keyframes moon {
+  0% {
+    transform: rotateZ(0deg)
+  }
+  0% {
+    transform: rotateZ(360deg)
+  }
+}
+
+.text {
+  position: absolute;
+  height: 45vh;
+  width: 85%;
+  border-radius: 0 !important;
+  transform: translate(-50%, 0) !important;
+  top: 74vh !important;
+  overflow: hidden;
+}
+
+p {
+  color: white;
+  margin: 0;
+  opacity: 0;
+  transition: all 0.8s ease;
+  text-indent: 20px;
+  font-size: calc(6px + 1.2vw);
+  line-height: calc(7px + 2vw);
+}

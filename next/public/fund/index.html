@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>The Blake Sanie Fund</title>
+        <meta name="description" content="Improve stock market gains with intelligent automation!"/>
+        <link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="/favicons/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/favicons/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/favicons/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="/favicons/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
+        <link rel="manifest" href="/favicons/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="/favicons/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+        <meta property="og:image" content="/siteThumb.png">
+        <meta property="og:image:type" content="image/png">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="1200">
+        <link href="https://fonts.googleapis.com/css?family=Barlow:200,400&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="style.css" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="canvasjs/canvasjs.min.js"></script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-164774604-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'UA-164774604-1');
+        </script>
+
+    </head>
+    <body>
+        <div id="landing">
+            <h1>The Blake Sanie Fund</h1>
+            <div id="improve">
+                <h2>Improve Stock Market Gains with
+                    <br/>
+                    <span class="emphasize">Automation</span></h2>
+                <table cellspacing="0" id="returnsTable">
+                    <tr class="emphasize">
+                        <td>Sanie</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr>
+                        <td>S&P 500</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
+                <p class="asterisk">
+                    Returns from 2003-2020
+                </p>
+                <p class="action buried">
+                    Learn More
+                </p>
+            </div>
+            <div id="gradient"></div>
+            <div id="chartHolder">
+                <div class="censor"></div>
+                <div id="myChart" class="chart handsOff"></div>
+                <!-- <div id="markerHolder"> <p class="marker" id="myPercent">1000%</p> <p class="marker" id="spyPercent">1000%</p> </div> -->
+                <!-- <div id="hoverHelper"></div> -->
+            </div>
+        </div>
+        <div id="gradientFade"></div>
+        <div id="content">
+            <h3>Total Returns</h3>
+            <h4>Drag to Zoom</h4>
+            <div id="compareHolder">
+                <div class="censor"></div>
+                <div id="compareChart" class="chart"></div>
+                <table cellspacing="0" class="key">
+                    <tr class="myKeyRow">
+                        <td></td>
+                        <td>
+                            Sanie Fund
+                        </td>
+                    </tr>
+                    <tr class="spyKeyRow">
+                        <td></td>
+                        <td>
+                            S&P 500
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <h3>
+                Weekly Returns
+            </h3>
+            <h4>Distribution of Weekly Returns, Split into .5% Intervals</h4>
+            <div id="histogramHolder">
+                <div class="censor"></div>
+                <div id="histogram" class="chart"></div>
+                <table cellspacing="0" class="key">
+                    <tr class="myKeyRow">
+                        <td></td>
+                        <td>
+                            Sanie Fund
+                        </td>
+                    </tr>
+                    <tr class="spyKeyRow">
+                        <td></td>
+                        <td>
+                            S&P 500
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <h3>How it Works</h3>
+            <h4 id="works">
+                An original algorithm screens for assets with strong growth and ranks them according to their potential returns in the near future. Portfolios are intelligently generated on a weekly basis. Funds are allocated to the highest ranking assets, taking
+                risk metrics into account. The algorithm rebalances the portfolio once a week before market open, ready to buy and sell securities on command.
+            </h4>
+            <h3>Risk vs. Reward</h3>
+            <div id="greeks" class="buried">
+                <div class="greek">
+                    <p class="letter">
+                        α
+                    </p>
+                    <p class="riskMetric">
+                        .34
+                    </p>
+                    <div class="greekOverlay handsOff">
+                        <p class="description">
+                            Annual return, compounding year over year
+                        </p>
+                    </div>
+                    <div class="info">
+                        <p class="infoText">
+                            ?
+                        </p>
+                    </div>
+                </div>
+                <div class="greek">
+                    <p class="letter">
+                        β
+                    </p>
+                    <p class="riskMetric">
+                        .49
+                    </p>
+                    <div class="greekOverlay handsOff">
+                        <p class="description">
+                            Amount of risk experienced relative to the S&P 500
+                        </p>
+                    </div>
+                    <div class="info">
+                        <p class="infoText">
+                            ?
+                        </p>
+                    </div>
+                </div>
+                <div class="greek">
+                    <p class="letter">
+                        Sharpe
+                    </p>
+                    <p class="riskMetric">
+                        1.5
+                    </p>
+                    <div class="greekOverlay handsOff">
+                        <p class="description">
+                            Ratio of risk-free returns to excess returns.
+                            <br/>
+                            <a href="https://en.wikipedia.org/wiki/Sharpe_ratio" target="_blank">Learn more</a>
+                        </p>
+                    </div>
+                    <div class="info">
+                        <p class="infoText">
+                            ?
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- <div id="normalHolder" class="handsOff"> <div class="censor"></div> <div id="normal" class="chart"></div> </div> -->
+            <h3>Statistical Significance</h3>
+            <p class="step">
+                Assume:<br/>μ<sub>Sanie</sub>
+                - μ<sub>S&P 500</sub>
+                = 0
+            </p>
+            <p class="step">
+                Hypothesize:<br/>μ<sub>Sanie</sub>
+                - μ<sub>S&P 500</sub>
+                > 0
+            </p>
+            <p class="step">
+                Conduct:<br/>
+                <a href="http://www.stat.yale.edu/Courses/1997-98/101/meancomp.htm" target="_blank">Two-Sample t-Test for Difference in Means</a>
+            </p>
+            <!-- <p class="step"> Calculate:<br/>(μ<sub>Sanie</sub> - μ<sub>S&P 500</sub>)<br/>/ (σ<sub>Sanie</sub> <sup>2</sup> + σ<sub>S&P 500</sub> <sup>2</sup>) <sup>.5</sup> <br/>* (n<sub>shared</sub>) <sup>.5</sup> </p> -->
+            <div id="tTestGraphHolder" class="handsOff">
+                <div class="censor"></div>
+                <div id="tTestGraph" class="chart"></div>
+
+            </div>
+            <p class="description" id="works">
+                With an effective p-value of 0.0003, we can be 99.97% confident that the Sanie Strategy outperforms the S&P 500 on a weekly basis. These findings are highly unlikely due to chance.
+            </p>
+            <h3>Jump Onboard</h3>
+            <div id="underConstruction" class="buried">
+                <p class="linkAccount">
+                    Link your brokerage account
+                </p>
+                <div id="brokers"><img class="broker" src="./images/schwab.jpg"/>
+                    <img class="broker" src="./images/td.png"/>
+                    <img class="broker" src="./images/etrade.jpg"/>
+                    <img class="broker" src="./images/robinhood.png"/>
+                    <img class="broker" src="./images/merrill.png"/></div>
+                <p class="cautionTape">
+                    Under Construction<br/>Coming Soon!
+                </p>
+                <script src="data.js" type="text/javascript"></script>
+                <script src="landing.js" type="text/javascript"></script>
+                <script src="functions.js" type="text/javascript"></script>
+                <script src="scroll.js" type="text/javascript"></script>
+            </body>
+        </html>
