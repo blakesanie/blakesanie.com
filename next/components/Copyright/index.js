@@ -18,16 +18,6 @@ export default function Copyright(props) {
     >
       {`Copyright © Blake Sanie ${new Date().getFullYear()} | All rights reserved | `}
       <a
-        href="https://www.apache.org/licenses/LICENSE-2.0"
-        target="_blank"
-        style={{
-          color: "inherit",
-        }}
-      >
-        License
-      </a>
-      {` | `}
-      <a
         href="https://github.com/blakesanie/blakesanie.com"
         target="_blank"
         style={{
@@ -36,6 +26,17 @@ export default function Copyright(props) {
       >
         Source
       </a>
+      {` | `}
+      <a
+        href="https://www.apache.org/licenses/LICENSE-2.0"
+        target="_blank"
+        style={{
+          color: "inherit",
+        }}
+      >
+        License
+      </a>
+
       {props.links
         ? props.links.map((link) => {
             return (

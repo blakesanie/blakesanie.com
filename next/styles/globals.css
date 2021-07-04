@@ -24,3 +24,12 @@ a {
   flex-direction: column;
   align-items: center;
 }
+
+.invisible {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body {
+  min-height: 100vh;
+}

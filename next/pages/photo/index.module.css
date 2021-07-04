@@ -1,0 +1,69 @@
+.masonry img {
+  /* transition: opacity 0.2s ease; */
+  border-radius: 0px;
+  cursor: pointer;
+}
+
+.masonry {
+  width: 100%;
+}
+
+.fullScreen {
+  position: fixed;
+  top: 0;
+  left: 220px;
+  right: 0;
+  bottom: 0;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 999999999;
+  backdrop-filter: blur(12px);
+  transition: opacity 0.2s ease;
+}
+
+.fullScreen .exit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-bottom-right-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.fullScreen .half {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  cursor: w-resize;
+}
+
+.fullScreen .half:last-of-type {
+  left: 50%;
+  cursor: e-resize;
+}
+
+.fullScreenImage {
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+@media screen and (max-width: 800px) {
+  .fullScreen {
+    left: 0;
+  }
+  .photo {
+    padding: 0 14px !important;
+  }
+}
+
+/* @media screen and (max-width: 340px) {
+  .content {
+    padding: 0 20px !important;
+  }
+} */

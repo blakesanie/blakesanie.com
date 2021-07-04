@@ -160,7 +160,7 @@ Site Directory: %O
           <div className={styles.navSection}>
             <h3>Engineering</h3>
             <Link href="/resume">Résumé</Link>
-            <Link href="/cs">Projects</Link>
+            <Link href="/projects">Projects</Link>
             <Link href="/github" target="_blank">
               Github
             </Link>
@@ -203,7 +203,17 @@ Site Directory: %O
         </nav>
         <p className={styles.madeBy}>
           Built by Blake Sanie with
-          <Link href="https://reactjs.org/" target="_blank" rel="noreferrer">
+          <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
+            <img
+              alt=""
+              src="https://seeklogo.com/images/N/next-js-logo-8FCFF51DD2-seeklogo.com.png"
+              style={{
+                filter: `invert(100%)`,
+              }}
+            ></img>
+          </a>
+          ,
+          <a href="https://reactjs.org/" target="_blank" rel="noreferrer">
             <img
               alt=""
               src="https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/react-512.png"
@@ -211,13 +221,9 @@ Site Directory: %O
                 filter: `invert(100%)`,
               }}
             ></img>
-          </Link>
+          </a>
           ,
-          <Link
-            href="https://pages.github.com/"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href="https://pages.github.com/" target="_blank" rel="noreferrer">
             <img
               alt=""
               src="https://www.flaticon.com/svg/static/icons/svg/25/25231.svg"
@@ -225,7 +231,7 @@ Site Directory: %O
                 filter: `invert(100%)`,
               }}
             ></img>
-          </Link>
+          </a>
           , and
           <img
             alt=""
