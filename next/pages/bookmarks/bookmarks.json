@@ -1,0 +1,237 @@
+{
+   "checksum": "60d8b59d302f43cd99752da512ed05e7",
+   "roots": {
+      "bookmark_bar": {
+         "children": [ {
+            "date_added": "13257403662783978",
+            "guid": "d15ce429-6638-4576-89aa-8852e37eb17d",
+            "id": "5",
+            "name": "Probabilistic Bayesian Neural Networks",
+            "type": "url",
+            "url": "https://keras.io/examples/keras_recipes/bayesian_neural_networks/"
+         }, {
+            "date_added": "13257547115427876",
+            "guid": "3dacce08-a850-47b4-952e-969cb2684d4b",
+            "id": "7",
+            "name": "mdps-intro-value-iteration.pptx",
+            "type": "url",
+            "url": "https://people.eecs.berkeley.edu/~pabbeel/cs287-fa12/slides/mdps-exact-methods.pdf"
+         }, {
+            "date_added": "13257573543610704",
+            "guid": "059ad73c-9c24-4112-8c9e-436ae4298aa3",
+            "id": "8",
+            "name": "How To Find Stocks That Go Up 1,000% Before Everyone Else | by Marc Guberti | Data Driven Investor | Feb, 2021 | Medium",
+            "type": "url",
+            "url": "https://medium.com/datadriveninvestor/how-to-find-stocks-that-go-up-1-000-before-everyone-else-ed7446bb344d"
+         }, {
+            "date_added": "13259013478081215",
+            "guid": "6657244f-4e3b-46d7-9d8d-d8b9dd2470b1",
+            "id": "10",
+            "name": "Pearson",
+            "type": "url",
+            "url": "https://www.pearson.com/store/login"
+         }, {
+            "date_added": "13259165606471313",
+            "guid": "be3f0ac9-2062-4df0-9304-9429a2344e35",
+            "id": "12",
+            "name": "CS- 3510-B-EXAMS",
+            "type": "url",
+            "url": "https://piazza.com/class/klqybyzhvd540v?cid=6"
+         }, {
+            "date_added": "13261375108430469",
+            "guid": "6a76accf-4244-4be9-9eb7-68913c674f90",
+            "id": "14",
+            "name": "CS 4873C  Ethics Blair MacIntyre Spring’21 | Computing, Society, & Professionalism",
+            "type": "url",
+            "url": "https://github.blairmacintyre.me/cs4873-s21/"
+         }, {
+            "date_added": "13261377493519944",
+            "guid": "89c9d4ac-ecd9-475c-acf3-ff3651c8a98b",
+            "id": "15",
+            "name": "Blake Sanie",
+            "type": "url",
+            "url": "https://www.blakesanie.com/"
+         }, {
+            "date_added": "13261377511737964",
+            "guid": "589e98c0-ace5-4a47-92cc-e2ecc740f390",
+            "id": "16",
+            "name": "Blake Sanie – Medium",
+            "type": "url",
+            "url": "https://blakesanie.medium.com/"
+         }, {
+            "date_added": "13261377537740133",
+            "guid": "f204b853-6c61-4e50-81f7-513217ac9617",
+            "id": "17",
+            "name": "Blake Sanie | LinkedIn",
+            "type": "url",
+            "url": "https://www.linkedin.com/in/blakesanie/"
+         }, {
+            "date_added": "13261377548161835",
+            "guid": "f4c42eb3-514f-4139-944a-15d00ff9eb92",
+            "id": "18",
+            "name": "Dashboard | Gradescope",
+            "type": "url",
+            "url": "https://www.gradescope.com/"
+         }, {
+            "date_added": "13261377643619251",
+            "guid": "8fc29b8d-404d-483e-9021-9cb91f0c82ca",
+            "id": "19",
+            "name": "CS2200-Project4/src at master · bsanie3/CS2200-Project4",
+            "type": "url",
+            "url": "https://github.gatech.edu/bsanie3/CS2200-Project4/tree/master/src"
+         }, {
+            "date_added": "13261377656569710",
+            "guid": "56b9d12a-de86-44de-861e-60b6f6f08ad7",
+            "id": "20",
+            "name": "Gatech Github",
+            "type": "url",
+            "url": "https://github.gatech.edu/"
+         }, {
+            "date_added": "13261377695610467",
+            "guid": "063f95c4-7b7a-4786-8ff2-9e329e36e57b",
+            "id": "21",
+            "name": "BuzzPort | Georgia Tech",
+            "type": "url",
+            "url": "https://buzzport.gatech.edu/my/"
+         }, {
+            "date_added": "13261377705764467",
+            "guid": "0441a546-f811-442e-ad4d-2c4ef4cb0680",
+            "id": "22",
+            "name": "Oscar Registration",
+            "type": "url",
+            "url": "https://oscar.gatech.edu/bprod/twbkwbis.P_GenMenu?name=bmenu.P_StuMainMnu"
+         }, {
+            "date_added": "13261377734135942",
+            "guid": "33a38994-a545-414f-ae65-bd763a48f39b",
+            "id": "23",
+            "name": "Ellucian Degree Works - Georgia Tech DegreeWorks Audit",
+            "type": "url",
+            "url": "https://degreeaudit.gatech.edu/DashboardServlet/"
+         }, {
+            "date_added": "13261377776965568",
+            "guid": "b3cd49b6-fb6d-4d95-835e-38cd9075144f",
+            "id": "24",
+            "name": "Dashboard | Canvas",
+            "type": "url",
+            "url": "https://gatech.instructure.com/"
+         }, {
+            "date_added": "13261377812662622",
+            "guid": "8b445088-5bbe-4384-a9c4-fc51390ff45f",
+            "id": "25",
+            "name": "Blake's Portfolio - Stock Portfolio & Tracker - Yahoo Finance",
+            "type": "url",
+            "url": "https://finance.yahoo.com/portfolio/p_1/view/v1"
+         }, {
+            "date_added": "13261377834732108",
+            "guid": "11faf144-d367-461b-92e0-57ce538a31ca",
+            "id": "26",
+            "name": "Portfolio | Robinhood",
+            "type": "url",
+            "url": "https://robinhood.com/"
+         }, {
+            "date_added": "13262114540486466",
+            "guid": "cbf51d1d-3bb8-459b-8881-93583ce51d46",
+            "id": "28",
+            "name": "Solutions to Applied Statistics and Probability for Engineers (9781118539712) :: Homework Help and Answers :: Slader",
+            "type": "url",
+            "url": "https://www.slader.com/textbook/9781118539712-applied-statistics-and-probability-for-engineers-6th-edition/"
+         }, {
+            "date_added": "13262458061209508",
+            "guid": "dcc0c557-acb7-4996-ae45-3fcd6c9c281e",
+            "id": "30",
+            "name": "NP Completeness and Reductions",
+            "type": "url",
+            "url": "https://courses.engr.illinois.edu/cs573/fa2013/lec/slides/02_notes.pdf"
+         }, {
+            "date_added": "13263439483627479",
+            "guid": "038f0ce0-5028-4de7-8a95-7472f230139b",
+            "id": "32",
+            "name": "GT Breakout Room Reservation",
+            "type": "url",
+            "url": "https://gtevents.gatech.edu/EmsWebApp/Default.aspx"
+         }, {
+            "date_added": "13263856470642410",
+            "guid": "708d5dce-f4af-45cf-a5ef-f07eb4104424",
+            "id": "34",
+            "name": "Covid-19 Exposure and Health Alerts | Stamps Health Services | Georgia Tech | Atlanta, GA",
+            "type": "url",
+            "url": "https://health.gatech.edu/coronavirus/health-alerts"
+         }, {
+            "date_added": "13264319158546626",
+            "guid": "13975290-9603-4391-a8bb-bcd2b637d69f",
+            "id": "36",
+            "name": "python 3.x - How to call asynchronous functions without expecting returns from them? - Stack Overflow",
+            "type": "url",
+            "url": "https://stackoverflow.com/questions/56199803/how-to-call-asynchronous-functions-without-expecting-returns-from-them"
+         }, {
+            "date_added": "13264644519919041",
+            "guid": "3371b771-a05b-4c83-85dc-7b205d1c4254",
+            "id": "38",
+            "name": "Great UI - Technical Demo - FingerprintJS Pro",
+            "type": "url",
+            "url": "https://fingerprintjs.com/demo/"
+         }, {
+            "date_added": "13265321700640431",
+            "guid": "be5ce621-5f30-40d3-a89a-aaa4c650ce1f",
+            "id": "40",
+            "name": "Understanding async await in python socket io / aiohttp server - Stack Overflow",
+            "type": "url",
+            "url": "https://stackoverflow.com/questions/48229592/understanding-async-await-in-python-socket-io-aiohttp-server"
+         }, {
+            "date_added": "13265942222683986",
+            "guid": "d26f110d-78d1-4009-b404-1289bcb326c0",
+            "id": "42",
+            "name": "Georgia Tech VPN",
+            "type": "url",
+            "url": "https://vpn.gatech.edu/global-protect/login.esp"
+         }, {
+            "date_added": "13266368897695443",
+            "guid": "d48ea887-276a-465b-ad89-312fa09bf238",
+            "id": "44",
+            "name": "Introduction to 1D Convolutional Neural Networks in Keras for Time Sequences | by Nils | Good Audience",
+            "type": "url",
+            "url": "https://blog.goodaudience.com/introduction-to-1d-convolutional-neural-networks-in-keras-for-time-sequences-3a7ff801a2cf"
+         }, {
+            "date_added": "13266559135026884",
+            "guid": "da9a165d-e8a7-4ec8-8fd6-71fb7de56e15",
+            "id": "45",
+            "name": "Markdown Cheatsheet · adam-p/markdown-here Wiki",
+            "type": "url",
+            "url": "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"
+         }, {
+            "date_added": "13266781647382711",
+            "guid": "532d3f63-9c6f-48e2-a67f-9fb6c946d1ca",
+            "id": "47",
+            "name": "Blake's Stocks Sheet - Google Sheets",
+            "type": "url",
+            "url": "https://docs.google.com/spreadsheets/d/1W8S2c7igI-jNjOgErO4AmXAF0h66T7fAqDgNhPbklOM/edit#gid=0"
+         } ],
+         "date_added": "13256183821369156",
+         "date_modified": "13266781647382711",
+         "guid": "00000000-0000-4000-a000-000000000002",
+         "id": "1",
+         "name": "Bookmarks",
+         "type": "folder"
+      },
+      "other": {
+         "children": [  ],
+         "date_added": "13256183821369248",
+         "date_modified": "0",
+         "guid": "00000000-0000-4000-a000-000000000003",
+         "id": "2",
+         "name": "Other Bookmarks",
+         "type": "folder"
+      },
+      "synced": {
+         "children": [  ],
+         "date_added": "13256183821369271",
+         "date_modified": "0",
+         "guid": "00000000-0000-4000-a000-000000000004",
+         "id": "3",
+         "name": "Mobile Bookmarks",
+         "type": "folder"
+      }
+   },
+   "sync_metadata": "CooBChAIiIECEgrchqm9tV4AAAAAEgAaWFhqdU4zVUdJK1NKV0VQa042d0FYZkI3WEUyUDYxYjF5QVgyME9PSFYxRkVud2Y1WFVRNzVaOWtuakh6VVcvUFZPL3hkVlFibFFQQkh1cCtGbUs1SjBnPT0gASoYaWt0TDFUWTZkYngzUWFOOHh0WmJqZz09EqUBCCoSoAEKHCszOU5xSzNILzJkbisyTjd4blMvNHEzL2pCND0SJDkxNmQ3NjUxLWRhMmUtNGVjYS04MWRjLThiNzBmMzViNTQwNBgAIAMoAzADON/evriYL0C8iJSFmS9KHFpwa0laV2NyWWhPb2lWQ0xJQ25lbCtBWGZoTT1aISIf///2VSt4ZGFnS3R5NU5WVURiYTZ3bEtXcVFmR1FBPWW6IvsfEqMBCAwSngEKHHYwODBVNXVnZms2dzFiK1B6djVJTlNWNllBND0SJGQxNjhkODMyLTRhOWQtNGVjYy1iNmRiLWRhNTIyYmFlMzZkMBgAIAMoAzACOMj0kpn/LkCylpSFmS9KHFZvWk15WEFSbEp3SWpVcWlXbDFYblVNUHZuND1aHyId7U4yd1MzK1d4amlhSjJtVFFBSHJmZ1RJczRVND1lYBHXShKiAQgHEp0BChxrWFJsUHN6UXJLKy81akl2UVFRN0N1dldDU1U9EiRkYTczZDNmMi1jZTdhLTQzMWUtYmIxYy0xMmQ1ZGIxN2Y3ZDMYACACKAIwAjinh7KV+S5Ao5aUhZkvShxCOFIyeEc1aG12LzR0UGVtQXJFYjA1RGJQUVU9Wh4iHGhGSDNaRG9rblZVTmxnODZ4dVRXNjEyZ0YyTT1lfZwf0RKjAQgOEp4BChx1UEZVTnJjWHArZEV1LzBiaHNpVU9nOWs1c3M9EiQ2NzMwMjMyMy05NGE2LTQ4NzQtYmMxZC00NThkYTM5YzUxN2YYACACKAIwAzjSmty2hy9AwJaUhZkvShx2emkzQmRDZWQvYms4eFRSTG1WVEo2QlVEVEk9Wh8iHfZObDk5OUY0ckdKSmFhdzVYdi9IQjRrbEdkOVk9ZQAAAAASowEIDxKeAQocL3JBdTIrN04rVlg1Sk9lejBjNFB3cVp2ZlRBPRIkYTUzMGM0NWEtMThmMS00MmNjLTlmOTQtNWEzZmE3MDUyOGE1GAAgBCgEMAQ4kOTtt4cvQLCIlIWZL0ocZHY0QWxEVm1vbXRWR0lRcEwzT3VsQWhqSGc0PVofIh37eC9xQnBzVVNXSHpjL001R3lLQjJwbFNBTEQ0PWUd4Dx5EqQBCB4SnwEKHC96aVdVSzVieEpadWwrK29uTjlWVW9NcFlOTT0SJDE5M2M2NGI4LWU0MzktNDA3ZS1iNTQ1LWY3ZjYzMzExYjEwYxgAIAIoAjACOJuzjruLL0DHlpSFmS9KHHpQUVhqaG1PQUJ1cWtxbWUvNyt1aWM3Mktmaz1aICIe//9PVlZlcHA1c1RVY21NVXZwVTZueWNyNGd5ME09ZQAAAAASpAEIGhKfAQocVGZUaTN4QiswaTd6QW12YlFhRkVhZzBTS2VRPRIkYzgzYmRiNDItNTRhOS00Y2EzLWE5ZjgtNDM0NTg0Y2U1NWQ1GAAgAigCMAI47c2CuIcvQJeIlIWZL0ocNzAxMEhuKzdDSUVyWWhrd04wa1lnWjJaVjBRPVogIh7//kIrbGVwalRJTXNDMW5XRGduOUtUTWdYM1dEVT1lmP8PihKuAQgvEqkBChxaMUZ0WUNWK25RcWRFMDA0V2FBelR0WkQ2TzA9EiQ1MzJkM2Y2My05YzZmLTQ4ZTItYTY3Zi05ZmI2Yzk0NmQxY2EYACABKAAw////////////ATiYlOHImy9AmJThyJsvShxXeGpkMnpHbnJvY2tXaVVKWkxXLy96TzBhcHc9WiEiH////jkzT09XYWtMMFNLa3RUcXp5Q3FaUFRNeFdlST1lAAAAABKDAQgCEn8KHHpEVkdycnRaTGRNKzRCVHliZytIQ09yV2d5bz0SJDQxNWFjYWFjLWM5MWUtNDNjNS04NWU3LTMyOGQxZGU5YWMyYRgAIAAoADABOMP47qP0LkDD+O6j9C5KHDV1c3kvY3BmcGkxRXRvQkhEZ1hJczBxYjRyQT1aAGUAAAAAEqQBCCASnwEKHHRUem9hWDVkUXlrTVM3L01HeXliVXNPV2Nhcz0SJDM1ZTA2NDYwLTFjODctNGQ1ZS1hZWM5LTEwYmQ0NjRjNTc5YhgAIAMoAzADOOzVi4+PL0DCiJSFmS9KHDRvc3dBRXBUZEY2VlMvREJuLzkyaDZSWVdIZz1aICIe//9odGYrb3ZUMDI4QndwY3VLRHVDTlBQcmNNWG89ZRu1tdESgwEIAxJ/Chx5NVdFMjd1STZ2WC9EZUlTSEp6bmpNcXVXV3M9EiRiOTE5YjcwMS0yOGMxLTQyNzYtOTZhZi04MGJhZjgyYjgyZTAYACAAKAAwATjD+O6j9C5Aw/juo/QuShw3OWwrTFJFVXBpYUV2REQrRzQzY3BYU3R3QmM9WgBlAAAAABKjAQgKEp4BChxTVS9RbDRyU0hhLzU3dHhDdGF4Q2JGTjlhTkk9EiQ1MmI0MzQ0ZS0zNTQ5LTRmODAtODZiNC02ZDc2N2Y1OWU0YWUYACADKAMwAzjC3c3Q/i5AuZaUhZkvShx6V29QN2h5SEtwWDY2RTY5T05JVzNsa0JDamc9Wh8iHdo5YU50MWZUeU50WitYbFNKeFZGOTVJS0V4bEE9ZZavIagSpAEIGBKfAQoccGNHU2x5b2pYNWYxTUZ5RTl6b1k5WDZFN29vPRIkMGNmZTk3NDgtZDg3NC00MWNkLWEwMjUtZmE5NWM2NmYwNGRmGAAgQyhDMCg4x4r/t4cvQNuIlIWZL0ocTzBVdG1GTEhzdzNLclN6RThMcjl6d3lUMFFjPVogIh7/+0JUOXpmMkdQRUI4SXY1akg4STRQaTN2L3U3ND1lHanytRKlAQgmEqABChxVaU92cUxQMG9WMUdSbDAvNXAxdG1KMFFHRVE9EiRjYzI0NTZkNy04MzU4LTQ3NWMtOTY3NC1hYzc5MGM0ZjViMTMYACADKAMwAzjyn9nNky9AiYiUhZkvShx5WjdHSjhBdklBMnJFdkJBY21rNjcvOTFLY3M9WiEiH///2zI0U0FIUlVtc29nZXNpbVAvRWxYcjNMWGVMZz1lB4kWrRKDAQgBEn8KHC9FS0xhVVV5TWRiS0VrMUJhMlVpbnlEbmY3ST0SJDkxMTZmMTQ5LTMyOTQtNDc2Mi1hYjA2LWIyZGQ4MTMyZDA2ZRgAIAAoADABOMP47qP0LkDD+O6j9C5KHFUrR0dJdFpFRHBac0lTbE9VYUlUdUlMZE1uST1aAGUAAAAAEqQBCCISnwEKHDhETXc5d0N6eFNPejlxWnluN0hTQlpJM0hSQT0SJDk0MjBjYjY4LTVlMTQtNGVkYi1hNTFjLWFiYWJmMGQwNTcxNRgAIAIoAjACOPPE9tWQL0CkiJSFmS9KHGtOdHZPM0Y2ajlBQXRlVEpJMFEvTEJJZjBwRT1aICIe//9uSjg2eHZOem1jRFZMUVpTSGEycjdyRHZTTFE9Zboi+x8SpAEIHBKfAQocc2t1VVFpL2tqRGJDVXY4RjhoNlVnVGFkRUljPRIkODM4MGQyNTEtZGY3OS00NDFmLWJlMzctMWRkODRkMzA3MGE4GAAgAigCMAI4yMenl4ovQPSIlIWZL0ocWGszb0FXR1p2WXdrNG56UlFYdHdFRThjVnlvPVogIh7//015OXVjQ1dqbzRYbVRTY2FsdmJMcjlrVnBkaz1lOrFcbBKkAQgZEp8BChxUUitmaDV1cXdwQTNzME9wZkpZR285eGZpVjQ9EiRmNWE2MWZmYS0zMTY3LTRhM2UtYjgyNC1kMDAyNGUyMjBlYWUYACACKAIwAji3oYG4hy9AzoiUhZkvShx6eHdTNHlXS2ZnTUp2TlhJcjF6aStmSGFQcDQ9WiAiHv/9ZTNHRk9mUFlYVWozSjhhZHlCMkgvakpvUXYwPWXUmE6iEqUBCCwSoAEKHDM3RW5ucUJ4Qms0R2M0dUZjZUZJWDhkWm03cz0SJDQxY2EyYzNkLTE1NDktNDYxZi05ZjNlLWVmNDA2MTYwZGYxMhgAIAIoAjABOKH1+IOaL0Dm9fiDmi9KHHQvQ1o1L3owTEsvelE4dy9saEFucVJIeGhXZz1aISIf///7SVpNblNCSWtpaVpLeWdvSWlrcWZHVVRXR2lnPWVbhUNjEqMBCBMSngEKHGhkeXpudmIyYm90U3VBQWd4YThrNTFLME9SQT0SJGMyN2Y0ZDg0LWY2YmYtNGFiZi05YTc3LTFiNjAwNTRiNWJmYxgAIAIoAjACOOb49reHL0CeiJSFmS9KHEhSRjVRbW1uQkhuY3JKcWJERU0wN2NvWSt6OD1aHyId/3JWc1VuUVltZEx0RDRlRUcxa3B4K294YlpSYz1lNktZgRKjAQgQEp4BChxjbjVYY3ZpWXlJcjM5cnFTeHAxUnlORjdVSEk9EiRjNzJhMjM0OS00MWZjLTQ5YWItYWM1Mi1mZGZhNzcyYmJiMDkYACACKAIwAji88u63hy9A+oiUhZkvShwvQU1ibVIwc0s4OHNsSnVDVWptakV1U0ZESUk9Wh8iHf1OaXRWSDBNOVpocEJoam41dzh2djdIM1c5R0U9ZVuFQ2MSogEIBRKdAQocbWpoa1RjTU5kZTBaRmZGcGZiNm4yYzRSSVNjPRIkNWFlNjVkODktNDU1MC00NTUyLWJkNzYtNWM2MDQ2NjM1OTQxGAAgAigCMAI4wrP+0PguQNSWlIWZL0ocRDhOSjJWaFVmQzh3VGJ2MmdxZHhTS2QyREM0PVoeIhwrNEZJUmVwNmV5cmpXRVMrbjVRS3VFYjRMWms9ZQTLqQMSowEIEhKeAQocSzlvZEl1TmZ1bXAySFEvWXV2QzNrMHp5UmFrPRIkOTMzM2M3NTQtM2E5Zi00YWNiLTg0NzItYzkzMTQ4MTdhMzNmGAAgAigCMAI4g4/xt4cvQOaIlIWZL0ocR1FHeHFJUE05YTEyWU53YkhBVktXNnIzbnJRPVofIh3/ZEdDcW02OEpqOWJzSmJRdnZZbk1lTzhlajZvPWWbvY6jEqQBCBUSnwEKHDVWTnpnck96YSt0SGZrcEh4MUdyVlNaRHdaQT0SJGY3Nzg3YzM3LTk5MjUtNDI5OC05ODdlLWQ2N2VkZGE2MzllNRgAIAQoBDAEOPuO+reHL0CqiJSFmS9KHGlFOEZZTmwwSmFzWE53SGIrZFgrNnBsTDllZz1aICIe/9xnNWZqUE12bG1DbWpvQ0hqSTdzYVZMR3A4K1U9ZepNY9kSpAEIFBKfAQocYzJSYXpsZHJ0bVZMd3lwcnFVQjQ4WUFKMGdnPRIkNzNmNTM2ZGYtYWZmNy00YjYxLTgzYmItOWYxZmJkZmM3ZDc1GAAgAygDMAM4+t33t4cvQO2IlIWZL0ocL2tINHR0VjFIdWVYR1kycEh0Q1RNcmpMQkFZPVogIh7/uW1wM2RoMFd6T09vNSswK1dsMjNWTTI4UHRUaz1lNktZgRKjAQgIEp4BChwvZFBtYkRXbEExNGdmTjkwa1JQTDFZd0lrRkk9EiQ5NDI0ZDE4ZC0zZDlhLTRiMjgtOWVhMy03YjlmNDIwYTAyNTQYACACKAIwAji+jf+h+S5ArJaUhZkvShxXS094UWVkYllTSVZKV09nL29Ha0tkT1FFbFE9Wh8iHbRKOUlONTN0NmxnNG5UK3hreHZGYStqNjhBRms9ZVuFQ2MSpAEIFhKfAQocSXhUYUhRcEV6b2NaUmZQTklGdnRyWjZPTU1zPRIkMWQ4YWY5ZmItNjRiYi00MGQxLWJjYTktMTlkNzg4NGQzNDAyGAAgCCgIMAY4pt76t4cvQM2WlIWZL0ocOGwwNFNhZXFpcVVMY0U4STFIWVFRb0sybzM4PVogIh7/7lI5M3dJSW5GRW1iL2NsWDFMb1V4Ym1WQ3Jnbz1lAAAAABKjAQgREp4BChwxdTJ6dlVrVUxDMEU3THV0TFZHaE0wS1FzQlE9EiQ3NmMzNDlhMS0yYmZiLTQxZjctOWY4ZS01YmNiYThmYTRhNGQYACAGKAYwBTjOvfC3hy9AyIiUhZkvShxKSERPdnJzdklMTlM5MWo1RzZodnNKYmt1b2s9Wh8iHf5MbWo2VktXeTkwNjNlNndhaGt6VXk4eU1pMk09ZeLId0ASpAEIFxKfAQocZ2lURncvMEt5SWVkekZoYXNSQUFlL0xSWFhBPRIkMTgzN2E1YmYtYzM3YS00ZDUyLThmNzEtNjNjYzYwZGE0OTVmGAAgBCgEMAQ4+bv8t4cvQIOIlIWZL0ocQWowT1l4SVBTbU9udHVGNmI3eTJVSkFlb2xrPVogIh7/90o3Q05TLzZMbjZMMnZ4TWE5eFlqSEYrRWI2dz1l8iaaqhKlAQgkEqABChw4M2Zpc3IzaXI4YTh1TWdXUVhCQjdGMk9CZk09EiQzNTcxNDM3Yi0zN2FmLTRmN2ItYjBlNC05MDQ2YTViZDc5OWMYACACKAIwAjiV4sayki9A1IiUhZkvShxhOTZZS084L3pOL05qMEF1dUJ0RHhXdzRMMzQ9WiEiH///t2tsTDBrZGdxN0liQ1E2QWVNVmh0bVhyNHMwWT1lD8w0FBKlAQgoEqABChxwL1V3YjRWUjVsMEF3Vkl5a2pKejh3TExPM289EiRmMjUwYzkyMC01OWMyLTRiNTktOGIxMi1kOGY1NjBiYWM0NjUYACACKAIwAjinis2Qli9AtoiUhZkvShw5UDJoTVAyQ29PWURBa29hVk1pK2JUeUZnV0U9WiEiH///7UhGWllOK1ZDYzRhRFJSUitwU1ZhS0FvQTFUWT1lD8w0FBKqAQgtEqUBChw3cVJhbkZpOHR4UHB2RjRUM0hIUGlRM0dHMVE9EiQ2MDAwMWQ3ZC00YmFlLTRlZjQtYTg0My02ODc0NjFiNzIxNjkYACACKAIwrsPU3povOLOK1N6aL0DmitTemi9KHGJhdzVRVHdyU08xbjVlL1dnSnk3SHJoRjhIQT1aISIf///9akdOUm5qYnZucDRWcXFBd1QzeUhKVFFmdFZFPWUIDEouGAEgl4vhyJsvKAA=",
+   "version": 1
+}

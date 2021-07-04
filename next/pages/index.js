@@ -1,6 +1,6 @@
 import HeaderAndFooter from "../components/HeaderAndFooter";
 import styles from "./index.module.css";
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Typed from "react-typed";
 import "react-typed/dist/animatedCursor.css";
 import Div100vh, { use100vh } from "react-div-100vh";
@@ -8,12 +8,13 @@ import { isMobile } from "react-device-detect";
 import Particles from "react-particles-js";
 import { particlesParams } from "./particlesParams.js";
 import CopyRight from "../components/Copyright";
+import Link from "next/link";
 
 export default function Home(props) {
   const [scroll, setScroll] = useState(0);
   const windowHeight = use100vh();
   const [windowWidth, setWindowWidth] = useState(500);
-  useLayoutEffect(() => {
+  useEffect(() => {
     window.addEventListener(
       "scroll",
       (e) => {
@@ -133,6 +134,9 @@ export default function Home(props) {
         html {
           background-color: black;
         }
+        header {
+          background-color: black !important;
+        }
       `}</style>
       <CopyRight
         style={{
@@ -149,7 +153,7 @@ export default function Home(props) {
             key={i}
             style={{
               maxHeight:
-                i == 0 && (windowWidth <= 800 || windowHeight > 1200)
+                i == 0 && (windowWidth <= 800 || windowHeight >= 1200)
                   ? windowHeight - 80
                   : "none",
               justifyContent: i == 0 ? "flex-start" : "center",
@@ -168,7 +172,7 @@ export default function Home(props) {
                       position: "absolute",
                       left: `50%`,
                       transform: "translateX(-100px)",
-                      top: 20,
+                      top: 26,
                       width: 200,
                       height: 200,
                       background: `radial-gradient(closest-side, #ffa00060 0%, #00000000 100%)`,
@@ -201,12 +205,15 @@ export default function Home(props) {
                     width: "100%",
                     opacity: 1 - Math.abs(offset) / windowHeight,
                     transform: `translateY(${offset * 0.1}px)`,
-                    backgroundImage: `url(/images/${item.imageUrl})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center top",
-                    backgroundRepeat: "no-repeat",
                   }}
-                ></div>
+                >
+                  <img
+                    src={`/images/${item.imageUrl}`}
+                    style={{
+                      position: `relative`,
+                    }}
+                  ></img>
+                </div>
                 <div
                   className={styles.particles}
                   style={{
@@ -240,7 +247,7 @@ export default function Home(props) {
                       <div className={styles.buttonContainer}>
                         {item.links.map((link, i) => {
                           return (
-                            <a
+                            <Link
                               key={i}
                               href={link.url}
                               target={
@@ -248,7 +255,7 @@ export default function Home(props) {
                               }
                             >
                               {link.label}
-                            </a>
+                            </Link>
                           );
                         })}
                       </div>

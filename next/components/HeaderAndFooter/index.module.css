@@ -19,7 +19,7 @@
 
 .header h1 {
   color: white;
-  padding: 5px 0;
+  padding: 5px 18px;
   border: 2px dashed rgba(255, 255, 255, 0.2);
   font-size: 28px;
   max-width: 180px;
@@ -51,8 +51,8 @@
   /* border: 1px solid red; */
 }
 
-.header.transitionable {
-  transition: height 0.2s ease, transform 0.4s ease;
+.transitionable {
+  transition: none;
 }
 
 .invisible {
@@ -95,10 +95,6 @@
   right: 0;
   width: calc(100% - 220px);
   animation: fadeIn 1s ease;
-}
-
-.content {
-  padding: 0 40px;
 }
 
 .page h1 {
@@ -214,6 +210,9 @@
   .madeBy img {
     width: 16px;
     height: 16px;
+  }
+  .transitionable {
+    transition: height 0.2s ease, transform 0.4s ease;
   }
 }
 

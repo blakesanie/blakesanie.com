@@ -1,81 +1,127 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { isMobile } from "react-device-detect";
 import styles from "./index.module.css";
-import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function HeaderAndFooter(props) {
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(true);
-  const [transitionable, setTransitionable] = useState(true);
-  const [windowInnerWidth, setWindowInnerWidth] = useState(500);
-  const [windowInnerHeight, setWindowInnerHeight] = useState(500);
-
-  const router = useRouter();
-  console.log(router);
-
-  let currentTimeout;
+  const [shouldBeMenuBar, setShouldBeMenuBar] = useState(true);
+  const [transitionable, setTransitionable] = useState(shouldBeMenuBar);
+  const [windowDim, setWindowDim] = useState({
+    height: undefined,
+    width: undefined,
+    scrollY: undefined,
+  });
 
   const toggleMenu = () => {
     // alert(menuExpanded);
     setMenuExpanded(!menuExpanded);
   };
 
-  const shouldBeMenuBar = () => {
-    return windowInnerWidth <= 800 || windowInnerHeight > 1200;
+  let currentTimeout;
+
+  const updatePageWidth = () => {
+    if (shouldBeMenuBar) {
+      setTransitionable(false);
+      currentTimeout = setTimeout(() => {
+        setTransitionable(true);
+      }, 200);
+    } else {
+      if (currentTimeout) {
+        clearTimeout(currentTimeout);
+      }
+      setTransitionable(false);
+    }
   };
 
-  useLayoutEffect(() => {
-    if (props.notFound) {
-      window.history.pushState({}, null, "/");
-      setTimeout(() => {
-        alert("Sorry, that page doesn't appear to exist!");
-      }, 500);
-    }
+  useEffect(() => {
+    setWindowDim({
+      width: window.innerWidth,
+      height: window.innerHeight,
+      scrollY: window.scrollY,
+    });
+    setHeaderVisible(window.innerWidth <= 800);
+    const handleMenuBar = () => {
+      console.log(
+        "transitionable",
+        window.innerWidth <= 800 || window.innerHeight > 1200
+      );
+      setShouldBeMenuBar(window.innerWidth <= 800 || window.innerHeight > 1200);
+    };
+    console.log(
+      `
+%c _    _      _                          _ 
+| |  | |    | |                        | |
+| |  | | ___| | ___ ___  _ __ ___   ___| |
+| |/\\| |/ _ \\ |/ __/ _ \\| '_ \` _ \\ / _ \\ |
+\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|
+ \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)
+      `,
+      "font-family: monospace; font-weight: 1000; font-size: 12px"
+    );
+    console.log(
+      `
+%cLook's like you're in the web inspector! We'll get along just fine.
 
-    setWindowInnerWidth(window.innerWidth);
-    setWindowInnerHeight(window.innerHeight);
+Say Hi @ https://www.linkedin.com/in/blakesanie/
 
+View source @ https://github.com/blakesanie/blakesanie.com
+
+Site Directory: %O
+
+`,
+      "font-size: 12px;",
+      {
+        "/": "Homepage",
+        "/cs": "Computer Science Projects",
+        "/photo": {
+          "/": "Photography Portfolio",
+          "/gear": "Photography Equipment and Tools",
+        },
+        "/resume": "Professional Résumé",
+        "/linkedin": "LinkedIn Profile",
+        "/github": "Github Profile",
+        "/fund": "The Blake Sanie Fund",
+        "/blog": "Medium Blog Page",
+        "/instagram": "Instagram Profile",
+      }
+    );
+    console.log(
+      "%c ",
+      "font-size:200px; padding: 0 150px; background:url(https://i.imgur.com/pzw4C8l.gif) no-repeat; background-size: cover; background-repeat: no-repeat; background-position: center; "
+    );
     const handleScroll = () => {
       setHeaderVisible(
         window.scrollY < window.innerHeight || window.innerHeight > 1200
       );
+      handleMenuBar();
     };
-
-    const updatePageWidth = () => {
-      if (shouldBeMenuBar()) {
-        handleScroll();
-        currentTimeout = setTimeout(() => {
-          setTransitionable(true);
-        }, 200);
-      } else {
-        if (currentTimeout) {
-          clearTimeout(currentTimeout);
-        }
-        setTransitionable(false);
-      }
+    const handleResize = () => {
+      setShouldBeMenuBar(window.innerWidth <= 800 || window.innerHeight > 1200);
+      updatePageWidth();
+      handleScroll();
+      handleMenuBar();
     };
-
-    setHeaderVisible(window.innerWidth <= 800);
-    setTransitionable(shouldBeMenuBar());
-
+    handleMenuBar();
     updatePageWidth();
-    window.addEventListener("resize", updatePageWidth);
+    window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("resize", updatePageWidth);
+      window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   const getIdealHeaderHeight = () => {
-    if (windowInnerWidth >= 440) {
+    if (windowDim.width >= 440) {
       return 248;
     }
     return 382;
   };
 
   let headerStyles = {};
-  if (shouldBeMenuBar()) {
+  if (shouldBeMenuBar) {
     headerStyles.height = menuExpanded ? `${getIdealHeaderHeight()}px` : "80px";
     headerStyles.transform = `translateY(${
       headerVisible || menuExpanded ? 0 : "-100"
@@ -85,14 +131,15 @@ export default function HeaderAndFooter(props) {
     <>
       <header
         className={`
-          ${styles.header} ${router.pathname == "/" ? styles.dark : ""}
+          ${styles.header}
+          ${transitionable ? styles.transitionable : ""}
         `}
         style={headerStyles}
       >
         <div
           className={`
-            ${styles.hamburger},
-            ${menuExpanded ? styles.rotated : ""},
+            ${styles.hamburger}
+            ${menuExpanded ? styles.rotated : ""}
           `}
           onClick={toggleMenu}
         >
@@ -100,9 +147,9 @@ export default function HeaderAndFooter(props) {
           <div className={styles.line}></div>
           <div className={styles.line}></div>
         </div>
-        <a href="/">
+        <Link href="/">
           <h1>Blake Sanie</h1>
-        </a>
+        </Link>
         <h2>
           <span>‌‌‎Inquisitive student.‎‌‌</span>
           <span>Aspiring engineer.</span>
@@ -112,51 +159,51 @@ export default function HeaderAndFooter(props) {
         <nav className={styles.nav}>
           <div className={styles.navSection}>
             <h3>Engineering</h3>
-            <a href="/resume">Résumé</a>
-            <a href="/cs">Projects</a>
-            <a href="/github" target="_blank">
+            <Link href="/resume">Résumé</Link>
+            <Link href="/cs">Projects</Link>
+            <Link href="/github" target="_blank">
               Github
-            </a>
+            </Link>
           </div>
           <div className={styles.navSection}>
             <h3>Ventures</h3>
-            <a href="/fund" target="_blank">
+            <Link href="/fund" target="_blank">
               Stock Fund
-            </a>
-            <a
+            </Link>
+            <Link
               href="https://investivision.com"
               target="_blank"
               rel="noreferrer"
             >
               Investivision
-            </a>
-            <a href="/blog" target="_blank">
+            </Link>
+            <Link href="/blog" target="_blank">
               Blog
-            </a>
+            </Link>
           </div>
           <div className={styles.navSection}>
             <h3>Photography</h3>
-            <a href="/photo">Portfolio</a>
-            <a href="/photo/gear">Gear</a>
+            <Link href="/photo">Portfolio</Link>
+            <Link href="/photo/gear">Gear</Link>
           </div>
           <div className={styles.navSection}>
             <h3>Personal</h3>
-            <a href="/linkedin" target="_blank">
+            <Link href="/linkedin" target="_blank">
               LinkedIn
-            </a>
+            </Link>
             {isMobile ? (
-              <a href="/contact.vcf">Contact Card</a>
+              <Link href="/contact.vcf">Contact Card</Link>
             ) : (
-              <a href="mailto:blake@sanie.com">Email</a>
+              <Link href="mailto:blake@sanie.com">Email</Link>
             )}
-            <a href="/instagram" target="_blank">
+            <Link href="/instagram" target="_blank">
               Instagram
-            </a>
+            </Link>
           </div>
         </nav>
         <p className={styles.madeBy}>
           Built by Blake Sanie with
-          <a href="https://reactjs.org/" target="_blank" rel="noreferrer">
+          <Link href="https://reactjs.org/" target="_blank" rel="noreferrer">
             <img
               alt=""
               src="https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/react-512.png"
@@ -164,9 +211,13 @@ export default function HeaderAndFooter(props) {
                 filter: `invert(100%)`,
               }}
             ></img>
-          </a>
+          </Link>
           ,
-          <a href="https://pages.github.com/" target="_blank" rel="noreferrer">
+          <Link
+            href="https://pages.github.com/"
+            target="_blank"
+            rel="noreferrer"
+          >
             <img
               alt=""
               src="https://www.flaticon.com/svg/static/icons/svg/25/25231.svg"
@@ -174,7 +225,7 @@ export default function HeaderAndFooter(props) {
                 filter: `invert(100%)`,
               }}
             ></img>
-          </a>
+          </Link>
           , and
           <img
             alt=""

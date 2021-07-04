@@ -1,0 +1,43 @@
+.techUsed {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.techRow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.techRow .imgContainer {
+  height: 30px;
+  margin: 5px;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.techRow .wide img {
+  height: 20px;
+}
+
+.techRow .imgContainer:hover {
+  transform: scale(1.2);
+}
+
+.techRow img {
+  height: 100%;
+}
+
+.currentTechnology {
+  text-align: center;
+  height: 20px;
+  margin-bottom: 10px;
+}
