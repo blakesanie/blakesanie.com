@@ -10,12 +10,24 @@
   color: white;
 }
 
-.frame img {
+.imageWrapper > div {
+  height: 100%;
+  width: 100%;
+}
+
+.coverImage {
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  object-fit: cover;
+}
+
+/* .frame img {
   position: absolute;
   height: 100%;
   width: 100%;
   object-fit: cover;
-}
+} */
 
 .frame h2 {
   font-size: 44px;
