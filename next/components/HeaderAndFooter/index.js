@@ -41,7 +41,7 @@ export default function HeaderAndFooter(props) {
       height: window.innerHeight,
       scrollY: window.scrollY,
     });
-    setHeaderVisible(window.innerWidth <= 800 || window.innerHeight > 1200);
+    setHeaderVisible(window.innerWidth <= 800);
     const handleMenuBar = () => {
       setShouldBeMenuBar(window.innerWidth <= 800 || window.innerHeight > 1200);
     };

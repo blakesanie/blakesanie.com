@@ -3,6 +3,7 @@ import styles from "./index.module.css";
 import TechUsed from "../../components/TechUsed";
 import Copyright from "../../components/Copyright";
 import HeaderAndFooter from "../../components/HeaderAndFooter";
+import { NextSeo } from "next-seo";
 
 const projects = [
   {
@@ -220,6 +221,7 @@ const projects = [
 export default function CS(props) {
   return (
     <HeaderAndFooter>
+      <NextSeo title="Blake Sanie - Projects" />
       <div className={`content ${styles.cs}`}>
         <h1>Projects</h1>
         {projects.map((project, i) => {

@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./index.module.css";
 import Copyright from "../../../components/Copyright";
 import HeaderAndFooter from "../../../components/HeaderAndFooter";
+import { NextSeo } from "next-seo";
 
 const data = [
   {
@@ -74,6 +75,7 @@ const data = [
 export default function Gear(props) {
   return (
     <HeaderAndFooter>
+      <NextSeo title="Blake Sanie - Photo Gear" />
       <div className={`content ${styles.gear}`}>
         <h1>Gear</h1>
         <div className={styles.gearContainer}>

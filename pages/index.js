@@ -9,6 +9,7 @@ import Particles from "react-particles-js";
 import { particlesParams } from "../extras/particlesParams.js";
 import CopyRight from "../components/Copyright";
 import Link from "next/link";
+import Head from "next/head";
 
 const data = [
   {
@@ -28,7 +29,7 @@ const data = [
     imageUrl: "mac2.jpg",
     links: [
       {
-        url: "/cs",
+        url: "/projects",
         label: "Projects",
       },
       {

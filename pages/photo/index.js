@@ -4,6 +4,7 @@ import Masonry from "react-masonry-component";
 import Copyright from "../../components/Copyright";
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.js";
 import styles from "./index.module.css";
+import { NextSeo } from "next-seo";
 
 var didShuffle = false;
 
@@ -79,6 +80,7 @@ export default function Photo(props) {
 
   return (
     <HeaderAndFooter>
+      <NextSeo title="Blake Sanie - Photography" />
       <div className={`content ${styles.photo}`}>
         <h1>Photo</h1>
         <Masonry
