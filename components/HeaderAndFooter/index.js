@@ -2,105 +2,65 @@ import React, { useState, useEffect } from "react";
 import { isMobile } from "react-device-detect";
 import styles from "./index.module.css";
 import Link from "next/link";
+import { NewsArticleJsonLd } from "next-seo";
+
+let mouseHistory = {
+  current: undefined,
+  prev: undefined,
+};
+
+let timeout;
 
 export default function HeaderAndFooter(props) {
   const [menuExpanded, setMenuExpanded] = useState(false);
-  const [headerVisible, setHeaderVisible] = useState(true);
+  const [menuIsDown, setMenuIsDown] = useState(true);
   const [shouldBeMenuBar, setShouldBeMenuBar] = useState(true);
-  const [transitionable, setTransitionable] = useState(shouldBeMenuBar);
-  const [windowDim, setWindowDim] = useState({
-    height: undefined,
-    width: undefined,
-    scrollY: undefined,
-  });
+  const [transitionable, setTransitionable] = useState(false);
+  const [idealHeaderHeight, setIdealHeaderHeight] = useState(248);
 
   const toggleMenu = () => {
     // alert(menuExpanded);
     setMenuExpanded(!menuExpanded);
   };
 
-  let currentTimeout;
-
-  const updatePageWidth = () => {
-    if (shouldBeMenuBar) {
-      setTransitionable(false);
-      currentTimeout = setTimeout(() => {
-        setTransitionable(true);
-      }, 200);
-    } else {
-      if (currentTimeout) {
-        clearTimeout(currentTimeout);
-      }
-      setTransitionable(false);
-    }
-  };
-
   useEffect(() => {
-    setWindowDim({
-      width: window.innerWidth,
-      height: window.innerHeight,
-      scrollY: window.scrollY,
-    });
-    setHeaderVisible(window.innerWidth <= 800 || window.innerHeight > 1200);
-    const handleMenuBar = () => {
-      setShouldBeMenuBar(window.innerWidth <= 800 || window.innerHeight > 1200);
-    };
-    console.log(
-      `
-%c _    _      _                          _ 
-| |  | |    | |                        | |
-| |  | | ___| | ___ ___  _ __ ___   ___| |
-| |/\\| |/ _ \\ |/ __/ _ \\| '_ \` _ \\ / _ \\ |
-\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|
- \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)
-      `,
-      "font-family: monospace; font-weight: 1000; font-size: 12px"
-    );
-    console.log(
-      `
-%cLook's like you're in the web inspector! We'll get along just fine.
-
-Say Hi @ https://www.linkedin.com/in/blakesanie/
-
-View source @ https://github.com/blakesanie/blakesanie.com
-
-Site Directory: %O
-
-`,
-      "font-size: 12px;",
-      {
-        "/": "Homepage",
-        "/cs": "Computer Science Projects",
-        "/photo": {
-          "/": "Photography Portfolio",
-          "/gear": "Photography Equipment and Tools",
-        },
-        "/resume": "Professional Résumé",
-        "/linkedin": "LinkedIn Profile",
-        "/github": "Github Profile",
-        "/fund": "The Blake Sanie Fund",
-        "/blog": "Medium Blog Page",
-        "/instagram": "Instagram Profile",
-      }
-    );
-    console.log(
-      "%c ",
-      "font-size:200px; padding: 0 150px; background:url(https://i.imgur.com/pzw4C8l.gif) no-repeat; background-size: cover; background-repeat: no-repeat; background-position: center; "
-    );
     const handleScroll = () => {
-      setHeaderVisible(
-        window.scrollY < window.innerHeight || window.innerHeight > 1200
-      );
-      handleMenuBar();
+      mouseHistory = {
+        current: window.scrollY,
+        prev: mouseHistory.current,
+      };
+      console.log(mouseHistory.current - mouseHistory.prev);
+      const delta = mouseHistory.current - mouseHistory.prev;
+      if (delta > 0) {
+        setMenuIsDown(false);
+      }
+      if (delta < -70) {
+        setMenuIsDown(true);
+      }
     };
     const handleResize = () => {
-      setShouldBeMenuBar(window.innerWidth <= 800 || window.innerHeight > 1200);
-      updatePageWidth();
-      handleScroll();
-      handleMenuBar();
+      const result = window.innerWidth < 800 || window.innerHeight > 1200;
+      if (!result) {
+        setTransitionable(false);
+        console.log("transitionable false");
+        clearInterval(timeout);
+        timeout = undefined;
+      } else if (result && !timeout) {
+        timeout = setTimeout(() => {
+          setTransitionable(true);
+          console.log("transitionable true");
+          timeout = undefined;
+        }, 400);
+      }
+      if (window.innerWidth >= 440) {
+        setIdealHeaderHeight(248);
+      } else {
+        setIdealHeaderHeight(382);
+      }
+      setShouldBeMenuBar(result);
     };
-    handleMenuBar();
-    updatePageWidth();
+    handleScroll();
+    handleResize();
     window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", handleScroll);
     return () => {
@@ -109,19 +69,21 @@ Site Directory: %O
     };
   }, []);
 
-  const getIdealHeaderHeight = () => {
-    if (windowDim.width >= 440) {
-      return 248;
-    }
-    return 382;
-  };
-
   let headerStyles = {};
   if (shouldBeMenuBar) {
-    headerStyles.height = menuExpanded ? `${getIdealHeaderHeight()}px` : "80px";
-    headerStyles.transform = `translateY(${
-      headerVisible || menuExpanded ? 0 : "-100"
-    }%)`;
+    headerStyles.height = menuExpanded ? `${idealHeaderHeight}px` : "80px";
+    if (mouseHistory.current <= 80 && !menuIsDown && !menuExpanded) {
+      headerStyles.position = "absolute";
+    } else if (!menuExpanded) {
+      if (mouseHistory.prev <= 80 && mouseHistory.current > 80) {
+        headerStyles.transition = "None";
+        headerStyles.transform = `translateY(${-100}%)`;
+      } else {
+        headerStyles.transform = `translateY(${
+          menuIsDown || menuExpanded ? 0 : "-100"
+        }%)`;
+      }
+    }
   }
   return (
     <>
