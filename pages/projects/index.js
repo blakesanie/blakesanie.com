@@ -213,7 +213,7 @@ const projects = [
         github: "https://github.com/blakesanie/Bounce",
       },
     ],
-    imageUrl: "images/cs/bounce.jpg",
+    imageUrl: "/images/cs/bounce.jpg",
     techUsed: ["Swift", "Xcode", "GameKit", "App Store Connect"],
   },
 ];
@@ -241,7 +241,7 @@ export default function CS(props) {
                           rel="noreferrer"
                           className={styles.github}
                           style={{
-                            backgroundImage: `url("../images/cs/techUsed/github.png")`,
+                            backgroundImage: `url("../images/cs/techUsed/Github.png")`,
                           }}
                         >
                           View on

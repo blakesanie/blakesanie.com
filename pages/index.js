@@ -14,7 +14,7 @@ import Head from "next/head";
 const data = [
   {
     text: ["^500 Hi, ^500I'm Blake ^2000", "^500 Scroll to learn more ^1000"],
-    imageUrl: "macbook3.jpeg",
+    imageUrl: "macbook1.jpeg",
     links: [],
   },
   {
@@ -130,6 +130,7 @@ export default function Home(props) {
     // );
   }, []);
   //(scroll);
+  const frameHeight = Math.min(windowHeight, 1000);
   return (
     <HeaderAndFooter>
       <style jsx global>{`
@@ -148,15 +149,16 @@ export default function Home(props) {
         }}
       />
       {data.map((item, i) => {
-        let offset = scroll - windowHeight * i;
+        let offset = scroll - frameHeight * i;
         return (
-          <Div100vh
+          <div
             className={styles.frame}
             key={i}
             style={{
+              height: frameHeight,
               maxHeight:
                 i == 0 && (windowWidth <= 800 || windowHeight >= 1200)
-                  ? windowHeight - 80
+                  ? frameHeight - 80
                   : "none",
               justifyContent: i == 0 ? "flex-start" : "center",
             }}
@@ -266,7 +268,7 @@ export default function Home(props) {
                 </div>
               </>
             )}
-          </Div100vh>
+          </div>
         );
       })}
     </HeaderAndFooter>

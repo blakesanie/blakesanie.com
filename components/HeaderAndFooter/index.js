@@ -17,6 +17,7 @@ export default function HeaderAndFooter(props) {
   const [shouldBeMenuBar, setShouldBeMenuBar] = useState(true);
   const [transitionable, setTransitionable] = useState(false);
   const [idealHeaderHeight, setIdealHeaderHeight] = useState(248);
+  const [scroll, setScroll] = useState(0);
 
   const toggleMenu = () => {
     // alert(menuExpanded);
@@ -29,7 +30,7 @@ export default function HeaderAndFooter(props) {
         current: window.scrollY,
         prev: mouseHistory.current,
       };
-      console.log(mouseHistory.current - mouseHistory.prev);
+      setScroll(window.scrollY);
       const delta = mouseHistory.current - mouseHistory.prev;
       if (delta > 0) {
         setMenuIsDown(false);
@@ -51,6 +52,10 @@ export default function HeaderAndFooter(props) {
           console.log("transitionable true");
           timeout = undefined;
         }, 400);
+        if (!mouseHistory.current) {
+          setTransitionable(true);
+          console.log("transitionable true");
+        }
       }
       if (window.innerWidth >= 440) {
         setIdealHeaderHeight(248);
@@ -72,7 +77,8 @@ export default function HeaderAndFooter(props) {
   let headerStyles = {};
   if (shouldBeMenuBar) {
     headerStyles.height = menuExpanded ? `${idealHeaderHeight}px` : "80px";
-    if (mouseHistory.current <= 80 && !menuIsDown && !menuExpanded) {
+    if (scroll <= 0) {
+    } else if (scroll <= 80 && !menuIsDown && !menuExpanded) {
       headerStyles.position = "absolute";
     } else if (!menuExpanded) {
       if (mouseHistory.prev <= 80 && mouseHistory.current > 80) {
