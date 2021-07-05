@@ -22,13 +22,10 @@
   flex-direction: row-reverse;
 }
 
-.project .image {
+.imageContainer {
   position: relative;
   width: min(max(40%, 300px), 400px);
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  margin: 0 25px;
+  height: 400px;
 }
 
 /* .iframeWrapper {
@@ -75,7 +72,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .linksContainer a {
@@ -100,9 +97,16 @@
   background-position: 83% center;
 }
 
+@media screen and (max-width: 1050px) {
+  .imageContainer {
+    width: 80%;
+    height: 300px;
+  }
+}
+
 @media screen and (max-width: 800px) {
-  .image {
-    width: min(80%, 400px) !important;
+  .imageContainer {
+    height: min(50vw, 250px) !important;
   }
   .cs {
     padding: 0 20px !important;

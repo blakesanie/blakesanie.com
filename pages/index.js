@@ -9,24 +9,35 @@ import Particles from "react-particles-js";
 import { particlesParams } from "../extras/particlesParams.js";
 import CopyRight from "../components/Copyright";
 import Link from "next/link";
-import Head from "next/head";
+import Image from "next/image";
+
+import macbook3 from "../public/images/macbook3.jpeg";
+import crosland from "../public/images/crosland.jpg";
+import mac2 from "../public/images/mac2.jpg";
+import stock from "../public/images/stock.png";
+import hawaii from "../public/images/full/DSC_0817.jpeg";
+import mandel1 from "../public/images/mandel1.png";
+import startup from "../public/images/startup.jpg";
+import connect from "../public/images/connect.jpg";
+
+import wwdcImage from "../public/images/wwdc_blake.png";
 
 const data = [
   {
     text: ["^500 Hi, ^500I'm Blake ^2000", "^500 Scroll to learn more ^1000"],
-    imageUrl: "macbook1.jpeg",
+    imageUrl: macbook3,
     links: [],
   },
   {
     text: [
       "I am a Computer Science student at the Georgia Institute of Technology.",
     ],
-    imageUrl: "crosland.jpg",
+    imageUrl: crosland,
     links: [],
   },
   {
     text: ["Ultimately, I am an engineer at heart"],
-    imageUrl: "mac2.jpg",
+    imageUrl: mac2,
     links: [
       {
         url: "/projects",
@@ -41,7 +52,7 @@ const data = [
   },
   {
     text: ["Fascinated with automated stock trading"],
-    imageUrl: "stock.png",
+    imageUrl: stock,
     links: [
       { url: "/fund", label: "Stock Fund", external: true },
       {
@@ -53,7 +64,7 @@ const data = [
   },
   {
     text: ["With a sense of photographic expression."],
-    imageUrl: "full/DSC_0817.jpeg",
+    imageUrl: hawaii,
     links: [
       {
         url: "/photo",
@@ -67,12 +78,12 @@ const data = [
   },
   {
     text: ["I encourage you to learn from my ventures,"],
-    imageUrl: "mandel1.png",
+    imageUrl: mandel1,
     links: [{ url: "/blog", label: "Blog" }],
   },
   {
     text: ["Reach out with professional inquiries,"],
-    imageUrl: "startup.jpg",
+    imageUrl: startup,
     links: [
       {
         url: "/linkedin",
@@ -87,7 +98,7 @@ const data = [
   },
   {
     text: ["Or connect with me further."],
-    imageUrl: "connect.jpg",
+    imageUrl: connect,
     links: [
       {
         url: "mailto:blake@sanie.com",
@@ -130,7 +141,6 @@ export default function Home(props) {
     // );
   }, []);
   //(scroll);
-  const frameHeight = Math.min(windowHeight, 1000);
   return (
     <HeaderAndFooter>
       <style jsx global>{`
@@ -149,16 +159,15 @@ export default function Home(props) {
         }}
       />
       {data.map((item, i) => {
-        let offset = scroll - frameHeight * i;
+        let offset = scroll - windowHeight * i;
         return (
-          <div
+          <Div100vh
             className={styles.frame}
             key={i}
             style={{
-              height: frameHeight,
               maxHeight:
                 i == 0 && (windowWidth <= 800 || windowHeight >= 1200)
-                  ? frameHeight - 80
+                  ? windowHeight - 80
                   : "none",
               justifyContent: i == 0 ? "flex-start" : "center",
             }}
@@ -182,13 +191,17 @@ export default function Home(props) {
                       background: `radial-gradient(closest-side, #ffa00060 0%, #00000000 100%)`,
                     }}
                   ></div>
-                  <img
-                    src="/images/wwdc_blake.png"
-                    className={styles.wwdcImage}
-                    style={{
-                      transform: `translateY(${offset * -0.2}px)`,
-                    }}
-                  />
+                  <div className={styles.wwdcImage}>
+                    <Image
+                      src={wwdcImage}
+                      width="140"
+                      height="185"
+                      layout="fixed"
+                      style={{
+                        transform: `translateY(${offset * -0.2}px)`,
+                      }}
+                    />
+                  </div>
 
                   <Typed
                     strings={item.text}
@@ -210,13 +223,15 @@ export default function Home(props) {
                     opacity: 1 - Math.abs(offset) / windowHeight,
                     transform: `translateY(${offset * 0.1}px)`,
                   }}
+                  className={styles.imageWrapper}
                 >
-                  <img
-                    src={`/images/${item.imageUrl}`}
-                    style={{
-                      position: `relative`,
-                    }}
-                  ></img>
+                  <Image
+                    className={styles.coverImage}
+                    src={item.imageUrl}
+                    layout="responsive"
+                    quality="100"
+                    priority
+                  />
                 </div>
                 <div
                   className={styles.particles}
@@ -232,13 +247,22 @@ export default function Home(props) {
               </>
             ) : (
               <>
-                <img
-                  alt=""
-                  src={`/images/${item.imageUrl}`}
+                <div
                   style={{
                     opacity: 1 - Math.abs(offset) / windowHeight,
+                    position: "absolute",
+                    height: "100%",
+                    width: "100%",
                   }}
-                ></img>
+                >
+                  <Image
+                    src={item.imageUrl}
+                    layout="fill"
+                    quality="100"
+                    objectFit="cover"
+                    loading="eager"
+                  />
+                </div>
                 <div
                   className={styles.center}
                   style={{
@@ -268,7 +292,7 @@ export default function Home(props) {
                 </div>
               </>
             )}
-          </div>
+          </Div100vh>
         );
       })}
     </HeaderAndFooter>

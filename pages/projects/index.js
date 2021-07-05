@@ -4,12 +4,31 @@ import TechUsed from "../../components/TechUsed";
 import Copyright from "../../components/Copyright";
 import HeaderAndFooter from "../../components/HeaderAndFooter";
 import { NextSeo } from "next-seo";
+import Image from "next/image";
+
+import InvestivisionImage from "../../public/images/cs/investivision.png";
+
+import UXAIImage from "../../public/images/cs/uxai.png";
+
+import BubbleImage from "../../public/images/cs/bubble.png";
+
+import StockBotImage from "../../public/images/cs/fund_chart.png";
+
+import AcrossImage from "../../public/images/cs/AcrossTheAisle.jpg";
+import HeadlinesImage from "../../public/images/cs/headlines.jpg";
+import SpotifyImage from "../../public/images/cs/spotify.png";
+import CalculessImage from "../../public/images/cs/calculess.jpg";
+import TwitterPoetryImage from "../../public/images/cs/TwitterPoetryBot.png";
+import TrendingTwitterImage from "../../public/images/cs/twitter.jpg";
+import ProximityImage from "../../public/images/cs/proximity.jpg";
+import BounceImage from "../../public/images/cs/bounce.jpg";
+import StockAnalysisImage from "../../public/images/cs/stockAnalysis.png";
 
 const projects = [
   {
     name: "Investivision",
     desc: "Intelligent stock market investing tools for the long-term. View the market's top investments at a glance, browse our vast array of rankings, and construct your personal portfolio with optimal growth versus volatility characteristics. Available on web, and soon mobile!",
-    imageUrl: "/images/cs/investivision.png",
+    imageUrl: InvestivisionImage,
     links: [
       {
         text: "Visit Website",
@@ -33,7 +52,7 @@ const projects = [
   {
     name: "UX-AI",
     desc: "An web-based AI agent that strengthens user experience by intelligently inferring user behavior status given demonstrated page interactions. With these valuable insights, UX-AI encourages sites to dynamically adjust user experience with the goal of optimizing engagement during casual, fast-paced, and distracted browsing sessions.",
-    imageUrl: "/images/cs/uxai.png",
+    imageUrl: UXAIImage,
     links: [
       {
         text: "Demo",
@@ -61,7 +80,7 @@ const projects = [
   {
     name: "React Bubble UI",
     desc: "A highly configurable Bubble UI React.js component, similar to the iconic Apple Watch app layout. This custom element provides a playful and curious feel that trumps dull grid-based webpage layouts. Download this open source package or contribute on GitHub today!",
-    imageUrl: "/images/cs/bubble.png",
+    imageUrl: BubbleImage,
     links: [
       {
         text: "Demo",
@@ -87,7 +106,7 @@ const projects = [
   {
     name: "Stock Bot",
     desc: "A fully autonomous stock trading system. LSTM-based neural networks continuously learn from historical data using a genetic algorithm in order to produce weekly portfolios optimized for risk and volatility. Even with zero human oversight, account value grows exponentially!",
-    imageUrl: "/images/cs/fund_chart.png",
+    imageUrl: StockBotImage,
     links: [
       {
         text: "Learn More",
@@ -100,7 +119,7 @@ const projects = [
   {
     name: "Across the Aisle",
     desc: "An app that tries to unite a politically divided America. By housing discussion threads for a variety of controversial political topics, Americans from all over the political spectrum can understand each other's perspectives. Awarded as finalist in 2018 Congressional App Challenge.",
-    imageUrl: "/images/cs/AcrossTheAisle.jpg",
+    imageUrl: AcrossImage,
     links: [
       {
         text: "View Submission",
@@ -113,7 +132,7 @@ const projects = [
   {
     name: "Regression-Based Stock Analysis",
     desc: "An investment-assisting tool that utilizes statistical models to infer and visualize trends in S&P 500 stocks. For each symbol in the index, the program parses historical time series data and quantifies the stock's growth potential and volatility. Findings are outputted to CSV and a public, interactive website.",
-    imageUrl: "/images/cs/stockAnalysis.png",
+    imageUrl: StockAnalysisImage,
     links: [
       {
         github: "https://github.com/blakesanie/Stock-Analysis",
@@ -124,7 +143,7 @@ const projects = [
   {
     name: "Headlines",
     desc: "A remarkably user-friendly news app. As the name implies, notable titles can be browsed with minimal effort. With numerous categories and more than 32 world-renowned news sources to choose from, articles are filtered to fit your interests. If a headline just isn't enough, an article description, photo, and the full article are one press away.",
-    imageUrl: "/images/cs/headlines.jpg",
+    imageUrl: HeadlinesImage,
     links: [
       {
         github: "https://github.com/blakesanie/Headlines",
@@ -135,7 +154,7 @@ const projects = [
   {
     name: "Twitter Poetry Detection",
     desc: `A NLP-driven bot with an appreciation for poetry. The bot listens to Twitter's tweet stream, continuously searching for updates that contain the subject "life" and maintain a rhyming scheme when reformatted into a quatrain. Selected tweets are automatically retweeted, giving accidental poets a shoutout on the platform.`,
-    imageUrl: "/images/cs/TwitterPoetryBot.png",
+    imageUrl: TwitterPoetryImage,
     links: [
       {
         text: "Twitter",
@@ -151,7 +170,7 @@ const projects = [
   {
     name: "Spotify Mosaic",
     desc: "A digital art project. This web app provides a means of visualization one's music taste. Users can authenticate with their Spotify account and build creative mosaics from album covers on their playlists. Exporting and printing features come built in!",
-    imageUrl: "/images/cs/spotify.png",
+    imageUrl: SpotifyImage,
     links: [
       {
         text: "Launch Web App",
@@ -164,7 +183,7 @@ const projects = [
   {
     name: "Calculess.js",
     desc: "An open source javaScript library that provides complex calculus functions through abstract and easy-to-use methods. Download Calculess to start implementing limits, derivatives, integrals, and more with your project's functions, or contribute to the repository on GitHub!",
-    imageUrl: "/images/cs/calculess.jpg",
+    imageUrl: CalculessImage,
     links: [
       {
         github: "https://github.com/blakesanie/Calculess",
@@ -191,7 +210,7 @@ const projects = [
         github: "https://github.com/blakesanie/Trending-Twitter-Links",
       },
     ],
-    imageUrl: "/images/cs/twitter.jpg",
+    imageUrl: TrendingTwitterImage,
     techUsed: ["Node.js", "Twitter Developers"],
   },
   {
@@ -202,7 +221,7 @@ const projects = [
         github: "https://github.com/blakesanie/Proximity",
       },
     ],
-    imageUrl: "/images/cs/proximity.jpg",
+    imageUrl: ProximityImage,
     techUsed: ["Swift", "Xcode", "Places API", "App Store Connect"],
   },
   {
@@ -213,7 +232,7 @@ const projects = [
         github: "https://github.com/blakesanie/Bounce",
       },
     ],
-    imageUrl: "/images/cs/bounce.jpg",
+    imageUrl: BounceImage,
     techUsed: ["Swift", "Xcode", "GameKit", "App Store Connect"],
   },
 ];
@@ -272,11 +291,18 @@ export default function CS(props) {
                   }}
                 ></iframe>
               ) : (
-                <img
-                  src={project.imageUrl}
-                  className={styles.image}
-                  alt={project.name}
-                ></img>
+                <div className={styles.imageContainer}>
+                  <Image
+                    src={project.imageUrl}
+                    className={styles.image}
+                    alt={project.name}
+                    layout="fill"
+                    loading="eager"
+                    objectFit="contain"
+                    quality={75}
+                    priority={i < 3}
+                  ></Image>
+                </div>
               )}
             </div>
           );

@@ -24,8 +24,12 @@
   overflow: hidden;
 }
 
+.imgContainer > div {
+  width: auto !important;
+}
+
 .techRow .wide img {
-  height: 20px;
+  height: 20px !important;
 }
 
 .techRow .imgContainer:hover {
@@ -33,7 +37,8 @@
 }
 
 .techRow img {
-  height: 100%;
+  position: relative !important;
+  width: auto !important;
 }
 
 .currentTechnology {
