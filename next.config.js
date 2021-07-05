@@ -1,5 +1,4 @@
 module.exports = {
-  distDir: "_next",
   trailingSlash: true,
   exportPathMap() {
     return {
