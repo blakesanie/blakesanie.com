@@ -9,33 +9,24 @@ import Particles from "react-particles-js";
 import { particlesParams } from "../extras/particlesParams.js";
 import CopyRight from "../components/Copyright";
 import Link from "next/link";
-import Image from "next/image";
-
-import macbook3 from "../public/images/macbook3.jpeg";
-import crosland from "../public/images/crosland.jpg";
-import mac2 from "../public/images/mac2.jpg";
-import stock from "../public/images/stock.png";
-import hawaii from "../public/images/full/DSC_0817.jpeg";
-import mandel1 from "../public/images/mandel1.png";
-import startup from "../public/images/startup.jpg";
-import connect from "../public/images/connect.jpg";
+import Head from "next/head";
 
 const data = [
   {
     text: ["^500 Hi, ^500I'm Blake ^2000", "^500 Scroll to learn more ^1000"],
-    imageUrl: macbook3,
+    imageUrl: "macbook3.jpeg",
     links: [],
   },
   {
     text: [
       "I am a Computer Science student at the Georgia Institute of Technology.",
     ],
-    imageUrl: crosland,
+    imageUrl: "crosland.jpg",
     links: [],
   },
   {
     text: ["Ultimately, I am an engineer at heart"],
-    imageUrl: mac2,
+    imageUrl: "mac2.jpg",
     links: [
       {
         url: "/projects",
@@ -50,7 +41,7 @@ const data = [
   },
   {
     text: ["Fascinated with automated stock trading"],
-    imageUrl: stock,
+    imageUrl: "stock.png",
     links: [
       { url: "/fund", label: "Stock Fund", external: true },
       {
@@ -62,7 +53,7 @@ const data = [
   },
   {
     text: ["With a sense of photographic expression."],
-    imageUrl: hawaii,
+    imageUrl: "full/DSC_0817.jpeg",
     links: [
       {
         url: "/photo",
@@ -76,12 +67,12 @@ const data = [
   },
   {
     text: ["I encourage you to learn from my ventures,"],
-    imageUrl: mandel1,
+    imageUrl: "mandel1.png",
     links: [{ url: "/blog", label: "Blog" }],
   },
   {
     text: ["Reach out with professional inquiries,"],
-    imageUrl: startup,
+    imageUrl: "startup.jpg",
     links: [
       {
         url: "/linkedin",
@@ -96,7 +87,7 @@ const data = [
   },
   {
     text: ["Or connect with me further."],
-    imageUrl: connect,
+    imageUrl: "connect.jpg",
     links: [
       {
         url: "mailto:blake@sanie.com",
@@ -217,15 +208,13 @@ export default function Home(props) {
                     opacity: 1 - Math.abs(offset) / windowHeight,
                     transform: `translateY(${offset * 0.1}px)`,
                   }}
-                  className={styles.imageWrapper}
                 >
-                  <Image
-                    className={styles.coverImage}
-                    src={item.imageUrl}
-                    layout="responsive"
-                    quality="100"
-                    priority
-                  />
+                  <img
+                    src={`/images/${item.imageUrl}`}
+                    style={{
+                      position: `relative`,
+                    }}
+                  ></img>
                 </div>
                 <div
                   className={styles.particles}
@@ -241,22 +230,13 @@ export default function Home(props) {
               </>
             ) : (
               <>
-                <div
+                <img
+                  alt=""
+                  src={`/images/${item.imageUrl}`}
                   style={{
                     opacity: 1 - Math.abs(offset) / windowHeight,
-                    position: "absolute",
-                    height: "100%",
-                    width: "100%",
                   }}
-                >
-                  <Image
-                    src={item.imageUrl}
-                    layout="fill"
-                    quality="100"
-                    objectFit="cover"
-                    loading="eager"
-                  />
-                </div>
+                ></img>
                 <div
                   className={styles.center}
                   style={{

@@ -90,8 +90,8 @@ export default function Photo(props) {
             transitionDuration: 200,
             gutter: gutter,
           }} // default {}
-          disableImagesLoaded={false} // default false
-          updateOnEachImageLoad={true} // default false and works only if disableImagesLoaded is false
+          disableImagesLoaded={true} // default false
+          updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
         >
           {filenames.map((filename, i) => {
             return (

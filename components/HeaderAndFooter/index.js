@@ -72,10 +72,7 @@ export default function HeaderAndFooter(props) {
   let headerStyles = {};
   if (shouldBeMenuBar) {
     headerStyles.height = menuExpanded ? `${idealHeaderHeight}px` : "80px";
-    if (
-      mouseHistory < 0 ||
-      (mouseHistory.current <= 80 && !menuIsDown && !menuExpanded)
-    ) {
+    if (mouseHistory.current <= 80 && !menuIsDown && !menuExpanded) {
       headerStyles.position = "absolute";
     } else if (!menuExpanded) {
       if (mouseHistory.prev <= 80 && mouseHistory.current > 80) {
