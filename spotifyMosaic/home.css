@@ -1,0 +1,85 @@
+@import url("https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700");
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Quicksand", sans-serif;
+  font-weight: 400;
+  box-sizing: border-box;
+}
+
+body {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-image: url("./Unknown.png");
+  background-position: 50% 45%;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+body > * {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+a {
+  color: black !important;
+  text-decoration: none !important;
+}
+
+h1 {
+  position: absolute;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  border-bottom-right-radius: 3vmin;
+}
+
+#content {
+  padding: 5vmin;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 80vmin;
+  border-radius: 3vmin;
+}
+
+h2 {
+  font-size: 4vmin;
+  text-align: center;
+}
+
+#try {
+  font-size: 3vmin;
+  padding: 3vmin 5vmin;
+  background-color: #148f46;
+  border-radius: 1000px;
+  margin-top: 5vmin;
+  color: white !important;
+  border: 1px solid #148f46;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+#try:hover {
+  color: #148f46 !important;
+  background-color: white;
+}
+
+#byline {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 2vmin;
+  padding: 1vmin 2vmin;
+  border-top-left-radius: 1vmin;
+}
+
+#byline a {
+  color: #aaa !important;
+  text-decoration: underline !important;
+}

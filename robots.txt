@@ -1,0 +1,12 @@
+User-Agent: *
+Disallow: /
+Allow: /index.html
+Allow: /cs
+Allow: /photo
+Allow: /blog
+Allow: /md/
+Allow: /spotifyMosaic
+Allow: /spotifyMosaic/
+Allow: /fund
+
+Sitemap: https://www.blakesanie.com/sitemap.xml

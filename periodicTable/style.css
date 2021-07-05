@@ -1,0 +1,500 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400');
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+}
+
+
+h1 {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+h2, h3 {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 90%;
+  transform: translateY(-50%);
+}
+
+h3 {
+  top: 73%;
+}
+
+h6 {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  text-align: center;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+#key {
+  position: absolute;
+  top: 130px;
+  right: 0;
+  width: 60px;
+  background-color: rgba(255,255,255,0.8);
+  height: 25px;
+  z-index: 3;
+  transition: all 0.5s ease;
+  border-bottom-left-radius: 10px;
+  box-sizing: border-box;
+  border: 1px solid black;
+  border-right: 0px solid black;
+  overflow: hidden;
+}
+
+#keyHolder {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.keyItem {
+  opacity: 0;
+  position: relative;
+  width: 247px;
+  line-height: 60px;
+  border: 1px solid black;
+  color: black;
+  text-align: center;
+  font-size: 20px;
+  transition: opacity 0.5s ease;
+}
+
+sup, sub {
+  font-size: 12px;
+  line-height: 0;
+}
+
+.orbital, .som, .period, .radio {
+  display: none;
+}
+
+#alk {
+  background-color: #FF8080;
+}
+
+#earth {
+  background-color: #FFFD9A;
+}
+
+#trans {
+  background-color: #FFC481;
+}
+
+#other {
+  background-color: #D86E6E;
+}
+
+#oids {
+  background-color: #FFB9E3;
+}
+
+#non {
+  background-color: #9FC9FF;
+}
+
+#hal {
+  background-color: #B3FFFD;
+}
+
+#noble {
+  background-color: #E2C0FF;
+}
+
+#lanth {
+  background-color: #8BE3C0;
+}
+
+#act {
+  background-color: #B6FFAE;
+}
+
+#s {
+  background-color: #9FC9FF;
+}
+
+#p {
+  background-color: #8BE3C0;
+}
+
+#d {
+  background-color: #FF8080;
+}
+
+#f {
+  background-color: #FFC481;
+}
+
+#solid {
+  background-color: #FFC481;
+}
+
+#gas {
+  background-color: #FF8080;
+}
+
+#liquid {
+  background-color: #9FC9FF;
+}
+
+#one {
+  background-color: #B6FFAE;
+}
+
+#two {
+  background-color: #8BE3C0;
+}
+
+#three {
+  background-color: #FFFD9A;
+}
+
+#four {
+  background-color: #9FC9FF;
+}
+
+#five {
+  background-color: #FFB9E3;
+}
+
+#six {
+  background-color: #FF8080;
+}
+
+#seven {
+  background-color: #FFC481;
+}
+
+#stable {
+  background-color: #9FC9FF;
+}
+
+#fifth {
+  background-color: #B3FFFD;
+}
+
+#fourth {
+  background-color: #FFFD9A;
+}
+
+#third {
+  background-color: #FFC481;
+}
+
+#second {
+  background-color: #FF8080;
+}
+
+#first {
+  background-color: #FFB9E3;
+}
+
+#unknown {
+  background-color: #E2C0FF;
+}
+
+#zoom {
+  position: absolute;
+  top: 100px;
+  right: 0;
+  width: 60px;
+  background-color: rgba(0,0,0,0.7);
+  height: 25px;
+  z-index: 98;
+  transition: all 0.5s ease;
+  overflow: hidden;
+  border-bottom-left-radius: 10px;
+}
+
+#label {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 13px;
+  color: white;
+  width: 60px;
+  line-height: 25px;
+  text-align: center;
+  z-index: 4;
+}
+
+#key #label {
+  color: black;
+  z-index: 97;
+}
+
+p {
+  position: absolute;
+  color: white;
+  transition: opacity 0.2s ease;
+}
+
+#percent {
+  position: absolute;
+  width: 100px;
+  top: 25px;
+  line-height: 65px;
+  text-align: center;
+  color: white;
+  font-size: 30px;
+}
+
+#fit {
+  position: absolute;
+  color: white;
+  width: 70px;
+  left: 115px;
+  top: 37.5px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 25px;
+  background-color: black;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+#fit:hover {
+  background-color: white;
+  color: black;
+}
+
+input {
+  opacity: 0;
+  position: absolute;
+  width: 90%;
+  left: 50%;
+  top: 12.5px;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+#head {
+  position: relative;
+  height: 100px;
+  background-color: rgba(0,0,0,0.05);
+  width: 100vw;
+}
+
+#img {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  height: 80px;
+  width: 80px;
+  background-image: url('http://res.cloudinary.com/bsanie/image/upload/v1481860144/quantumweb_zw0huv.png');
+  background-size: contain;
+}
+
+#mode {
+  position: absolute;
+  height: 34px;
+  width: 120px;
+  top: 100px;
+  background-color: rgba(240,240,240,0.8);
+  z-index: 98;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+}
+
+#mode p {
+  color: black;
+  position: absolute;
+  width: 88px;
+  line-height: 34px;
+  right: 0;
+  text-align: center;
+  font-size: 15px;
+}
+
+#icon {
+  position: absolute;
+  height: 30px;
+  width: 30px;
+  top: 2px;
+  left: 2px;
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+#line {
+  position: absolute;
+  width: 50px;
+  height: 6px;
+  background-color: black;
+  transition: all 0.5s ease;
+  transform-origin: 6.6% 50%;
+}
+
+#line:nth-of-type(2) {
+  top: 12px;
+}
+
+#line:nth-of-type(3) {
+  top: 24px;
+}
+
+#modeHolder {
+  position: absolute;
+  opacity: 0;
+  width: 120px;
+  height: 0;
+  top: 134px;
+  transition: all 0.5s ease;
+  z-index: 98;
+  box-sizing: border-box;
+  border: 1px solid black;
+  border-left: none;
+}
+
+#modeCont {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+}
+
+#modeHolder p {
+  position: relative;
+  width: 100%;
+  min-width: 120px;
+  border-bottom: 1px solid black;
+  background-color: rgba(255,255,255,0.95);
+  line-height: 80px;
+  text-align: center;
+  font-size: 20px;
+  color: black;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+#modeHolder h1 {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  color: black;
+  z-index: 1000;
+  transform: translateY(0);
+  text-align: center;
+  font-size: 15px;
+}
+
+#modeHolder p:nth-of-type(1) {
+  background-color: rgba(230,230,230,0.8);
+}
+
+h5 {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  text-align: center;
+  font-size: 40px;
+}
+
+#cont {
+  position: relative;
+  margin-top: 2vmin;
+  margin-bottom: 2vmin;
+  width: calc(100vw - 4vmin);
+  left: 2vmin;
+  height: calc(100vh - 240px - 4vmin);
+  overflow: scroll;
+  transition: opacity 0.5s ease;
+}
+
+#table {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+span {
+  position: relative;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+}
+
+#num {
+  position: absolute;
+  height: 22%;
+  width: 40%;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+}
+
+.item {
+  border: 0.5px solid black;
+  cursor: pointer;
+  transition: background-color 0.5s ease;
+}
+
+#foot {
+  display: none;
+  position: relative;
+  border: none;
+  width: 100vw;
+  height: 140px;
+  transition: all 0.5s ease;
+  z-index: 99;
+  box-sizing: border-box;
+  border-top: 2px solid black;
+}
+
+#foot:hover {
+  height: calc(50vh + 140px);
+  margin-top: -50vh;
+}
+
+#click {
+  position: relative;
+  width: 100vw;
+  height: 140px;
+  background-color: rgba(255,255,255,0.9);
+  transition: height 0.5s ease, margin-top 0.5s ease;
+  z-index: 99;
+  box-sizing: border-box;
+  border-top: 2px solid black;
+}
+
+#click:hover {
+  height: calc(50vh + 140px);
+  margin-top: -50vh;
+}
+
+h4 {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  text-align: center;
+  font-size: 5vmin;
+}
+
+@media screen and (max-width: 500px) {
+  h5 {
+    text-align: right;
+    width: 92%;
+  }
+}
