@@ -5,7 +5,7 @@ import Copyright from "../../components/Copyright";
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.js";
 import styles from "./index.module.css";
 import { NextSeo } from "next-seo";
-import Image from "next/Image";
+import Image from "next/image";
 
 var didShuffle = false;
 
