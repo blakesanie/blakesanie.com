@@ -47,6 +47,7 @@ export default function Photo(props) {
 
   const [width, setWidth] = useState(getImageWidth());
   const [selectedPhoto, setSelectedPhoto] = useState(undefined);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   const handleResize = (window) => {
     setWidth(getImageWidth(window));
@@ -93,6 +94,9 @@ export default function Photo(props) {
           }} // default {}
           disableImagesLoaded={false} // default false
           updateOnEachImageLoad={true} // default false and works only if disableImagesLoaded is false
+          onImagesLoaded={() => {
+            setImagesLoaded(true);
+          }}
         >
           {filenames.map((filename, i) => {
             return (
