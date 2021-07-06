@@ -1,7 +1,24 @@
-.masonry img {
+.masonry .imgContainer {
   /* transition: opacity 0.2s ease; */
   border-radius: 0px;
   cursor: pointer;
+  height: auto !important;
+  margin-bottom: 12px !important;
+}
+
+.masonry .imgContainer * {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.imgContainer > div {
+  position: relative !important;
+  width: 100% !important;
+}
+
+.masonry img {
+  position: relative !important;
 }
 
 .masonry {
@@ -48,9 +65,6 @@
 .fullScreenImage {
   width: 100%;
   height: 100%;
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
 }
 
 @media screen and (max-width: 800px) {

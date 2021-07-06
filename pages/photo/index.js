@@ -5,6 +5,7 @@ import Copyright from "../../components/Copyright";
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.js";
 import styles from "./index.module.css";
 import { NextSeo } from "next-seo";
+import Image from "next/Image";
 
 var didShuffle = false;
 
@@ -95,10 +96,8 @@ export default function Photo(props) {
         >
           {filenames.map((filename, i) => {
             return (
-              <img
-                key={filename}
-                alt="Copyright Blake Sanie"
-                src={`/images/thumbnails/${filename}`}
+              <div
+                className={styles.imgContainer}
                 style={{
                   marginBottom: gutter,
                   width: width,
@@ -106,7 +105,26 @@ export default function Photo(props) {
                 onClick={() => {
                   setSelectedPhoto(i);
                 }}
-              ></img>
+              >
+                <Image
+                  src={`/images/thumbnails/${filename}`}
+                  height="250"
+                  width="250"
+                  layout="fixed"
+                />
+              </div>
+              // <img
+              //   key={filename}
+              //   alt="Copyright Blake Sanie"
+              //   src={`/images/thumbnails/${filename}`}
+              //   style={{
+              //     marginBottom: gutter,
+              //     width: width,
+              //   }}
+              //   onClick={() => {
+              //     setSelectedPhoto(i);
+              //   }}
+              // ></img>
             );
           })}
         </Masonry>
@@ -118,12 +136,13 @@ export default function Photo(props) {
             padding: gutter,
           }}
         >
-          <div
-            className={styles.fullScreenImage}
-            style={{
-              backgroundImage: `url("/images/full/${filenames[selectedPhoto]}")`,
-            }}
-          ></div>
+          <div className={styles.fullScreenImage}>
+            <Image
+              src={`/images/full/${filenames[selectedPhoto]}`}
+              layout="fill"
+              objectFit="contain"
+            />
+          </div>
           <div className={styles.half} onClick={prevImage}></div>
           <div className={styles.half} onClick={nextImage}></div>
           <p

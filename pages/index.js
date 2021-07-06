@@ -200,6 +200,7 @@ export default function Home(props) {
                       style={{
                         transform: `translateY(${offset * -0.2}px)`,
                       }}
+                      priority
                     />
                   </div>
 
