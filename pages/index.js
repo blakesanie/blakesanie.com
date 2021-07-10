@@ -141,6 +141,8 @@ export default function Home(props) {
     // );
   }, []);
   //(scroll);
+  const frameHeight = Math.max(300, Math.min(1000, windowHeight));
+  const frameOffset = windowHeight - frameHeight;
   return (
     <HeaderAndFooter>
       <style jsx global>{`
@@ -159,16 +161,23 @@ export default function Home(props) {
         }}
       />
       {data.map((item, i) => {
-        let offset = scroll - windowHeight * i;
+        let adjustedScroll = scroll;
+        if (i == data.length - 1) {
+          adjustedScroll += frameOffset;
+        } else if (i > 0) {
+          adjustedScroll += frameOffset / 2;
+        }
+        let offset = adjustedScroll - frameHeight * i;
         return (
-          <Div100vh
+          <div
             className={styles.frame}
             key={i}
             style={{
-              maxHeight:
-                i == 0 && (windowWidth <= 800 || windowHeight >= 1200)
-                  ? windowHeight - 80
-                  : "none",
+              height:
+                frameHeight -
+                (i == 0 && (windowWidth <= 800 || windowHeight >= 1200)
+                  ? 80
+                  : 0),
               justifyContent: i == 0 ? "flex-start" : "center",
             }}
           >
@@ -198,7 +207,7 @@ export default function Home(props) {
                       height="185"
                       layout="fixed"
                       style={{
-                        transform: `translateY(${offset * -0.2}px)`,
+                        transform: `translateY(${adjustedScroll * -0.2}px)`,
                       }}
                       priority
                     />
@@ -213,7 +222,7 @@ export default function Home(props) {
                       fontSize: 50,
                       height: 60,
 
-                      transform: `translateY(${offset * -0.1}px)`,
+                      transform: `translateY(${adjustedScroll * -0.1}px)`,
                     }}
                   ></Typed>
                 </div>
@@ -221,8 +230,8 @@ export default function Home(props) {
                   style={{
                     flex: 1,
                     width: "100%",
-                    opacity: 1 - Math.abs(offset) / windowHeight,
-                    transform: `translateY(${offset * 0.1}px)`,
+                    opacity: 1 - Math.abs(adjustedScroll) / frameHeight,
+                    transform: `translateY(${scroll * 0.1}px)`,
                   }}
                   className={styles.imageWrapper}
                 >
@@ -237,7 +246,7 @@ export default function Home(props) {
                 <div
                   className={styles.particles}
                   style={{
-                    opacity: 1 - Math.abs(offset) / windowHeight,
+                    opacity: 1 - Math.abs(adjustedScroll) / frameHeight,
                   }}
                 >
                   <Particles
@@ -250,7 +259,7 @@ export default function Home(props) {
               <>
                 <div
                   style={{
-                    opacity: 1 - Math.abs(offset) / windowHeight,
+                    opacity: 1 - Math.min(0.8, Math.abs(offset) / frameHeight),
                     position: "absolute",
                     height: "100%",
                     width: "100%",
@@ -293,7 +302,7 @@ export default function Home(props) {
                 </div>
               </>
             )}
-          </Div100vh>
+          </div>
         );
       })}
     </HeaderAndFooter>
