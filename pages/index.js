@@ -132,16 +132,16 @@ export default function Home(props) {
       true
     );
     setWindowWidth(window.innerWidth);
-    // window.addEventListener(
-    //   "resize",
-    //   (e) => {
-    //     setWindowHeight(window.innerHeight);
-    //   },
-    //   true
-    // );
+    window.addEventListener(
+      "resize",
+      (e) => {
+        setWindowWidth(window.innerWidth);
+      },
+      true
+    );
   }, []);
   //(scroll);
-  const frameHeight = Math.max(300, Math.min(1000, windowHeight));
+  const frameHeight = Math.max(400, Math.min(1000, windowHeight));
   const frameOffset = windowHeight - frameHeight;
   return (
     <HeaderAndFooter>
@@ -168,6 +168,7 @@ export default function Home(props) {
           adjustedScroll += frameOffset / 2;
         }
         let offset = adjustedScroll - frameHeight * i;
+        console.log(windowWidth, windowHeight);
         return (
           <div
             className={styles.frame}
@@ -183,13 +184,9 @@ export default function Home(props) {
           >
             {i == 0 ? (
               <>
-                <div
-                  className={styles.center}
-                  style={{
-                    zIndex: 5,
-                  }}
-                >
+                <div className={`${styles.center}`}>
                   <div
+                    className={styles.gradient}
                     style={{
                       position: "absolute",
                       left: `50%`,
@@ -200,15 +197,17 @@ export default function Home(props) {
                       background: `radial-gradient(closest-side, #ffa00060 0%, #00000000 100%)`,
                     }}
                   ></div>
-                  <div className={styles.wwdcImage}>
+                  <div
+                    className={styles.wwdcImage}
+                    style={{
+                      transform: `translateY(${adjustedScroll * -0.2}px)`,
+                    }}
+                  >
                     <Image
                       src={wwdcImage}
                       width="140"
                       height="185"
-                      layout="fixed"
-                      style={{
-                        transform: `translateY(${adjustedScroll * -0.2}px)`,
-                      }}
+                      layout="intrinsic"
                       priority
                     />
                   </div>
@@ -218,10 +217,9 @@ export default function Home(props) {
                     typeSpeed={50}
                     backSpeed={40}
                     loop
+                    className={styles.typed}
                     style={{
-                      fontSize: 50,
-                      height: 60,
-
+                      height: Math.min(60, (24 + 0.03 * windowWidth) * 1.6),
                       transform: `translateY(${adjustedScroll * -0.1}px)`,
                     }}
                   ></Typed>
