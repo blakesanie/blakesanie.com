@@ -68,11 +68,14 @@
 }
 
 @media screen and (max-width: 800px) {
-  .fullScreen {
-    left: 0;
-  }
   .photo {
     padding: 0 14px !important;
+  }
+}
+
+@media screen and (max-width: 800px), (min-height: 1200px) {
+  .fullScreen {
+    left: 0;
   }
 }
 
