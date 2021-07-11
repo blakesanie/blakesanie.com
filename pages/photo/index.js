@@ -59,7 +59,6 @@ export default function Photo(props) {
       width: window.innerWidth,
       height: window.innerHeight,
     });
-    console.log("set window dim");
     handleResize(window);
     window.addEventListener("resize", () => {
       handleResize(window);

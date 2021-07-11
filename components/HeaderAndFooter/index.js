@@ -43,18 +43,15 @@ export default function HeaderAndFooter(props) {
       const result = window.innerWidth < 800 || window.innerHeight > 1200;
       if (!result) {
         setTransitionable(false);
-        console.log("transitionable false");
         clearInterval(timeout);
         timeout = undefined;
       } else if (result && !timeout) {
         timeout = setTimeout(() => {
           setTransitionable(true);
-          console.log("transitionable true");
           timeout = undefined;
         }, 400);
         if (!mouseHistory.current) {
           setTransitionable(true);
-          console.log("transitionable true");
         }
       }
       if (window.innerWidth >= 440) {
