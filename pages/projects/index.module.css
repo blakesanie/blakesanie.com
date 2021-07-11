@@ -28,6 +28,17 @@
   height: 400px;
 }
 
+/* .imageContainer > * {
+  position: relative !important;
+  height: auto !important;
+} */
+
+.imageContainer img {
+  position: relative !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
 /* .iframeWrapper {
     position: relative;
     padding-bottom: 56.25% !important;

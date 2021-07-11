@@ -6,6 +6,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.js";
 import styles from "./index.module.css";
 import { NextSeo } from "next-seo";
 import Image from "next/image";
+import imageLoader from "../../extras/imageLoader";
 
 var didShuffle = false;
 
@@ -115,6 +116,8 @@ export default function Photo(props) {
                   height="250"
                   width="250"
                   layout="fixed"
+                  loader={imageLoader}
+                  loading="lazy"
                 />
               </div>
               // <img
@@ -145,6 +148,7 @@ export default function Photo(props) {
               src={`/images/full/${filenames[selectedPhoto]}`}
               layout="fill"
               objectFit="contain"
+              loader={imageLoader}
             />
           </div>
           <div className={styles.half} onClick={prevImage}></div>

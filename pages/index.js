@@ -10,34 +10,24 @@ import { particlesParams } from "../extras/particlesParams.js";
 import CopyRight from "../components/Copyright";
 import Link from "next/link";
 import Image from "next/image";
-
-import macbook3 from "../public/images/macbook3.jpeg";
-import crosland from "../public/images/crosland.jpg";
-import mac2 from "../public/images/mac2.jpg";
-import stock from "../public/images/stock.png";
-import hawaii from "../public/images/full/DSC_0817.jpeg";
-import mandel1 from "../public/images/mandel1.png";
-import startup from "../public/images/startup.jpg";
-import connect from "../public/images/connect.jpg";
-
-import wwdcImage from "../public/images/wwdc_blake.png";
+import imageLoader from "../extras/imageLoader";
 
 const data = [
   {
     text: ["^500 Hi, ^500I'm Blake ^2000", "^500 Scroll to learn more ^1000"],
-    imageUrl: macbook3,
+    imageUrl: "/images/macbook3.jpeg",
     links: [],
   },
   {
     text: [
       "I am a Computer Science student at the Georgia Institute of Technology.",
     ],
-    imageUrl: crosland,
+    imageUrl: "/images/crosland.jpg",
     links: [],
   },
   {
     text: ["Ultimately, I am an engineer at heart"],
-    imageUrl: mac2,
+    imageUrl: "/images/mac2.jpg",
     links: [
       {
         url: "/projects",
@@ -52,7 +42,7 @@ const data = [
   },
   {
     text: ["Fascinated with automated stock trading"],
-    imageUrl: stock,
+    imageUrl: "/images/stock.png",
     links: [
       { url: "/fund", label: "Stock Fund", external: true },
       {
@@ -64,7 +54,7 @@ const data = [
   },
   {
     text: ["With a sense of photographic expression."],
-    imageUrl: hawaii,
+    imageUrl: "/images/full/DSC_0817.jpeg",
     links: [
       {
         url: "/photo",
@@ -78,12 +68,12 @@ const data = [
   },
   {
     text: ["I encourage you to learn from my ventures,"],
-    imageUrl: mandel1,
+    imageUrl: "/images/mandel1.png",
     links: [{ url: "/blog", label: "Blog" }],
   },
   {
     text: ["Reach out with professional inquiries,"],
-    imageUrl: startup,
+    imageUrl: "/images/startup.jpg",
     links: [
       {
         url: "/linkedin",
@@ -98,7 +88,7 @@ const data = [
   },
   {
     text: ["Or connect with me further."],
-    imageUrl: connect,
+    imageUrl: "/images/connect.jpg",
     links: [
       {
         url: "mailto:blake@sanie.com",
@@ -204,11 +194,12 @@ export default function Home(props) {
                     }}
                   >
                     <Image
-                      src={wwdcImage}
+                      src="/images/wwdc_blake.png"
                       width="140"
                       height="185"
                       layout="intrinsic"
                       priority
+                      loader={imageLoader}
                     />
                   </div>
 
@@ -236,9 +227,9 @@ export default function Home(props) {
                   <Image
                     className={styles.coverImage}
                     src={item.imageUrl}
-                    layout="responsive"
-                    quality="100"
+                    layout="fill"
                     priority
+                    loader={imageLoader}
                   />
                 </div>
                 <div
@@ -266,9 +257,9 @@ export default function Home(props) {
                   <Image
                     src={item.imageUrl}
                     layout="fill"
-                    quality="100"
                     objectFit="cover"
                     loading="eager"
+                    loader={imageLoader}
                   />
                 </div>
                 <div
