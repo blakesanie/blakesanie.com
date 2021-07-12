@@ -23,7 +23,7 @@ export default function Photo(props) {
     shuffleArray(filenames);
     didShuffle = true;
   }
-  const gutter = 14;
+  const gutter = 10;
 
   const [windowDim, setWindowDim] = useState({
     width: undefined,
@@ -111,8 +111,8 @@ export default function Photo(props) {
                 }}
               >
                 <Image
-                  src={`/images/thumbnails/${filename}`}
-                  height="250"
+                  src={`/images/portfolio/${filename}`}
+                  height="450"
                   width="250"
                   layout="fixed"
                   loader={imageLoader}
@@ -144,7 +144,7 @@ export default function Photo(props) {
         >
           <div className={styles.fullScreenImage}>
             <Image
-              src={`/images/full/${filenames[selectedPhoto]}`}
+              src={`/images/portfolio/${filenames[selectedPhoto]}`}
               layout="fill"
               objectFit="contain"
               loader={imageLoader}

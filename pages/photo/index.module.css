@@ -3,7 +3,7 @@
   border-radius: 0px;
   cursor: pointer;
   height: auto !important;
-  margin-bottom: 12px !important;
+  margin-bottom: 5.5px !important;
 }
 
 .masonry .imgContainer * {
@@ -28,8 +28,8 @@
 .fullScreen {
   position: fixed;
   top: 0;
-  left: 220px;
   right: 0;
+  left: 0;
   bottom: 0;
   height: 100vh;
   background-color: rgba(255, 255, 255, 0.8);
@@ -69,13 +69,7 @@
 
 @media screen and (max-width: 800px) {
   .photo {
-    padding: 0 14px !important;
-  }
-}
-
-@media screen and (max-width: 800px), (min-height: 1200px) {
-  .fullScreen {
-    left: 0;
+    padding: 0 10px !important;
   }
 }
 

@@ -30,7 +30,7 @@ extensions = ['jpeg', 'jpg', 'png']
 
 
 if not 'keepexisting' in ', '.join(sys.argv):
-    print('keeping existing images in /optimized/')
+    print('deleting existing images in /optimized/')
     try:
         shutil.rmtree('public/optimized')
     except Exception as e:
