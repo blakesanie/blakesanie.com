@@ -10,6 +10,10 @@
   color: white;
 }
 
+.imageWrapper {
+  min-height: calc(0.3 * (100vw - 220px));
+}
+
 .imageWrapper > div {
   height: 100%;
   width: 100%;
@@ -89,8 +93,12 @@
   width: 140px !important;
   height: auto !important;
   margin-bottom: 20px;
-  margin-top: calc(-20px + 6vh);
   z-index: 10;
+  margin-top: calc(-20px + 6vh);
+}
+
+.gradient {
+  top: calc(-20px + 6vh);
 }
 
 .typed {
@@ -114,6 +122,9 @@
   }
   .frame h2 {
     font-size: calc(24px + 3vmin) !important;
+  }
+  .imageWrapper {
+    min-height: calc(0.3s * (100vw));
   }
 }
 

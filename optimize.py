@@ -8,7 +8,7 @@ import sys
 import numpy as np
 import multiprocessing
 
-numWorkers = 10
+numWorkers = 20
 
 widths = []
 
@@ -50,10 +50,10 @@ def optimizeImages(paths):
         if originalExt != 'png':
             img = img.convert('RGB')
         for width in widths:
-            if originalWidth < 700 and width > 700:
-                break
-            if originalWidth > 1000 and width < 400:
-                continue
+            # if originalWidth < 700 and width > 700:
+            #     break
+            # if originalWidth > 1000 and width < 400:
+            #     continue
             for quality in qualities:
                 newImg = img.resize(
                     (width, math.floor(width / originalWidth * originalHeight)), Image.ANTIALIAS)

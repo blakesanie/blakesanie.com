@@ -54,7 +54,7 @@ const data = [
   },
   {
     text: ["With a sense of photographic expression."],
-    imageUrl: "/images/full/DSC_0817.jpeg",
+    imageUrl: "/images/portfolio/DSC_0817.jpg",
     links: [
       {
         url: "/photo",
@@ -181,7 +181,6 @@ export default function Home(props) {
                       position: "absolute",
                       left: `50%`,
                       transform: "translateX(-100px)",
-                      top: 26,
                       width: 200,
                       height: 200,
                       background: `radial-gradient(closest-side, #ffa00060 0%, #00000000 100%)`,
