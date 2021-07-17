@@ -115,7 +115,7 @@ const projects = [
   {
     name: "Regression-Based Stock Analysis",
     desc: "An investment-assisting tool that utilizes statistical models to infer and visualize trends in S&P 500 stocks. For each symbol in the index, the program parses historical time series data and quantifies the stock's growth potential and volatility. Findings are outputted to CSV and a public, interactive website.",
-    imageUrl: "/images/cs/AcrossTheAisle.jpg",
+    imageUrl: "/images/cs/stockAnalysis.png",
     links: [
       {
         github: "https://github.com/blakesanie/Stock-Analysis",

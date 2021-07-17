@@ -6,7 +6,8 @@ import math
 import shutil
 import sys
 import numpy as np
-from multiprocessing import Process, Queue
+import multiprocessing
+
 
 numWorkers = 20
 
@@ -29,26 +30,8 @@ startingDir = 'public/images'
 extensions = ['jpeg', 'jpg', 'png']
 
 
-if not 'keepexisting' in ', '.join(sys.argv):
-    print('deleting existing images in /optimized/')
-    try:
-        shutil.rmtree('public/optimized')
-    except Exception as e:
-        print(e)
-
-filepaths = []
-for ext in extensions:
-    filepaths.extend(glob.glob(f'{startingDir}/**/*.{ext}', recursive=True))
-
-
-q = Queue()
-for filepath in filepaths:
-    q.put(filepath)
-
-
-def optimizeImages(queue):
-    while not queue.empty():
-        filepath = queue.get()
+def optimizeImages(paths):
+    for filepath in paths:
         img = Image.open(filepath)
         originalWidth, originalHeight = img.size
         filename = os.path.split(filepath)[-1]
@@ -84,17 +67,40 @@ def optimizeImages(queue):
                     print(newFilepath)
 
 
-processes = []
-
 if __name__ == '__main__':
+
+    filepaths = []
+    if len(sys.argv) > 1 and not sys.argv[1].startswith('--'):
+        filepaths.append(os.path.join('public', sys.argv[1]))
+    else:
+        if not 'keepexisting' in ', '.join(sys.argv):
+            print('deleting existing images in /optimized/')
+            try:
+                shutil.rmtree('public/optimized')
+            except Exception as e:
+                print(e)
+
+        for ext in extensions:
+            filepaths.extend(
+                glob.glob(f'{startingDir}/**/*.{ext}', recursive=True))
+    print(filepaths)
+    print(sys.argv)
+    # raise Exception()
+
+    np.random.shuffle(filepaths)
+    chunks = np.array_split(filepaths, numWorkers)
+
+    # print(filepaths)
+    # print(chunks)
+
+    processes = []
+
     for i in range(numWorkers):
-        processes.append(Process(
-            target=optimizeImages, args=(q,)))
+        processes.append(multiprocessing.Process(
+            target=optimizeImages, args=(chunks[i],)))
 
     for i in range(numWorkers):
         processes[i].start()
 
     for i in range(numWorkers):
         processes[i].join()
-
-    q.close()

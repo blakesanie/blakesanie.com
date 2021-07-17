@@ -150,8 +150,28 @@ export default function Photo(props) {
               loader={imageLoader}
             />
           </div>
-          <div className={styles.half} onClick={prevImage}></div>
-          <div className={styles.half} onClick={nextImage}></div>
+          <div className={styles.half} onClick={prevImage}>
+            <div className={styles.scrubButton}>
+              <Image
+                src="/images/left_arrow.png"
+                width="10"
+                height="20"
+                layout="fixed"
+                loader={imageLoader}
+              ></Image>
+            </div>
+          </div>
+          <div className={styles.half} onClick={nextImage}>
+            <div className={styles.scrubButton}>
+              <Image
+                src="/images/left_arrow.png"
+                width="10"
+                height="20"
+                layout="fixed"
+                loader={imageLoader}
+              ></Image>
+            </div>
+          </div>
           <p
             className={styles.exit}
             onClick={() => {

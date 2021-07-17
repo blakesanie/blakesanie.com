@@ -45,7 +45,9 @@
   cursor: pointer;
   padding: 4px 10px;
   border-bottom-right-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: #ffffff80;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 40px 0px #00000020;
 }
 
 .fullScreen .half {
@@ -53,13 +55,43 @@
   top: 0;
   left: 0;
   width: 50%;
+  max-width: 400px;
   height: 100%;
   cursor: w-resize;
+  display: flex;
+  align-items: center;
+}
+
+.fullScreen .half:hover .scrubButton {
+  background-color: #ffffffa0;
+  box-shadow: 0 0 40px 0px #00000020;
+}
+
+.fullScreen .half:hover .scrubButton img {
+  opacity: 1;
+}
+
+.scrubButton {
+  padding: 10px;
+  padding-bottom: 6px;
+  padding-left: 8px;
+  border-radius: 8px;
+  margin: 60px 30px;
+  backdrop-filter: blur(10px);
+  background-color: #ffffff10;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.scrubButton img {
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
 }
 
 .fullScreen .half:last-of-type {
-  left: 50%;
+  left: auto;
+  right: 0;
   cursor: e-resize;
+  transform: scaleX(-1);
 }
 
 .fullScreenImage {
@@ -70,6 +102,9 @@
 @media screen and (max-width: 800px) {
   .photo {
     padding: 0 10px !important;
+  }
+  .fullScreen .half {
+    align-items: flex-end;
   }
 }
 
