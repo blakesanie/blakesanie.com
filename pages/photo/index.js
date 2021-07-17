@@ -170,6 +170,9 @@ export default function Photo(props) {
           <div
             className={styles.half}
             onClick={prevImage}
+            style={{
+              display: selectedPhoto == 0 ? "none" : "flex",
+            }}
             ref={leftHalfElement}
           >
             <div className={styles.scrubButton}>
@@ -186,6 +189,9 @@ export default function Photo(props) {
             className={styles.half}
             onClick={nextImage}
             ref={rightHalfElement}
+            style={{
+              display: selectedPhoto == filenames.length - 1 ? "none" : "flex",
+            }}
           >
             <div className={styles.scrubButton}>
               <Image

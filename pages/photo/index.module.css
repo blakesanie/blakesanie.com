@@ -78,7 +78,7 @@
   border-radius: 8px;
   margin: 60px 30px;
   backdrop-filter: blur(10px);
-  background-color: #ffffff10;
+  background-color: #ffffff20;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
