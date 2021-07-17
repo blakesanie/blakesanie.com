@@ -6,7 +6,7 @@ import math
 import shutil
 import sys
 import numpy as np
-import multiprocessing
+from multiprocessing import Process, Queue
 
 numWorkers = 20
 
@@ -41,8 +41,14 @@ for ext in extensions:
     filepaths.extend(glob.glob(f'{startingDir}/**/*.{ext}', recursive=True))
 
 
-def optimizeImages(paths):
-    for filepath in paths:
+q = Queue()
+for filepath in filepaths:
+    q.put(filepath)
+
+
+def optimizeImages(queue):
+    while not queue.empty():
+        filepath = queue.get()
         img = Image.open(filepath)
         originalWidth, originalHeight = img.size
         filename = os.path.split(filepath)[-1]
@@ -78,19 +84,17 @@ def optimizeImages(paths):
                     print(newFilepath)
 
 
-chunks = np.array_split(filepaths, numWorkers)
-# print(filepaths)
-# print(chunks)
-
 processes = []
 
 if __name__ == '__main__':
     for i in range(numWorkers):
-        processes.append(multiprocessing.Process(
-            target=optimizeImages, args=(chunks[i],)))
+        processes.append(Process(
+            target=optimizeImages, args=(q,)))
 
     for i in range(numWorkers):
         processes[i].start()
 
     for i in range(numWorkers):
         processes[i].join()
+
+    q.close()
