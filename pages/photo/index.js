@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import filenames from "../../extras/photo/filenames.js";
 import Masonry from "react-masonry-component";
 import Copyright from "../../components/Copyright";
@@ -30,6 +30,10 @@ export default function Photo(props) {
     height: undefined,
   });
 
+  const backButtonElement = useRef(null);
+  const leftHalfElement = useRef(null);
+  const rightHalfElement = useRef(null);
+
   const getImageWidth = (window) => {
     if (!window) {
       return 0;
@@ -54,6 +58,16 @@ export default function Photo(props) {
     setWidth(getImageWidth(window));
   };
 
+  const handleKeydown = (event) => {
+    if (event.key == "Escape") {
+      backButtonElement.current.click();
+    } else if (event.key == "ArrowRight") {
+      rightHalfElement.current.click();
+    } else if (event.key == "ArrowLeft") {
+      leftHalfElement.current.click();
+    }
+  };
+
   useEffect(() => {
     setWindowDim({
       width: window.innerWidth,
@@ -63,6 +77,7 @@ export default function Photo(props) {
     window.addEventListener("resize", () => {
       handleResize(window);
     });
+    window.addEventListener("keydown", handleKeydown);
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -143,14 +158,20 @@ export default function Photo(props) {
           }}
         >
           <div className={styles.fullScreenImage}>
-            <Image
-              src={`/images/portfolio/${filenames[selectedPhoto]}`}
-              layout="fill"
-              objectFit="contain"
-              loader={imageLoader}
-            />
+            {selectedPhoto == undefined ? null : (
+              <Image
+                src={`/images/portfolio/${filenames[selectedPhoto]}`}
+                layout="fill"
+                objectFit="contain"
+                loader={imageLoader}
+              />
+            )}
           </div>
-          <div className={styles.half} onClick={prevImage}>
+          <div
+            className={styles.half}
+            onClick={prevImage}
+            ref={leftHalfElement}
+          >
             <div className={styles.scrubButton}>
               <Image
                 src="/images/left_arrow.png"
@@ -161,7 +182,11 @@ export default function Photo(props) {
               ></Image>
             </div>
           </div>
-          <div className={styles.half} onClick={nextImage}>
+          <div
+            className={styles.half}
+            onClick={nextImage}
+            ref={rightHalfElement}
+          >
             <div className={styles.scrubButton}>
               <Image
                 src="/images/left_arrow.png"
@@ -174,6 +199,7 @@ export default function Photo(props) {
           </div>
           <p
             className={styles.exit}
+            ref={backButtonElement}
             onClick={() => {
               setSelectedPhoto(undefined);
             }}

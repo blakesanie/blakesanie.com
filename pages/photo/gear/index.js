@@ -3,6 +3,8 @@ import styles from "./index.module.css";
 import Copyright from "../../../components/Copyright";
 import HeaderAndFooter from "../../../components/HeaderAndFooter";
 import { NextSeo } from "next-seo";
+import Image from "next/image";
+import imageLoader from "../../../extras/imageLoader";
 
 const data = [
   {
@@ -89,10 +91,16 @@ export default function Gear(props) {
                 rel="noreferrer"
               >
                 <h2>{item.name}</h2>
-                <img
-                  src={`/images/gear/${item.imageUrl}`}
-                  alt={item.name}
-                ></img>
+                <div className={styles.imgWrapper}>
+                  <Image
+                    src={`/images/gear/${item.imageUrl}`}
+                    alt={item.name}
+                    loader={imageLoader}
+                    height={200}
+                    width={500}
+                    layout="fixed"
+                  ></Image>
+                </div>
               </a>
             );
           })}

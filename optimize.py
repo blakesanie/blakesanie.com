@@ -71,18 +71,20 @@ if __name__ == '__main__':
 
     filepaths = []
     if len(sys.argv) > 1 and not sys.argv[1].startswith('--'):
-        filepaths.append(os.path.join('public', sys.argv[1]))
-    else:
-        if not 'keepexisting' in ', '.join(sys.argv):
-            print('deleting existing images in /optimized/')
-            try:
-                shutil.rmtree('public/optimized')
-            except Exception as e:
-                print(e)
+        startingDir = os.path.join(startingDir, sys.argv[1])
+        if os.path.isfile(startingDir):
+            filepaths.append(startingDir)
 
-        for ext in extensions:
-            filepaths.extend(
-                glob.glob(f'{startingDir}/**/*.{ext}', recursive=True))
+    if not 'keepexisting' in ', '.join(sys.argv):
+        print('deleting existing images in /optimized/')
+        try:
+            shutil.rmtree('public/optimized')
+        except Exception as e:
+            print(e)
+
+    for ext in extensions:
+        filepaths.extend(
+            glob.glob(f'{startingDir}/**/*.{ext}', recursive=True))
     print(filepaths)
     print(sys.argv)
     # raise Exception()
