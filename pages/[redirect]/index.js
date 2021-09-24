@@ -25,6 +25,10 @@ const redirects = {
     href: "https://music.apple.com/us/album/balance/1478925861",
     title: "Balance on Apple Music",
   },
+  twitter: {
+    href: "https://twitter.com/BlakeSanie",
+    title: "Twitter",
+  },
 };
 
 export async function getStaticPaths() {

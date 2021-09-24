@@ -305,7 +305,7 @@
   }
 }
 
-@media screen and (min-height: 820px) and (max-height: 1199px) and (min-width: 801px) {
+@media screen and (min-height: 850px) and (max-height: 1199px) and (min-width: 801px) {
   .header {
     display: flex;
     flex-direction: column;

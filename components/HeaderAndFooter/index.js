@@ -11,12 +11,16 @@ let mouseHistory = {
 
 let timeout;
 
+const initialIdealHeaderHeight = 260;
+
 export default function HeaderAndFooter(props) {
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [menuIsDown, setMenuIsDown] = useState(true);
   const [shouldBeMenuBar, setShouldBeMenuBar] = useState(true);
   const [transitionable, setTransitionable] = useState(false);
-  const [idealHeaderHeight, setIdealHeaderHeight] = useState(248);
+  const [idealHeaderHeight, setIdealHeaderHeight] = useState(
+    initialIdealHeaderHeight
+  );
   const [scroll, setScroll] = useState(0);
 
   const toggleMenu = () => {
@@ -55,7 +59,7 @@ export default function HeaderAndFooter(props) {
         }
       }
       if (window.innerWidth >= 440) {
-        setIdealHeaderHeight(248);
+        setIdealHeaderHeight(initialIdealHeaderHeight);
       } else {
         setIdealHeaderHeight(382);
       }
@@ -160,6 +164,9 @@ export default function HeaderAndFooter(props) {
             <Link href="/instagram" target="_blank">
               Instagram
             </Link>
+            <Link href="/twitter" target="_blank">
+              Twitter
+            </Link>
           </div>
         </nav>
         <p className={styles.madeBy}>
@@ -187,7 +194,7 @@ export default function HeaderAndFooter(props) {
           <a href="https://pages.github.com/" target="_blank" rel="noreferrer">
             <img
               alt=""
-              src="https://www.flaticon.com/svg/static/icons/svg/25/25231.svg"
+              src="https://cdn-icons-png.flaticon.com/512/25/25231.png"
               style={{
                 filter: `invert(100%)`,
               }}

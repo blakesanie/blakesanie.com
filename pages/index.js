@@ -99,6 +99,11 @@ const data = [
         label: "Instagram",
         external: true,
       },
+      {
+        url: "/twitter",
+        label: "Twitter",
+        external: true,
+      },
     ],
   },
 ];
