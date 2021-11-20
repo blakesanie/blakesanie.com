@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { isMobile } from "react-device-detect";
 import styles from "./index.module.css";
 import Link from "next/link";
 import { NewsArticleJsonLd } from "next-seo";
+import ScrollProgressBar from "../ScrollProgressBar";
+import { useRouter } from "next/router";
 
 let mouseHistory = {
   current: undefined,
@@ -11,7 +13,7 @@ let mouseHistory = {
 
 let timeout;
 
-const initialIdealHeaderHeight = 260;
+const initialIdealHeaderHeight = 270;
 
 export default function HeaderAndFooter(props) {
   const [menuExpanded, setMenuExpanded] = useState(false);
@@ -22,6 +24,10 @@ export default function HeaderAndFooter(props) {
     initialIdealHeaderHeight
   );
   const [scroll, setScroll] = useState(0);
+
+  const headerElement = useRef(null);
+
+  const router = useRouter();
 
   const toggleMenu = () => {
     // alert(menuExpanded);
@@ -61,9 +67,12 @@ export default function HeaderAndFooter(props) {
       if (window.innerWidth >= 440) {
         setIdealHeaderHeight(initialIdealHeaderHeight);
       } else {
-        setIdealHeaderHeight(382);
+        setIdealHeaderHeight(392);
       }
       setShouldBeMenuBar(result);
+      if (result) {
+        headerElement.current.scrollTop = 0;
+      }
     };
     handleScroll();
     handleResize();
@@ -100,6 +109,7 @@ export default function HeaderAndFooter(props) {
           ${transitionable ? styles.transitionable : ""}
         `}
         style={headerStyles}
+        ref={headerElement}
       >
         <div
           className={`
@@ -116,7 +126,7 @@ export default function HeaderAndFooter(props) {
           <h1>Blake Sanie</h1>
         </Link>
         <h2>
-          <span>‌‌‎Inquisitive student.‎‌‌</span>
+          <span>‌‌Inquisitive student.</span>
           <span>Aspiring engineer.</span>
           <span>Photography enthusiast.</span>
           <span>Curious stock trader.</span>
@@ -210,7 +220,18 @@ export default function HeaderAndFooter(props) {
           ></img>
         </p>
       </header>
-      <div className={styles.page}>{props.children}</div>
+      <div className={styles.page}>
+        {props.children}
+        <ScrollProgressBar
+          color={
+            router.pathname == "/"
+              ? "rgba(0, 126, 204, 0.8)"
+              : "rgba(0, 126, 204, 0.8)"
+          }
+          pageWidth={shouldBeMenuBar ? "100%" : "calc(100% - 220px"}
+          visible={!(shouldBeMenuBar && (menuIsDown || menuExpanded))}
+        />
+      </div>
     </>
   );
 }
