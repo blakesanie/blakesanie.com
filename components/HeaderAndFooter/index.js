@@ -13,7 +13,9 @@ let mouseHistory = {
 
 let timeout;
 
-const initialIdealHeaderHeight = 270;
+const initialIdealHeaderHeight = 290;
+
+const wrappedHeaderHeight = 410;
 
 export default function HeaderAndFooter(props) {
   const [menuExpanded, setMenuExpanded] = useState(false);
@@ -67,7 +69,7 @@ export default function HeaderAndFooter(props) {
       if (window.innerWidth >= 440) {
         setIdealHeaderHeight(initialIdealHeaderHeight);
       } else {
-        setIdealHeaderHeight(392);
+        setIdealHeaderHeight(wrappedHeaderHeight);
       }
       setShouldBeMenuBar(result);
       if (result) {
@@ -179,46 +181,59 @@ export default function HeaderAndFooter(props) {
             </Link>
           </div>
         </nav>
-        <p className={styles.madeBy}>
-          Built by Blake Sanie with
-          <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
+        <div className={styles.madeBy}>
+          <p>Built by Blake Sanie with</p>
+          <div className={styles.madeByIcons}>
+            <a href="https://reactjs.org/" target="_blank" rel="noreferrer">
+              <img
+                alt=""
+                src="/images/icons/react.png"
+                style={{
+                  filter: `invert(100%)`,
+                }}
+              ></img>
+            </a>
+            <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
+              <img
+                alt=""
+                src="/images/icons/nextjs.svg"
+                style={{
+                  filter: `invert(100%)`,
+                }}
+              ></img>
+            </a>
+            <a href="https://vercel.com/" target="_blank" rel="noreferrer">
+              <img
+                alt=""
+                src="/images/icons/vercel.png"
+                style={{
+                  filter: `invert(100%)`,
+                }}
+              ></img>
+            </a>
+            <a
+              href="https://github.com/blakesanie/blakesanie.com"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <img
+                alt=""
+                src="/images/icons/github.png"
+                style={{
+                  filter: `invert(100%)`,
+                }}
+              ></img>
+            </a>
+            <span>+</span>
             <img
               alt=""
-              src="https://seeklogo.com/images/N/next-js-logo-8FCFF51DD2-seeklogo.com.png"
+              src="/images/icons/heart.png"
               style={{
                 filter: `invert(100%)`,
               }}
             ></img>
-          </a>
-          ,
-          <a href="https://reactjs.org/" target="_blank" rel="noreferrer">
-            <img
-              alt=""
-              src="https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/react-512.png"
-              style={{
-                filter: `invert(100%)`,
-              }}
-            ></img>
-          </a>
-          ,
-          <a href="https://pages.github.com/" target="_blank" rel="noreferrer">
-            <img
-              alt=""
-              src="https://cdn-icons-png.flaticon.com/512/25/25231.png"
-              style={{
-                filter: `invert(100%)`,
-              }}
-            ></img>
-          </a>
-          , and
-          <img
-            alt=""
-            src="https://cdn2.iconfinder.com/data/icons/pittogrammi/142/80-512.png"
-            style={{
-              filter: `invert(100%)`,
-            }}
-          ></img>
-        </p>
+          </div>
+        </div>
       </header>
       <div className={styles.page}>
         {props.children}
