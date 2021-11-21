@@ -29,6 +29,22 @@ const redirects = {
     href: "https://twitter.com/BlakeSanie",
     title: "Twitter",
   },
+  paypal: {
+    href: "https://www.paypal.com/paypalme/blakesanie",
+    title: "PayPal",
+  },
+  venmo: {
+    href: "https://account.venmo.com/u/Blake-Sanie",
+    title: "Venmo",
+  },
+  youtube: {
+    href: "https://www.youtube.com/channel/UC5DbrnJtkkXNw-txM7NVWfw",
+    title: "Youtube",
+  },
+  spotify: {
+    href: "https://open.spotify.com/user/blake_sanie?si=uvhN4kfdTQWy4jnrlhKTVg",
+    title: "Spotify",
+  },
 };
 
 export async function getStaticPaths() {

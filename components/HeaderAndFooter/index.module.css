@@ -152,9 +152,9 @@
 }
 
 .madeBy img {
-  position: static;
   width: 19px;
   height: 19px;
+  margin-bottom: -4px; /* not sure why this is needed, but keeps + centered */
 }
 
 .madeByIcons {
@@ -168,6 +168,7 @@
 .madeByIcons > * {
   margin: 4px;
   opacity: 0.3;
+  box-sizing: content-box;
 }
 
 .madeByIcons a {

@@ -225,13 +225,15 @@ export default function HeaderAndFooter(props) {
               ></img>
             </a>
             <span>+</span>
-            <img
-              alt=""
-              src="/images/icons/heart.png"
-              style={{
-                filter: `invert(100%)`,
-              }}
-            ></img>
+            <a>
+              <img
+                alt=""
+                src="/images/icons/heart.png"
+                style={{
+                  filter: `invert(100%)`,
+                }}
+              ></img>
+            </a>
           </div>
         </div>
       </header>
