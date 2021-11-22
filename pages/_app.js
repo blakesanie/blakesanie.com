@@ -14,9 +14,15 @@ appleIcons = appleIcons.map((size) => {
 function MyApp({ Component, pageProps }) {
   return (
     <>
+      <Head>
+        <link
+          href="https://fonts.googleapis.com/css?family=Assistant:300,400,600"
+          rel="stylesheet"
+        />
+      </Head>
       <NextSeo
         title="Blake Sanie"
-        description="‌‌‎Inquisitive student.‎‌‌ Aspiring engineer. Photography enthusiast. Curious stock trader."
+        description="Inquisitive student. Aspiring engineer. Photography enthusiast. Curious stock trader."
         openGraph={{
           images: [
             {
