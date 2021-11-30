@@ -31,3 +31,16 @@ a {
 body {
   min-height: 100vh;
 }
+
+#nprogress {
+  z-index: 9999999 !important;
+}
+
+#nprogress .peg {
+  display: none !important;
+}
+
+#nprogress .bar {
+  border-bottom-right-radius: 100px !important;
+  border-top-right-radius: 100px !important;
+}

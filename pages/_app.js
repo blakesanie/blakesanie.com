@@ -1,6 +1,7 @@
 import "../styles/globals.css";
 import Head from "next/head";
 import { NextSeo } from "next-seo";
+import NextNProgress from "nextjs-progressbar";
 
 let appleIcons = [57, 60, 72, 76, 114, 120, 144, 152, 180];
 appleIcons = appleIcons.map((size) => {
@@ -14,6 +15,11 @@ appleIcons = appleIcons.map((size) => {
 function MyApp({ Component, pageProps }) {
   return (
     <>
+      <NextNProgress
+        color="red"
+        height={3}
+        options={{ showSpinner: false, easing: "ease" }}
+      />
       <Head>
         <link
           href="https://fonts.googleapis.com/css?family=Assistant:300,400,600"
