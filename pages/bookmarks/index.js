@@ -2,6 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import styles from "./Bookmarks.module.css";
 import { bookmarks } from "../../extras/bookmarks/bookmarkData";
 
+export async function getStaticProps() {
+  return {
+    props: {
+      bookmarks: bookmarks,
+    },
+  };
+}
+
 // const links = [
 //   {
 //     title: "GitHub",
@@ -107,7 +115,7 @@ import { bookmarks } from "../../extras/bookmarks/bookmarkData";
 //   return 0;
 // });
 
-export default function Gear(props) {
+export default function Bookmarks(props) {
   const [query, setQuery] = useState("");
 
   const [sortableAttribute, setSortableAttribute] = useState("title");
@@ -134,7 +142,7 @@ export default function Gear(props) {
           setSortableAttribute(event.target.value);
         }}
       >
-        {Object.keys(bookmarks[0]).map((key) => {
+        {Object.keys(props.bookmarks[0]).map((key) => {
           return <option key={key}>{key}</option>;
         })}
       </select>
@@ -147,7 +155,7 @@ export default function Gear(props) {
         <option value={1}>Ascending</option>
         <option value={-1}>Descending</option>
       </select>
-      {bookmarks
+      {props.bookmarks
         .filter((item) => {
           if (query.length == 0) {
             return true;
