@@ -12,7 +12,7 @@ import Link from "next/link";
 import Image from "next/image";
 import imageLoader from "../extras/imageLoader";
 
-export async function getStaticProps() {
+function getData(canShowMobile = false) {
   const data = [
     {
       text: ["^500 Hi, ^500I'm Blake ^2000", "^500 Scroll to learn more ^1000"],
@@ -108,20 +108,27 @@ export async function getStaticProps() {
       ],
     },
   ];
-  if (isMobile) {
+  if (canShowMobile && isMobile) {
     data[data.length - 1].links.push({
       url: "/contact.vcf",
       label: "Contact Card",
     });
   }
+  return data;
+}
+
+export async function getStaticProps() {
   return {
     props: {
-      data: data,
+      data: getData(),
     },
   };
 }
 
 export default function Home(props) {
+  if (Object.keys(props).length == 0) {
+    props.data = getData(true);
+  }
   const [scroll, setScroll] = useState(0);
   const windowHeight = use100vh();
   const [windowWidth, setWindowWidth] = useState(500);
@@ -170,7 +177,6 @@ export default function Home(props) {
           adjustedScroll += frameOffset / 2;
         }
         let offset = adjustedScroll - frameHeight * i;
-        console.log(windowWidth, windowHeight);
         return (
           <div
             className={styles.frame}
