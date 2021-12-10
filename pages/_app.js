@@ -2,6 +2,7 @@ import "../styles/globals.css";
 import Head from "next/head";
 import { NextSeo } from "next-seo";
 import NextNProgress from "nextjs-progressbar";
+// import Script from "next/script";
 
 let appleIcons = [57, 60, 72, 76, 114, 120, 144, 152, 180];
 appleIcons = appleIcons.map((size) => {
@@ -25,6 +26,25 @@ function MyApp({ Component, pageProps }) {
           href="https://fonts.googleapis.com/css?family=Assistant:300,400,600"
           rel="stylesheet"
         />
+        <meta
+          name="google-site-verification"
+          content="ePB1GvvA8L5Hza96sGcmDLw_jIzjhQ2JhXbIAg_8hlA"
+        />
+        <script
+          async="async"
+          src="https://www.googletagmanager.com/gtag/js?id=UA-164774604-1"
+        ></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "UA-164774604-1");`,
+          }}
+        ></script>
       </Head>
       <NextSeo
         title="Blake Sanie"
