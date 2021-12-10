@@ -1,12 +1,13 @@
 User-Agent: *
 Disallow: /
 Allow: /index.html
-Allow: /cs
+Allow: /projects
 Allow: /photo
-Allow: /blog
 Allow: /md/
 Allow: /spotifyMosaic
 Allow: /spotifyMosaic/
 Allow: /fund
+Allow: /resume
+
 
 Sitemap: https://www.blakesanie.com/sitemap.xml
