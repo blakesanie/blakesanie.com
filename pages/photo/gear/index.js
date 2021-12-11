@@ -70,7 +70,11 @@ export async function getStaticProps({ params }) {
 export default function Gear(props) {
   return (
     <HeaderAndFooter>
-      <NextSeo title="Blake Sanie - Photo Gear" />
+      <NextSeo
+        title="Blake Sanie - Photo Gear"
+        description="My collection of photography equipment and tools used to aid me with my advanced captures."
+        openGraph
+      />
       <div className={`content ${styles.gear}`}>
         <h1>Gear</h1>
         <div className={styles.gearContainer}>

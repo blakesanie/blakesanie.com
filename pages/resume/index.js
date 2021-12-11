@@ -7,7 +7,11 @@ import Div100vh, { use100vh } from "react-div-100vh";
 export default function Resume(props) {
   return (
     <HeaderAndFooter>
-      <NextSeo title="Blake Sanie - Résumé" />
+      <NextSeo
+        title="Blake Sanie - Résumé"
+        description="My professional experience, academic achievement, demonstrated skill set, leadership roles, and career objective."
+        openGraph
+      />
       <Div100vh className={styles.divWrapper}>
         <iframe
           src="/resume.pdf"

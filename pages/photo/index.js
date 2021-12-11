@@ -97,7 +97,11 @@ export default function Photo(props) {
 
   return (
     <HeaderAndFooter>
-      <NextSeo title="Blake Sanie - Photography" />
+      <NextSeo
+        title="Blake Sanie - Photography"
+        description="My vast portfolio of primarily landscape images captured since 2014."
+        openGraph
+      />
       <div className={`content ${styles.photo}`}>
         <h1>Photo</h1>
         <Masonry

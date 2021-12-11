@@ -241,7 +241,11 @@ export async function getStaticProps() {
 export default function CS(props) {
   return (
     <HeaderAndFooter>
-      <NextSeo title="Blake Sanie - Projects" />
+      <NextSeo
+        title="Blake Sanie - Projects"
+        description="My collective showcase of personal projects, focused on full-stack and data applications."
+        openGraph
+      />
       <div className={`content ${styles.cs}`}>
         <h1>Projects</h1>
         {props.projects.map((project, i) => {

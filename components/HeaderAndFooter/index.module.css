@@ -96,7 +96,7 @@
   left: 220px;
   right: 0;
   width: calc(100% - 220px);
-  animation: fadeIn 1s ease;
+  /* animation: fadeIn 1s ease; */
 }
 
 .page h1 {
