@@ -11,7 +11,7 @@ export default function Copyright(props) {
             fontSize: 13,
             width: `100%`,
             textAlign: "center",
-            padding: `30px 0`,
+            padding: `30px 10px`,
             marginTop: 10,
           },
           props.style
