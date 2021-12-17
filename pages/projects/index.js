@@ -64,6 +64,19 @@ export async function getStaticProps() {
           ],
         },
         {
+          name: "Evaluating the Effectiveness of Technical Indicators",
+          desc: "My final project for Georgia Tech's CS 4641 Course, Machine Learning, taught by Mahdi Roozbahani. Utilizing numerous supervised and non-supervised methods, my team aims to analyze the significance and approximate information gain provided by industry-standard technical indicators by classifying a high-dimensional indicator feature set into various simulated trading strategies.",
+          imageUrl: "/images/cs/indicator_clusters.png",
+          links: [
+            {
+              text: "Read Write-up",
+              url: "https://blakesanie.github.io/analyzing-financial-methods/",
+              external: true,
+            },
+          ],
+          techUsed: ["Tensorflow", "Jupyter Notebook", "Scikit Learn-wide"],
+        },
+        {
           name: "React Bubble UI",
           desc: "A highly configurable Bubble UI React.js component, similar to the iconic Apple Watch app layout. This custom element provides a playful and curious feel that trumps dull grid-based webpage layouts. Download this open source package or contribute on GitHub today!",
           imageUrl: "/images/cs/bubble.png",
@@ -96,7 +109,7 @@ export async function getStaticProps() {
           links: [
             {
               text: "Learn More",
-              url: "/fund",
+              url: "/fund/index.html",
               external: true,
             },
           ],

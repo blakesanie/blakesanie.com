@@ -45,51 +45,6 @@ function MyApp({ Component, pageProps }) {
     gtag("config", "UA-164774604-1");`,
           }}
         ></script>
-        {/* <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: `[{
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [{
-              "@type": "P",
-              "position": 1,
-              "name": "About",
-              "item": "https://blakesanie.com/"
-            },{
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Projects",
-              "item": "https://blakesanie.com/projects"
-            },{
-              "@type": "ListItem",
-              "position": 3,
-              "name": "Résumé",
-              "item": "https://blakesanie.com/resume"
-            },{
-              "@type": "ListItem",
-              "position": 4,
-              "name": "Stock Fund",
-              "item": "https://blakesanie.com/fund"
-            },{
-              "@type": "ListItem",
-              "position": 5,
-              "name": "Photography",
-              "item": "https://blakesanie.com/photo"
-            },{
-              "@type": "ListItem",
-              "position": 6,
-              "name": "Github",
-              "item": "https://blakesanie.com/github"
-            },{
-              "@type": "ListItem",
-              "position": 7,
-              "name": "Linkedin",
-              "item": "https://blakesanie.com/linkedin"
-            }]
-          }]`,
-          }}
-        ></script> */}
       </Head>
       <NextSeo
         title="Blake Sanie"

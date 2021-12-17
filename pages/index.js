@@ -45,7 +45,7 @@ function getData(canShowMobile = false) {
       text: ["Fascinated with automated stock trading"],
       imageUrl: "/images/stock.png",
       links: [
-        { url: "/fund", label: "Stock Fund", external: true },
+        { url: "/fund/index.html", label: "Stock Fund", external: true },
         {
           url: "https://investivision.com",
           label: "Investivision",

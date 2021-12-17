@@ -144,7 +144,7 @@ export default function HeaderAndFooter(props) {
           </div>
           <div className={styles.navSection}>
             <h3>Ventures</h3>
-            <Link href="/fund" target="_blank">
+            <Link href="/fund/index.html" target="_blank">
               Stock Fund
             </Link>
             <Link
