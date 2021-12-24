@@ -1,14 +1,37 @@
 import React, { useState, useEffect, useRef } from "react";
-import filenames from "../../extras/photo/filenames.js";
+import files from "../../extras/photo/filenames.js";
 import Masonry from "react-masonry-component";
 import Copyright from "../../components/Copyright";
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.js";
 import styles from "./index.module.css";
 import { NextSeo } from "next-seo";
+import Head from "next/head";
 import Image from "next/image";
 import imageLoader from "../../extras/imageLoader";
+import {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  Marker,
+} from "react-google-maps";
+import { rgbaToHsva } from "tsparticles/Utils";
+
+const MyMapComponent = withScriptjs(
+  withGoogleMap((props) => (
+    <GoogleMap
+      defaultZoom={16}
+      center={{ lat: props.coords[0], lng: props.coords[1] }}
+    >
+      {props.isMarkerShown && (
+        <Marker position={{ lat: props.coords[0], lng: props.coords[1] }} />
+      )}
+    </GoogleMap>
+  ))
+);
 
 var didShuffle = false;
+
+const filenames = Object.keys(files);
 
 export default function Photo(props) {
   function shuffleArray(array) {
@@ -97,6 +120,7 @@ export default function Photo(props) {
 
   return (
     <HeaderAndFooter>
+      <Head></Head>
       <NextSeo
         title="Blake Sanie - Photography"
         description="My vast portfolio of primarily landscape images captured since 2014."
@@ -190,7 +214,7 @@ export default function Photo(props) {
             </div>
           </div>
           <div
-            className={styles.half}
+            className={styles.half + " " + styles.rightHalf}
             onClick={nextImage}
             ref={rightHalfElement}
             style={{
@@ -214,8 +238,32 @@ export default function Photo(props) {
               setSelectedPhoto(undefined);
             }}
           >
-            Back
+            Exit
           </p>
+          {selectedPhoto !== undefined &&
+          files[filenames[selectedPhoto]].gps.length ? (
+            <div className={styles.metadata}>
+              <p className={styles.scrollForLocation}>
+                Scroll for Capture Location
+              </p>
+              <MyMapComponent
+                isMarkerShown
+                coords={files[filenames[selectedPhoto]].gps}
+                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp&libraries=geometry,drawing,places"
+                loadingElement={<div style={{ height: `100%` }} />}
+                containerElement={
+                  <div
+                    style={{
+                      width: "100%",
+                      height: `700px`,
+                      maxHeight: "calc(100vh - 20px)",
+                    }}
+                  />
+                }
+                mapElement={<div style={{ height: `100%` }} />}
+              />
+            </div>
+          ) : null}
         </div>
         <Copyright
           links={[
