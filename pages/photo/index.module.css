@@ -100,6 +100,19 @@
   height: calc(100% - env(safe-area-inset-bottom));
 }
 
+.loader {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top: calc(50% - 50px);
+  left: calc(50% - 50px);
+  border: 10px solid #999999a0;
+  border-radius: 50%;
+  border-right-color: white;
+  animation: rotate 1s linear infinite;
+  transition: opacity 0.2s ease;
+}
+
 .metadata {
   width: 100%;
   display: flex;
@@ -119,6 +132,7 @@
   box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.1);
   animation: vibrate 2.4s infinite ease-in-out;
   cursor: pointer;
+  transition: opacity 0.2s ease;
   /* animation: pulse 3s infinite ease-in-out; */
 }
 
@@ -126,15 +140,15 @@
   animation-play-state: paused;
 }
 
-@keyframes pulse {
+@keyframes rotate {
   0% {
-    opacity: 1;
+    transform: rotate(0);
   }
   50% {
-    opacity: 0;
+    transform: rotate(180deg);
   }
   100% {
-    opacity: 1;
+    transform: rotate(360deg);
   }
 }
 

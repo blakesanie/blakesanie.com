@@ -22,6 +22,7 @@ const MyMapComponent = withScriptjs(
     <GoogleMap
       defaultZoom={15}
       defaultTilt={0}
+      zoomControl={true}
       center={{ lat: props.coords[0], lng: props.coords[1] }}
     >
       {props.isMarkerShown && (
@@ -82,6 +83,7 @@ export default function Photo(props) {
   const [width, setWidth] = useState(getImageWidth());
   const [selectedPhoto, setSelectedPhoto] = useState(undefined);
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [fullScreenLoading, setFullScreenLoading] = useState(true);
 
   const handleResize = (window) => {
     setWidth(getImageWidth(window));
@@ -140,15 +142,61 @@ export default function Photo(props) {
     };
   }, []);
 
+  const setSelectedPhotoWithLoading = (i) => {
+    setFullScreenLoading(true);
+    setSelectedPhoto(i);
+  };
+
+  useEffect(() => {
+    if (selectedPhoto !== undefined) {
+      if (
+        selectedPhoto !== undefined &&
+        files[filenames[selectedPhoto]].gps.length
+      ) {
+        const [lat, lng] = files[filenames[selectedPhoto]].gps;
+        const map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: lat, lng: lng },
+          zoom: 15,
+          zoomControl: true,
+          zoomControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+          streetViewControl: true,
+          streetViewControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+          fullscreenControl: true,
+          fullscreenControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+          rotateControl: true,
+          rotateControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+        });
+        const infoWindow = new google.maps.InfoWindow();
+        const marker = new google.maps.Marker({
+          position: { lat: lat, lng: lng },
+          map: map,
+        });
+        marker.addListener("click", () => {
+          infoWindow.close();
+          infoWindow.setContent(`<p>${lat}, ${lng}</p>`);
+          infoWindow.open(marker.getMap(), marker);
+        });
+      }
+    }
+  }, [selectedPhoto]);
+
   const prevImage = () => {
     if (selectedPhoto > 0) {
-      setSelectedPhoto(selectedPhoto - 1);
+      setSelectedPhotoWithLoading(selectedPhoto - 1);
     }
   };
 
   const nextImage = () => {
     if (selectedPhoto < filenames.length - 1) {
-      setSelectedPhoto(selectedPhoto + 1);
+      setSelectedPhotoWithLoading(selectedPhoto + 1);
     }
   };
 
@@ -191,7 +239,7 @@ export default function Photo(props) {
                 }}
                 onClick={() => {
                   disableScroll();
-                  setSelectedPhoto(i);
+                  setSelectedPhotoWithLoading(i);
                 }}
               >
                 <Image
@@ -241,8 +289,18 @@ export default function Photo(props) {
                 layout="fill"
                 objectFit="contain"
                 loader={imageLoader}
+                // className={fullScreenLoading ? styles.loading : ""}
+                onLoad={() => {
+                  setFullScreenLoading(false);
+                }}
               />
             )}
+            <div
+              className={styles.loader}
+              style={{
+                opacity: fullScreenLoading ? 1 : 0,
+              }}
+            />
           </div>
           <div
             className={styles.half}
@@ -285,10 +343,10 @@ export default function Photo(props) {
             ref={backButtonElement}
             onClick={() => {
               enableScroll();
-              setSelectedPhoto(undefined);
+              setSelectedPhotoWithLoading(undefined);
             }}
           >
-            Exit
+            Esc
           </p>
           {selectedPhoto !== undefined &&
           files[filenames[selectedPhoto]].gps.length ? (
@@ -296,6 +354,9 @@ export default function Photo(props) {
               <p
                 className={styles.scrollForLocation}
                 ref={scrollForLocationElement}
+                style={{
+                  opacity: fullScreenLoading ? 0 : 1,
+                }}
                 onClick={() => {
                   fullScreenElement.current.scrollTo({
                     top: fullScreenElement.current.scrollHeight,
@@ -305,23 +366,15 @@ export default function Photo(props) {
               >
                 ↓ Scroll for Capture Location ↓
               </p>
-              <MyMapComponent
-                isMarkerShown
-                coords={files[filenames[selectedPhoto]].gps}
-                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp"
-                loadingElement={<div style={{ height: `100%` }} />}
-                containerElement={
-                  <div
-                    style={{
-                      width: "100%",
-                      height: `7000px`,
-                      maxHeight: windowHeight - 20,
-                      marginBottom: "env(safe-area-inset-bottom)",
-                    }}
-                  />
-                }
-                mapElement={<div style={{ height: `100%` }} />}
-              />
+              <div
+                id="map"
+                style={{
+                  width: "100%",
+                  height: `7000px`,
+                  maxHeight: windowHeight - 20,
+                  marginBottom: "env(safe-area-inset-bottom)",
+                }}
+              ></div>
             </div>
           ) : null}
         </div>
@@ -334,6 +387,10 @@ export default function Photo(props) {
           ]}
         />
       </div>
+      <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp"
+        async
+      ></script>
     </HeaderAndFooter>
   );
 }
