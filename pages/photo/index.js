@@ -58,6 +58,8 @@ export default function Photo(props) {
   const backButtonElement = useRef(null);
   const leftHalfElement = useRef(null);
   const rightHalfElement = useRef(null);
+  const fullScreenElement = useRef(null);
+  const scrollForLocationElement = useRef(null);
 
   const windowHeight = use100vh();
 
@@ -86,13 +88,40 @@ export default function Photo(props) {
   };
 
   const handleKeydown = (event) => {
+    const fullScreenOpen =
+      fullScreenElement.current !== null &&
+      !fullScreenElement.current.classList.contains("invisible");
     if (event.key == "Escape") {
+      event.preventDefault();
       backButtonElement.current.click();
     } else if (event.key == "ArrowRight") {
+      event.preventDefault();
       rightHalfElement.current.click();
     } else if (event.key == "ArrowLeft") {
+      event.preventDefault();
       leftHalfElement.current.click();
+    } else if (event.key == "ArrowUp") {
+      if (fullScreenOpen) {
+        event.preventDefault();
+        fullScreenElement.current.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+    } else if (event.key == "ArrowDown") {
+      if (fullScreenOpen) {
+        event.preventDefault();
+        scrollForLocationElement.current.click();
+      }
     }
+  };
+
+  const disableScroll = (event) => {
+    document.body.style.overflow = "hidden";
+  };
+
+  const enableScroll = (event) => {
+    document.body.style.overflow = "auto";
   };
 
   useEffect(() => {
@@ -107,6 +136,7 @@ export default function Photo(props) {
     window.addEventListener("keydown", handleKeydown);
     return () => {
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("keydown", handleKeydown);
     };
   }, []);
 
@@ -160,6 +190,7 @@ export default function Photo(props) {
                   width: width,
                 }}
                 onClick={() => {
+                  disableScroll();
                   setSelectedPhoto(i);
                 }}
               >
@@ -194,6 +225,7 @@ export default function Photo(props) {
           style={{
             padding: gutter,
           }}
+          ref={fullScreenElement}
         >
           <div
             className={styles.fullScreenImage}
@@ -252,6 +284,7 @@ export default function Photo(props) {
             className={styles.exit}
             ref={backButtonElement}
             onClick={() => {
+              enableScroll();
               setSelectedPhoto(undefined);
             }}
           >
@@ -260,7 +293,16 @@ export default function Photo(props) {
           {selectedPhoto !== undefined &&
           files[filenames[selectedPhoto]].gps.length ? (
             <div className={styles.metadata}>
-              <p className={styles.scrollForLocation}>
+              <p
+                className={styles.scrollForLocation}
+                ref={scrollForLocationElement}
+                onClick={() => {
+                  fullScreenElement.current.scrollTo({
+                    top: fullScreenElement.current.scrollHeight,
+                    behavior: "smooth",
+                  });
+                }}
+              >
                 ↓ Scroll for Capture Location ↓
               </p>
               <MyMapComponent

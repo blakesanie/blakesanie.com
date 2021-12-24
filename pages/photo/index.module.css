@@ -118,7 +118,12 @@
   margin-bottom: calc(10px + env(safe-area-inset-bottom));
   box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.1);
   animation: vibrate 2.4s infinite ease-in-out;
+  cursor: pointer;
   /* animation: pulse 3s infinite ease-in-out; */
+}
+
+.scrollForLocation:hover {
+  animation-play-state: paused;
 }
 
 @keyframes pulse {
