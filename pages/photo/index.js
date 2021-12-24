@@ -21,6 +21,7 @@ const MyMapComponent = withScriptjs(
   withGoogleMap((props) => (
     <GoogleMap
       defaultZoom={16}
+      defaultTilt={0}
       center={{ lat: props.coords[0], lng: props.coords[1] }}
     >
       {props.isMarkerShown && (
@@ -265,7 +266,7 @@ export default function Photo(props) {
               <MyMapComponent
                 isMarkerShown
                 coords={files[filenames[selectedPhoto]].gps}
-                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp&libraries=geometry,drawing,places"
+                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp"
                 loadingElement={<div style={{ height: `100%` }} />}
                 containerElement={
                   <div
