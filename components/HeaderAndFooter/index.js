@@ -108,6 +108,9 @@ export default function HeaderAndFooter(props) {
       style={Object.assign(
         {
           width: "100%",
+          paddingBottom: props.noBottomPadding
+            ? 0
+            : "env(safe-area-inset-bottom)",
         },
         props.style
       )}

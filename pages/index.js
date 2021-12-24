@@ -153,7 +153,7 @@ export default function Home(props) {
   const frameHeight = Math.max(400, Math.min(1000, windowHeight));
   const frameOffset = windowHeight - frameHeight;
   return (
-    <HeaderAndFooter>
+    <HeaderAndFooter noBottomPadding>
       <style jsx global>{`
         html {
           background-color: black;

@@ -8,6 +8,7 @@ import { NextSeo } from "next-seo";
 import Head from "next/head";
 import Image from "next/image";
 import imageLoader from "../../extras/imageLoader";
+import { use100vh } from "react-div-100vh";
 import {
   withScriptjs,
   withGoogleMap,
@@ -56,6 +57,8 @@ export default function Photo(props) {
   const backButtonElement = useRef(null);
   const leftHalfElement = useRef(null);
   const rightHalfElement = useRef(null);
+
+  const windowHeight = use100vh();
 
   const getImageWidth = (window) => {
     if (!window) {
@@ -268,8 +271,8 @@ export default function Photo(props) {
                   <div
                     style={{
                       width: "100%",
-                      height: `700px`,
-                      maxHeight: `calc(100% - 20px - env(safe-area-inset-bottom))`,
+                      height: `7000px`,
+                      maxHeight: windowHeight - 20,
                       marginBottom: "env(safe-area-inset-bottom)",
                     }}
                   />
