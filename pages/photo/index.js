@@ -20,7 +20,7 @@ import { rgbaToHsva } from "tsparticles/Utils";
 const MyMapComponent = withScriptjs(
   withGoogleMap((props) => (
     <GoogleMap
-      defaultZoom={16}
+      defaultZoom={15}
       defaultTilt={0}
       center={{ lat: props.coords[0], lng: props.coords[1] }}
     >
@@ -261,7 +261,7 @@ export default function Photo(props) {
           files[filenames[selectedPhoto]].gps.length ? (
             <div className={styles.metadata}>
               <p className={styles.scrollForLocation}>
-                Scroll for Capture Location
+                ↓ Scroll for Capture Location ↓
               </p>
               <MyMapComponent
                 isMarkerShown

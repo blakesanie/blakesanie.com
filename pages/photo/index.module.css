@@ -110,13 +110,14 @@
 
 .scrollForLocation {
   font-size: 13px;
-  margin-top: -30px;
+  margin-top: -25px;
   backdrop-filter: blur(10px);
   padding: 4px 10px;
   background-color: #ffffff50;
   border-radius: 6px;
-  margin-bottom: calc(15px + env(safe-area-inset-bottom));
+  margin-bottom: calc(10px + env(safe-area-inset-bottom));
   box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.1);
+  animation: vibrate 2.4s infinite ease-in-out;
   /* animation: pulse 3s infinite ease-in-out; */
 }
 
@@ -129,6 +130,18 @@
   }
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes vibrate {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  0% {
+    transform: translateY(0);
   }
 }
 
