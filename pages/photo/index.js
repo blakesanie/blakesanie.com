@@ -9,28 +9,6 @@ import Head from "next/head";
 import Image from "next/image";
 import imageLoader from "../../extras/imageLoader";
 import { use100vh } from "react-div-100vh";
-import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  Marker,
-} from "react-google-maps";
-import { rgbaToHsva } from "tsparticles/Utils";
-
-const MyMapComponent = withScriptjs(
-  withGoogleMap((props) => (
-    <GoogleMap
-      defaultZoom={15}
-      defaultTilt={0}
-      zoomControl={true}
-      center={{ lat: props.coords[0], lng: props.coords[1] }}
-    >
-      {props.isMarkerShown && (
-        <Marker position={{ lat: props.coords[0], lng: props.coords[1] }} />
-      )}
-    </GoogleMap>
-  ))
-);
 
 var didShuffle = false;
 
@@ -148,43 +126,47 @@ export default function Photo(props) {
   };
 
   useEffect(() => {
-    if (selectedPhoto !== undefined) {
-      if (
-        selectedPhoto !== undefined &&
-        files[filenames[selectedPhoto]].gps.length
-      ) {
-        const [lat, lng] = files[filenames[selectedPhoto]].gps;
-        const map = new google.maps.Map(document.getElementById("map"), {
-          center: { lat: lat, lng: lng },
-          zoom: 15,
-          zoomControl: true,
-          zoomControlOptions: {
-            position: google.maps.ControlPosition.RIGHT_CENTER,
-          },
-          streetViewControl: true,
-          streetViewControlOptions: {
-            position: google.maps.ControlPosition.RIGHT_CENTER,
-          },
-          fullscreenControl: true,
-          fullscreenControlOptions: {
-            position: google.maps.ControlPosition.RIGHT_CENTER,
-          },
-          rotateControl: true,
-          rotateControlOptions: {
-            position: google.maps.ControlPosition.RIGHT_CENTER,
-          },
-        });
-        const infoWindow = new google.maps.InfoWindow();
-        const marker = new google.maps.Marker({
-          position: { lat: lat, lng: lng },
-          map: map,
-        });
-        marker.addListener("click", () => {
-          infoWindow.close();
-          infoWindow.setContent(`<p>${lat}, ${lng}</p>`);
-          infoWindow.open(marker.getMap(), marker);
-        });
+    function plotMap() {
+      if (selectedPhoto !== undefined) {
+        if (files[filenames[selectedPhoto]].gps.length) {
+          const [lat, lng] = files[filenames[selectedPhoto]].gps;
+          const map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: lat, lng: lng },
+            zoom: 15,
+            zoomControl: true,
+            zoomControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_CENTER,
+            },
+            streetViewControl: true,
+            streetViewControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_CENTER,
+            },
+            fullscreenControl: true,
+            fullscreenControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_CENTER,
+            },
+            rotateControl: true,
+            rotateControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_CENTER,
+            },
+          });
+          const infoWindow = new google.maps.InfoWindow();
+          const marker = new google.maps.Marker({
+            position: { lat: lat, lng: lng },
+            map: map,
+          });
+          marker.addListener("click", () => {
+            infoWindow.close();
+            infoWindow.setContent(`<p>${lat}, ${lng}</p>`);
+            infoWindow.open(marker.getMap(), marker);
+          });
+        }
       }
+    }
+    try {
+      plotMap();
+    } catch (e) {
+      setTimeout(plotMap, 300);
     }
   }, [selectedPhoto]);
 

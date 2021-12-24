@@ -101,12 +101,12 @@
 }
 
 .loader {
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
   position: absolute;
-  top: calc(50% - 50px);
-  left: calc(50% - 50px);
-  border: 10px solid #999999a0;
+  top: calc(50% - 35px);
+  left: calc(50% - 35px);
+  border: 10px solid #cccccc80;
   border-radius: 50%;
   border-right-color: white;
   animation: rotate 1s linear infinite;
