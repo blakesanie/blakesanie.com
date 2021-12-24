@@ -119,7 +119,13 @@ export default function Photo(props) {
   };
 
   return (
-    <HeaderAndFooter>
+    <HeaderAndFooter
+      style={
+        {
+          // height: windowHeight,
+        }
+      }
+    >
       <Head></Head>
       <NextSeo
         title="Blake Sanie - Photography"
@@ -185,7 +191,14 @@ export default function Photo(props) {
             padding: gutter,
           }}
         >
-          <div className={styles.fullScreenImage}>
+          <div
+            className={styles.fullScreenImage}
+            style={
+              {
+                // height: windowHeight - 20,
+              }
+            }
+          >
             {selectedPhoto == undefined ? null : (
               <Image
                 src={`/images/portfolio/${filenames[selectedPhoto]}`}
@@ -256,7 +269,8 @@ export default function Photo(props) {
                     style={{
                       width: "100%",
                       height: `700px`,
-                      maxHeight: "calc(100vh - 20px)",
+                      maxHeight: `calc(100% - 20px - env(safe-area-inset-bottom))`,
+                      marginBottom: "env(safe-area-inset-bottom)",
                     }}
                   />
                 }

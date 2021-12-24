@@ -104,7 +104,14 @@ export default function HeaderAndFooter(props) {
     }
   }
   return (
-    <>
+    <div
+      style={Object.assign(
+        {
+          width: "100%",
+        },
+        props.style
+      )}
+    >
       <header
         className={`
           ${styles.header}
@@ -249,6 +256,6 @@ export default function HeaderAndFooter(props) {
           visible={!(shouldBeMenuBar && (menuIsDown || menuExpanded))}
         />
       </div>
-    </>
+    </div>
   );
 }
