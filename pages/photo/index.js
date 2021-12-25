@@ -126,48 +126,49 @@ export default function Photo(props) {
   };
 
   useEffect(() => {
-    function plotMap() {
-      if (selectedPhoto !== undefined) {
-        if (files[filenames[selectedPhoto]].gps.length) {
-          const [lat, lng] = files[filenames[selectedPhoto]].gps;
-          const map = new google.maps.Map(document.getElementById("map"), {
-            center: { lat: lat, lng: lng },
-            zoom: 15,
-            zoomControl: true,
-            zoomControlOptions: {
-              position: google.maps.ControlPosition.RIGHT_CENTER,
-            },
-            streetViewControl: true,
-            streetViewControlOptions: {
-              position: google.maps.ControlPosition.RIGHT_CENTER,
-            },
-            fullscreenControl: true,
-            fullscreenControlOptions: {
-              position: google.maps.ControlPosition.RIGHT_CENTER,
-            },
-            rotateControl: true,
-            rotateControlOptions: {
-              position: google.maps.ControlPosition.RIGHT_CENTER,
-            },
-          });
-          const infoWindow = new google.maps.InfoWindow();
-          const marker = new google.maps.Marker({
-            position: { lat: lat, lng: lng },
-            map: map,
-          });
-          marker.addListener("click", () => {
-            infoWindow.close();
-            infoWindow.setContent(`<p>${lat}, ${lng}</p>`);
-            infoWindow.open(marker.getMap(), marker);
-          });
+    function recurse() {
+      try {
+        if (selectedPhoto !== undefined) {
+          if (files[filenames[selectedPhoto]].gps.length) {
+            const [lat, lng] = files[filenames[selectedPhoto]].gps;
+            const map = new google.maps.Map(document.getElementById("map"), {
+              center: { lat: lat, lng: lng },
+              zoom: 15,
+              zoomControl: true,
+              zoomControlOptions: {
+                position: google.maps.ControlPosition.RIGHT_CENTER,
+              },
+              streetViewControl: true,
+              streetViewControlOptions: {
+                position: google.maps.ControlPosition.RIGHT_CENTER,
+              },
+              fullscreenControl: true,
+              fullscreenControlOptions: {
+                position: google.maps.ControlPosition.RIGHT_CENTER,
+              },
+              rotateControl: true,
+              rotateControlOptions: {
+                position: google.maps.ControlPosition.RIGHT_CENTER,
+              },
+            });
+            const infoWindow = new google.maps.InfoWindow();
+            const marker = new google.maps.Marker({
+              position: { lat: lat, lng: lng },
+              map: map,
+            });
+            marker.addListener("click", () => {
+              infoWindow.close();
+              infoWindow.setContent(`<p>${lat}, ${lng}</p>`);
+              infoWindow.open(marker.getMap(), marker);
+            });
+          }
         }
+      } catch (e) {
+        console.log(e, "trying again in .3 seconds");
+        setTimeout(recurse, 300);
       }
     }
-    try {
-      plotMap();
-    } catch (e) {
-      setTimeout(plotMap, 300);
-    }
+    recurse();
   }, [selectedPhoto]);
 
   const prevImage = () => {
