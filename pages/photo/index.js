@@ -191,7 +191,12 @@ export default function Photo(props) {
         }
       }
     >
-      <Head></Head>
+      <Head>
+        <script
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp"
+          async
+        ></script>
+      </Head>
       <NextSeo
         title="Blake Sanie - Photography"
         description="My vast portfolio of primarily landscape images captured since 2014."
@@ -370,10 +375,6 @@ export default function Photo(props) {
           ]}
         />
       </div>
-      <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp"
-        async
-      ></script>
     </HeaderAndFooter>
   );
 }
