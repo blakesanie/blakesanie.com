@@ -5,10 +5,15 @@ export default function ScrollProgressBar(props) {
 
   useEffect(() => {
     const handler = () => {
-      if (props.visible) {
+      if (
+        props.visible &&
+        document.body.scrollHeight - window.innerHeight > 200
+      ) {
         setProgress(
           window.scrollY / (document.body.scrollHeight - window.innerHeight)
         );
+      } else {
+        setProgress(0);
       }
     };
     document.addEventListener("scroll", handler);
@@ -17,13 +22,13 @@ export default function ScrollProgressBar(props) {
       document.removeEventListener("scroll", handler);
       window.removeEventListener("resize", handler);
     };
-  });
+  }, []);
 
   return (
     <div
       style={{
         position: "fixed",
-        width: props.pageWidth || "100%",
+        width: props.pageWidth === "100%" ? "200%" : "calc(200% - 440px)",
         top: 0,
         overflow: "hidden",
         display: props.visible ? "block" : "none",
@@ -34,7 +39,7 @@ export default function ScrollProgressBar(props) {
           backgroundColor: props.color || "black",
           height: props.height || 4,
           width: "100%",
-          transform: `translateX(calc(${progress * 100 - 100}%))`,
+          transform: `translateX(calc(${progress * 50 - 100}%))`,
           zIndex: 99999,
           borderBottomRightRadius: 100,
         }}

@@ -148,12 +148,19 @@ export default function Photo(props) {
   useEffect(() => {
     function recurse() {
       console.log(minLat, maxLat, minLng, maxLng);
+      let width = window.innerWidth;
+      if (width > 800) {
+        width -= 220;
+      }
+      const zoom = Math.floor(1.73 * Math.log(width) - 9.26);
+      console.log("using zoom", zoom);
       try {
         const map = new google.maps.Map(
           document.getElementById("fullScreenMap"),
+
           {
             center: { lat: (maxLat + minLat) / 2, lng: (maxLng + minLng) / 2 },
-            zoom: 3,
+            zoom: zoom,
             zoomControl: true,
             zoomControlOptions: {
               position: google.maps.ControlPosition.RIGHT_CENTER,
@@ -333,18 +340,37 @@ export default function Photo(props) {
         </div>
 
         <div
-          id="fullScreenMap"
           style={{
             width: "100%",
             height: `7000px`,
-            maxHeight: windowHeight - 100,
+            maxHeight: windowHeight - 110,
             marginBottom: "env(safe-area-inset-bottom)",
             display: mapMode ? "block" : "none",
           }}
-          onClick={() => {
-            infoWindow.close();
-          }}
-        ></div>
+        >
+          <div
+            id="fullScreenMap"
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+            onClick={() => {
+              infoWindow.close();
+            }}
+          ></div>
+          <p
+            style={{
+              position: "absolute",
+              top: -18,
+              width: "100%",
+              textAlign: "center",
+              fontSize: 12,
+              opacity: 0.4,
+            }}
+          >
+            Not all images are geotagged
+          </p>
+        </div>
 
         <Masonry
           className={`masonry ${styles.masonry} ${

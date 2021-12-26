@@ -255,7 +255,7 @@ export default function HeaderAndFooter(props) {
               ? "rgba(0, 126, 204, 0.8)"
               : "rgba(0, 126, 204, 0.8)"
           }
-          pageWidth={shouldBeMenuBar ? "100%" : "calc(100% - 220px"}
+          pageWidth={shouldBeMenuBar ? "100%" : "calc(100% - 220px)"}
           visible={!(shouldBeMenuBar && (menuIsDown || menuExpanded))}
         />
       </div>
