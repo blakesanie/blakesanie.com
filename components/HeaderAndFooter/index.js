@@ -104,17 +104,18 @@ export default function HeaderAndFooter(props) {
     }
   }
   return (
-    <div
-      style={Object.assign(
-        {
-          width: "100%",
-          paddingBottom: props.noBottomPadding
-            ? 0
-            : "env(safe-area-inset-bottom)",
-        },
-        props.style
-      )}
-    >
+    // <div
+    //   style={Object.assign(
+    //     {
+    //       width: "100%",
+    //       paddingBottom: props.noBottomPadding
+    //         ? 0
+    //         : "env(safe-area-inset-bottom)",
+    //     },
+    //     props.style
+    //   )}
+    // >
+    <>
       <header
         className={`
           ${styles.header}
@@ -247,7 +248,14 @@ export default function HeaderAndFooter(props) {
           </div>
         </div>
       </header>
-      <div className={styles.page}>
+      <div
+        className={styles.page}
+        style={{
+          paddingBottom: props.noBottomPadding
+            ? 0
+            : "env(safe-area-inset-bottom)",
+        }}
+      >
         {props.children}
         <ScrollProgressBar
           color={
@@ -259,6 +267,7 @@ export default function HeaderAndFooter(props) {
           visible={!(shouldBeMenuBar && (menuIsDown || menuExpanded))}
         />
       </div>
-    </div>
+    </>
+    // </div>
   );
 }
