@@ -3,26 +3,27 @@ import React, { useState, useEffect } from "react";
 export default function ScrollProgressBar(props) {
   const [progress, setProgress] = useState(0);
 
+  const handler = () => {
+    if (
+      props.visible &&
+      document.body.scrollHeight - window.innerHeight > 400
+    ) {
+      setProgress(
+        window.scrollY / (document.body.scrollHeight - window.innerHeight)
+      );
+    } else {
+      setProgress(0);
+    }
+  };
+
   useEffect(() => {
-    const handler = () => {
-      if (
-        props.visible &&
-        document.body.scrollHeight - window.innerHeight > 200
-      ) {
-        setProgress(
-          window.scrollY / (document.body.scrollHeight - window.innerHeight)
-        );
-      } else {
-        setProgress(0);
-      }
-    };
     document.addEventListener("scroll", handler);
     window.addEventListener("resize", handler);
     return () => {
       document.removeEventListener("scroll", handler);
       window.removeEventListener("resize", handler);
     };
-  }, []);
+  }, [props.visible]);
 
   return (
     <div

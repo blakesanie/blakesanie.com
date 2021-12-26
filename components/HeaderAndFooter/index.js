@@ -13,18 +13,13 @@ let mouseHistory = {
 
 let timeout;
 
-const initialIdealHeaderHeight = 290;
-
-const wrappedHeaderHeight = 410;
+isMobile = true;
 
 export default function HeaderAndFooter(props) {
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [menuIsDown, setMenuIsDown] = useState(true);
   const [shouldBeMenuBar, setShouldBeMenuBar] = useState(true);
   const [transitionable, setTransitionable] = useState(false);
-  const [idealHeaderHeight, setIdealHeaderHeight] = useState(
-    initialIdealHeaderHeight
-  );
   const [scroll, setScroll] = useState(0);
 
   const headerElement = useRef(null);
@@ -66,11 +61,6 @@ export default function HeaderAndFooter(props) {
           setTransitionable(true);
         }
       }
-      if (window.innerWidth >= 440) {
-        setIdealHeaderHeight(initialIdealHeaderHeight);
-      } else {
-        setIdealHeaderHeight(wrappedHeaderHeight);
-      }
       setShouldBeMenuBar(result);
       if (result) {
         headerElement.current.scrollTop = 0;
@@ -88,7 +78,9 @@ export default function HeaderAndFooter(props) {
 
   let headerStyles = {};
   if (shouldBeMenuBar) {
-    headerStyles.height = menuExpanded ? `${idealHeaderHeight}px` : "80px";
+    headerStyles.height = menuExpanded
+      ? headerElement.current.scrollHeight
+      : 80;
     if (scroll <= 0) {
     } else if (scroll <= 80 && !menuIsDown && !menuExpanded) {
       headerStyles.position = "absolute";
@@ -103,6 +95,7 @@ export default function HeaderAndFooter(props) {
       }
     }
   }
+
   return (
     // <div
     //   style={Object.assign(
@@ -171,7 +164,8 @@ export default function HeaderAndFooter(props) {
           </div>
           <div className={styles.navSection}>
             <h3>Photography</h3>
-            <Link href="/photo">Portfolio</Link>
+            <Link href="/photo">Gallery</Link>
+            <Link href="/photo/?map=true">Map</Link>
             <Link href="/photo/gear">Gear</Link>
           </div>
           <div className={styles.navSection}>
@@ -254,6 +248,9 @@ export default function HeaderAndFooter(props) {
           paddingBottom: props.noBottomPadding
             ? 0
             : "env(safe-area-inset-bottom)",
+        }}
+        onClick={() => {
+          setMenuExpanded(false);
         }}
       >
         {props.children}

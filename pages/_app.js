@@ -2,6 +2,7 @@ import "../styles/globals.css";
 import Head from "next/head";
 import { NextSeo, SocialProfileJsonLd } from "next-seo";
 import NextNProgress from "nextjs-progressbar";
+import { useRouter } from "next/router";
 // import Script from "next/script";
 
 let appleIcons = [57, 60, 72, 76, 114, 120, 144, 152, 180];
@@ -14,13 +15,18 @@ appleIcons = appleIcons.map((size) => {
 });
 
 function MyApp({ Component, pageProps }) {
+  const router = useRouter();
+  console.log(router.route != "/photo");
   return (
     <>
-      <NextNProgress
-        color="red"
-        height={3}
-        options={{ showSpinner: false, easing: "ease" }}
-      />
+      {router && router.route != "/photo" ? (
+        <NextNProgress
+          color="red"
+          height={3}
+          options={{ showSpinner: false, easing: "ease" }}
+        />
+      ) : null}
+
       <Head>
         <link
           href="https://fonts.googleapis.com/css?family=Assistant:300,400,600"

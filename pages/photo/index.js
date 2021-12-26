@@ -9,6 +9,7 @@ import Head from "next/head";
 import Image from "next/image";
 import imageLoader from "../../extras/imageLoader";
 import { use100vh } from "react-div-100vh";
+import { useRouter } from "next/router";
 
 var didShuffle = false;
 
@@ -76,12 +77,21 @@ export default function Photo(props) {
     let numCols = Math.floor(Math.pow(usableWidth, 0.6) / 18);
     return usableWidth / numCols - (gutter * (numCols - 1)) / numCols;
   };
-
   const [width, setWidth] = useState(getImageWidth());
   const [selectedPhoto, setSelectedPhoto] = useState(undefined);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [fullScreenLoading, setFullScreenLoading] = useState(true);
-  const [mapMode, setMapMode] = useState(false);
+
+  const router = useRouter();
+
+  let mapMode;
+
+  if (router.asPath.includes("?map=") && router.query.map) {
+    mapMode = true;
+  } else if (!router.asPath.includes("?map=") && !router.query.map) {
+    mapMode = false;
+  }
+  // the above works, dont touch
 
   const handleResize = (window) => {
     setWidth(getImageWidth(window));
@@ -314,236 +324,248 @@ export default function Photo(props) {
       />
       <div className={`content ${styles.photo}`}>
         <h1>Photography</h1>
-        <div className={styles.modeControl}>
-          <p
-            style={{
-              opacity: mapMode ? 0.3 : 1,
-            }}
-          >
-            Gallery
-          </p>
-          <label className={styles.switch}>
-            <input
-              type="checkbox"
-              value={mapMode}
-              onChange={(e) => setMapMode(e.target.checked)}
-            />
-            <span className={styles.slider}></span>
-          </label>
-          <p
-            style={{
-              opacity: mapMode ? 1 : 0.3,
-            }}
-          >
-            Map
-          </p>
-        </div>
-
-        <div
-          style={{
-            width: "100%",
-            height: `7000px`,
-            maxHeight: windowHeight - 110,
-            marginBottom: "env(safe-area-inset-bottom)",
-            display: mapMode ? "block" : "none",
-          }}
-        >
-          <div
-            id="fullScreenMap"
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-            onClick={() => {
-              infoWindow.close();
-            }}
-          ></div>
-          <p
-            style={{
-              position: "absolute",
-              top: -18,
-              width: "100%",
-              textAlign: "center",
-              fontSize: 12,
-              opacity: 0.4,
-            }}
-          >
-            Not all images are geotagged
-          </p>
-        </div>
-
-        <Masonry
-          className={`masonry ${styles.masonry} ${
-            mapMode ? styles.masonryHidden : ""
-          }`} // default ''
-          elementType={"div"} // default 'div'
-          options={{
-            transitionDuration: 200,
-            gutter: gutter,
-          }} // default {}
-          disableImagesLoaded={false} // default false
-          updateOnEachImageLoad={true} // default false and works only if disableImagesLoaded is false
-          onImagesLoaded={() => {
-            setImagesLoaded(true);
-          }}
-        >
-          {filenames.map((filename, i) => {
-            return (
-              <div
-                className={styles.imgContainer}
-                style={{
-                  marginBottom: gutter,
-                  width: width,
-                }}
-                onClick={() => {
-                  disableScroll();
-                  setSelectedPhotoWithLoading(i);
-                }}
-              >
-                <Image
-                  src={`/images/portfolio/${filename}`}
-                  height="450"
-                  width="250"
-                  layout="fixed"
-                  loader={imageLoader}
-                  loading="lazy"
-                />
-              </div>
-              // <img
-              //   key={filename}
-              //   alt="Copyright Blake Sanie"
-              //   src={`/images/thumbnails/${filename}`}
-              //   style={{
-              //     marginBottom: gutter,
-              //     width: width,
-              //   }}
-              //   onClick={() => {
-              //     setSelectedPhoto(i);
-              //   }}
-              // ></img>
-            );
-          })}
-        </Masonry>
-        <div
-          className={`${styles.fullScreen} ${
-            selectedPhoto === undefined ? "invisible" : ""
-          }`}
-          style={{
-            padding: gutter,
-          }}
-          ref={fullScreenElement}
-        >
-          <div
-            className={styles.fullScreenImage}
-            style={
-              {
-                // height: windowHeight - 20,
-              }
-            }
-          >
-            {selectedPhoto == undefined ? null : (
-              <Image
-                src={`/images/portfolio/${filenames[selectedPhoto]}`}
-                layout="fill"
-                objectFit="contain"
-                loader={imageLoader}
-                // className={fullScreenLoading ? styles.loading : ""}
-                onLoad={() => {
-                  setFullScreenLoading(false);
-                }}
-              />
-            )}
-            <div
-              className={styles.loader}
-              style={{
-                opacity: fullScreenLoading ? 1 : 0,
-              }}
-            />
-          </div>
-          <div
-            className={styles.half}
-            onClick={prevImage}
-            style={{
-              display: selectedPhoto == 0 ? "none" : "flex",
-            }}
-            ref={leftHalfElement}
-          >
-            <div className={styles.scrubButton}>
-              <Image
-                src="/images/left_arrow.png"
-                width="10"
-                height="20"
-                layout="fixed"
-                loader={imageLoader}
-              ></Image>
-            </div>
-          </div>
-          <div
-            className={styles.half + " " + styles.rightHalf}
-            onClick={nextImage}
-            ref={rightHalfElement}
-            style={{
-              display: selectedPhoto == filenames.length - 1 ? "none" : "flex",
-            }}
-          >
-            <div className={styles.scrubButton}>
-              <Image
-                src="/images/left_arrow.png"
-                width="10"
-                height="20"
-                layout="fixed"
-                loader={imageLoader}
-              ></Image>
-            </div>
-          </div>
-          <p
-            className={styles.exit}
-            ref={backButtonElement}
-            onClick={() => {
-              enableScroll();
-              setSelectedPhotoWithLoading(undefined);
-            }}
-          >
-            Esc
-          </p>
-          {selectedPhoto !== undefined &&
-          files[filenames[selectedPhoto]].gps.length ? (
-            <div className={styles.metadata}>
+        {mapMode === undefined ? null : (
+          <>
+            <div className={styles.modeControl}>
               <p
-                className={styles.scrollForLocation}
-                ref={scrollForLocationElement}
                 style={{
-                  opacity: fullScreenLoading ? 0 : 1,
-                }}
-                onClick={() => {
-                  fullScreenElement.current.scrollTo({
-                    top: fullScreenElement.current.scrollHeight,
-                    behavior: "smooth",
-                  });
+                  opacity: mapMode ? 0.3 : 1,
                 }}
               >
-                ↓ Scroll for Capture Location ↓
+                Gallery
               </p>
+              <label className={styles.switch}>
+                <input
+                  type="checkbox"
+                  checked={mapMode}
+                  onChange={(e) => {
+                    router.push(
+                      "/photo" + (e.target.checked ? "/?map=true" : ""),
+                      undefined,
+                      { shallow: true }
+                    );
+                    // setMapMode(e.target.checked);
+                  }}
+                />
+                <span className={styles.slider}></span>
+              </label>
+              <p
+                style={{
+                  opacity: mapMode ? 1 : 0.3,
+                }}
+              >
+                Map
+              </p>
+            </div>
+
+            <div
+              style={{
+                width: "100%",
+                height: `7000px`,
+                maxHeight: windowHeight - 110,
+                marginBottom: "env(safe-area-inset-bottom)",
+                display: mapMode ? "block" : "none",
+              }}
+            >
               <div
-                id="map"
+                id="fullScreenMap"
                 style={{
                   width: "100%",
-                  height: `7000px`,
-                  maxHeight: windowHeight - 20,
-                  marginBottom: "env(safe-area-inset-bottom)",
+                  height: "100%",
+                }}
+                onClick={() => {
+                  infoWindow.close();
                 }}
               ></div>
+              <p
+                style={{
+                  position: "absolute",
+                  top: -18,
+                  width: "100%",
+                  textAlign: "center",
+                  fontSize: 12,
+                  opacity: 0.3,
+                }}
+              >
+                Not all images are geotagged
+              </p>
             </div>
-          ) : null}
-        </div>
-        <Copyright
-          links={[
-            {
-              url: "https://creativecommons.org/licenses/by-nc-nd/4.0/",
-              title: "Photo License",
-            },
-          ]}
-        />
+
+            <Masonry
+              className={`masonry ${styles.masonry} ${
+                mapMode ? styles.masonryHidden : ""
+              }`} // default ''
+              elementType={"div"} // default 'div'
+              options={{
+                transitionDuration: 200,
+                gutter: gutter,
+              }} // default {}
+              disableImagesLoaded={false} // default false
+              updateOnEachImageLoad={true} // default false and works only if disableImagesLoaded is false
+              onImagesLoaded={() => {
+                setImagesLoaded(true);
+              }}
+            >
+              {filenames.map((filename, i) => {
+                return (
+                  <div
+                    className={styles.imgContainer}
+                    style={{
+                      marginBottom: gutter,
+                      width: width,
+                    }}
+                    onClick={() => {
+                      disableScroll();
+                      setSelectedPhotoWithLoading(i);
+                    }}
+                  >
+                    <Image
+                      src={`/images/portfolio/${filename}`}
+                      height="450"
+                      width="250"
+                      layout="fixed"
+                      loader={imageLoader}
+                      loading="lazy"
+                    />
+                  </div>
+                  // <img
+                  //   key={filename}
+                  //   alt="Copyright Blake Sanie"
+                  //   src={`/images/thumbnails/${filename}`}
+                  //   style={{
+                  //     marginBottom: gutter,
+                  //     width: width,
+                  //   }}
+                  //   onClick={() => {
+                  //     setSelectedPhoto(i);
+                  //   }}
+                  // ></img>
+                );
+              })}
+            </Masonry>
+            <div
+              className={`${styles.fullScreen} ${
+                selectedPhoto === undefined ? "invisible" : ""
+              }`}
+              style={{
+                padding: gutter,
+              }}
+              ref={fullScreenElement}
+            >
+              <div
+                className={styles.fullScreenImage}
+                style={
+                  {
+                    // height: windowHeight - 20,
+                  }
+                }
+              >
+                {selectedPhoto == undefined ? null : (
+                  <Image
+                    src={`/images/portfolio/${filenames[selectedPhoto]}`}
+                    layout="fill"
+                    objectFit="contain"
+                    loader={imageLoader}
+                    // className={fullScreenLoading ? styles.loading : ""}
+                    onLoad={() => {
+                      setFullScreenLoading(false);
+                    }}
+                  />
+                )}
+                <div
+                  className={styles.loader}
+                  style={{
+                    opacity: fullScreenLoading ? 1 : 0,
+                  }}
+                />
+              </div>
+              <div
+                className={styles.half}
+                onClick={prevImage}
+                style={{
+                  display: selectedPhoto == 0 ? "none" : "flex",
+                }}
+                ref={leftHalfElement}
+              >
+                <div className={styles.scrubButton}>
+                  <Image
+                    src="/images/left_arrow.png"
+                    width="10"
+                    height="20"
+                    layout="fixed"
+                    loader={imageLoader}
+                  ></Image>
+                </div>
+              </div>
+              <div
+                className={styles.half + " " + styles.rightHalf}
+                onClick={nextImage}
+                ref={rightHalfElement}
+                style={{
+                  display:
+                    selectedPhoto == filenames.length - 1 ? "none" : "flex",
+                }}
+              >
+                <div className={styles.scrubButton}>
+                  <Image
+                    src="/images/left_arrow.png"
+                    width="10"
+                    height="20"
+                    layout="fixed"
+                    loader={imageLoader}
+                  ></Image>
+                </div>
+              </div>
+              <p
+                className={styles.exit}
+                ref={backButtonElement}
+                onClick={() => {
+                  enableScroll();
+                  setSelectedPhotoWithLoading(undefined);
+                }}
+              >
+                Esc
+              </p>
+              {selectedPhoto !== undefined &&
+              files[filenames[selectedPhoto]].gps.length ? (
+                <div className={styles.metadata}>
+                  <p
+                    className={styles.scrollForLocation}
+                    ref={scrollForLocationElement}
+                    style={{
+                      opacity: fullScreenLoading ? 0 : 1,
+                    }}
+                    onClick={() => {
+                      fullScreenElement.current.scrollTo({
+                        top: fullScreenElement.current.scrollHeight,
+                        behavior: "smooth",
+                      });
+                    }}
+                  >
+                    ↓ Scroll for Capture Location ↓
+                  </p>
+                  <div
+                    id="map"
+                    style={{
+                      width: "100%",
+                      height: `7000px`,
+                      maxHeight: windowHeight - 20,
+                      marginBottom: "env(safe-area-inset-bottom)",
+                    }}
+                  ></div>
+                </div>
+              ) : null}
+            </div>
+            <Copyright
+              links={[
+                {
+                  url: "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+                  title: "Photo License",
+                },
+              ]}
+            />
+          </>
+        )}
       </div>
     </HeaderAndFooter>
   );
