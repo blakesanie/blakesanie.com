@@ -5,6 +5,7 @@
   position: relative;
   font-family: "Assistant", sans-serif;
   font-weight: 600;
+  outline: none !important;
 }
 
 #__next {
@@ -43,4 +44,28 @@ body {
 #nprogress .bar {
   border-bottom-right-radius: 100px !important;
   border-top-right-radius: 100px !important;
+}
+
+.gm-style * {
+  cursor: default;
+}
+
+.gm-style .gm-style-iw-d::-webkit-scrollbar {
+  /* -webkit-appearance: auto !important; */
+  width: 0 !important;
+}
+
+.gm-style .gm-style-iw-c {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.1) !important;
+  border: 7px solid white;
+}
+
+.gm-style-iw-d {
+  overflow: hidden !important;
+}
+
+.gm-style-iw-c button {
+  display: none !important;
 }

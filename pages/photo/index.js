@@ -14,6 +14,25 @@ var didShuffle = false;
 
 const filenames = Object.keys(files);
 
+let minLat = Infinity;
+let minLng = Infinity;
+let maxLat = -Infinity;
+let maxLng = -Infinity;
+console.log(Object.values(files));
+for (const metadata of Object.values(files)) {
+  const { gps } = metadata;
+  if (gps.length) {
+    const [lat, lng] = gps;
+    minLat = Math.min(minLat, lat);
+    maxLat = Math.max(maxLat, lat);
+    minLng = Math.min(minLng, lng);
+    maxLng = Math.max(maxLng, lng);
+  }
+}
+
+let infoWindow;
+let canHover = false;
+
 export default function Photo(props) {
   function shuffleArray(array) {
     for (var i = array.length - 1; i > 0; i--) {
@@ -62,6 +81,7 @@ export default function Photo(props) {
   const [selectedPhoto, setSelectedPhoto] = useState(undefined);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [fullScreenLoading, setFullScreenLoading] = useState(true);
+  const [mapMode, setMapMode] = useState(false);
 
   const handleResize = (window) => {
     setWidth(getImageWidth(window));
@@ -124,6 +144,89 @@ export default function Photo(props) {
     setFullScreenLoading(true);
     setSelectedPhoto(i);
   };
+
+  useEffect(() => {
+    function recurse() {
+      console.log(minLat, maxLat, minLng, maxLng);
+      try {
+        const map = new google.maps.Map(
+          document.getElementById("fullScreenMap"),
+          {
+            center: { lat: (maxLat + minLat) / 2, lng: (maxLng + minLng) / 2 },
+            zoom: 3,
+            zoomControl: true,
+            zoomControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_CENTER,
+            },
+            streetViewControl: true,
+            streetViewControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_CENTER,
+            },
+            fullscreenControl: true,
+            fullscreenControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_CENTER,
+            },
+            rotateControl: true,
+            rotateControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_CENTER,
+            },
+          }
+        );
+        infoWindow = new google.maps.InfoWindow();
+        for (let i = 0; i < filenames.length; i++) {
+          const filename = filenames[i];
+          const { gps } = files[filename];
+          if (gps.length) {
+            const [lat, lng] = gps;
+            const [name, ext] = filename.split(".");
+            const marker = new google.maps.Marker({
+              position: { lat: lat, lng: lng },
+              map: map,
+            });
+            function openFullScreen() {
+              setSelectedPhotoWithLoading(i);
+            }
+            function showPreview() {
+              let img = document.createElement("img");
+              img.src = `/optimized/images/portfolio/${name}_w=384&q=75.${ext}`;
+              img.addEventListener("click", (e) => {
+                e.stopPropagation();
+                openFullScreen();
+              });
+              img.style.width = "192px";
+              img.style.marginBottom = "-10px";
+              img.style.cursor = "pointer";
+
+              // infoWindow.close();
+              infoWindow.setContent(img);
+              infoWindow.open(marker.getMap(), marker);
+            }
+            marker.addListener("mouseover", function () {
+              canHover = true;
+              showPreview();
+            });
+            marker.addListener("mouseout", function () {
+              if (canHover) {
+                infoWindow.close();
+              }
+            });
+            marker.addListener("click", (e) => {
+              e.domEvent.stopPropagation();
+              if (canHover) {
+                openFullScreen(e);
+              } else {
+                showPreview();
+              }
+            });
+          }
+        }
+      } catch (e) {
+        console.log(e, "will try again in 0.2s");
+        setTimeout(recurse, 200);
+      }
+    }
+    recurse();
+  }, []);
 
   useEffect(() => {
     function recurse() {
@@ -203,9 +306,50 @@ export default function Photo(props) {
         openGraph
       />
       <div className={`content ${styles.photo}`}>
-        <h1>Photo</h1>
+        <h1>Photography</h1>
+        <div className={styles.modeControl}>
+          <p
+            style={{
+              opacity: mapMode ? 0.3 : 1,
+            }}
+          >
+            Gallery
+          </p>
+          <label className={styles.switch}>
+            <input
+              type="checkbox"
+              value={mapMode}
+              onChange={(e) => setMapMode(e.target.checked)}
+            />
+            <span className={styles.slider}></span>
+          </label>
+          <p
+            style={{
+              opacity: mapMode ? 1 : 0.3,
+            }}
+          >
+            Map
+          </p>
+        </div>
+
+        <div
+          id="fullScreenMap"
+          style={{
+            width: "100%",
+            height: `7000px`,
+            maxHeight: windowHeight - 100,
+            marginBottom: "env(safe-area-inset-bottom)",
+            display: mapMode ? "block" : "none",
+          }}
+          onClick={() => {
+            infoWindow.close();
+          }}
+        ></div>
+
         <Masonry
-          className={`masonry ${styles.masonry}`} // default ''
+          className={`masonry ${styles.masonry} ${
+            mapMode ? styles.masonryHidden : ""
+          }`} // default ''
           elementType={"div"} // default 'div'
           options={{
             transitionDuration: 200,
