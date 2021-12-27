@@ -17,6 +17,20 @@
   width: 100% !important;
 }
 
+.masonry .pinIcon {
+  position: absolute !important;
+  bottom: 10px;
+  right: 0px;
+  width: 20px;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+  /* stroke-width: 4;
+  stroke: rgb(112, 112, 112); */
+  fill: rgb(255, 255, 255);
+
+  /* backdrop-filter: blur(10px); */
+}
+
 .masonry img {
   position: relative !important;
 }
