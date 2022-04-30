@@ -99,7 +99,7 @@ function MyApp({ Component, pageProps }) {
           },
           {
             name: "theme-color",
-            content: "rgb(0,0,0)",
+            content: "rgb(255,255,255)",
           },
         ]}
       />

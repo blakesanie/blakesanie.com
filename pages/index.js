@@ -11,6 +11,7 @@ import CopyRight from "../components/Copyright";
 import Link from "next/link";
 import Image from "next/image";
 import imageLoader from "../extras/imageLoader";
+import { NextSeo } from "next-seo";
 
 function getData(canShowMobile = false) {
   const data = [
@@ -162,6 +163,14 @@ export default function Home(props) {
           background-color: #00000080 !important;
         }
       `}</style>
+      <NextSeo
+        additionalMetaTags={[
+          {
+            name: "theme-color",
+            content: "rgb(0,0,0)",
+          },
+        ]}
+      />
       <CopyRight
         style={{
           position: "absolute",
