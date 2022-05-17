@@ -25,14 +25,40 @@ export async function getStaticProps() {
           techUsed: [
             "IFTTT",
             "Firebase",
-            "Heroku",
-            "Yahoo Finance",
             "Tensorflow",
-            "Selenium",
             "Stripe",
             "Google Cloud Platform",
-            "React Native",
+            "Next.js",
+            "Figma",
+            "GitHub Actions",
+            "Netlify",
+            "Chrome Extension API",
+          ],
+        },
+        {
+          name: "Distal Radius Object Identification (DROiD)",
+          desc: "As my Georgia Tech capstone project, I worked alongside Emory Dept. of Orthopaedics to craft a state-of-the-art utility to identify wrist implant manufacturers from a simple x-ray, allowing surgeons to immediately discover the proper tools and techniques for implant extraction during emergency operations. To optimize accuracy, we leveraged an unsupervised data augmentation pipeline followed by Transfer Learning for inference.",
+          imageUrl: "/images/cs/droid.png",
+          links: [
+            {
+              text: "Design Documentation",
+              url: "/droid.pdf",
+              external: true,
+            },
+            {
+              github:
+                "https://github.com/dmace2/distal-radius-implant-identifier",
+            },
+          ],
+          techUsed: [
+            "Tensorflow",
+            "Jupyter Notebook",
+            "Swift",
+            "Xcode",
             "PostgreSQL",
+            "Heroku",
+            "Figma",
+            "App Store Connect",
           ],
         },
         {
@@ -41,7 +67,7 @@ export async function getStaticProps() {
           imageUrl: "/images/cs/uxai.png",
           links: [
             {
-              text: "Demo",
+              text: "Visit Demo",
               url: "https://uxai.blakesanie.com/#demo",
               external: true,
             },
@@ -57,7 +83,7 @@ export async function getStaticProps() {
           techUsed: [
             "Tensorflow",
             "Jupyter Notebook",
-            "Chome Extension API",
+            "Chrome Extension API",
             "JavaScript",
             "NPM",
             "Next.js",
@@ -82,7 +108,7 @@ export async function getStaticProps() {
           imageUrl: "/images/cs/bubble.png",
           links: [
             {
-              text: "Demo",
+              text: "Visit Demo",
               url: "https://bubbleui.blakesanie.com",
               external: true,
             },
@@ -92,7 +118,7 @@ export async function getStaticProps() {
               external: true,
             },
             {
-              text: "Design Overview",
+              text: "View Design Overview",
               url: "https://codeburst.io/deconstructing-the-iconic-apple-watch-bubble-ui-aba68a405689",
               external: true,
             },
@@ -162,7 +188,7 @@ export async function getStaticProps() {
           imageUrl: "/images/cs/TwitterPoetryBot.png",
           links: [
             {
-              text: "Twitter",
+              text: "View on Twitter",
               url: "https://twitter.com/your_life_poems",
               external: true,
             },
@@ -246,7 +272,12 @@ export async function getStaticProps() {
           imageUrl: "/images/cs/bounce.jpg",
           techUsed: ["Swift", "Xcode", "GameKit", "App Store Connect"],
         },
-      ],
+      ].map((obj) => {
+        if (obj.techUsed) {
+          obj.techUsed = obj.techUsed.sort();
+        }
+        return obj;
+      }),
     },
   };
 }
@@ -255,9 +286,8 @@ export default function CS(props) {
   return (
     <HeaderAndFooter>
       <NextSeo
-        title="Blake Sanie - Projects"
-        description="My collective showcase of personal projects, focused on full-stack and data applications."
-        openGraph
+        title="Projects"
+        description="My collective showcase of personal projects, focused on full-stack, data, and Machine Learning applications."
       />
       <div className={`content ${styles.cs}`}>
         <h1>Projects</h1>
@@ -281,7 +311,7 @@ export default function CS(props) {
                             backgroundImage: `url("../images/cs/techUsed/Github.png")`,
                           }}
                         >
-                          View on
+                          GitHub
                         </a>
                       );
                     }

@@ -318,9 +318,8 @@ export default function Photo(props) {
         ></script>
       </Head>
       <NextSeo
-        title="Blake Sanie - Photography"
+        title="Photography"
         description="My vast portfolio of primarily landscape images captured since 2014."
-        openGraph
       />
       <div className={`content ${styles.photo}`}>
         <h1>Photography</h1>

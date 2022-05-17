@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import Head from "next/head";
-import { NextSeo, SocialProfileJsonLd } from "next-seo";
+import { DefaultSeo, SocialProfileJsonLd } from "next-seo";
 import NextNProgress from "nextjs-progressbar";
 import { useRouter } from "next/router";
 // import Script from "next/script";
@@ -52,8 +52,9 @@ function MyApp({ Component, pageProps }) {
           }}
         ></script>
       </Head>
-      <NextSeo
-        title="Blake Sanie"
+      <DefaultSeo
+        defaultTitle="Blake Sanie"
+        titleTemplate="%s | Blake Sanie"
         description="Inquisitive student. Aspiring engineer. Photography enthusiast. Curious stock trader."
         openGraph={{
           images: [
@@ -108,9 +109,9 @@ function MyApp({ Component, pageProps }) {
         name="Blake Sanie"
         url="https://blakesanie.com"
         sameAs={[
-          "https://www.linkedin.com/in/blakesanie/",
+          "https://linkedin.com/in/blakesanie/",
           "https://blakesanie.medium.com/",
-          "https://www.blakesanie.com/instagram",
+          "https://instagram.com/blake_sanie/",
           "https://github.com/blakesanie",
           "https://twitter.com/BlakeSanie",
         ]}

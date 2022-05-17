@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Bookmarks.module.css";
 import { bookmarks } from "../../extras/bookmarks/bookmarkData";
+import { NextSeo } from "next-seo";
 
 export async function getStaticProps() {
   return {
@@ -127,6 +128,7 @@ export default function Bookmarks(props) {
 
   return (
     <div>
+      <NextSeo noindex={true} title="Bookmarks" />
       <input
         type="text"
         placeholder="Search"

@@ -8,9 +8,8 @@ export default function Resume(props) {
   return (
     <HeaderAndFooter>
       <NextSeo
-        title="Blake Sanie - Résumé"
-        description="My professional experience, academic achievement, demonstrated skill set, leadership roles, and career objective."
-        openGraph
+        title="Résumé"
+        description="My professional experience, academic achievements, demonstrated skill set, leadership roles, and career objective."
       />
       <Div100vh className={styles.divWrapper}>
         <iframe

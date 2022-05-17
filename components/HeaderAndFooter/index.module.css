@@ -53,6 +53,11 @@
   /* border: 1px solid red; */
 }
 
+.nav li {
+  list-style-type: none;
+  display: flex; /* this keeps spacing right, idk why */
+}
+
 .transitionable {
   transition: none;
 }

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import NotFound from "../404";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import HeaderAndFooter from "../../components/HeaderAndFooter";
+import { NextSeo } from "next-seo";
 
 const redirects = {
   linkedin: {
@@ -14,7 +14,7 @@ const redirects = {
     title: "Blog on Medium",
   },
   instagram: {
-    href: "https://www.blakesanie.com/instagram",
+    href: "https://www.instagram.com/blake_sanie/",
     title: "Instagram",
   },
   github: {
@@ -79,6 +79,7 @@ export default function Redirect(props) {
               content={`0; URL=${redirects[redirect].href}`}
             />
           </Head>
+          <NextSeo title={redirects[redirect].title} nofollow={true} />
           <h1 className="redirectLabel">{`Redirecting to ${redirects[redirect].title}...`}</h1>
         </>
       ) : null}

@@ -137,54 +137,70 @@ export default function HeaderAndFooter(props) {
           <span>Photography enthusiast.</span>
           <span>Curious stock trader.</span>
         </h2>
-        <nav className={styles.nav}>
-          <div className={styles.navSection}>
-            <h3>Engineering</h3>
-            <Link href="/resume">Résumé</Link>
-            <Link href="/projects">Projects</Link>
-            <Link href="/github" target="_blank">
-              Github
-            </Link>
-          </div>
-          <div className={styles.navSection}>
-            <h3>Ventures</h3>
-            <Link href="/fund/index.html" target="_blank">
-              Stock Fund
-            </Link>
-            <Link
-              href="https://investivision.com"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Investivision
-            </Link>
-            <Link href="/blog" target="_blank">
-              Blog
-            </Link>
-          </div>
-          <div className={styles.navSection}>
-            <h3>Photography</h3>
-            <Link href="/photo">Gallery</Link>
-            <Link href="/photo/?map=true">Map</Link>
-            <Link href="/photo/gear">Gear</Link>
-          </div>
-          <div className={styles.navSection}>
-            <h3>Personal</h3>
-            <Link href="/linkedin" target="_blank">
-              LinkedIn
-            </Link>
-            {isMobile ? (
-              <Link href="/contact.vcf">Contact Card</Link>
-            ) : (
-              <Link href="mailto:blake@sanie.com">Email</Link>
-            )}
-            <Link href="/instagram" target="_blank">
-              Instagram
-            </Link>
-            <Link href="/twitter" target="_blank">
-              Twitter
-            </Link>
-          </div>
+        <nav>
+          <ul className={styles.nav}>
+            <div className={styles.navSection}>
+              <h3>Engineering</h3>
+              <li>
+                <Link href="/resume">Résumé</Link>
+              </li>
+              <li>
+                <Link href="/projects">Projects</Link>
+              </li>
+              <li>
+                <Link href="/github" target="_blank">
+                  Github
+                </Link>
+              </li>
+            </div>
+            <div className={styles.navSection}>
+              <h3>Ventures</h3>
+              <li>
+                <Link href="/fund/index.html" target="_blank">
+                  Stock Fund
+                </Link>
+              </li>
+              <li>
+                <Link href="https://investivision.com" target="_blank">
+                  Investivision
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" target="_blank">
+                  Blog
+                </Link>
+              </li>
+            </div>
+            <div className={styles.navSection}>
+              <h3>Photography</h3>
+              <li>
+                <Link href="/photo">Gallery</Link>
+              </li>
+              <li>
+                <Link href="/photo/?map=true">Map</Link>
+              </li>
+              <li>
+                <Link href="/photo/gear">Gear</Link>
+              </li>
+            </div>
+            <div className={styles.navSection}>
+              <h3>Personal</h3>
+              <Link href="/linkedin" target="_blank">
+                LinkedIn
+              </Link>
+              {isMobile ? (
+                <Link href="/contact.vcf">Contact Card</Link>
+              ) : (
+                <Link href="mailto:blake@sanie.com">Email</Link>
+              )}
+              <Link href="/instagram" target="_blank">
+                Instagram
+              </Link>
+              <Link href="/twitter" target="_blank">
+                Twitter
+              </Link>
+            </div>
+          </ul>
         </nav>
         <div className={styles.madeBy}>
           <p>Built by Blake Sanie with</p>

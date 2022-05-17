@@ -13,123 +13,121 @@ import Image from "next/image";
 import imageLoader from "../extras/imageLoader";
 import { NextSeo } from "next-seo";
 
-function getData(canShowMobile = false) {
-  const data = [
-    {
-      text: ["^500 Hi, ^500I'm Blake ^2000", "^500 Scroll to learn more ^1000"],
-      imageUrl: "/images/macbook3.jpeg",
-      links: [],
-    },
-    {
-      text: [
-        "I am a Computer Science student at the Georgia Institute of Technology.",
-      ],
-      imageUrl: "/images/crosland.jpg",
-      links: [],
-    },
-    {
-      text: ["Ultimately, I am an engineer at heart"],
-      imageUrl: "/images/mac2.jpg",
-      links: [
-        {
-          url: "/projects",
-          label: "Projects",
-        },
-        {
-          url: "/github",
-          label: "GitHub",
-          external: true,
-        },
-      ],
-    },
-    {
-      text: ["Fascinated with automated stock trading"],
-      imageUrl: "/images/stock.png",
-      links: [
-        { url: "/fund/index.html", label: "Stock Fund", external: true },
-        {
-          url: "https://investivision.com",
-          label: "Investivision",
-          external: true,
-        },
-      ],
-    },
-    {
-      text: ["With a sense of photographic expression."],
-      imageUrl: "/images/portfolio/DSC_0817.jpg",
-      links: [
-        {
-          url: "/photo",
-          label: "Portfolio",
-        },
-        {
-          url: "/photo/gear",
-          label: "Gear",
-        },
-      ],
-    },
-    {
-      text: ["I encourage you to learn from my ventures,"],
-      imageUrl: "/images/mandel1.png",
-      links: [{ url: "/blog", label: "Blog" }],
-    },
-    {
-      text: ["Reach out with professional inquiries,"],
-      imageUrl: "/images/startup.jpg",
-      links: [
-        {
-          url: "/linkedin",
-          label: "LinkedIn",
-          external: true,
-        },
-        {
-          url: "/resume",
-          label: "Résumé",
-        },
-      ],
-    },
-    {
-      text: ["Or connect with me further."],
-      imageUrl: "/images/connect.jpg",
-      links: [
-        {
-          url: "mailto:blake@sanie.com",
-          label: "Email",
-        },
-        {
-          url: "/instagram",
-          label: "Instagram",
-          external: true,
-        },
-        {
-          url: "/twitter",
-          label: "Twitter",
-          external: true,
-        },
-      ],
-    },
-  ];
-  if (canShowMobile && isMobile) {
-    data[data.length - 1].links.push({
-      url: "/contact.vcf",
-      label: "Contact Card",
-    });
-  }
-  return data;
-}
+const markupData = [
+  {
+    text: ["^500 Hi, ^500I'm Blake ^2000", "^500 Scroll to learn more ^1000"],
+    imageUrl: "/images/macbook3.jpeg",
+    links: [],
+  },
+  {
+    text: [
+      "I am a Computer Science student at the Georgia Institute of Technology.",
+    ],
+    imageUrl: "/images/crosland.jpg",
+    links: [],
+  },
+  {
+    text: ["Ultimately, I am an engineer at heart"],
+    imageUrl: "/images/mac2.jpg",
+    links: [
+      {
+        url: "/projects",
+        label: "Projects",
+      },
+      {
+        url: "/github",
+        label: "GitHub",
+        external: true,
+      },
+    ],
+  },
+  {
+    text: ["Fascinated with automated stock trading"],
+    imageUrl: "/images/stock.png",
+    links: [
+      { url: "/fund/index.html", label: "Stock Fund", external: true },
+      {
+        url: "https://investivision.com",
+        label: "Investivision",
+        external: true,
+      },
+    ],
+  },
+  {
+    text: ["With a sense of photographic expression."],
+    imageUrl: "/images/portfolio/DSC_0817.jpg",
+    links: [
+      {
+        url: "/photo",
+        label: "Portfolio",
+      },
+      {
+        url: "/photo/gear",
+        label: "Gear",
+      },
+    ],
+  },
+  {
+    text: ["I encourage you to learn from my ventures,"],
+    imageUrl: "/images/mandel1.png",
+    links: [{ url: "/blog", label: "Blog" }],
+  },
+  {
+    text: ["Reach out with professional inquiries,"],
+    imageUrl: "/images/startup.jpg",
+    links: [
+      {
+        url: "/linkedin",
+        label: "LinkedIn",
+        external: true,
+      },
+      {
+        url: "/resume",
+        label: "Résumé",
+      },
+    ],
+  },
+  {
+    text: ["Or connect with me further."],
+    imageUrl: "/images/connect.jpg",
+    links: [
+      {
+        url: "mailto:blake@sanie.com",
+        label: "Email",
+      },
+      {
+        url: "/instagram",
+        label: "Instagram",
+        external: true,
+      },
+      {
+        url: "/twitter",
+        label: "Twitter",
+        external: true,
+      },
+    ],
+  },
+];
 
 export async function getStaticProps() {
   return {
     props: {
-      data: getData(),
+      data: markupData,
     },
   };
 }
 
 export default function Home(props) {
-  if (Object.keys(props).length == 0) {
-    props.data = getData(true);
-  }
+  const [data, setData] = useState(props.data || markupData);
+  useEffect(() => {
+    if (isMobile) {
+      data[data.length - 1].links.push({
+        url: "/contact.vcf",
+        label: "Contact Card",
+      });
+      setData([...data]);
+    }
+  }, [isMobile]);
   const [scroll, setScroll] = useState(0);
   const windowHeight = use100vh();
   const [windowWidth, setWindowWidth] = useState(500);
@@ -178,9 +176,9 @@ export default function Home(props) {
           zIndex: 9999,
         }}
       />
-      {props.data.map((item, i) => {
+      {data.map((item, i) => {
         let adjustedScroll = scroll;
-        if (i == props.data.length - 1) {
+        if (i == data.length - 1) {
           adjustedScroll += frameOffset;
         } else if (i > 0) {
           adjustedScroll += frameOffset / 2;

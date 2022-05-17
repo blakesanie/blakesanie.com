@@ -68,7 +68,7 @@ def optimizeImages(paths):
 
 
 if __name__ == '__main__':
-
+    # python {optional starting dir} --keepexisting
     filepaths = []
     if len(sys.argv) > 1 and not sys.argv[1].startswith('--'):
         startingDir = os.path.join(startingDir, sys.argv[1])
