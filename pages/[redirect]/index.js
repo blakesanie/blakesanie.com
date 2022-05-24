@@ -19,7 +19,7 @@ const redirects = {
   },
   github: {
     href: "https://github.com/blakesanie",
-    title: "Github",
+    title: "GitHub",
   },
   balance: {
     href: "https://music.apple.com/us/album/balance/1478925861",
@@ -44,6 +44,10 @@ const redirects = {
   spotify: {
     href: "https://open.spotify.com/user/blake_sanie?si=uvhN4kfdTQWy4jnrlhKTVg",
     title: "Spotify",
+  },
+  source: {
+    href: "https://github.com/blakesanie/blakesanie.com",
+    title: "source code on GitHub",
   },
 };
 

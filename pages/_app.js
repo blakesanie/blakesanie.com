@@ -3,6 +3,7 @@ import Head from "next/head";
 import { DefaultSeo, SocialProfileJsonLd } from "next-seo";
 import NextNProgress from "nextjs-progressbar";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 // import Script from "next/script";
 
 let appleIcons = [57, 60, 72, 76, 114, 120, 144, 152, 180];
@@ -16,7 +17,54 @@ appleIcons = appleIcons.map((size) => {
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  console.log(router.route != "/photo");
+  console.log("router", router);
+
+  useEffect(() => {
+    console.log(
+      `
+%c _    _      _                          _ 
+| |  | |    | |                        | |
+| |  | | ___| | ___ ___  _ __ ___   ___| |
+| |/\\| |/ _ \\ |/ __/ _ \\| '_ \` _ \\ / _ \\ |
+\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|
+ \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)
+      `,
+      "font-family: monospace; font-weight: 1000; font-size: 12px"
+    );
+    console.log(
+      `
+%cLook's like you're in the web inspector! We'll get along just fine.
+
+Say Hi @ ${window.location.origin}/linkedin
+       @ ${window.location.origin}/twitter
+
+View source @ ${window.location.origin}/source
+
+Site Directory: %O
+`,
+      "font-size: 12px; font-family: monospace; font-size: 12px;",
+      {
+        "/": "Homepage",
+        "/projects": "Computer Science Projects",
+        "/photo": {
+          "/": "Photography Portfolio",
+          "/gear": "Photography Equipment and Tools",
+        },
+        "/resume": "Professional Résumé",
+        "/linkedin": "LinkedIn Profile",
+        "/github": "GitHub Profile",
+        "/fund": "The Blake Sanie Fund",
+        "/blog": "Medium Blog Page",
+        "/instagram": "Instagram Profile",
+      }
+    );
+    console.log(
+      "%c ",
+      "font-size:200px; padding: 0 150px; background:url(https://i.imgur.com/pzw4C8l.gif) no-repeat; background-size: cover; background-repeat: no-repeat; background-position: center; "
+    );
+    // consoleImage("https://i.imgur.com/pzw4C8l.gif");
+  }, []);
+
   return (
     <>
       {router && router.route != "/photo" ? (
