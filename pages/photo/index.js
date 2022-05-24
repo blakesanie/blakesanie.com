@@ -19,7 +19,6 @@ let minLat = Infinity;
 let minLng = Infinity;
 let maxLat = -Infinity;
 let maxLng = -Infinity;
-console.log(Object.values(files));
 for (const metadata of Object.values(files)) {
   const { gps } = metadata;
   if (gps.length) {
@@ -157,13 +156,11 @@ export default function Photo(props) {
 
   useEffect(() => {
     function recurse() {
-      console.log(minLat, maxLat, minLng, maxLng);
       let width = window.innerWidth;
       if (width > 800) {
         width -= 220;
       }
       const zoom = Math.floor(1.73 * Math.log(width) - 9.26);
-      console.log("using zoom", zoom);
       try {
         const map = new google.maps.Map(
           document.getElementById("fullScreenMap"),
@@ -238,7 +235,6 @@ export default function Photo(props) {
           }
         }
       } catch (e) {
-        console.log(e, "will try again in 0.2s");
         setTimeout(recurse, 200);
       }
     }
@@ -284,7 +280,6 @@ export default function Photo(props) {
           }
         }
       } catch (e) {
-        console.log(e, "trying again in .3 seconds");
         setTimeout(recurse, 300);
       }
     }

@@ -17,7 +17,6 @@ appleIcons = appleIcons.map((size) => {
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  console.log("router", router);
 
   useEffect(() => {
     console.log(
