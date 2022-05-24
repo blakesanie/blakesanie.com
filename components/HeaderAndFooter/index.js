@@ -13,8 +13,6 @@ let mouseHistory = {
 
 let timeout;
 
-isMobile = true;
-
 export default function HeaderAndFooter(props) {
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [menuIsDown, setMenuIsDown] = useState(true);
