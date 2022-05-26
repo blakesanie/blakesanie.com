@@ -1,41 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <title>Spotify Mosaic</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-</head>
+    <link rel="stylesheet" type="text/css" href="/spotifyMosaic/style.css" />
+  </head>
 
-<body>
+  <body>
     <div id="cover">
-        <p id="login">First, login With Spotify</p>
+      <p id="login">First, login With Spotify</p>
     </div>
     <h1>Spotify Mosaic</h1>
     <div id="person">
-        <div id="profilePic"></div>
-        <h5 id="name">user.name</h5>
+      <div id="profilePic"></div>
+      <h5 id="name">user.name</h5>
     </div>
-    <h4 class="label">Select which playlists you'd like to draw Album Covers from</h4>
+    <h4 class="label">
+      Select which playlists you'd like to draw Album Covers from
+    </h4>
     <div id="playlists"></div>
     <h2 id="generate">Generate Mosaic from Playlists</h2>
 
-    <input type="file" accept="image/*" onchange="changeSampleImage(this)" id="fileInput">
+    <input
+      type="file"
+      accept="image/*"
+      onchange="changeSampleImage(this)"
+      id="fileInput"
+    />
     <p id="numTiles">Max # Tiles: 1000</p>
-    <input type="range" min="100" max="10000" value="1000" id="slider">
+    <input type="range" min="100" max="10000" value="1000" id="slider" />
     <div id="output">
-        <div id="imgHolder">
-            <img src="./sample.jpg" id="samplePic"/>
-        </div>
-        <canvas id="canvas"></canvas>
-        <canvas id="mosaic"></canvas>
+      <div id="imgHolder">
+        <img src="/spotifyMosaic/sample.jpg" id="samplePic" />
+      </div>
+      <canvas id="canvas"></canvas>
+      <canvas id="mosaic"></canvas>
     </div>
     <a id="download" target="_blank">Download Creation</a>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
-    <script src="./spotify.js"></script>
-    <script src="./mosaic.js"></script>
-</body>
-
+    <script src="/spotifyMosaic/spotify.js"></script>
+    <script src="/spotifyMosaic/mosaic.js"></script>
+  </body>
 </html>
 <!--
 <a href="/login" class="btn btn-primary">Log in with Spotify</a>
