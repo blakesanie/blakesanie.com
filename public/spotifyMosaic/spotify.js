@@ -42,7 +42,7 @@ $(document).on("click", "#login", async function () {
   url += "&redirect_uri=" + encodeURIComponent(redirect_uri);
   url += "&state=" + encodeURIComponent(state);
   console.log(url);
-  // window.location.href = url;
+  window.location.href = url;
 });
 
 if (access_token && (state == null || state !== storedState)) {
