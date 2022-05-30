@@ -26,7 +26,7 @@ const redirects = {
     title: "Balance on Apple Music",
   },
   twitter: {
-    href: "https://twitter.com/BlakeSanie",
+    href: "https://twitter.com/blakesanie",
     title: "Twitter",
   },
   paypal: {
