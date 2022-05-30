@@ -160,7 +160,7 @@ Site Directory: %O
           "https://blakesanie.medium.com/",
           "https://instagram.com/blake_sanie/",
           "https://github.com/blakesanie",
-          "https://twitter.com/BlakeSanie",
+          "https://twitter.com/blakesanie",
         ]}
       />
       <Component {...pageProps} />
