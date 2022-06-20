@@ -20,8 +20,11 @@
     "react-masonry-component": "^6.2.1",
     "react-particles-js": "^3.5.3",
     "react-tsparticles": "^1.33.3",
+    "react-twitter-embed": "^4.0.4",
     "react-typed": "^1.2.0",
-    "tsparticles": "^1.30.3"
+    "snoowrap": "^1.23.0",
+    "tsparticles": "^1.30.3",
+    "twitter-api-v2": "^1.12.2"
   },
   "devDependencies": {
     "gh-pages": "^3.2.0"

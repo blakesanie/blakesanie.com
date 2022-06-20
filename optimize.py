@@ -7,6 +7,7 @@ import shutil
 import sys
 import numpy as np
 import multiprocessing
+from tqdm import tqdm
 
 
 numWorkers = 20
@@ -30,41 +31,39 @@ startingDir = 'public/images'
 extensions = ['jpeg', 'jpg', 'png']
 
 
-def optimizeImages(paths):
-    for filepath in paths:
-        img = Image.open(filepath)
-        originalWidth, originalHeight = img.size
-        filename = os.path.split(filepath)[-1]
-        originalExt = filename.split('.')[-1]
-        if originalExt != 'png':
-            img = img.convert('RGB')
-        for width in widths:
-            # if originalWidth < 700 and width > 700:
-            #     break
-            # if originalWidth > 1000 and width < 400:
-            #     continue
-            for quality in qualities:
-                newImg = img.resize(
-                    (width, math.floor(width / originalWidth * originalHeight)), Image.ANTIALIAS)
-                for ext in [originalExt]:  # will need serverless for webp
-                    filepathParts = filepath.split(os.path.sep)
-                    filepathParts.insert(1, 'optimized')
-                    newFilename = '.'.join(filepathParts[-1].split('.')[0:-1])
-                    newFilename += f'_w={width}&q={quality}.{ext}'
-                    filepathParts[-1] = newFilename
-                    newFilepath = os.path.join(*filepathParts)
-                    if ext.lower() == 'jpg':
-                        ext = 'jpeg'
+def optimizeImage(filepath):
+    img = Image.open(filepath)
+    originalWidth, originalHeight = img.size
+    filename = os.path.split(filepath)[-1]
+    originalExt = filename.split('.')[-1]
+    if originalExt != 'png':
+        img = img.convert('RGB')
+    for width in widths:
+        # if originalWidth < 700 and width > 700:
+        #     break
+        # if originalWidth > 1000 and width < 400:
+        #     continue
+        for quality in qualities:
+            newImg = img.resize(
+                (width, math.floor(width / originalWidth * originalHeight)), Image.ANTIALIAS)
+            for ext in [originalExt]:  # will need serverless for webp
+                filepathParts = filepath.split(os.path.sep)
+                filepathParts.insert(1, 'optimized')
+                newFilename = '.'.join(filepathParts[-1].split('.')[0:-1])
+                newFilename += f'_w={width}&q={quality}.{ext}'
+                filepathParts[-1] = newFilename
+                newFilepath = os.path.join(*filepathParts)
+                if ext.lower() == 'jpg':
+                    ext = 'jpeg'
 
-                    parentDir = os.path.join(*filepathParts[:-1])
-                    if not os.path.isdir(parentDir):
-                        os.makedirs(parentDir, exist_ok=True)
+                parentDir = os.path.join(*filepathParts[:-1])
+                if not os.path.isdir(parentDir):
+                    os.makedirs(parentDir, exist_ok=True)
 
-                    pngInfo = img.info
+                pngInfo = img.info
 
-                    newImg.save(newFilepath, ext, quality=quality,
-                                subsampling=0, optimize=True, **pngInfo)
-                    print(newFilepath)
+                newImg.save(newFilepath, ext, quality=quality,
+                            subsampling=0, optimize=True, **pngInfo)
 
 
 if __name__ == '__main__':
@@ -89,20 +88,6 @@ if __name__ == '__main__':
     print(sys.argv)
     # raise Exception()
 
-    np.random.shuffle(filepaths)
-    chunks = np.array_split(filepaths, numWorkers)
-
-    # print(filepaths)
-    # print(chunks)
-
-    processes = []
-
-    for i in range(numWorkers):
-        processes.append(multiprocessing.Process(
-            target=optimizeImages, args=(chunks[i],)))
-
-    for i in range(numWorkers):
-        processes[i].start()
-
-    for i in range(numWorkers):
-        processes[i].join()
+    with multiprocessing.Pool(numWorkers) as p:
+        for _ in tqdm(p.imap_unordered(optimizeImage, filepaths), total=len(filepaths)):
+            pass
