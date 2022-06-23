@@ -168,6 +168,9 @@ export default function HeaderAndFooter(props) {
                   Blog
                 </Link>
               </li>
+              <li>
+                <Link href="/mlbVis">r/mlbVis</Link>
+              </li>
             </div>
             <div className={styles.navSection}>
               <h3>Photography</h3>
