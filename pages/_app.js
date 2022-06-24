@@ -147,7 +147,7 @@ Site Directory: %O
           },
           {
             name: "theme-color",
-            content: "rgb(255,255,255)",
+            content: "#4895d5",
           },
         ]}
       />

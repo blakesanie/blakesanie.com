@@ -272,11 +272,7 @@ export default function HeaderAndFooter(props) {
       >
         {props.children}
         <ScrollProgressBar
-          color={
-            router.pathname == "/"
-              ? "rgba(0, 126, 204, 0.8)"
-              : "rgba(0, 126, 204, 0.8)"
-          }
+          color={rgba(0, 126, 204, 0.8)}
           pageWidth={shouldBeMenuBar ? "100%" : "calc(100% - 220px)"}
           visible={!(shouldBeMenuBar && (menuIsDown || menuExpanded))}
         />
