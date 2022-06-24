@@ -8,7 +8,7 @@ import sys
 import numpy as np
 import multiprocessing
 from tqdm import tqdm
-
+import random
 
 numWorkers = 20
 
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     if not 'keepexisting' in ', '.join(sys.argv):
         print('deleting existing images in /optimized/')
         try:
-            shutil.rmtree('public/optimized')
+            shutil.rmtree(startingDir.replace('/images', '/optimized'))
         except Exception as e:
             print(e)
 
@@ -87,6 +87,8 @@ if __name__ == '__main__':
     print(filepaths)
     print(sys.argv)
     # raise Exception()
+
+    random.shuffle(filepaths)
 
     with multiprocessing.Pool(numWorkers) as p:
         for _ in tqdm(p.imap_unordered(optimizeImage, filepaths), total=len(filepaths)):
