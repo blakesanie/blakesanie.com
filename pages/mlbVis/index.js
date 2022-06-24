@@ -3,9 +3,11 @@ import HeaderAndFooter from "../../components/HeaderAndFooter";
 import styles from "./index.module.css";
 import { NextSeo } from "next-seo";
 import Copyright from "../../components/Copyright";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export default function MLBVis(props) {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState(undefined);
 
   useEffect(async () => {
     const res = await fetch(`/api/mlbVis`);
@@ -36,7 +38,7 @@ export default function MLBVis(props) {
             src="/optimized/images/cs/techUsed/Reddit_w=64&q=75.png"
           />
         </h3>
-        {posts &&
+        {posts ? (
           posts.map((post) => {
             const titleSplit = post.title.split(" > ");
             return (
@@ -72,7 +74,17 @@ export default function MLBVis(props) {
                 </h5>
               </a>
             );
-          })}
+          })
+        ) : (
+          <>
+            <Skeleton containerClassName={styles.skeleton} />
+            <Skeleton containerClassName={styles.skeleton} />
+            <Skeleton containerClassName={styles.skeleton} />
+            <Skeleton containerClassName={styles.skeleton} />
+            <Skeleton containerClassName={styles.skeleton} />
+            <Skeleton containerClassName={styles.skeleton} />
+          </>
+        )}
         <Copyright />
       </div>
     </HeaderAndFooter>

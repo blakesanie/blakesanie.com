@@ -115,3 +115,14 @@
     /* color: black; */
 }
 
+.skeleton {
+    width: 320px;
+    height: 400px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px;
+}
+
+.skeleton > * {
+    height: 100%;
+}
