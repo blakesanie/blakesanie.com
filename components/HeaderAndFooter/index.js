@@ -74,7 +74,10 @@ export default function HeaderAndFooter(props) {
     };
   }, []);
 
-  let headerStyles = {};
+  const headerColor = props.headerColor || "rgba(0, 126, 204, 0.8)";
+  let headerStyles = {
+    backgroundColor: headerColor,
+  };
   if (shouldBeMenuBar) {
     headerStyles.height = menuExpanded
       ? headerElement.current.scrollHeight
@@ -121,6 +124,7 @@ export default function HeaderAndFooter(props) {
             ${menuExpanded ? styles.rotated : ""}
           `}
           onClick={toggleMenu}
+          id="hamburger"
         >
           <div className={styles.line}></div>
           <div className={styles.line}></div>
@@ -205,7 +209,7 @@ export default function HeaderAndFooter(props) {
         </nav>
         <div className={styles.madeBy}>
           <p>Built by Blake Sanie with</p>
-          <div className={styles.madeByIcons}>
+          <div className={styles.madeByIcons} id="madeBy">
             <a href="https://reactjs.org/" target="_blank" rel="noreferrer">
               <img
                 alt=""
@@ -272,7 +276,7 @@ export default function HeaderAndFooter(props) {
       >
         {props.children}
         <ScrollProgressBar
-          color={"rgba(0, 126, 204, 0.8)"}
+          color={headerColor}
           pageWidth={shouldBeMenuBar ? "100%" : "calc(100% - 220px)"}
           visible={!(shouldBeMenuBar && (menuIsDown || menuExpanded))}
         />

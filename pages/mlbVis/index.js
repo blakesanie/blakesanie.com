@@ -17,7 +17,7 @@ export default function MLBVis(props) {
   }, []);
 
   return (
-    <HeaderAndFooter>
+    <HeaderAndFooter headerColor="#004189dd">
       <NextSeo
         title="MLB Visualization"
         description="An automated subreddit for exploring data-driven storytelling surrounding America's pastime. Not affiliated with MLB."

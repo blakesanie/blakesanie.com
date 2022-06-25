@@ -299,13 +299,7 @@ export default function Photo(props) {
   };
 
   return (
-    <HeaderAndFooter
-      style={
-        {
-          // height: windowHeight,
-        }
-      }
-    >
+    <HeaderAndFooter headerColor="#f8f8f8dd">
       <Head>
         <script
           src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp"
@@ -315,7 +309,27 @@ export default function Photo(props) {
       <NextSeo
         title="Photography"
         description="My vast portfolio of primarily landscape images captured since 2014."
+        additionalMetaTags={[
+          {
+            name: "theme-color",
+            content: "rgb(249,249,249)",
+          },
+        ]}
       />
+      <style jsx global>{`
+        header * {
+          color: #000 !important;
+        }
+        header h1 {
+          border-color: #00000040 !important;
+        }
+        #hamburger > div {
+          background-color: black !important;
+        }
+        #madeBy img {
+          filter: none !important;
+        }
+      `}</style>
       <div className={`content ${styles.photo}`}>
         <h1>Photography</h1>
         {mapMode === undefined ? null : (
