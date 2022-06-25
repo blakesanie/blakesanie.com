@@ -86,7 +86,7 @@ export default function Redirect(props) {
   const router = useRouter();
   const { redirect } = router.query;
   useEffect(() => {
-    // window.location.href = redirects[redirect].href;
+    window.location.href = redirects[redirect].href;
   }, []);
   return (
     <HeaderAndFooter
@@ -106,12 +106,12 @@ export default function Redirect(props) {
       )}
       {redirect && (
         <>
-          {/* <Head>
+          <Head>
             <meta
               httpEquiv="refresh"
               content={`0; URL=${redirects[redirect].href}`}
             />
-          </Head> */}
+          </Head>
           <NextSeo title={redirects[redirect].title} nofollow={true} />
           <h1 className="redirectLabel">{`Redirecting to ${redirects[redirect].title}...`}</h1>
         </>
