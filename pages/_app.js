@@ -1,5 +1,4 @@
 import "../styles/globals.css";
-import Head from "next/head";
 import { DefaultSeo, SocialProfileJsonLd } from "next-seo";
 import NextNProgress from "nextjs-progressbar";
 import { useRouter } from "next/router";
@@ -71,32 +70,6 @@ Site Directory: %O
         options={{ showSpinner: false, easing: "ease" }}
         // stopDelayMs={20000000}
       />
-
-      <Head>
-        <link
-          href="https://fonts.googleapis.com/css?family=Assistant:300,400,600"
-          rel="stylesheet"
-        />
-        <meta
-          name="google-site-verification"
-          content="ePB1GvvA8L5Hza96sGcmDLw_jIzjhQ2JhXbIAg_8hlA"
-        />
-        <script
-          async="async"
-          src="https://www.googletagmanager.com/gtag/js?id=UA-164774604-1"
-        ></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag("js", new Date());
-
-    gtag("config", "UA-164774604-1");`,
-          }}
-        ></script>
-      </Head>
       <DefaultSeo
         defaultTitle="Blake Sanie"
         titleTemplate="%s | Blake Sanie"
