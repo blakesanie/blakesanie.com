@@ -29,9 +29,6 @@ export default function MLBVis(props) {
         ]}
       />
       <style jsx global>{`
-        header h1 {
-          border-color: red !important;
-        }
         #hamburger > div {
           background-color: red;
         }

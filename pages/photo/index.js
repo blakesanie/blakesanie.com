@@ -299,7 +299,7 @@ export default function Photo(props) {
   };
 
   return (
-    <HeaderAndFooter headerColor="#f8f8f8dd">
+    <HeaderAndFooter headerColor="#f8f8f8dd" className="lightBackground">
       <Head>
         <script
           src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp"

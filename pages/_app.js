@@ -66,13 +66,11 @@ Site Directory: %O
 
   return (
     <>
-      {router && router.route != "/photo" ? (
-        <NextNProgress
-          color="red"
-          height={3}
-          options={{ showSpinner: false, easing: "ease" }}
-        />
-      ) : null}
+      <NextNProgress
+        height={3}
+        options={{ showSpinner: false, easing: "ease" }}
+        // stopDelayMs={20000000}
+      />
 
       <Head>
         <link

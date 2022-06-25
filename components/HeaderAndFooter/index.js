@@ -118,6 +118,7 @@ export default function HeaderAndFooter(props) {
         className={`
           ${styles.header}
           ${transitionable ? styles.transitionable : ""}
+          ${props.className || ""}
         `}
         style={headerStyles}
         ref={headerElement}
