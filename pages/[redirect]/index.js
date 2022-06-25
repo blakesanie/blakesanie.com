@@ -30,6 +30,7 @@ export const redirects = {
   balance: {
     href: "https://music.apple.com/us/album/balance/1478925861",
     title: "Balance on Apple Music",
+    hidden: true,
     headerColor: "#000000",
   },
   twitter: {

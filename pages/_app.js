@@ -3,6 +3,8 @@ import { DefaultSeo, SocialProfileJsonLd } from "next-seo";
 import NextNProgress from "nextjs-progressbar";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import pageTree from "../extras/initialLog/pageTree.js";
+
 // import Script from "next/script";
 
 let appleIcons = [57, 60, 72, 76, 114, 120, 144, 152, 180];
@@ -14,8 +16,32 @@ appleIcons = appleIcons.map((size) => {
   };
 });
 
+function isObj(val) {
+  return typeof val === "object" && !Array.isArray(val) && val !== null;
+}
+
+function addVisitRecursively(path, obj) {
+  if (path) {
+    console.log(path);
+    // ${path.substring(path.lastIndexOf("/") + 1)}
+    eval(
+      `obj.visit = function () {
+  window.location.href = obj.redirect || path;
+}`
+    );
+  }
+  for (const key of Object.keys(obj)) {
+    if (isObj(obj[key])) {
+      obj[key] = addVisitRecursively(path + key, obj[key]);
+    }
+  }
+  return obj;
+}
+
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
+
+  let siteDirectory = addVisitRecursively("", pageTree);
 
   useEffect(() => {
     console.log(
@@ -41,20 +67,7 @@ View source @ ${window.location.origin}/source
 Site Directory: %O
 `,
       "font-size: 12px; font-family: monospace; font-size: 12px;",
-      {
-        "/": "Homepage",
-        "/projects": "Computer Science Projects",
-        "/photo": {
-          "/": "Photography Portfolio",
-          "/gear": "Photography Equipment and Tools",
-        },
-        "/resume": "Professional Résumé",
-        "/linkedin": "LinkedIn Profile",
-        "/github": "GitHub Profile",
-        "/fund": "The Blake Sanie Fund",
-        "/blog": "Medium Blog Page",
-        "/instagram": "Instagram Profile",
-      }
+      siteDirectory
     );
     console.log(
       "%c ",

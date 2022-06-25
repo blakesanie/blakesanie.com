@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node preBuild.js && next build",
     "deploy": "npm run build && gh-pages -d out -b gh-pages-nextjs -t true",
     "start": "next start"
   },
   "dependencies": {
+    "glob": "^7.1.7",
     "next": "^11.0.1",
     "next-seo": "^4.26.0",
     "nextjs-progressbar": "^0.0.13",
