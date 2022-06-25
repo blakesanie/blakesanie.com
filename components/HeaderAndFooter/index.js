@@ -76,9 +76,12 @@ export default function HeaderAndFooter(props) {
   }, []);
 
   const headerColor = props.headerColor || "rgba(0, 126, 204, 0.8)";
-  let headerStyles = {
-    backgroundColor: headerColor,
-  };
+  let headerStyles = { ...props.headerStyles };
+  if (props.headerGradient) {
+    headerStyles.background = props.headerGradient;
+  } else {
+    headerStyles.backgroundColor = headerColor;
+  }
   if (shouldBeMenuBar) {
     headerStyles.height = menuExpanded
       ? headerElement.current.scrollHeight
