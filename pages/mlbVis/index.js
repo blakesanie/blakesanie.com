@@ -70,7 +70,7 @@ export default function MLBVis(props) {
                 {post.caption.map((line, i) => {
                   return <h5>{line}</h5>;
                 })}
-                <img src={post.imageUrl} />
+                <img src={post.imageUrl} className={styles.postImage} />
                 <h5>
                   <img
                     className={styles.redditLogo}

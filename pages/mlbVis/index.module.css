@@ -126,3 +126,7 @@
 .skeleton > * {
     height: 100%;
 }
+
+.postImage {
+    width: 100%;
+}

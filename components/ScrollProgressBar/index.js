@@ -33,6 +33,7 @@ export default function ScrollProgressBar(props) {
         top: 0,
         overflow: "hidden",
         display: props.visible ? "block" : "none",
+        zIndex: 99999,
       }}
     >
       <div
