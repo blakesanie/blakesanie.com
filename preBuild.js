@@ -82,6 +82,8 @@ tree["/spotifyMosaic"] = {
 
 console.log(tree);
 
+fs.mkdir("extras/initialLog", () => {});
+
 fs.writeFile(
   "extras/initialLog/pageTree.js",
   `module.exports = ${JSON.stringify(tree)};`,
