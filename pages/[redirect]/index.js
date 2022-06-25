@@ -4,7 +4,7 @@ import Head from "next/head";
 import HeaderAndFooter from "../../components/HeaderAndFooter";
 import { NextSeo } from "next-seo";
 
-const redirects = {
+export const redirects = {
   linkedin: {
     href: "https://www.linkedin.com/in/blakesanie/",
     title: "LinkedIn",
@@ -73,9 +73,12 @@ export async function getStaticProps({ params }) {
 export default function Redirect(props) {
   const router = useRouter();
   const { redirect } = router.query;
+  useEffect(() => {
+    window.location.href = redirects[redirect].href;
+  }, []);
   return (
     <HeaderAndFooter>
-      {redirect ? (
+      {redirect && (
         <>
           <Head>
             <meta
@@ -86,7 +89,7 @@ export default function Redirect(props) {
           <NextSeo title={redirects[redirect].title} nofollow={true} />
           <h1 className="redirectLabel">{`Redirecting to ${redirects[redirect].title}...`}</h1>
         </>
-      ) : null}
+      )}
     </HeaderAndFooter>
   );
 }

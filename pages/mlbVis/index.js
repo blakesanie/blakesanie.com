@@ -21,7 +21,21 @@ export default function MLBVis(props) {
       <NextSeo
         title="MLB Visualization"
         description="An automated subreddit for exploring data-driven storytelling surrounding America's pastime. Not affiliated with MLB."
+        additionalMetaTags={[
+          {
+            name: "theme-color",
+            content: "rgb(35, 90, 153)",
+          },
+        ]}
       />
+      <style jsx global>{`
+        header h1 {
+          border-color: red !important;
+        }
+        #hamburger > div {
+          background-color: red;
+        }
+      `}</style>
       <div className={`content ${styles.content}`}>
         <h1>MLB Visualization</h1>
         <h2>

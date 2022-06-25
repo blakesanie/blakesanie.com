@@ -5,6 +5,7 @@ import Link from "next/link";
 import { NewsArticleJsonLd } from "next-seo";
 import ScrollProgressBar from "../ScrollProgressBar";
 import { useRouter } from "next/router";
+import { redirects } from "../../pages/[redirect]";
 
 let mouseHistory = {
   current: undefined,
@@ -150,9 +151,9 @@ export default function HeaderAndFooter(props) {
                 <Link href="/projects">Projects</Link>
               </li>
               <li>
-                <Link href="/github" target="_blank">
-                  Github
-                </Link>
+                <a href={redirects["github"].href} target="_blank">
+                  GitHub
+                </a>
               </li>
             </div>
             <div className={styles.navSection}>
@@ -168,9 +169,9 @@ export default function HeaderAndFooter(props) {
                 </Link>
               </li>
               <li>
-                <Link href="/blog" target="_blank">
+                <a href={redirects["blog"].href} target="_blank">
                   Blog
-                </Link>
+                </a>
               </li>
               <li>
                 <Link href="/mlbVis">r/mlbVis</Link>
@@ -190,20 +191,20 @@ export default function HeaderAndFooter(props) {
             </div>
             <div className={styles.navSection}>
               <h3>Personal</h3>
-              <Link href="/linkedin" target="_blank">
+              <a href={redirects["linkedin"].href} target="_blank">
                 LinkedIn
-              </Link>
+              </a>
               {isMobile ? (
                 <Link href="/contact.vcf">Contact Card</Link>
               ) : (
                 <Link href="mailto:blake@sanie.com">Email</Link>
               )}
-              <Link href="/instagram" target="_blank">
+              <a href={redirects["instagram"].href} target="_blank">
                 Instagram
-              </Link>
-              <Link href="/twitter" target="_blank">
+              </a>
+              <a href={redirects["twitter"].href} target="_blank">
                 Twitter
-              </Link>
+              </a>
             </div>
           </ul>
         </nav>

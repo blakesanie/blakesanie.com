@@ -284,10 +284,17 @@ export async function getStaticProps() {
 
 export default function CS(props) {
   return (
-    <HeaderAndFooter>
+    <HeaderAndFooter headerColor="#00B0ADcc">
+      {/* #00B0ADcc */}
       <NextSeo
         title="Projects"
         description="My collective showcase of personal projects, focused on full-stack, data, and Machine Learning applications."
+        additionalMetaTags={[
+          {
+            name: "theme-color",
+            content: "rgb(52, 192, 189)",
+          },
+        ]}
       />
       <div className={`content ${styles.cs}`}>
         <h1>Projects</h1>

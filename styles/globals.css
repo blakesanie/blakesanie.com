@@ -9,6 +9,10 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html {
+  background-color: white;
+}
+
 #__next {
   width: 100vw;
   overflow-x: hidden;
