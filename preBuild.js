@@ -24,18 +24,18 @@ for (const filename of filenames) {
     const description = getAttr(contents, 'description="');
     const title =
       getAttr(contents, 'title="') || getAttr(contents, 'defaultTitle="');
-    console.log(filename, title, description);
+
     if (!description || !title) {
       continue;
     }
-    console.log("current filename", filename);
+
     let routeParts = filename.split("pages/")[1].split("/");
     routeParts = routeParts
       .slice(0, routeParts.length - 1)
       .map(function (routePart) {
         return "/" + routePart;
       });
-    console.log(routeParts);
+
     if (routeParts.length == 0) {
       routeParts = ["/"];
     }
@@ -83,7 +83,7 @@ tree["/spotifyMosaic"] = {
 console.log(tree);
 
 fs.writeFile(
-  "./extras/initialLog/pageTree.js",
+  "extras/initialLog/pageTree.js",
   `module.exports = ${JSON.stringify(tree)};`,
   () => {}
 );
