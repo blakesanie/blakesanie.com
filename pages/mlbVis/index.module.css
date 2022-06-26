@@ -83,6 +83,7 @@
     transition: box-shadow 0.2s ease;
     /* flex: 1; */
     padding-bottom:10px;
+    height: 490px;
 }
 
 .card:hover {
@@ -117,7 +118,7 @@
 
 .skeleton {
     width: 320px;
-    height: 400px;
+    height: 490px;
     border-radius: 10px;
     overflow: hidden;
     margin: 12px;
@@ -128,5 +129,8 @@
 }
 
 .postImage {
-    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    flex: 1;
 }

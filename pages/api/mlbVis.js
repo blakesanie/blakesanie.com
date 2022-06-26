@@ -1,4 +1,17 @@
+import fs from "fs";
 const snoowrap = require("snoowrap");
+
+// let isDev = true;
+// try {
+//   // fs.readdirSync(".").forEach((file) => {
+//   //   console.log(file);
+//   // });
+//   fs.readFileSync(".env", "utf8");
+// } catch (e) {
+//   isDev = false;
+// }
+
+// console.log("isDev", isDev);
 
 const reddit = new snoowrap({
   userAgent: "script:com.blakesanie.mlbVis:v1.0.0 (by u/mlbVis)",
@@ -9,30 +22,19 @@ const reddit = new snoowrap({
 });
 
 export default async function handler(req, res) {
-  console.log(reddit);
+  // console.log(isDev);
+  // if (!isDev && req.headers.referer != "https://blakesanie.com/mlbVis") {
+  //   return res.status(403);
+  // }
+  console.log("host, referer", req.headers.host, req.headers.referer);
   let posts = await reddit.getSubreddit("mlbVis").getNew();
-  console.log("posts", posts);
+  // console.log("posts", posts);
   posts = posts
     .filter((post) => post.preview)
     .map((post) => {
-      const lines = post.title.split(" || ");
-      if (lines[0].startsWith("Walk off")) {
-        lines[0] = lines[0]
-          .replace("Walk off", "")
-          .split(" ")
-          .slice(2)
-          .join(" ");
-        lines.push("Walk Off 💥");
-      }
-      if (lines[0].includes(", ")) {
-        const split = lines[0].split(", ");
-        lines[0] = split[0];
-        lines.splice(1, 0, split[1]);
-      }
       return {
         permalink: post.permalink,
-        title: lines[0],
-        caption: lines.splice(1),
+        title: post.title,
         imageUrl: post.preview.images[0].source.url,
         author: post.author.name,
         ups: post.ups,
