@@ -12,6 +12,9 @@
   height: 100vh;
   min-height: 100vh;
   z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;  
 }
 .header.dark {
   background-color: rgba(0, 0, 0, 0.5);
@@ -84,7 +87,8 @@
   padding: 10px 10px;
   height: auto;
   flex: 1;
-  max-width: 170px;
+  min-width: 220px;
+  /* width: 170px !important; */
 }
 
 .nav a {
@@ -192,6 +196,30 @@
   opacity: 0.6;
 }
 
+.nowPlaying {
+  background-color: rgba(0,0,0,0.7);
+  border-radius: 8px;
+  width: calc(100% - 20px);
+  margin-top: 20px;
+  margin-bottom: 10px;
+  backdrop-filter: saturate(400%);
+  /* border: 1px solid rgba(255,255,255,0.2) */
+  box-shadow: 0 0 10px 0 rgba(255,255,255,0.2);
+  padding-top: 8px;
+}
+
+.nowPlaying img {
+  position: relative;
+  max-width: 100%;
+  margin-bottom: -4px;
+}
+
+.nowPlaying p {
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.7;
+}
+
 @media screen and (max-width: 800px),
   (min-width: 800px) and (min-height: 1200px) {
   .header {
@@ -215,10 +243,14 @@
     padding: 0;
     margin-bottom: 10px;
     line-height: 14px;
-    margin-top: 7px;
+    margin-top: 0px;
   }
   .header h2 span {
     display: inline;
+  }
+  .navSection {
+    min-width: 0;
+    flex: initial;
   }
   .nav h3 {
     font-size: 18px;
@@ -247,6 +279,9 @@
   }
   .transitionable {
     transition: height 0.2s ease, transform 0.4s ease;
+  }
+  .nowPlaying {
+    width: 240px;
   }
 }
 
@@ -317,7 +352,7 @@
   .header h1 {
     font-size: 24px;
     padding: 6px 0;
-    margin-top: 6px;
+    margin-top: 8px;
   }
   .hamburger {
     height: 80px;

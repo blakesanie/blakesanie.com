@@ -210,6 +210,18 @@ export default function HeaderAndFooter(props) {
                 Twitter
               </a>
             </div>
+            <div className={styles.navSection}>
+              <h3>Links</h3>
+              <a href={redirects["spotify"].href} target="_blank">
+                Spotify
+              </a>
+              <a href={redirects["youtube"].href} target="_blank">
+                Youtube
+              </a>
+              <a href={redirects["source"].href} target="_blank">
+                Source
+              </a>
+            </div>
           </ul>
         </nav>
         <div className={styles.madeBy}>
@@ -266,6 +278,10 @@ export default function HeaderAndFooter(props) {
               ></img>
             </a>
           </div>
+        </div>
+        <div className={styles.nowPlaying}>
+          <p>Last listened to</p>
+          <img src="https://spotify-github-profile.vercel.app/api/view?uid=blake_sanie&cover_image=true&theme=novatorem&bar_color=53b14f&bar_color_cover=true" />
         </div>
       </header>
       <div
