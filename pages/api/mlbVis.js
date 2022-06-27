@@ -14,7 +14,8 @@ export default async function handler(req, res) {
   if (
     !referer ||
     host.split(":")[0].replace("127.0.0.1", "localhost") !=
-      referer.split("://")[1].split("/")[0].split(":")[0]
+      referer.split("://")[1].split("/")[0].split(":")[0] ||
+    referer.replace("//", "").split("/")[1] != "mlbVis"
   ) {
     return res.status(403).json();
   }
