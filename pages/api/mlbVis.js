@@ -1,17 +1,4 @@
-import fs from "fs";
 const snoowrap = require("snoowrap");
-
-// let isDev = true;
-// try {
-//   // fs.readdirSync(".").forEach((file) => {
-//   //   console.log(file);
-//   // });
-//   fs.readFileSync(".env", "utf8");
-// } catch (e) {
-//   isDev = false;
-// }
-
-// console.log("isDev", isDev);
 
 const reddit = new snoowrap({
   userAgent: "script:com.blakesanie.mlbVis:v1.0.0 (by u/mlbVis)",
@@ -22,11 +9,15 @@ const reddit = new snoowrap({
 });
 
 export default async function handler(req, res) {
-  // console.log(isDev);
-  // if (!isDev && req.headers.referer != "https://blakesanie.com/mlbVis") {
-  //   return res.status(403);
-  // }
-  console.log("host, referer", req.headers.host, req.headers.referer);
+  let { host, referer } = req.headers;
+  host = host.split(":")[0];
+  if (
+    !referer ||
+    host.split(":")[0].replace("127.0.0.1", "localhost") !=
+      referer.split("://")[1].split("/")[0].split(":")[0]
+  ) {
+    return res.status(403).json();
+  }
   let posts = await reddit.getSubreddit("mlbVis").getNew();
   // console.log("posts", posts);
   posts = posts
