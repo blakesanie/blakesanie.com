@@ -163,6 +163,9 @@ export default function Home(props) {
         #nowPlaying {
           border: 2px solid rgba(255, 255, 255, 0.1);
         }
+        #nowPlaying * {
+          --highlight-color: rgba(255, 255, 255, 0.1) !important;
+        }
       `}</style>
       <NextSeo
         additionalMetaTags={[

@@ -333,6 +333,9 @@ export default function Photo(props) {
           background-color: white;
           border: 2px solid rgba(0, 0, 0, 0.1);
         }
+        #spotifyBg {
+          background-color: white;
+        }
       `}</style>
       <div className={`content ${styles.photo}`}>
         <h1>Photography</h1>

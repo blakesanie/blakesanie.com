@@ -211,7 +211,7 @@ export default function HeaderAndFooter(props) {
                 Twitter
               </a>
             </div>
-            <div className={styles.navSection}>
+            {/* <div className={styles.navSection}>
               <h3>Links</h3>
               <a href={redirects["spotify"].href} target="_blank">
                 Spotify
@@ -222,7 +222,7 @@ export default function HeaderAndFooter(props) {
               <a href={redirects["source"].href} target="_blank">
                 Source
               </a>
-            </div>
+            </div> */}
           </ul>
         </nav>
 

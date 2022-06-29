@@ -28,6 +28,19 @@ const processTrack = (item, live) => {
 let cached;
 let exp = 0;
 
+const getPreviousTrack = async () => {
+  response = await fetch(
+    `https://api.spotify.com/v1/me/player/recently-played?limit=1`,
+    {
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    }
+  );
+  const json = await response.json();
+  return processTrack(json.items[0].track, false);
+};
+
 const getLastSong = async (recursion = true) => {
   let response = await fetch(
     "https://api.spotify.com/v1/me/player/currently-playing",
@@ -39,16 +52,7 @@ const getLastSong = async (recursion = true) => {
   );
   if (response.status == 204) {
     console.log("USE PREVIOUS TRACK");
-    response = await fetch(
-      `https://api.spotify.com/v1/me/player/recently-played?limit=1`,
-      {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      }
-    );
-    const json = await response.json();
-    return processTrack(json.items[0].track, false);
+    return await getPreviousTrack();
   } else if (response.status == 401) {
     if (!recursion) {
       throw Error("Reached max recursion depth");
@@ -71,8 +75,12 @@ const getLastSong = async (recursion = true) => {
     ACCESS_TOKEN = json.access_token;
     return await getLastSong(false);
   } else if (response.status == 200) {
-    console.log("CURRENTLY PLAYING TRACK");
     const json = await response.json();
+    if (json.currently_playing_type == "ad" || !json.item) {
+      console.log("ADVERTIZEMENT CURRENTLY");
+      return await getPreviousTrack();
+    }
+    console.log("CURRENTLY PLAYING TRACK");
     return processTrack(json.item, true);
   } else {
     console.error(response);

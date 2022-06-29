@@ -79,44 +79,40 @@ export default function nowPlaying(props) {
     }
   }, [onScreen]);
 
-  if (!track) {
-    return (
-      <div
-        className={`${props.className || ""} ${styles.nowPlaying}`}
-        ref={rootRef}
-      >
-        <Skeleton containerClassName={styles.skeleton} />
-      </div>
-    );
-  }
-
   return (
     <div
       className={`${props.className || ""} ${styles.nowPlaying}`}
+      ref={rootRef}
       id="nowPlaying"
     >
-      <p className={styles.header}>
-        <div className={styles.spotifyIcon}>
-          <div className={styles.spotifyBg} />
-          <img src="/optimized/images/cs/techUsed/Spotify Developers_w=64&q=75.png" />
-        </div>
-        {track.live ? "Now Playing" : "Recently Played"}
-      </p>
-      <div className={styles.row}>
-        <img src={track.image} />
-        <div className={styles.carousels}>
-          <Carousel>
-            <p className={styles.artist}>{track.artists.join(", ")}</p>
-          </Carousel>
-          <Carousel>
-            <p className={styles.name}>{track.name}</p>
-          </Carousel>
-          <Carousel>
-            <p className={styles.album}>{track.album}</p>
-          </Carousel>
-        </div>
-      </div>
-      <div className={styles.bars}>{bars}</div>
+      {!track ? (
+        <Skeleton containerClassName={styles.skeleton} />
+      ) : (
+        <>
+          <p className={styles.header}>
+            <div className={styles.spotifyIcon}>
+              <div className={styles.spotifyBg} id="spotifyBg" />
+              <img src="/optimized/images/cs/techUsed/Spotify Developers_w=64&q=75.png" />
+            </div>
+            {track.live ? "Now Playing" : "Recently Played"}
+          </p>
+          <div className={styles.row}>
+            <img src={track.image} />
+            <div className={styles.carousels}>
+              <Carousel>
+                <p className={styles.artist}>{track.artists.join(", ")}</p>
+              </Carousel>
+              <Carousel>
+                <p className={styles.name}>{track.name}</p>
+              </Carousel>
+              <Carousel>
+                <p className={styles.album}>{track.album}</p>
+              </Carousel>
+            </div>
+          </div>
+          <div className={styles.bars}>{bars}</div>
+        </>
+      )}
     </div>
   );
 }
