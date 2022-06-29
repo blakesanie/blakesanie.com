@@ -22,6 +22,7 @@ const processTrack = (item, live) => {
     album: item.album.name,
     image: bestImage,
     live: live,
+    link: item.external_urls.spotify,
   };
 };
 
@@ -29,7 +30,7 @@ let cached;
 let exp = 0;
 
 const getPreviousTrack = async () => {
-  response = await fetch(
+  const response = await fetch(
     `https://api.spotify.com/v1/me/player/recently-played?limit=1`,
     {
       headers: {

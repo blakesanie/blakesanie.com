@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import styles from "./index.module.css";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -53,37 +53,66 @@ function useOnScreen(ref, rootMargin = "0px", once = false) {
   return isIntersecting;
 }
 
+let trackExp = 0;
+
+let trackResetInterval;
+
+let trackRefreshWaitSeconds;
+
 export default function nowPlaying(props) {
   const [track, setTrack] = useState();
   const [bars, setBars] = useState([]);
   const rootRef = useRef(null);
-  const onScreen = useOnScreen(rootRef, "-100px", true);
+  const onScreen = useOnScreen(rootRef, "0px");
+  // console.log("onScreen", onScreen);
+
+  const getNowPlaying = useCallback(async () => {
+    const res = await fetch(`/api/nowPlaying`);
+    const json = await res.json();
+    trackRefreshWaitSeconds = json.live ? 3 * 60 : 15 * 60;
+    const newBars = [];
+    for (let i = 0; i < 16; i++) {
+      newBars.push(
+        <div
+          className={styles.bar}
+          style={{
+            animationDuration: `${0.8 + Math.random() * 1}s`,
+          }}
+        ></div>
+      );
+    }
+    setBars(newBars);
+    setTrack(json);
+    const now = new Date();
+    now.setSeconds(now.getSeconds() + trackRefreshWaitSeconds);
+    trackExp = now;
+  }, []);
 
   useEffect(async () => {
-    if (onScreen && !track) {
-      const res = await fetch(`/api/nowPlaying`);
-      const json = await res.json();
-      const newBars = [];
-      for (let i = 0; i < 16; i++) {
-        newBars.push(
-          <div
-            className={styles.bar}
-            style={{
-              animationDuration: `${0.8 + Math.random() * 1}s`,
-            }}
-          ></div>
-        );
+    if (onScreen) {
+      if (new Date() >= trackExp) {
+        // console.log("get immediate track");
+        await getNowPlaying();
       }
-      setBars(newBars);
-      setTrack(json);
+      trackResetInterval = setInterval(
+        getNowPlaying,
+        1000 * trackRefreshWaitSeconds
+      );
+      // console.log("set track interval for 30s");
+    } else {
+      clearInterval(trackResetInterval);
+      trackResetInterval = undefined;
+      // console.log("clear track interval");
     }
   }, [onScreen]);
 
   return (
-    <div
+    <a
       className={`${props.className || ""} ${styles.nowPlaying}`}
       ref={rootRef}
       id="nowPlaying"
+      target="_blank"
+      href={track?.link}
     >
       {!track ? (
         <Skeleton containerClassName={styles.skeleton} />
@@ -113,6 +142,6 @@ export default function nowPlaying(props) {
           <div className={styles.bars}>{bars}</div>
         </>
       )}
-    </div>
+    </a>
   );
 }

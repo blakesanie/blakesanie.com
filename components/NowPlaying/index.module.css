@@ -6,6 +6,7 @@
     backdrop-filter: saturate(110%);
     /* padding: 6px 0; */
     border-radius: 8px;
+    color: white !important;
 }
 
 .skeleton {
