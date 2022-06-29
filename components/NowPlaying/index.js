@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import styles from "./index.module.css";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import TrackVisibility from "react-on-screen";
 
 function Carousel(props) {
   const children = [];
