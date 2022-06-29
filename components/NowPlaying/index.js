@@ -88,9 +88,9 @@ export default function nowPlaying(props) {
     trackExp = now;
   }, []);
 
-  useEffect(async () => {
+  const handleVisibilityChange = useCallback(async () => {
     if (onScreen) {
-      if (new Date() >= trackExp) {
+      if (!track || new Date() >= trackExp) {
         // console.log("get immediate track");
         await getNowPlaying();
       }
@@ -104,7 +104,22 @@ export default function nowPlaying(props) {
       trackResetInterval = undefined;
       // console.log("clear track interval");
     }
+  }, []);
+
+  useEffect(async () => {
+    await handleVisibilityChange();
   }, [onScreen]);
+
+  useEffect(() => {
+    // document.addEventListener("visibilitychange", async (event) => {
+    //   if (document.visibilityState == "visible") {
+    //     await handleVisibilityChange();
+    //   } else {
+    //     clearInterval(trackResetInterval);
+    //     trackResetInterval = undefined;
+    //   }
+    // });
+  }, []);
 
   return (
     <a
