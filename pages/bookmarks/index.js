@@ -128,7 +128,7 @@ export default function Bookmarks(props) {
 
   return (
     <div>
-      <NextSeo noindex={true} title="Bookmarks" />
+      <NextSeo nofollow={true} noindex={true} title="Bookmarks" />
       <input
         type="text"
         placeholder="Search"

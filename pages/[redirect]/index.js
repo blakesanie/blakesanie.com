@@ -105,18 +105,18 @@ export default function Redirect(props) {
           ]}
         />
       )}
-      {redirect && (
-        <>
-          <Head>
-            <meta
-              httpEquiv="refresh"
-              content={`0; URL=${redirects[redirect].href}`}
-            />
-          </Head>
-          <NextSeo title={redirects[redirect].title} nofollow={true} />
-          <h1 className="redirectLabel">{`Redirecting to ${redirects[redirect].title}...`}</h1>
-        </>
-      )}
+      <NextSeo
+        title={redirects[redirect].title}
+        nofollow={true}
+        noindex={true}
+      />
+      <Head>
+        <meta
+          httpEquiv="refresh"
+          content={`0; URL=${redirects[redirect].href}`}
+        />
+      </Head>
+      <h1 className="redirectLabel">{`Redirecting to ${redirects[redirect].title}...`}</h1>
     </HeaderAndFooter>
   );
 }

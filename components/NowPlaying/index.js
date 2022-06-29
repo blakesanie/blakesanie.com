@@ -19,13 +19,10 @@ function Carousel(props) {
 function useOnScreen(ref, rootMargin = "0px", once = false) {
   const [isIntersecting, setIntersecting] = useState(false);
   const [observerKilled, setObserverKilled] = useState(false);
-  // console.log("onscreen ref", ref);
   const observer = useMemo(() => {
     try {
       return new IntersectionObserver(
         ([entry]) => {
-          // console.log("onscreen SHOWING");
-          console.log("onscreen entry", entry);
           if (once && entry.isIntersecting) {
             observer.disconnect();
             setObserverKilled(true);
@@ -37,15 +34,12 @@ function useOnScreen(ref, rootMargin = "0px", once = false) {
           rootMargin: rootMargin,
         }
       );
-      console.log("onscreen made observer");
     } catch (e) {
-      console.log("onscreen observer not defined");
       return undefined;
     }
   }, [ref.current]);
 
   useEffect(() => {
-    console.log("onscreen observer", observer);
     if (!observer || observerKilled) {
       return;
     }
@@ -64,8 +58,6 @@ export default function nowPlaying(props) {
   const [bars, setBars] = useState([]);
   const rootRef = useRef(null);
   const onScreen = useOnScreen(rootRef, "-100px", true);
-
-  console.log("onscreen", onScreen);
 
   useEffect(async () => {
     if (onScreen && !track) {
