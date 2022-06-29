@@ -1,0 +1,130 @@
+.nowPlaying {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0,0,0,0.09);
+    backdrop-filter: saturate(110%);
+    /* padding: 6px 0; */
+    border-radius: 8px;
+}
+
+.skeleton {
+    min-height: 120px;
+    width: 100%;
+    /* background-color: red; */
+}
+
+.skeleton > * {
+    min-height: 100%;
+    --base-color: rgba(0,0,0,0.0) !important;
+    --highlight-color: rgba(0,0,0,0.1) !important;
+}
+
+.header {
+    font-size: 16px;
+    padding: 4px 0;
+    /* padding-bottom: 4px; */
+}
+
+.row {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.row img {
+    width: 40%;
+    max-width: 70px;
+    margin-left: 6px;
+}
+
+.carousels {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.carousel {
+    /* border: 1px solid red; */
+    width: 100%;
+    height: 1.3em;
+    overflow-x: hidden;
+}
+
+.slidingWindow {
+    display: flex;
+    position: absolute;
+    height: 100%;
+    align-items: center;
+    /* border: 1px solid blue; */
+    animation: slide 10s linear infinite;
+}
+
+.slidingWindow > * {
+    white-space: nowrap;
+    margin-right: 30px;
+    margin-left: 6px;
+}
+
+.artist {
+font-size: 13px;
+}
+
+.name {
+    font-size: 13px;
+    font-style: italic;
+}
+
+.album {
+    font-size: 13px;
+    opacity: 0.6;
+}
+
+.bars {
+    margin-top: 6px;
+    width: 100%;
+    display: flex;
+    overflow-y: hidden;
+    padding: 0 6px;
+    opacity: 0.3;
+}
+
+.bar {
+    flex: 1;
+    background-color: white;
+    margin: 0 2px;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    height: 20px;
+    animation: bob 2s ease infinite;
+}
+
+:global(.lightBackground) .bar {
+    background-color: black;
+}
+
+@keyframes slide {
+    0% {
+        transform: translateX(0)
+    }
+    100% {
+        transform: translateX(-25%)
+    }
+}
+
+@keyframes bob {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

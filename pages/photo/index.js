@@ -329,6 +329,10 @@ export default function Photo(props) {
         #madeBy img {
           filter: none !important;
         }
+        #nowPlaying {
+          background-color: white;
+          border: 2px solid rgba(0, 0, 0, 0.1);
+        }
       `}</style>
       <div className={`content ${styles.photo}`}>
         <h1>Photography</h1>

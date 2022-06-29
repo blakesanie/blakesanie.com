@@ -13,6 +13,7 @@
     "next": "^11.0.1",
     "next-seo": "^4.26.0",
     "nextjs-progressbar": "^0.0.13",
+    "node-fetch": "^2.6.1",
     "react": "17.0.2",
     "react-device-detect": "^1.17.0",
     "react-div-100vh": "^0.6.0",

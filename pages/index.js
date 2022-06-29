@@ -160,6 +160,9 @@ export default function Home(props) {
         header {
           background-color: #00000080 !important;
         }
+        #nowPlaying {
+          border: 2px solid rgba(255, 255, 255, 0.1);
+        }
       `}</style>
       <NextSeo
         additionalMetaTags={[

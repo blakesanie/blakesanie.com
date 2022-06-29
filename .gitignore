@@ -1,4 +1,6 @@
 pageTree.js
+pages/api/spotify*.js
+.idea/*
 
 out
 __pycache__

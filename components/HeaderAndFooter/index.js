@@ -6,6 +6,7 @@ import { NewsArticleJsonLd } from "next-seo";
 import ScrollProgressBar from "../ScrollProgressBar";
 import { useRouter } from "next/router";
 import { redirects } from "../../pages/[redirect]";
+import NowPlaying from "../NowPlaying";
 
 let mouseHistory = {
   current: undefined,
@@ -224,6 +225,8 @@ export default function HeaderAndFooter(props) {
             </div>
           </ul>
         </nav>
+
+        <NowPlaying className={styles.nowPlaying} />
         <div className={styles.madeBy}>
           <p>Built by Blake Sanie with</p>
           <div className={styles.madeByIcons} id="madeBy">
@@ -278,10 +281,6 @@ export default function HeaderAndFooter(props) {
               ></img>
             </a>
           </div>
-        </div>
-        <div className={styles.nowPlaying}>
-          <p>Last listened to</p>
-          <img src="https://spotify-github-profile.vercel.app/api/view?uid=blake_sanie&cover_image=true&theme=novatorem&bar_color=53b14f&bar_color_cover=true" />
         </div>
       </header>
       <div
