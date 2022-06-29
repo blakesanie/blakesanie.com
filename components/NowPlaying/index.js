@@ -6,7 +6,7 @@ import TrackVisibility from "react-on-screen";
 
 function Carousel(props) {
   const children = [];
-  for (var i = 0; i < (props.repetitions || 4); i++) {
+  for (var i = 0; i < 8; i++) {
     children.push(props.children);
   }
 
@@ -105,6 +105,10 @@ export default function nowPlaying(props) {
       id="nowPlaying"
     >
       <p className={styles.header}>
+        <div className={styles.spotifyIcon}>
+          <div className={styles.spotifyBg} />
+          <img src="/optimized/images/cs/techUsed/Spotify Developers_w=64&q=75.png" />
+        </div>
         {track.live ? "Now Playing" : "Recently Played"}
       </p>
       <div className={styles.row}>

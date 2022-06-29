@@ -7,13 +7,20 @@ const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 
 const processTrack = (item, live) => {
+  let bestImage;
+  for (const image of item.album.images.reverse()) {
+    if (image.height >= 120) {
+      bestImage = image.url;
+      break;
+    }
+  }
   return {
     name: item.name,
     artists: item.artists.map((artist) => {
       return artist.name;
     }),
     album: item.album.name,
-    image: item.album.images[0].url,
+    image: bestImage,
     live: live,
   };
 };
@@ -76,6 +83,16 @@ const getLastSong = async (recursion = true) => {
 const CACHE_TTL = 30;
 
 export default async function handler(req, res) {
+  let { host, referer } = req.headers;
+  host = host.split(":")[0];
+  if (
+    !referer ||
+    host.split(":")[0].replace("127.0.0.1", "localhost") !=
+      referer.split("://")[1].split("/")[0].split(":")[0]
+  ) {
+    return res.status(403).json();
+  }
+
   if (!cached || exp < new Date()) {
     console.log("CACHE MISS");
     cached = await getLastSong();
@@ -84,5 +101,10 @@ export default async function handler(req, res) {
   } else {
     console.log("CACHE HIT");
   }
+
+  res.setHeader(
+    "Cache-Control",
+    `s-max-age=${60 * 1}, stale-while-revalidate=${60 * 1}`
+  );
   return res.status(200).json(cached);
 }

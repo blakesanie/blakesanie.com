@@ -23,7 +23,39 @@
 .header {
     font-size: 16px;
     padding: 4px 0;
+    padding-top: 7px;
     /* padding-bottom: 4px; */
+}
+
+.spotifyIcon {
+    height: 24px;
+    width: 24px;
+    display: inline-flex;
+    padding: 0px;
+    /* background-color: black; */
+    /* padding: 3px; */
+    /* border-radius: 6px; */
+    vertical-align: middle;
+    transform: translateY(-1px);
+    margin-right: 6px;
+    justify-content: center;
+    align-items: center;
+    /* border-radius: 50%; */
+}
+
+.spotifyIcon img {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+.spotifyBg {
+    height: 90%;
+    width: 90%;
+    background-color: black;
+    border-radius: 50%;
 }
 
 .row {
@@ -34,7 +66,7 @@
 
 .row img {
     width: 40%;
-    max-width: 70px;
+    max-width: 60px;
     margin-left: 6px;
 }
 
@@ -69,16 +101,16 @@
 }
 
 .artist {
-font-size: 13px;
+font-size: 12px;
 }
 
 .name {
-    font-size: 13px;
+    font-size: 15px;
     font-style: italic;
 }
 
 .album {
-    font-size: 13px;
+    font-size: 12px;
     opacity: 0.6;
 }
 
@@ -87,7 +119,7 @@ font-size: 13px;
     width: 100%;
     display: flex;
     overflow-y: hidden;
-    padding: 0 6px;
+    padding: 0 8px;
     opacity: 0.3;
 }
 
@@ -97,8 +129,8 @@ font-size: 13px;
     margin: 0 2px;
     border-top-right-radius: 3px;
     border-top-left-radius: 3px;
-    height: 20px;
-    animation: bob 2s ease infinite;
+    height: 12px;
+    animation: bob 2s ease-in-out infinite;
 }
 
 :global(.lightBackground) .bar {
@@ -110,7 +142,7 @@ font-size: 13px;
         transform: translateX(0)
     }
     100% {
-        transform: translateX(-25%)
+        transform: translateX(-12.5%)
     }
 }
 
