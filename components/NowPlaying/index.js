@@ -88,7 +88,7 @@ export default function nowPlaying(props) {
     trackExp = now;
   }, []);
 
-  const handleVisibilityChange = useCallback(async () => {
+  const handleVisibility = useCallback(async (onScreen) => {
     if (onScreen) {
       if (!track || new Date() >= trackExp) {
         // console.log("get immediate track");
@@ -107,19 +107,35 @@ export default function nowPlaying(props) {
   }, []);
 
   useEffect(async () => {
-    await handleVisibilityChange();
+    await handleVisibility(onScreen);
   }, [onScreen]);
 
   useEffect(() => {
-    // document.addEventListener("visibilitychange", async (event) => {
-    //   if (document.visibilityState == "visible") {
-    //     await handleVisibilityChange();
-    //   } else {
-    //     clearInterval(trackResetInterval);
-    //     trackResetInterval = undefined;
-    //   }
-    // });
+    document.addEventListener("visibilitychange", async (event) => {
+      if (document.visibilityState == "visible") {
+        await handleVisibility(onScreen);
+      } else {
+        await handleVisibility(false);
+      }
+    });
   }, []);
+
+  const carousels = useMemo(() => {
+    if (!track) return;
+    return (
+      <div className={styles.carousels}>
+        <Carousel>
+          <p className={styles.artist}>{track.artists.join(", ")}</p>
+        </Carousel>
+        <Carousel>
+          <p className={styles.name}>{track.name}</p>
+        </Carousel>
+        <Carousel>
+          <p className={styles.album}>{track.album}</p>
+        </Carousel>
+      </div>
+    );
+  }, [track]);
 
   return (
     <a
@@ -142,17 +158,7 @@ export default function nowPlaying(props) {
           </p>
           <div className={styles.row}>
             <img src={track.image} />
-            <div className={styles.carousels}>
-              <Carousel>
-                <p className={styles.artist}>{track.artists.join(", ")}</p>
-              </Carousel>
-              <Carousel>
-                <p className={styles.name}>{track.name}</p>
-              </Carousel>
-              <Carousel>
-                <p className={styles.album}>{track.album}</p>
-              </Carousel>
-            </div>
+            {carousels}
           </div>
           <div className={styles.bars}>{bars}</div>
         </>
