@@ -75,9 +75,10 @@ if __name__ == '__main__':
             filepaths.append(startingDir)
 
     if not 'keepexisting' in ', '.join(sys.argv):
-        print('deleting existing images in /optimized/')
         try:
-            shutil.rmtree(startingDir.replace('/images', '/optimized'))
+            optimizePath = startingDir.replace('/images', '/optimized/images')
+            print(f'deleting existing images in {optimizePath}')
+            shutil.rmtree(optimizePath)
         except Exception as e:
             print(e)
 

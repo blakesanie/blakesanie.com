@@ -6,6 +6,7 @@ out
 __pycache__
 
 # portfolio
+public/images/*.zip
 public/images/portfolio
 Photo\ Portfolio
 photoPortfolio
