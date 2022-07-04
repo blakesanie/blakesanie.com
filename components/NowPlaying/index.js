@@ -82,11 +82,13 @@ export default function nowPlaying(props) {
         trackInterval.pause();
       }
     } else {
-      trackInterval = new IntervalPlus(getNowPlaying, 1000 * 10, {
-        immediate: true,
-        verbose: true,
-        name: "interval-plus Demo",
-      });
+      if (onScreen) {
+        trackInterval = new IntervalPlus(getNowPlaying, 1000 * 10, {
+          immediate: true,
+          verbose: true,
+          name: "interval-plus Demo",
+        });
+      }
     }
   }, [onScreen]);
 
