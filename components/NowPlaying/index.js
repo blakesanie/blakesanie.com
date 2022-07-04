@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import styles from "./index.module.css";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import TwitterApiv2LabsReadWrite from "twitter-api-v2/dist/v2-labs/client.v2.labs.write";
+import { IntervalPlus } from "interval-plus";
 
 function Carousel(props) {
   const children = [];
@@ -53,11 +55,7 @@ function useOnScreen(ref, rootMargin = "0px", once = false) {
   return isIntersecting;
 }
 
-let trackExp = 0;
-
-let trackResetInterval;
-
-let trackRefreshWaitSeconds;
+let trackInterval;
 
 export default function nowPlaying(props) {
   const [track, setTrack] = useState();
@@ -69,7 +67,48 @@ export default function nowPlaying(props) {
   const getNowPlaying = useCallback(async () => {
     const res = await fetch(`/api/nowPlaying`);
     const json = await res.json();
-    trackRefreshWaitSeconds = json.live ? 3 * 60 : 15 * 60;
+    const trackRefreshWait = json.live ? 1000 * 10 : 1000 * 60 * 1;
+    setTrack(json);
+    if (trackInterval.interval != trackRefreshWait) {
+      trackInterval.changeInterval(trackRefreshWait);
+    }
+  }, []);
+
+  useEffect(async () => {
+    if (trackInterval) {
+      if (onScreen) {
+        trackInterval.resume();
+      } else {
+        trackInterval.pause();
+      }
+    } else {
+      trackInterval = new IntervalPlus(getNowPlaying, 1000 * 10, {
+        immediate: true,
+        verbose: true,
+        name: "interval-plus Demo",
+      });
+    }
+  }, [onScreen]);
+
+  useEffect(() => {
+    document.addEventListener("visibilitychange", async (event) => {
+      if (trackInterval) {
+        if (document.visibilityState == "visible") {
+          trackInterval.resume();
+        } else {
+          trackInterval.pause();
+        }
+      }
+    });
+    window.addEventListener("focus", () => {
+      if (trackInterval) trackInterval.resume();
+    });
+    window.addEventListener("blur", () => {
+      if (trackInterval) trackInterval.pause();
+    });
+  }, []);
+
+  useEffect(() => {
     const newBars = [];
     for (let i = 0; i < 16; i++) {
       newBars.push(
@@ -82,42 +121,6 @@ export default function nowPlaying(props) {
       );
     }
     setBars(newBars);
-    setTrack(json);
-    const now = new Date();
-    now.setSeconds(now.getSeconds() + trackRefreshWaitSeconds);
-    trackExp = now;
-  }, []);
-
-  const handleVisibility = useCallback(async (onScreen) => {
-    if (onScreen) {
-      if (!track || new Date() >= trackExp) {
-        // console.log("get immediate track");
-        await getNowPlaying();
-      }
-      trackResetInterval = setInterval(
-        getNowPlaying,
-        1000 * trackRefreshWaitSeconds
-      );
-      // console.log("set track interval for 30s");
-    } else {
-      clearInterval(trackResetInterval);
-      trackResetInterval = undefined;
-      // console.log("clear track interval");
-    }
-  }, []);
-
-  useEffect(async () => {
-    await handleVisibility(onScreen);
-  }, [onScreen]);
-
-  useEffect(() => {
-    document.addEventListener("visibilitychange", async (event) => {
-      if (document.visibilityState == "visible") {
-        await handleVisibility(onScreen);
-      } else {
-        await handleVisibility(false);
-      }
-    });
   }, []);
 
   const carousels = useMemo(() => {

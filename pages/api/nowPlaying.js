@@ -89,7 +89,7 @@ const getLastSong = async (recursion = true) => {
   }
 };
 
-const CACHE_TTL = 30;
+const CACHE_TTL = 10;
 
 export default async function handler(req, res) {
   let { host, referer } = req.headers;

@@ -21,7 +21,7 @@ function Card({ post }) {
         {titleSplit[1]}
       </h4>
       {post.caption.map((line, i) => {
-        return <h5>{line}</h5>;
+        return <h5 key={line}>{line}</h5>;
       })}
       <div
         className={styles.postImage}
@@ -113,7 +113,7 @@ export default function MLBVis(props) {
         </h3>
         {posts ? (
           posts.map((post) => {
-            return <Card post={post} />;
+            return <Card post={post} key={post.title} />;
           })
         ) : (
           <>
