@@ -59,6 +59,7 @@ let trackInterval;
 export default function nowPlaying(props) {
   const [track, setTrack] = useState();
   const [bars, setBars] = useState([]);
+  const [intervalCreated, setIntervalCreated] = useState(false);
   const rootRef = useRef(null);
   const onScreen = useOnScreen(rootRef, "0px");
   // console.log("onScreen", onScreen);
@@ -67,10 +68,12 @@ export default function nowPlaying(props) {
     const stored = localStorage.getItem("nowPlaying");
     if (stored) {
       const parsed = JSON.parse(stored);
+      console.log("date in localstorage:", new Date(parsed.timestamp));
       if (new Date() - new Date(parsed.timestamp) < 15000) {
         return parsed.track;
       }
     }
+    console.log("track stored in localstorage:", stored);
     const res = await fetch(`/api/nowPlaying`);
     const json = await res.json();
     localStorage.setItem(
@@ -93,7 +96,7 @@ export default function nowPlaying(props) {
   }, []);
 
   useEffect(async () => {
-    if (trackInterval) {
+    if (intervalCreated) {
       if (onScreen) {
         trackInterval.resume();
       } else {
@@ -106,13 +109,21 @@ export default function nowPlaying(props) {
           verbose: true,
           name: "interval-plus Demo",
         });
+        setIntervalCreated(true);
       }
     }
+    return () => {
+      if (trackInterval) {
+        trackInterval.stop();
+        trackInterval = undefined;
+        setIntervalCreated(false);
+      }
+    };
   }, [onScreen]);
 
   useEffect(() => {
     document.addEventListener("visibilitychange", async (event) => {
-      if (trackInterval) {
+      if (trackInterval && intervalCreated) {
         if (document.visibilityState == "visible") {
           trackInterval.resume();
         } else {
@@ -121,10 +132,10 @@ export default function nowPlaying(props) {
       }
     });
     window.addEventListener("focus", () => {
-      if (trackInterval) trackInterval.resume();
+      if (trackInterval && intervalCreated) trackInterval.resume();
     });
     window.addEventListener("blur", () => {
-      if (trackInterval) trackInterval.pause();
+      if (trackInterval && intervalCreated) trackInterval.pause();
     });
   }, []);
 
