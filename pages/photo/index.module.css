@@ -10,6 +10,14 @@
   min-width: 400px; */
 }
 
+/* .aspectRatio * {
+
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: auto !important;
+} */
+
 .masonry .pinIcon {
   position: absolute !important;
   bottom: 10px;
@@ -24,11 +32,6 @@
   /* backdrop-filter: blur(10px); */
 }
 
-.invisibleImg {
-  position: absolute;
-  opacity: 0;
-  max-height: 0;
-}
 
 .masonry img {
   position: relative !important;
@@ -113,10 +116,12 @@
 .fullScreenImage {
   width: 100%;
   height: calc(100% - env(safe-area-inset-bottom));
+}
 
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+.fullScreenImage * {
+  background-size: contain !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
 }
 
 .loader {

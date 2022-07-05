@@ -611,6 +611,7 @@ function GalleryImage({ filename, width }) {
           //   (250 / files[filename]["width"]) * files[filename]["height"]
           // )}
           // width={250}
+          sizes="380px"
           layout="fill"
           onLoad={() => {
             setLoaded(true);
