@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import files from "../../extras/photo/filenames.js";
+console.log("files", files);
 import Masonry from "react-masonry-component";
 import Copyright from "../../components/Copyright";
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.js";
 import styles from "./index.module.css";
 import { NextSeo } from "next-seo";
 import Head from "next/head";
-import Image from "next/image";
-import imageLoader from "../../extras/imageLoader";
+import Image, { myLoader } from "../../components/Image";
 import { use100vh } from "react-div-100vh";
 import { useRouter } from "next/router";
 
@@ -47,11 +47,6 @@ export default function Photo(props) {
     didShuffle = true;
   }
   const gutter = 10;
-
-  const [windowDim, setWindowDim] = useState({
-    width: undefined,
-    height: undefined,
-  });
 
   const backButtonElement = useRef(null);
   const leftHalfElement = useRef(null);
@@ -134,10 +129,6 @@ export default function Photo(props) {
   };
 
   useEffect(() => {
-    setWindowDim({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
     handleResize(window);
     window.addEventListener("resize", () => {
       handleResize(window);
@@ -202,7 +193,11 @@ export default function Photo(props) {
             }
             function showPreview() {
               let img = document.createElement("img");
-              img.src = `/optimized/images/portfolio/${name}_w=384&q=75.${ext}`;
+              img.src = myLoader({
+                src: `/images/portfolio/${name}.${ext}`,
+                width: 384,
+                quality: 75,
+              });
               img.addEventListener("click", (e) => {
                 e.stopPropagation();
                 openFullScreen();
@@ -433,15 +428,10 @@ export default function Photo(props) {
                       disableScroll();
                       setSelectedPhotoWithLoading(i);
                     }}
+                    // key={filename}
                   >
-                    <Image
-                      src={`/images/portfolio/${filename}`}
-                      height="450"
-                      width="250"
-                      layout="fixed"
-                      loader={imageLoader}
-                      loading="lazy"
-                    />
+                    <GalleryImage filename={filename} />
+
                     {files[filename].gps.length ? (
                       <svg
                         viewBox="0 0 413.099 413.099"
@@ -494,11 +484,11 @@ export default function Photo(props) {
                     src={`/images/portfolio/${filenames[selectedPhoto]}`}
                     layout="fill"
                     objectFit="contain"
-                    loader={imageLoader}
                     // className={fullScreenLoading ? styles.loading : ""}
                     onLoad={() => {
                       setFullScreenLoading(false);
                     }}
+                    blurry
                   />
                 )}
                 <div
@@ -522,7 +512,6 @@ export default function Photo(props) {
                     width="10"
                     height="20"
                     layout="fixed"
-                    loader={imageLoader}
                   ></Image>
                 </div>
               </div>
@@ -541,7 +530,6 @@ export default function Photo(props) {
                     width="10"
                     height="20"
                     layout="fixed"
-                    loader={imageLoader}
                   ></Image>
                 </div>
               </div>
@@ -597,5 +585,42 @@ export default function Photo(props) {
         )}
       </div>
     </HeaderAndFooter>
+  );
+}
+
+function GalleryImage({ filename }) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <>
+      <div
+        style={{
+          // position: "static",
+          width: "100%",
+          paddingBottom: loaded
+            ? 0
+            : `${
+                (files[filename]["height"] / files[filename]["width"]) * 100
+              }%`,
+          // background: "gold",
+        }}
+        className={styles.aspectRatio}
+      >
+        <div className={loaded ? "" : styles.invisibleImg}>
+          <Image
+            src={`/images/portfolio/${filename}`}
+            height={
+              (250 / files[filename]["width"]) * files[filename]["height"]
+            }
+            width={250}
+            layout="fixed"
+            onLoad={() => {
+              setLoaded(true);
+            }}
+            blurry
+          />
+        </div>
+      </div>
+    </>
   );
 }

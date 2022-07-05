@@ -233,7 +233,7 @@ export default function HeaderAndFooter(props) {
             <a href="https://reactjs.org/" target="_blank" rel="noreferrer">
               <img
                 alt=""
-                src="/images/icons/react.png"
+                src="/optimized/images/icons/react_w=48&q=75.webp"
                 style={{
                   filter: `invert(100%)`,
                 }}
@@ -251,7 +251,7 @@ export default function HeaderAndFooter(props) {
             <a href="https://vercel.com/" target="_blank" rel="noreferrer">
               <img
                 alt=""
-                src="/images/icons/vercel.png"
+                src="/optimized/images/icons/vercel_w=48&q=75.webp"
                 style={{
                   filter: `invert(100%)`,
                 }}
@@ -264,7 +264,7 @@ export default function HeaderAndFooter(props) {
             >
               <img
                 alt=""
-                src="/images/icons/github.png"
+                src="/optimized/images/icons/github_w=48&q=75.webp"
                 style={{
                   filter: `invert(100%)`,
                 }}
@@ -274,7 +274,7 @@ export default function HeaderAndFooter(props) {
             <a>
               <img
                 alt=""
-                src="/images/icons/heart.png"
+                src="/optimized/images/icons/heart_w=48&q=75.webp"
                 style={{
                   filter: `invert(100%)`,
                 }}

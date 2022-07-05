@@ -9,8 +9,7 @@ import Particles from "react-particles-js";
 import { particlesParams } from "../extras/particlesParams.js";
 import CopyRight from "../components/Copyright";
 import Link from "next/link";
-import Image from "next/image";
-import imageLoader from "../extras/imageLoader";
+import Image from "../components/Image";
 import { NextSeo } from "next-seo";
 
 const markupData = [
@@ -229,7 +228,6 @@ export default function Home(props) {
                       height="185"
                       layout="intrinsic"
                       priority
-                      loader={imageLoader}
                     />
                   </div>
 
@@ -259,7 +257,6 @@ export default function Home(props) {
                     src={item.imageUrl}
                     layout="fill"
                     priority
-                    loader={imageLoader}
                   />
                 </div>
                 <div
@@ -288,8 +285,7 @@ export default function Home(props) {
                     src={item.imageUrl}
                     layout="fill"
                     objectFit="cover"
-                    loading="eager"
-                    loader={imageLoader}
+                    blurry
                   />
                 </div>
                 <div

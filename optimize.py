@@ -46,7 +46,7 @@ def optimizeImage(filepath):
         for quality in qualities:
             newImg = img.resize(
                 (width, math.floor(width / originalWidth * originalHeight)), Image.ANTIALIAS)
-            for ext in [originalExt]:  # will need serverless for webp
+            for ext in [originalExt, 'webp']:  # will need serverless for webp
                 filepathParts = filepath.split(os.path.sep)
                 filepathParts.insert(1, 'optimized')
                 newFilename = '.'.join(filepathParts[-1].split('.')[0:-1])
@@ -62,7 +62,7 @@ def optimizeImage(filepath):
 
                 pngInfo = img.info
 
-                newImg.save(newFilepath, ext, quality=quality,
+                newImg.save(newFilepath, format=ext, quality=quality,
                             subsampling=0, optimize=True, **pngInfo)
 
 

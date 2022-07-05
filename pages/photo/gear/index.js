@@ -3,8 +3,7 @@ import styles from "./index.module.css";
 import Copyright from "../../../components/Copyright";
 import HeaderAndFooter from "../../../components/HeaderAndFooter";
 import { NextSeo } from "next-seo";
-import Image from "next/image";
-import imageLoader from "../../../extras/imageLoader";
+import Image from "../../../components/Image";
 
 export async function getStaticProps({ params }) {
   return {
@@ -85,10 +84,10 @@ export default function Gear(props) {
                   <Image
                     src={`/images/gear/${item.imageUrl}`}
                     alt={item.name}
-                    loader={imageLoader}
                     height={200}
                     width={500}
                     layout="fixed"
+                    blurry
                   ></Image>
                 </div>
               </a>

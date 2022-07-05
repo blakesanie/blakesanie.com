@@ -4,8 +4,7 @@ import TechUsed from "../../components/TechUsed";
 import Copyright from "../../components/Copyright";
 import HeaderAndFooter from "../../components/HeaderAndFooter";
 import { NextSeo } from "next-seo";
-import Image from "next/image";
-import imageLoader from "../../extras/imageLoader";
+import Image from "../../components/Image";
 
 export async function getStaticProps() {
   return {
@@ -352,13 +351,11 @@ export default function CS(props) {
                     className={styles.image}
                     alt={project.name}
                     layout="fill"
-                    loading="eager"
                     objectFit="contain"
                     quality={75}
-                    priority={i < 3}
-                    loader={imageLoader}
                     sizes="(min-width: 1050px) 500px, (max-width: 1050px) 70vw"
-                  ></Image>
+                    blurry
+                  />
                 </div>
               )}
             </div>

@@ -10,7 +10,8 @@ basePath = path.split("extras")[0] + os.path.sep + "public/images/portfolio"
 
 
 def get_exif(filename):
-    exif = Image.open(filename)._getexif()
+    image = Image.open(filename)
+    exif = image._getexif()
     processed = {}
     final = defaultdict(dict)
     if exif is not None:
@@ -24,7 +25,7 @@ def get_exif(filename):
                 name = GPSTAGS.get(key, key)
                 final['GPSInfo'][name] = value
 
-    return final
+    return final, image.width, image.height
 
 
 def get_decimal_coordinates(info):
@@ -45,10 +46,11 @@ filenames = {}
 
 for filename in os.listdir(basePath):
     if filename.split('.')[-1] in ('jpg', 'jpeg'):
+        exif, width, height = get_exif(basePath + os.path.sep + filename)
         coords = get_decimal_coordinates(
-            get_exif(basePath + os.path.sep + filename)['GPSInfo']) or []
+            exif['GPSInfo']) or []
 
-        filenames[filename] = {'gps': coords}
+        filenames[filename] = {'gps': coords, 'width': width, 'height': height}
 
 with open('filenames.js', 'w') as out:
     out.write("module.exports = {};".format(

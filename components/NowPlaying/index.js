@@ -64,10 +64,29 @@ export default function nowPlaying(props) {
   const onScreen = useOnScreen(rootRef, "0px");
   // console.log("onScreen", onScreen);
 
-  const getNowPlaying = useCallback(async () => {
+  const getTrack = async () => {
+    const stored = localStorage.getItem("nowPlaying");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (new Date() - parsed.timestamp < 15) {
+        return parsed.track;
+      }
+    }
     const res = await fetch(`/api/nowPlaying`);
     const json = await res.json();
-    const trackRefreshWait = json.live ? 1000 * 10 : 1000 * 60 * 1;
+    localStorage.setItem(
+      "nowPlaying",
+      JSON.stringify({
+        timestamp: new Date(),
+        track: json,
+      })
+    );
+    return json;
+  };
+
+  const getNowPlaying = useCallback(async () => {
+    const json = await getTrack();
+    const trackRefreshWait = json.live ? 1000 * 20 : 1000 * 90 * 1;
     setTrack(json);
     if (trackInterval.interval != trackRefreshWait) {
       trackInterval.changeInterval(trackRefreshWait);
@@ -157,7 +176,7 @@ export default function nowPlaying(props) {
           <p className={styles.header}>
             <div className={styles.spotifyIcon}>
               <div className={styles.spotifyBg} id="spotifyBg" />
-              <img src="/optimized/images/cs/techUsed/Spotify Developers_w=64&q=75.png" />
+              <img src="/optimized/images/cs/techUsed/Spotify Developers_w=64&q=75.webp" />
             </div>
             {track.live ? "Now Playing" : "Recently Played"}
           </p>

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import styles from "./index.module.css";
-import Image from "next/image";
-import imageLoader from "../../extras/imageLoader";
+import Image from "../Image";
 
 export default function TechUsed(props) {
   const [current, setCurrent] = useState("");
@@ -34,9 +33,9 @@ export default function TechUsed(props) {
                 objectFit="contain"
                 onMouseLeave={clearCurrent}
                 onTouchEnd={clearCurrent}
-                loading="eager"
-                loader={imageLoader}
-              ></Image>
+                // loading="eager"
+                blurry
+              />
             </div>
           );
         })}

@@ -32,7 +32,7 @@ function Card({ post }) {
       <h5>
         <img
           className={styles.redditLogo}
-          src="/optimized/images/mlbVis_w=64&q=75.png"
+          src="/optimized/images/mlbVis_w=64&q=75.webp"
         />
         By{" "}
         <a href={`https://reddit.com/u/${post.author}`} target="_blank">
@@ -108,7 +108,7 @@ export default function MLBVis(props) {
           </a>{" "}
           <img
             className={styles.redditLogo}
-            src="/optimized/images/cs/techUsed/Reddit_w=64&q=75.png"
+            src="/optimized/images/cs/techUsed/Reddit_w=64&q=75.webp"
           />
         </h3>
         {posts ? (
