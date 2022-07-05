@@ -11,9 +11,17 @@ import Image, { myLoader } from "../../components/Image";
 import { use100vh } from "react-div-100vh";
 import { useRouter } from "next/router";
 
-var didShuffle = false;
+function shuffleArray(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+}
 
 const filenames = Object.keys(files);
+shuffleArray(filenames);
 
 let minLat = Infinity;
 let minLng = Infinity;
@@ -34,18 +42,6 @@ let infoWindow;
 let canHover = false;
 
 export default function Photo(props) {
-  function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-    }
-  }
-  if (!didShuffle) {
-    shuffleArray(filenames);
-    didShuffle = true;
-  }
   const gutter = 10;
 
   const backButtonElement = useRef(null);
@@ -400,68 +396,69 @@ export default function Photo(props) {
                 Not all images are geotagged
               </p>
             </div>
+            {width > 0 && (
+              <Masonry
+                className={`masonry ${styles.masonry} ${
+                  mapMode ? styles.masonryHidden : ""
+                }`} // default ''
+                elementType={"div"} // default 'div'
+                options={{
+                  transitionDuration: 200,
+                  gutter: gutter,
+                }} // default {}
+                disableImagesLoaded={false} // default false
+                updateOnEachImageLoad={true} // default false and works only if disableImagesLoaded is false
+                onImagesLoaded={() => {
+                  setImagesLoaded(true);
+                }}
+              >
+                {filenames.map((filename, i) => {
+                  return (
+                    <div
+                      className={styles.imgContainer}
+                      style={{
+                        marginBottom: gutter,
+                        width: width,
+                      }}
+                      onClick={() => {
+                        disableScroll();
+                        setSelectedPhotoWithLoading(i);
+                      }}
+                      key={filename}
+                    >
+                      <GalleryImage filename={filename} width={width} />
 
-            <Masonry
-              className={`masonry ${styles.masonry} ${
-                mapMode ? styles.masonryHidden : ""
-              }`} // default ''
-              elementType={"div"} // default 'div'
-              options={{
-                transitionDuration: 200,
-                gutter: gutter,
-              }} // default {}
-              disableImagesLoaded={false} // default false
-              updateOnEachImageLoad={true} // default false and works only if disableImagesLoaded is false
-              onImagesLoaded={() => {
-                setImagesLoaded(true);
-              }}
-            >
-              {filenames.map((filename, i) => {
-                return (
-                  <div
-                    className={styles.imgContainer}
-                    style={{
-                      marginBottom: gutter,
-                      width: width,
-                    }}
-                    onClick={() => {
-                      disableScroll();
-                      setSelectedPhotoWithLoading(i);
-                    }}
-                    // key={filename}
-                  >
-                    <GalleryImage filename={filename} />
-
-                    {files[filename].gps.length ? (
-                      <svg
-                        viewBox="0 0 413.099 413.099"
-                        className={styles.pinIcon}
-                      >
-                        <g>
-                          <path
-                            d="M206.549,0L206.549,0c-82.6,0-149.3,66.7-149.3,149.3c0,28.8,9.2,56.3,22,78.899l97.3,168.399c6.1,11,18.4,16.5,30,16.5
+                      {files[filename].gps.length ? (
+                        <svg
+                          viewBox="0 0 413.099 413.099"
+                          className={styles.pinIcon}
+                        >
+                          <g>
+                            <path
+                              d="M206.549,0L206.549,0c-82.6,0-149.3,66.7-149.3,149.3c0,28.8,9.2,56.3,22,78.899l97.3,168.399c6.1,11,18.4,16.5,30,16.5
                          c11.601,0,23.3-5.5,30-16.5l97.3-168.299c12.9-22.601,22-49.601,22-78.901C355.849,66.8,289.149,0,206.549,0z M206.549,193.4
                          c-30,0-54.5-24.5-54.5-54.5s24.5-54.5,54.5-54.5s54.5,24.5,54.5,54.5C261.049,169,236.549,193.4,206.549,193.4z"
-                          />
-                        </g>
-                      </svg>
-                    ) : null}
-                  </div>
-                  // <img
-                  //   key={filename}
-                  //   alt="Copyright Blake Sanie"
-                  //   src={`/images/thumbnails/${filename}`}
-                  //   style={{
-                  //     marginBottom: gutter,
-                  //     width: width,
-                  //   }}
-                  //   onClick={() => {
-                  //     setSelectedPhoto(i);
-                  //   }}
-                  // ></img>
-                );
-              })}
-            </Masonry>
+                            />
+                          </g>
+                        </svg>
+                      ) : null}
+                    </div>
+                    // <img
+                    //   key={filename}
+                    //   alt="Copyright Blake Sanie"
+                    //   src={`/images/thumbnails/${filename}`}
+                    //   style={{
+                    //     marginBottom: gutter,
+                    //     width: width,
+                    //   }}
+                    //   onClick={() => {
+                    //     setSelectedPhoto(i);
+                    //   }}
+                    // ></img>
+                  );
+                })}
+              </Masonry>
+            )}
             <div
               className={`${styles.fullScreen} ${
                 selectedPhoto === undefined ? "invisible" : ""
@@ -587,7 +584,7 @@ export default function Photo(props) {
   );
 }
 
-function GalleryImage({ filename }) {
+function GalleryImage({ filename, width }) {
   const [loaded, setLoaded] = useState(false);
 
   return (
@@ -596,29 +593,30 @@ function GalleryImage({ filename }) {
         style={{
           // position: "static",
           width: "100%",
-          paddingBottom: loaded
-            ? 0
-            : `${
-                (files[filename]["height"] / files[filename]["width"]) * 100
-              }%`,
+          // paddingBottom: loaded
+          //   ? 0
+          //   : `${
+          //       (files[filename]["height"] / files[filename]["width"]) * 100
+          //     }%`,
+          height:
+            (width / files[filename]["width"]) * files[filename]["height"] +
+            "px",
           // background: "gold",
         }}
         className={styles.aspectRatio}
       >
-        <div className={loaded ? "" : styles.invisibleImg}>
-          <Image
-            src={`/images/portfolio/${filename}`}
-            height={
-              (250 / files[filename]["width"]) * files[filename]["height"]
-            }
-            width={250}
-            layout="fixed"
-            onLoad={() => {
-              setLoaded(true);
-            }}
-            blurry
-          />
-        </div>
+        <Image
+          src={`/images/portfolio/${filename}`}
+          // height={Math.round(
+          //   (250 / files[filename]["width"]) * files[filename]["height"]
+          // )}
+          // width={250}
+          layout="fill"
+          onLoad={() => {
+            setLoaded(true);
+          }}
+          blurry
+        />
       </div>
     </>
   );
