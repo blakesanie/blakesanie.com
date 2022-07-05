@@ -479,7 +479,29 @@ export default function Photo(props) {
                 {selectedPhoto == undefined ? null : (
                   <Image
                     src={`/images/portfolio/${filenames[selectedPhoto]}`}
-                    layout="fill"
+                    // sizes={
+                    //   Math.min(
+                    //     2000,
+                    //     Math.round(
+                    //       (2000 * files[filenames[selectedPhoto]].width) /
+                    //         files[filenames[selectedPhoto]].height
+                    //     ) * 0.5
+                    //   ) + "px"
+                    // }
+                    height={Math.min(
+                      1200,
+                      (files[filenames[selectedPhoto]].height /
+                        files[filenames[selectedPhoto]].width) *
+                        900
+                    )}
+                    width={Math.min(
+                      1200,
+                      (files[filenames[selectedPhoto]].width /
+                        files[filenames[selectedPhoto]].height) *
+                        900
+                    )}
+                    loading="eager"
+                    layout="fixed"
                     objectFit="contain"
                     // className={fullScreenLoading ? styles.loading : ""}
                     onLoad={() => {
@@ -607,12 +629,12 @@ function GalleryImage({ filename, width }) {
       >
         <Image
           src={`/images/portfolio/${filename}`}
-          // height={Math.round(
-          //   (250 / files[filename]["width"]) * files[filename]["height"]
-          // )}
-          // width={250}
-          sizes="380px"
-          layout="fill"
+          height={Math.round(
+            (250 / files[filename]["width"]) * files[filename]["height"]
+          )}
+          width={250}
+          // sizes="640px"
+          layout="fixed"
           onLoad={() => {
             setLoaded(true);
           }}
