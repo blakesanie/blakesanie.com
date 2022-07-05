@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import styles from "./index.module.css";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import TwitterApiv2LabsReadWrite from "twitter-api-v2/dist/v2-labs/client.v2.labs.write";
 import { IntervalPlus } from "interval-plus";
 
 function Carousel(props) {
@@ -68,7 +67,7 @@ export default function nowPlaying(props) {
     const stored = localStorage.getItem("nowPlaying");
     if (stored) {
       const parsed = JSON.parse(stored);
-      if (new Date() - parsed.timestamp < 15) {
+      if (new Date() - new Date(parsed.timestamp) < 15000) {
         return parsed.track;
       }
     }
