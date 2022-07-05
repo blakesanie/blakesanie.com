@@ -314,7 +314,7 @@ export default function CS(props) {
                           rel="noreferrer"
                           className={styles.github}
                           style={{
-                            backgroundImage: `url("../images/cs/techUsed/Github.png")`,
+                            backgroundImage: `url("/optimized/images/cs/techUsed/GitHub_w=64&q=75.webp")`,
                           }}
                         >
                           GitHub
