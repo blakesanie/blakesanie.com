@@ -488,7 +488,6 @@ export default function Photo(props) {
                     onLoad={() => {
                       setFullScreenLoading(false);
                     }}
-                    blurry
                   />
                 )}
                 <div
