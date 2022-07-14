@@ -64,13 +64,13 @@
   margin: 0 25px;
 }
 
-.project h2 {
+.project h3 {
   font-size: 25px;
   margin-bottom: 30px;
   text-align: center;
 }
 
-.project h3 {
+.project h4 {
   text-indent: 40px;
   font-size: 19px;
   font-weight: 400;
@@ -126,7 +126,7 @@
     min-width: 40vw;
     width: 100%;
   }
-  .project h3 {
+  .project h4 {
     font-size: calc(12px + 1vmin);
   }
   .content .projects {

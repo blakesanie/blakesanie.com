@@ -28,7 +28,8 @@
     "react-typed": "^1.2.0",
     "snoowrap": "^1.23.0",
     "tsparticles": "^1.30.3",
-    "twitter-api-v2": "^1.12.2"
+    "twitter-api-v2": "^1.12.2",
+    "typed.js": "^2.0.12"
   },
   "devDependencies": {
     "gh-pages": "^3.2.0"

@@ -311,7 +311,7 @@ export default function Photo(props) {
         header * {
           color: #000 !important;
         }
-        header h1 {
+        #myName {
           border-color: #00000040 !important;
         }
         #hamburger > div {
@@ -330,6 +330,12 @@ export default function Photo(props) {
       `}</style>
       <div className={`content ${styles.photo}`}>
         <h1>Photography</h1>
+        <h2>
+          My enthusiasm for capturing photographs lends me a creative release
+          from my logical, algorithmic side. It also enables me to truly admire
+          the compositional beauty in front of my eyes every day, from San
+          Francisco, to Venice, to my own backyard.
+        </h2>
         {mapMode === undefined ? null : (
           <>
             <div className={styles.modeControl}>

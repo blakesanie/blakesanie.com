@@ -137,44 +137,50 @@ export default function HeaderAndFooter(props) {
           <div className={styles.line}></div>
         </div>
         <Link href="/">
-          <h1>Blake Sanie</h1>
+          <a id="myName">Blake Sanie</a>
         </Link>
-        <h2>
+        <p class={styles.headerSubLine}>
           <span>‌‌Inquisitive student.</span>
           <span>Aspiring engineer.</span>
           <span>Photography enthusiast.</span>
           <span>Curious stock trader.</span>
-        </h2>
+        </p>
         <nav>
           <ul className={styles.nav}>
             <div className={styles.navSection}>
-              <h3>Engineering</h3>
+              <p className={styles.navSectionTitle}>Engineering</p>
               <li>
-                <Link href="/resume">Résumé</Link>
+                <Link href="/resume">
+                  <a rel="nofollow">Résumé</a>
+                </Link>
               </li>
               <li>
                 <Link href="/projects">Projects</Link>
               </li>
               <li>
-                <a href={redirects["github"].href} target="_blank">
+                <a
+                  href={redirects["github"].href}
+                  target="_blank"
+                  rel="nofollow"
+                >
                   GitHub
                 </a>
               </li>
             </div>
             <div className={styles.navSection}>
-              <h3>Ventures</h3>
+              <p className={styles.navSectionTitle}>Ventures</p>
               <li>
                 <Link href="/fund/index.html" target="_blank">
-                  Stock Fund
+                  <a rel="nofollow">Stock Fund</a>
                 </Link>
               </li>
               <li>
                 <Link href="https://investivision.com" target="_blank">
-                  Investivision
+                  <a rel="nofollow">Investivision</a>
                 </Link>
               </li>
               <li>
-                <a href={redirects["blog"].href} target="_blank">
+                <a href={redirects["blog"].href} target="_blank" rel="nofollow">
                   Blog
                 </a>
               </li>
@@ -183,31 +189,51 @@ export default function HeaderAndFooter(props) {
               </li>
             </div>
             <div className={styles.navSection}>
-              <h3>Photography</h3>
+              <p className={styles.navSectionTitle}>Photography</p>
               <li>
                 <Link href="/photo">Gallery</Link>
               </li>
               <li>
-                <Link href="/photo/?map=true">Map</Link>
+                <Link href="/photo/?map=true">
+                  <a rel="nofollow">Map</a>
+                </Link>
               </li>
               <li>
-                <Link href="/photo/gear">Gear</Link>
+                <Link href="/photo/gear">
+                  <a rel="nofollow">Gear</a>
+                </Link>
               </li>
             </div>
             <div className={styles.navSection}>
-              <h3>Personal</h3>
-              <a href={redirects["linkedin"].href} target="_blank">
+              <p className={styles.navSectionTitle}>Personal</p>
+              <a
+                href={redirects["linkedin"].href}
+                target="_blank"
+                rel="nofollow"
+              >
                 LinkedIn
               </a>
               {isMobile ? (
-                <Link href="/contact.vcf">Contact Card</Link>
+                <Link href="/contact.vcf">
+                  <a rel="nofollow">Contact Card</a>
+                </Link>
               ) : (
-                <Link href="mailto:blake@sanie.com">Email</Link>
+                <Link href="mailto:blake@sanie.com">
+                  <a rel="nofollow">Email</a>
+                </Link>
               )}
-              <a href={redirects["instagram"].href} target="_blank">
+              <a
+                href={redirects["instagram"].href}
+                target="_blank"
+                rel="nofollow"
+              >
                 Instagram
               </a>
-              <a href={redirects["twitter"].href} target="_blank">
+              <a
+                href={redirects["twitter"].href}
+                target="_blank"
+                rel="nofollow"
+              >
                 Twitter
               </a>
             </div>

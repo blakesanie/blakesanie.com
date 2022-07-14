@@ -297,12 +297,18 @@ export default function CS(props) {
       />
       <div className={`content ${styles.cs}`}>
         <h1>Projects</h1>
+        <h2>
+          My software engineering journey is grounded on and continues to build
+          upon hands-on projects. Explore my growing portfolio of applications,
+          products, and services developed since my first lines of code at 14
+          years old.
+        </h2>
         {props.projects.map((project, i) => {
           return (
             <div className={styles.project} key={i}>
               <div className={styles.info}>
-                <h2>{project.name}</h2>
-                <h3>{project.desc}</h3>
+                <h3>{project.name}</h3>
+                <h4>{project.desc}</h4>
                 <TechUsed techUsed={project.techUsed || []} />
                 <div className={styles.linksContainer}>
                   {project.links.map((link) => {
@@ -311,7 +317,7 @@ export default function CS(props) {
                         <a
                           href={link.github}
                           target="_blank"
-                          rel="noreferrer"
+                          rel="nofollow"
                           className={styles.github}
                           style={{
                             backgroundImage: `url("/optimized/images/cs/techUsed/GitHub_w=64&q=75.webp")`,
@@ -325,6 +331,7 @@ export default function CS(props) {
                       <a
                         href={link.url}
                         target={link.external === true ? "_blank" : "_self"}
+                        rel="nofollow"
                       >
                         {link.text}
                       </a>

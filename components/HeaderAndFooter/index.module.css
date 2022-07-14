@@ -20,7 +20,7 @@
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.header h1 {
+.header :global(#myName) {
   color: white;
   padding: 7px 18px;
   /* border: 2px dashed rgba(255, 255, 255, 0.2); */
@@ -33,15 +33,15 @@
   /* background-color: blue !important; */
 }
 
-:global(.lightBackground).header h1 {
+:global(.lightBackground).header :global(#myName) {
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='black' stroke-width='3' stroke-dasharray='2%2c 8' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square'/%3e%3c/svg%3e");
 }
 
-:global(.redBorder).header h1 {
+:global(.redBorder).header :global(#myName) {
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='red' stroke-width='3' stroke-dasharray='2%2c 8' stroke-dashoffset='0' stroke-opacity='1' stroke-linecap='square'/%3e%3c/svg%3e");
 }
 
-.header h2 {
+.headerSubLine {
   font-size: 14px;
   text-align: center;
   line-height: 20px;
@@ -50,7 +50,7 @@
   opacity: 0.5;
 }
 
-.header h2 span {
+.headerSubLine span {
   padding: 0 3px;
   display: block;
 }
@@ -104,7 +104,7 @@
   opacity: 1;
 }
 
-.nav h3 {
+.navSectionTitle  {
   font-size: 20px;
   margin-bottom: 10px;
 }
@@ -119,9 +119,18 @@
 .page h1 {
   text-align: center;
   font-size: 36px;
-  margin-top: 20px;
   margin: 60px 0;
+  margin-bottom: 30px;
   font-weight: 400;
+}
+
+.page h2 {
+  font-size: 20px;
+  margin-bottom: 40px;
+  text-indent: 30px;
+  font-weight: 400;
+  opacity: 0.6;
+  max-width: 720px;
 }
 
 .hamburger {
@@ -217,27 +226,27 @@
     backdrop-filter: blur(12px);
     min-height: 0;
   }
-  .header h1 {
+  .header :global(#myName) {
     font-size: 22px;
     margin-bottom: 7px;
     padding: 4px 0;
     width: 160px;
   }
-  .header h2 {
+  .headerSubLine  {
     font-size: 12px;
     padding: 0;
     margin-bottom: 10px;
     line-height: 14px;
     margin-top: 0px;
   }
-  .header h2 span {
+  .headerSubLine span {
     display: inline;
   }
   .navSection {
     min-width: 0;
     flex: initial;
   }
-  .nav h3 {
+  .navSectionTitle  {
     font-size: 18px;
   }
   .nav a {
@@ -333,10 +342,10 @@
 } */
 
 @media screen and (max-width: 470px) {
-  .header h2 {
+  .headerSubLine {
     display: none;
   }
-  .header h1 {
+  .header :global(#myName) {
     font-size: 24px;
     padding: 6px 0;
     margin-top: 8px;
@@ -357,7 +366,7 @@
   }
 }
 
-@media screen and (min-height: 850px) and (max-height: 1199px) and (min-width: 801px) {
+@media screen and (min-height: 1070px) and (max-height: 1199px) and (min-width: 801px) {
   .header {
     display: flex;
     flex-direction: column;

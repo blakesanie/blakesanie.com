@@ -1,7 +1,8 @@
 import HeaderAndFooter from "../components/HeaderAndFooter";
 import styles from "./index.module.css";
-import React, { useState, useEffect } from "react";
-import Typed from "react-typed";
+import React, { useState, useEffect, useRef } from "react";
+// import Typed from "react-typed";
+import Typed from "typed.js";
 import "react-typed/dist/animatedCursor.css";
 import Div100vh, { use100vh } from "react-div-100vh";
 import { isMobile } from "react-device-detect";
@@ -14,19 +15,20 @@ import { NextSeo } from "next-seo";
 
 const markupData = [
   {
-    text: ["^500 Hi, ^500I'm Blake ^2000", "^500 Scroll to learn more ^1000"],
     imageUrl: "/images/macbook3.jpeg",
     links: [],
   },
   {
     text: [
-      "I am a Computer Science student at the Georgia Institute of Technology.",
+      "I am a Computer Science undergrad student at the Georgia Institute of Technology, concentrating in Information Internetworks and Intelligence.",
     ],
     imageUrl: "/images/crosland.jpg",
     links: [],
   },
   {
-    text: ["Ultimately, I am an engineer at heart"],
+    text: [
+      "Ultimately, I am an exuberant software engineer at heart, and a problem-solver at my core,",
+    ],
     imageUrl: "/images/mac2.jpg",
     links: [
       {
@@ -37,11 +39,14 @@ const markupData = [
         url: "/github",
         label: "GitHub",
         external: true,
+        nofollow: true,
       },
     ],
   },
   {
-    text: ["Fascinated with automated stock trading"],
+    text: [
+      "Fascinated with Machine Learning and Automation surrounding stock market research and trading.",
+    ],
     imageUrl: "/images/stock.png",
     links: [
       { url: "/fund/index.html", label: "Stock Fund", external: true },
@@ -49,16 +54,22 @@ const markupData = [
         url: "https://investivision.com",
         label: "Investivision",
         external: true,
+        nofollow: true,
       },
     ],
   },
   {
-    text: ["With a sense of photographic expression."],
+    text: ["With a sense of photographic expression put on full display."],
     imageUrl: "/images/portfolio/DSC_0817.jpg",
     links: [
       {
         url: "/photo",
-        label: "Portfolio",
+        label: "Gallery",
+      },
+      {
+        url: "/photo?map=true",
+        label: "Map",
+        nofollow: true,
       },
       {
         url: "/photo/gear",
@@ -67,42 +78,50 @@ const markupData = [
     ],
   },
   {
-    text: ["I encourage you to learn from my ventures,"],
+    text: ["I encourage you to learn about my various ventures, old and new,"],
     imageUrl: "/images/mandel1.png",
-    links: [{ url: "/blog", label: "Blog" }],
+    links: [{ url: "/blog", label: "Blog", external: true, nofollow: true }],
   },
   {
-    text: ["Reach out with professional inquiries,"],
+    text: [
+      "Reach out with professional inquiries surrounding new opportunities,",
+    ],
     imageUrl: "/images/startup.jpg",
     links: [
       {
         url: "/linkedin",
         label: "LinkedIn",
         external: true,
+        nofollow: true,
       },
       {
         url: "/resume",
         label: "Résumé",
+        external: true,
+        nofollow: true,
       },
     ],
   },
   {
-    text: ["Or connect with me further."],
+    text: ["Or connect with me further through my online presence."],
     imageUrl: "/images/connect.jpg",
     links: [
       {
         url: "mailto:blake@sanie.com",
         label: "Email",
+        nofollow: true,
       },
       {
         url: "/instagram",
         label: "Instagram",
         external: true,
+        nofollow: true,
       },
       {
         url: "/twitter",
         label: "Twitter",
         external: true,
+        nofollow: true,
       },
     ],
   },
@@ -117,6 +136,8 @@ export async function getStaticProps() {
 }
 
 export default function Home(props) {
+  const typed = useRef();
+
   const [data, setData] = useState(props.data || markupData);
   useEffect(() => {
     if (isMobile) {
@@ -147,6 +168,23 @@ export default function Home(props) {
       true
     );
   }, []);
+
+  useEffect(() => {
+    typed.current.innerHTML = "";
+    const t = new Typed(typed.current, {
+      strings: [
+        "^500 Hi, ^500I'm Blake ^2000",
+        "^500 Scroll to learn more ^1000",
+      ],
+      typeSpeed: 50,
+      backSpeed: 40,
+      loop: true,
+    });
+    return () => {
+      t.destroy();
+    };
+  }, []);
+
   //(scroll);
   const frameHeight = Math.max(400, Math.min(1000, windowHeight));
   const frameOffset = windowHeight - frameHeight;
@@ -230,8 +268,16 @@ export default function Home(props) {
                       priority
                     />
                   </div>
-
-                  <Typed
+                  <h1
+                    className={styles.typed}
+                    style={{
+                      height: Math.min(60, (24 + 0.03 * windowWidth) * 1.6),
+                      transform: `translateY(${adjustedScroll * -0.1}px)`,
+                    }}
+                  >
+                    <span ref={typed}>Hi, I'm Blake.</span>
+                  </h1>
+                  {/* <Typed
                     strings={item.text}
                     typeSpeed={50}
                     backSpeed={40}
@@ -241,7 +287,7 @@ export default function Home(props) {
                       height: Math.min(60, (24 + 0.03 * windowWidth) * 1.6),
                       transform: `translateY(${adjustedScroll * -0.1}px)`,
                     }}
-                  ></Typed>
+                  ></Typed> */}
                 </div>
                 <div
                   style={{
@@ -275,7 +321,8 @@ export default function Home(props) {
               <>
                 <div
                   style={{
-                    opacity: 1 - Math.min(0.8, Math.abs(offset) / frameHeight),
+                    opacity:
+                      0.7 * (1 - Math.min(1, Math.abs(offset) / frameHeight)),
                     position: "absolute",
                     height: "100%",
                     width: "100%",
@@ -299,15 +346,16 @@ export default function Home(props) {
                     {item.links ? (
                       <div className={styles.buttonContainer}>
                         {item.links.map((link, i) => {
+                          console.log("link", link);
                           return (
                             <Link
                               key={i}
                               href={link.url}
-                              target={
-                                link.external === true ? "_blank" : "_self"
-                              }
+                              target={link.external ? "_blank" : "_self"}
                             >
-                              {link.label}
+                              <a rel={link.nofollow ? "nofollow" : ""}>
+                                {link.label}
+                              </a>
                             </Link>
                           );
                         })}

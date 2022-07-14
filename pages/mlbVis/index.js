@@ -99,7 +99,8 @@ export default function MLBVis(props) {
         <h1>MLB Visualization</h1>
         <h2>
           An automated subreddit for exploring data-driven storytelling
-          surrounding America's pastime. Not affiliated with MLB.{" "}
+          surrounding America's pastime. All algorithms are my own, though data
+          is provided by the League's official API. Not affiliated with MLB.{" "}
         </h2>
         <h3>
           Recent games below. <span className={styles.red}>View more on</span>{" "}

@@ -12,16 +12,7 @@
     width: 100%;
 }
 
-.content h2 {
-    width: 100%;
-    text-align: center;
-    font-weight: 400;
-    font-size: 22px;
-    margin-bottom: 50px;
-    margin-top: -20px;
-    max-width: 600px;
-    /* opacity: 0.5; */
-}
+
 
 .content h3 {
     width: 100%;
