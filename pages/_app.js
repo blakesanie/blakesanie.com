@@ -4,6 +4,7 @@ import NextNProgress from "nextjs-progressbar";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import pageTree from "../extras/initialLog/pageTree.js";
+import Head from "next/head";
 
 // import Script from "next/script";
 
@@ -96,45 +97,50 @@ Site Directory: %O
             },
           ],
         }}
-        additionalLinkTags={[
-          {
-            rel: "icon",
-            href: "/favicons/android-icon-192x192.png",
-          },
-          {
-            rel: "icon",
-            href: "/favicons/favicon-96x96.png",
-          },
-          {
-            rel: "icon",
-            href: "/favicons/favicon-16x16.png",
-          },
-          {
-            rel: "apple-touch-icon",
-            href: "https://www.test.ie/touch-icon-ipad.jpg",
-            sizes: "76x76",
-          },
-          {
-            rel: "manifest",
-            href: "/favicons/manifest.json",
-          },
-          ...appleIcons,
-        ]}
         additionalMetaTags={[
-          {
-            name: "msapplication-TileColor",
-            content: "#ffffff",
-          },
-          {
-            name: "msapplication-TileColor",
-            content: "/favicons/ms-icon-144x144.png",
-          },
           {
             name: "theme-color",
             content: "rgb(51, 152, 214)",
           },
         ]}
       />
+      <Head>
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="https://blakesanie.com/favicons/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="https://blakesanie.com/favicons/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="https://blakesanie.com/favicons/favicon-16x16.png"
+        />
+        <link
+          rel="manifest"
+          href="https://blakesanie.com/favicons/site.webmanifest"
+        />
+        <link
+          rel="mask-icon"
+          href="https://blakesanie.com/favicons/safari-pinned-tab.svg"
+          color="#5bbad5"
+        />
+        <link
+          rel="shortcut icon"
+          href="https://blakesanie.com/favicons/favicon.ico"
+        />
+        <meta name="msapplication-TileColor" content="#da532c" />
+        <meta
+          name="msapplication-config"
+          content="https://blakesanie.com/favicons/browserconfig.xml"
+        />
+      </Head>
       <SocialProfileJsonLd
         type="Person"
         name="Blake Sanie"

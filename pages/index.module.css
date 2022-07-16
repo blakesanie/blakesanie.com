@@ -36,6 +36,7 @@
 .frame h2 {
   font-size: 40px !important;
   opacity: 1 !important;
+  text-indent: 0 !important;
 }
 
 .centerContainer {
