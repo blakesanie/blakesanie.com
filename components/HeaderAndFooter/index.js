@@ -195,7 +195,7 @@ export default function HeaderAndFooter(props) {
               </li>
               <li>
                 <Link href="/photo/?map=true">
-                  <a rel="nofollow">Map</a>
+                  <a rel="nofollow">Capture Map</a>
                 </Link>
               </li>
               <li>

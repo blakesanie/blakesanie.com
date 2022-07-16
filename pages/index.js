@@ -68,7 +68,7 @@ const markupData = [
       },
       {
         url: "/photo?map=true",
-        label: "Map",
+        label: "Capture Map",
         nofollow: true,
       },
       {
