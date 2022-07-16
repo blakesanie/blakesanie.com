@@ -96,7 +96,7 @@ const markupData = [
       },
       {
         url: "/resume",
-        label: "Résumé",
+        label: "Resume",
         external: true,
         nofollow: true,
       },

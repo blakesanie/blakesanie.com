@@ -151,7 +151,7 @@ export default function HeaderAndFooter(props) {
               <p className={styles.navSectionTitle}>Engineering</p>
               <li>
                 <Link href="/resume">
-                  <a rel="nofollow">Résumé</a>
+                  <a rel="nofollow">Resume</a>
                 </Link>
               </li>
               <li>

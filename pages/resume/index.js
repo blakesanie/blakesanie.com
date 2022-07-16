@@ -8,7 +8,7 @@ export default function Resume(props) {
   return (
     <HeaderAndFooter>
       <NextSeo
-        title="Résumé"
+        title="Resume"
         description="My professional experience, academic achievements, demonstrated skill set, leadership roles, and career objective."
       />
       <Div100vh className={styles.divWrapper}>
