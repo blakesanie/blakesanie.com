@@ -326,7 +326,7 @@ export default function Home(props) {
                     position: "absolute",
                     height: "100%",
                     width: "100%",
-                    transition: "opacity 0.3s ease",
+                    transition: "opacity 0.1s ease",
                   }}
                 >
                   <Image
