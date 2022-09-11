@@ -62,6 +62,10 @@ export const redirects = {
     href: "https://github.com/blakesanie/blakesanie.com",
     title: "source code on GitHub",
   },
+  blakeOS: {
+    href: "https://www.notion.so/blakesanie/blakeOS-5ddea8783f0f40088effd7720bf059f5",
+    title: "blakeOS on Notion",
+  },
 };
 
 export async function getStaticPaths() {
