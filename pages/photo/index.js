@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import files from "../../extras/photo/filenames.js";
 console.log("files", files);
 import Masonry from "react-masonry-component";
@@ -20,7 +26,7 @@ function shuffleArray(array) {
   }
 }
 
-const filenames = Object.keys(files);
+const filenames = Object.keys(files).slice(0, 5);
 shuffleArray(filenames);
 
 let minLat = Infinity;
@@ -40,10 +46,11 @@ for (const metadata of Object.values(files)) {
 
 let infoWindow;
 let canHover = false;
+const gutter = 10;
+
+let imageResizeFunction;
 
 export default function Photo(props) {
-  const gutter = 10;
-
   const backButtonElement = useRef(null);
   const leftHalfElement = useRef(null);
   const rightHalfElement = useRef(null);
@@ -52,7 +59,7 @@ export default function Photo(props) {
 
   const windowHeight = use100vh();
 
-  const getImageWidth = (window) => {
+  const getImageWidth = useCallback((window) => {
     if (!window) {
       return 0;
     }
@@ -66,11 +73,14 @@ export default function Photo(props) {
     }
     let numCols = Math.floor(Math.pow(usableWidth, 0.6) / 18);
     return usableWidth / numCols - (gutter * (numCols - 1)) / numCols;
-  };
+  });
+
   const [width, setWidth] = useState(getImageWidth());
   const [selectedPhoto, setSelectedPhoto] = useState(undefined);
   const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [fullScreenLoading, setFullScreenLoading] = useState(true);
+
+  const [captionLeft, setCaptionLeft] = useState(true);
+  // const [fullScreenLoading, setFullScreenLoading] = useState(true);
 
   const router = useRouter();
 
@@ -83,11 +93,33 @@ export default function Photo(props) {
   }
   // the above works, dont touch
 
+  const [selectedFilename, selectedFile, selectedAspectRatio] = useMemo(() => {
+    console.log("new selected photo");
+    const filename = filenames[selectedPhoto];
+    const file = files[filename] || undefined;
+    const ratio = file ? file.height / file.width : undefined;
+    if (ratio) {
+      window.removeEventListener("resize", imageResizeFunction);
+      imageResizeFunction = () => {
+        setCaptionLeft(imageCaptionLeft(ratio));
+      };
+      window.addEventListener("resize", imageResizeFunction);
+    }
+    return [filename, file, ratio];
+  }, [selectedPhoto]);
+
+  console.log("aspect from outside", selectedAspectRatio);
+
   const handleResize = (window) => {
     setWidth(getImageWidth(window));
+    // console.log("aspect ratio 1", selectedAspectRatio);
+    // if (selectedAspectRatio) {
+    //   console.log("new aspect ratio", selectedAspectRatio);
+    //   setCaptionLeft(imageCaptionLeft(selectedAspectRatio));
+    // }
   };
 
-  const handleKeydown = (event) => {
+  const handleKeydown = useCallback((event) => {
     const fullScreenOpen =
       fullScreenElement.current !== null &&
       !fullScreenElement.current.classList.contains("invisible");
@@ -114,15 +146,15 @@ export default function Photo(props) {
         scrollForLocationElement.current.click();
       }
     }
-  };
+  }, []);
 
-  const disableScroll = (event) => {
+  const disableScroll = useCallback((event) => {
     document.body.style.overflow = "hidden";
-  };
+  }, []);
 
-  const enableScroll = (event) => {
+  const enableScroll = useCallback((event) => {
     document.body.style.overflow = "auto";
-  };
+  }, []);
 
   useEffect(() => {
     handleResize(window);
@@ -137,7 +169,7 @@ export default function Photo(props) {
   }, []);
 
   const setSelectedPhotoWithLoading = (i) => {
-    setFullScreenLoading(true);
+    // setFullScreenLoading(true);
     setSelectedPhoto(i);
   };
 
@@ -185,7 +217,7 @@ export default function Photo(props) {
               map: map,
             });
             function openFullScreen() {
-              setSelectedPhotoWithLoading(i);
+              // setSelectedPhotoWithLoading(i);
             }
             function showPreview() {
               let img = document.createElement("img");
@@ -277,17 +309,17 @@ export default function Photo(props) {
     recurse();
   }, [selectedPhoto]);
 
-  const prevImage = () => {
+  const prevImage = useCallback(() => {
     if (selectedPhoto > 0) {
       setSelectedPhotoWithLoading(selectedPhoto - 1);
     }
-  };
+  });
 
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
     if (selectedPhoto < filenames.length - 1) {
       setSelectedPhotoWithLoading(selectedPhoto + 1);
     }
-  };
+  });
 
   return (
     <HeaderAndFooter headerColor="#f8f8f8dd" className="lightBackground">
@@ -467,61 +499,51 @@ export default function Photo(props) {
             )}
             <div
               className={`${styles.fullScreen} ${
-                selectedPhoto === undefined ? "invisible" : ""
+                !selectedFile ? "invisible" : ""
               }`}
               style={{
                 padding: gutter,
               }}
               ref={fullScreenElement}
             >
-              <div
-                className={styles.fullScreenImage}
-                style={
-                  {
-                    // height: windowHeight - 20,
-                  }
-                }
-              >
-                {selectedPhoto == undefined ? null : (
-                  <Image
-                    src={`/images/portfolio/${filenames[selectedPhoto]}`}
-                    // sizes={
-                    //   Math.min(
-                    //     2000,
-                    //     Math.round(
-                    //       (2000 * files[filenames[selectedPhoto]].width) /
-                    //         files[filenames[selectedPhoto]].height
-                    //     ) * 0.5
-                    //   ) + "px"
-                    // }
-                    height={Math.min(
-                      1200,
-                      (files[filenames[selectedPhoto]].height /
-                        files[filenames[selectedPhoto]].width) *
-                        900
-                    )}
-                    width={Math.min(
-                      1200,
-                      (files[filenames[selectedPhoto]].width /
-                        files[filenames[selectedPhoto]].height) *
-                        900
-                    )}
-                    loading="eager"
-                    layout="fixed"
-                    objectFit="contain"
-                    // className={fullScreenLoading ? styles.loading : ""}
-                    onLoad={() => {
-                      setFullScreenLoading(false);
-                    }}
-                  />
-                )}
+              {selectedFile && (
                 <div
-                  className={styles.loader}
+                  className={styles.fullScreenImage}
                   style={{
-                    opacity: fullScreenLoading ? 1 : 0,
+                    // height: windowHeight - 20,
+                    flexDirection: captionLeft ? "row" : "column",
                   }}
-                />
-              </div>
+                >
+                  <>
+                    <div className={styles.imageCaption}>
+                      <p>{selectedFilename.split(".")[0]}</p>
+                    </div>
+                    <div className={styles.imageComponent}>
+                      <Image
+                        src={`/images/portfolio/${selectedFilename}`}
+                        // sizes={
+                        //   Math.min(
+                        //     2000,
+                        //     Math.round(
+                        //       (2000 * files[filenames[selectedPhoto]].width) /
+                        //         files[filenames[selectedPhoto]].height
+                        //     ) * 0.5
+                        //   ) + "px"
+                        // }
+                        height={Math.min(1200, selectedAspectRatio * 900)}
+                        width={Math.min(1200, selectedAspectRatio * 900)}
+                        loading="eager"
+                        layout="fixed"
+                        objectFit="contain"
+                        // className={fullScreenLoading ? styles.loading : ""}
+                        onLoad={() => {
+                          // setFullScreenLoading(false);
+                        }}
+                      />
+                    </div>
+                  </>
+                </div>
+              )}
               <div
                 className={styles.half}
                 onClick={prevImage}
@@ -567,35 +589,18 @@ export default function Photo(props) {
               >
                 Esc
               </p>
-              {selectedPhoto !== undefined &&
+              {/* {selectedPhoto !== undefined &&
               files[filenames[selectedPhoto]].gps.length ? (
-                <div className={styles.metadata}>
-                  <p
-                    className={styles.scrollForLocation}
-                    ref={scrollForLocationElement}
-                    style={{
-                      opacity: fullScreenLoading ? 0 : 1,
-                    }}
-                    onClick={() => {
-                      fullScreenElement.current.scrollTo({
-                        top: fullScreenElement.current.scrollHeight,
-                        behavior: "smooth",
-                      });
-                    }}
-                  >
-                    ↓ Scroll for Capture Location ↓
-                  </p>
-                  <div
-                    id="map"
-                    style={{
-                      width: "100%",
-                      height: `7000px`,
-                      maxHeight: windowHeight - 20,
-                      marginBottom: "env(safe-area-inset-bottom)",
-                    }}
-                  ></div>
-                </div>
-              ) : null}
+                <div
+                  id="map"
+                  style={{
+                    width: "100%",
+                    height: `7000px`,
+                    maxHeight: windowHeight - 20,
+                    marginBottom: "env(safe-area-inset-bottom)",
+                  }}
+                ></div>
+              ) : null} */}
             </div>
             <Copyright
               links={[
@@ -610,6 +615,33 @@ export default function Photo(props) {
       </div>
     </HeaderAndFooter>
   );
+}
+
+function imageCaptionLeft(aspectRatio) {
+  // aspectRatio = height / width
+  const captionWidth = 300;
+  const captionHeight = 100;
+  // assume left
+  const leftUsableWidth = window.innerWidth - captionWidth;
+  const leftUsableHeight = window.innerHeight;
+  // assume top
+  const topUsableWidth = window.innerWidth;
+  const topUsableHeight = window.innerHeight - captionHeight;
+  // compute image size for each, and choose larger
+  let leftBestHeight = Math.min(
+    leftUsableWidth * aspectRatio,
+    leftUsableHeight
+  );
+  let topBestHeight = Math.min(topUsableWidth * aspectRatio, topUsableHeight);
+  console.log(
+    "leftBest topBest",
+    leftBestHeight,
+    topBestHeight,
+    "from ratio",
+    aspectRatio
+  );
+
+  return leftBestHeight > topBestHeight;
 }
 
 function GalleryImage({ filename, width }) {

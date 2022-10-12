@@ -114,55 +114,35 @@
 .fullScreenImage {
   width: 100%;
   height: calc(100% - env(safe-area-inset-bottom));
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
 }
 
-.fullScreenImage *:not(.loader) {
-  background-size: contain !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  height: 100% !important;
-  width: 100% !important;
-}
-
-.loader {
-  width: 70px;
-  height: 70px;
-  position: absolute;
-  top: calc(50% - 35px);
-  left: calc(50% - 35px);
-  border: 10px solid #cccccc80;
-  border-radius: 50%;
-  border-right-color: white;
-  animation: rotate 1s linear infinite;
-  transition: opacity 0.2s ease;
-}
-
-.metadata {
-  width: 100%;
+.imageCaption {
+  min-width: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border: 4px solid blue;
+  padding: 20px 0;
 }
 
-.scrollForLocation {
-  font-size: 13px;
-  margin-top: -25px;
-  backdrop-filter: blur(10px);
-  padding: 4px 10px;
-  background-color: #ffffff50;
-  border-radius: 6px;
-  margin-bottom: calc(10px + env(safe-area-inset-bottom));
-  box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.1);
-  animation: vibrate 2.4s infinite ease-in-out;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-  /* animation: pulse 3s infinite ease-in-out; */
+.imageCaption p {
+  font-size: 20px;
 }
 
-.scrollForLocation:hover {
-  animation-play-state: paused;
+.imageComponent {
+  flex: 1;
+  border: 4px solid red;
 }
+
+.imageComponent > * {
+  height: 100% !important;
+  width: 100% !important;
+}
+
 
 /* The switch - the box around the slider */
 .switch {
