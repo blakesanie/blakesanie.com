@@ -115,12 +115,13 @@
   width: 100%;
   height: calc(100% - env(safe-area-inset-bottom));
   display: flex;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
 }
 
 .imageCaption {
   min-width: 300px;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -134,7 +135,6 @@
 }
 
 .imageComponent {
-  flex: 1;
   border: 4px solid red;
 }
 

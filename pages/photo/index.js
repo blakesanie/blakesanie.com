@@ -26,7 +26,7 @@ function shuffleArray(array) {
   }
 }
 
-const filenames = Object.keys(files).slice(0, 5);
+const filenames = Object.keys(files);
 shuffleArray(filenames);
 
 let minLat = Infinity;
@@ -49,6 +49,8 @@ let canHover = false;
 const gutter = 10;
 
 let imageResizeFunction;
+
+const fullScreenPadding = 10;
 
 export default function Photo(props) {
   const backButtonElement = useRef(null);
@@ -79,7 +81,7 @@ export default function Photo(props) {
   const [selectedPhoto, setSelectedPhoto] = useState(undefined);
   const [imagesLoaded, setImagesLoaded] = useState(false);
 
-  const [captionLeft, setCaptionLeft] = useState(true);
+  const [fullImageLeftAndSize, setFullImageLeftAndSize] = useState([true, 0]);
   // const [fullScreenLoading, setFullScreenLoading] = useState(true);
 
   const router = useRouter();
@@ -101,9 +103,10 @@ export default function Photo(props) {
     if (ratio) {
       window.removeEventListener("resize", imageResizeFunction);
       imageResizeFunction = () => {
-        setCaptionLeft(imageCaptionLeft(ratio));
+        setFullImageLeftAndSize(calculateFullSizeLayout(ratio));
       };
       window.addEventListener("resize", imageResizeFunction);
+      imageResizeFunction();
     }
     return [filename, file, ratio];
   }, [selectedPhoto]);
@@ -321,6 +324,36 @@ export default function Photo(props) {
     }
   });
 
+  const [captionLeft, fullSizeWidth] = fullImageLeftAndSize;
+
+  const FullScreenImageComponent = useMemo(() => {
+    if (!selectedFilename) {
+      return null;
+    }
+    return (
+      <Image
+        src={`/images/portfolio/${selectedFilename}`}
+        // sizes={
+        //   Math.min(
+        //     2000,
+        //     Math.round(
+        //       (2000 * files[filenames[selectedPhoto]].width) /
+        //         files[filenames[selectedPhoto]].height
+        //     ) * 0.5
+        //   ) + "px"
+        // }
+        height={Math.min(1200, selectedAspectRatio * 900)}
+        width={Math.min(1200, selectedAspectRatio * 900)}
+        layout="responsive"
+        // className={fullScreenLoading ? styles.loading : ""}
+        onLoad={() => {
+          // setFullScreenLoading(false);
+        }}
+        blurry
+      />
+    );
+  }, [selectedFile]);
+
   return (
     <HeaderAndFooter headerColor="#f8f8f8dd" className="lightBackground">
       <Head>
@@ -502,7 +535,7 @@ export default function Photo(props) {
                 !selectedFile ? "invisible" : ""
               }`}
               style={{
-                padding: gutter,
+                padding: fullScreenPadding,
               }}
               ref={fullScreenElement}
             >
@@ -518,28 +551,14 @@ export default function Photo(props) {
                     <div className={styles.imageCaption}>
                       <p>{selectedFilename.split(".")[0]}</p>
                     </div>
-                    <div className={styles.imageComponent}>
-                      <Image
-                        src={`/images/portfolio/${selectedFilename}`}
-                        // sizes={
-                        //   Math.min(
-                        //     2000,
-                        //     Math.round(
-                        //       (2000 * files[filenames[selectedPhoto]].width) /
-                        //         files[filenames[selectedPhoto]].height
-                        //     ) * 0.5
-                        //   ) + "px"
-                        // }
-                        height={Math.min(1200, selectedAspectRatio * 900)}
-                        width={Math.min(1200, selectedAspectRatio * 900)}
-                        loading="eager"
-                        layout="fixed"
-                        objectFit="contain"
-                        // className={fullScreenLoading ? styles.loading : ""}
-                        onLoad={() => {
-                          // setFullScreenLoading(false);
-                        }}
-                      />
+                    <div
+                      className={styles.imageComponent}
+                      style={{
+                        width: fullSizeWidth,
+                        height: fullSizeWidth * selectedAspectRatio,
+                      }}
+                    >
+                      {FullScreenImageComponent}
                     </div>
                   </>
                 </div>
@@ -617,35 +636,35 @@ export default function Photo(props) {
   );
 }
 
-function imageCaptionLeft(aspectRatio) {
+function calculateFullSizeLayout(aspectRatio) {
   // aspectRatio = height / width
   const captionWidth = 300;
   const captionHeight = 100;
+
+  const windowWidth = window.innerWidth - 2 * fullScreenPadding;
+  const windowHeight = window.innerHeight - 2 * fullScreenPadding;
+
   // assume left
-  const leftUsableWidth = window.innerWidth - captionWidth;
-  const leftUsableHeight = window.innerHeight;
+  const leftUsableWidth = windowWidth - captionWidth;
+  const leftUsableHeight = windowHeight;
   // assume top
-  const topUsableWidth = window.innerWidth;
-  const topUsableHeight = window.innerHeight - captionHeight;
+  const topUsableWidth = windowWidth;
+  const topUsableHeight = windowHeight - captionHeight;
   // compute image size for each, and choose larger
   let leftBestHeight = Math.min(
-    leftUsableWidth * aspectRatio,
-    leftUsableHeight
-  );
-  let topBestHeight = Math.min(topUsableWidth * aspectRatio, topUsableHeight);
-  console.log(
-    "leftBest topBest",
-    leftBestHeight,
-    topBestHeight,
-    "from ratio",
-    aspectRatio
-  );
+    leftUsableWidth,
+    leftUsableHeight / aspectRatio
+  ); // actually width measurement
+  let topBestHeight = Math.min(topUsableWidth, topUsableHeight / aspectRatio);
 
-  return leftBestHeight > topBestHeight;
+  return [
+    leftBestHeight > topBestHeight,
+    Math.max(leftBestHeight, topBestHeight),
+  ];
 }
 
 function GalleryImage({ filename, width }) {
-  const [loaded, setLoaded] = useState(false);
+  // const [loaded, setLoaded] = useState(false);
 
   return (
     <>
@@ -674,7 +693,7 @@ function GalleryImage({ filename, width }) {
           // sizes="640px"
           layout="fixed"
           onLoad={() => {
-            setLoaded(true);
+            // setLoaded(true);
           }}
           blurry
         />
