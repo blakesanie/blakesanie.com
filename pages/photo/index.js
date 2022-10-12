@@ -549,7 +549,50 @@ export default function Photo(props) {
                 >
                   <>
                     <div className={styles.imageCaption}>
-                      <p>{selectedFilename.split(".")[0]}</p>
+                      <p className={styles.imageTitle}>
+                        {selectedFilename.split(".")[0]}
+                      </p>
+                      {selectedFile?.gps.length > 0 ? (
+                        <p className={styles.imageGPSCaption}>GPS data below</p>
+                      ) : null}
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <p className={styles.imageNav}>Prev</p>
+                        <p className={styles.imageNav}>Next</p>
+                        <p className={styles.imageNav}>Exit</p>
+                      </div>
+                      {/* <div className={styles.scrubHolder}>
+                        <div className={styles.scrubButton}>
+                          <Image
+                            src="/images/left_arrow.png"
+                            width="10"
+                            height="20"
+                            layout="fixed"
+                          ></Image>
+                        </div>
+                        <div className={styles.scrubButton}>
+                          <Image
+                            src="/images/left_arrow.png"
+                            width="10"
+                            height="20"
+                            layout="fixed"
+                          ></Image>
+                        </div>
+                      </div>
+                      <p
+                        className={styles.exit}
+                        ref={backButtonElement}
+                        onClick={() => {
+                          enableScroll();
+                          setSelectedPhotoWithLoading(undefined);
+                        }}
+                      >
+                        Esc
+                      </p> */}
                     </div>
                     <div
                       className={styles.imageComponent}
@@ -570,16 +613,7 @@ export default function Photo(props) {
                   display: selectedPhoto == 0 ? "none" : "flex",
                 }}
                 ref={leftHalfElement}
-              >
-                <div className={styles.scrubButton}>
-                  <Image
-                    src="/images/left_arrow.png"
-                    width="10"
-                    height="20"
-                    layout="fixed"
-                  ></Image>
-                </div>
-              </div>
+              ></div>
               <div
                 className={styles.half + " " + styles.rightHalf}
                 onClick={nextImage}
@@ -588,26 +622,8 @@ export default function Photo(props) {
                   display:
                     selectedPhoto == filenames.length - 1 ? "none" : "flex",
                 }}
-              >
-                <div className={styles.scrubButton}>
-                  <Image
-                    src="/images/left_arrow.png"
-                    width="10"
-                    height="20"
-                    layout="fixed"
-                  ></Image>
-                </div>
-              </div>
-              <p
-                className={styles.exit}
-                ref={backButtonElement}
-                onClick={() => {
-                  enableScroll();
-                  setSelectedPhotoWithLoading(undefined);
-                }}
-              >
-                Esc
-              </p>
+              ></div>
+
               {/* {selectedPhoto !== undefined &&
               files[filenames[selectedPhoto]].gps.length ? (
                 <div
