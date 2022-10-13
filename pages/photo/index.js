@@ -34,8 +34,8 @@ let minLng = Infinity;
 let maxLat = -Infinity;
 let maxLng = -Infinity;
 for (const metadata of Object.values(files)) {
-  const { gps } = metadata;
-  if (gps.length) {
+  const { gps } = metadata.exif;
+  if (gps) {
     const [lat, lng] = gps;
     minLat = Math.min(minLat, lat);
     maxLat = Math.max(maxLat, lat);
@@ -211,8 +211,8 @@ export default function Photo(props) {
         infoWindow = new google.maps.InfoWindow();
         for (let i = 0; i < filenames.length; i++) {
           const filename = filenames[i];
-          const { gps } = files[filename];
-          if (gps.length) {
+          const { gps } = files[filename].exif;
+          if (gps) {
             const [lat, lng] = gps;
             const [name, ext] = filename.split(".");
             const marker = new google.maps.Marker({
@@ -220,7 +220,7 @@ export default function Photo(props) {
               map: map,
             });
             function openFullScreen() {
-              // setSelectedPhotoWithLoading(i);
+              setSelectedPhotoWithLoading(i);
             }
             function showPreview() {
               let img = document.createElement("img");
@@ -271,8 +271,9 @@ export default function Photo(props) {
     function recurse() {
       try {
         if (selectedPhoto !== undefined) {
-          if (files[filenames[selectedPhoto]].gps.length) {
-            const [lat, lng] = files[filenames[selectedPhoto]].gps;
+          const gps = files[filenames[selectedPhoto]].exif.gps;
+          if (gps) {
+            const [lat, lng] = gps;
             const map = new google.maps.Map(document.getElementById("map"), {
               center: { lat: lat, lng: lng },
               zoom: 15,
@@ -499,7 +500,7 @@ export default function Photo(props) {
                     >
                       <GalleryImage filename={filename} width={width} />
 
-                      {files[filename].gps.length ? (
+                      {files[filename].exif.gps ? (
                         <svg
                           viewBox="0 0 413.099 413.099"
                           className={styles.pinIcon}
@@ -547,25 +548,69 @@ export default function Photo(props) {
                     flexDirection: captionLeft ? "row" : "column",
                   }}
                 >
-                  <>
-                    <div className={styles.imageCaption}>
-                      <p className={styles.imageTitle}>
-                        {selectedFilename.split(".")[0]}
-                      </p>
-                      {selectedFile?.gps.length > 0 ? (
-                        <p className={styles.imageGPSCaption}>GPS data below</p>
-                      ) : null}
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
+                  <div className={styles.imageCaption}>
+                    <p className={styles.imageTitle}>
+                      {selectedFilename.split(".")[0]}
+                    </p>
+                    <div className={styles.exifContainer}>
+                      {Object.entries(selectedFile.exif).map((pair) => {
+                        const [key, value] = pair;
+                        console.log("exif", key, value);
+                        return (
+                          <p
+                            className={styles.exif}
+                            onClick={() => {
+                              if (key == "gps") {
+                                fullScreenElement.current.scrollTo({
+                                  top: fullScreenElement.current.scrollHeight,
+                                  behavior: "smooth",
+                                });
+                              }
+                            }}
+                            style={{
+                              cursor: key == "gps" ? "pointer" : "default",
+                            }}
+                            ref={key == "gps" ? scrollForLocationElement : null}
+                          >
+                            {key == "gps" ? "GPS Below" : value}
+                          </p>
+                        );
+                      })}
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <p
+                        className={styles.imageNav}
+                        onClick={() => {
+                          leftHalfElement.current.click();
                         }}
                       >
-                        <p className={styles.imageNav}>Prev</p>
-                        <p className={styles.imageNav}>Next</p>
-                        <p className={styles.imageNav}>Exit</p>
-                      </div>
-                      {/* <div className={styles.scrubHolder}>
+                        Prev
+                      </p>
+                      <p
+                        className={styles.imageNav}
+                        onClick={() => {
+                          rightHalfElement.current.click();
+                        }}
+                      >
+                        Next
+                      </p>
+                      <p
+                        className={styles.imageNav}
+                        ref={backButtonElement}
+                        onClick={() => {
+                          enableScroll();
+                          setSelectedPhotoWithLoading(undefined);
+                        }}
+                      >
+                        Exit
+                      </p>
+                    </div>
+                    {/* <div className={styles.scrubHolder}>
                         <div className={styles.scrubButton}>
                           <Image
                             src="/images/left_arrow.png"
@@ -593,17 +638,16 @@ export default function Photo(props) {
                       >
                         Esc
                       </p> */}
-                    </div>
-                    <div
-                      className={styles.imageComponent}
-                      style={{
-                        width: fullSizeWidth,
-                        height: fullSizeWidth * selectedAspectRatio,
-                      }}
-                    >
-                      {FullScreenImageComponent}
-                    </div>
-                  </>
+                  </div>
+                  <div
+                    className={styles.imageComponent}
+                    style={{
+                      width: fullSizeWidth,
+                      height: fullSizeWidth * selectedAspectRatio,
+                    }}
+                  >
+                    {FullScreenImageComponent}
+                  </div>
                 </div>
               )}
               <div
@@ -624,18 +668,18 @@ export default function Photo(props) {
                 }}
               ></div>
 
-              {/* {selectedPhoto !== undefined &&
-              files[filenames[selectedPhoto]].gps.length ? (
+              {selectedFile?.exif?.gps ? (
                 <div
                   id="map"
                   style={{
                     width: "100%",
                     height: `7000px`,
-                    maxHeight: windowHeight - 20,
+                    maxHeight: windowHeight - 2 * fullScreenPadding,
+                    marginTop: fullScreenPadding,
                     marginBottom: "env(safe-area-inset-bottom)",
                   }}
                 ></div>
-              ) : null} */}
+              ) : null}
             </div>
             <Copyright
               links={[

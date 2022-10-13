@@ -3,29 +3,11 @@ from PIL.ExifTags import TAGS, GPSTAGS
 from PIL import Image
 import os
 import sys
+from pprint import pprint
 
 path = sys.path[0]
 print(path)
 basePath = path.split("extras")[0] + os.path.sep + "public/images/portfolio"
-
-
-def get_exif(filename):
-    image = Image.open(filename)
-    exif = image._getexif()
-    processed = {}
-    final = defaultdict(dict)
-    if exif is not None:
-        for key, value in exif.items():
-            name = TAGS.get(key, key)
-            processed[name] = value
-
-        if 'GPSInfo' in processed:
-
-            for key, value in processed['GPSInfo'].items():
-                name = GPSTAGS.get(key, key)
-                final['GPSInfo'][name] = value
-
-    return final, image.width, image.height
 
 
 def get_decimal_coordinates(info):
@@ -42,15 +24,55 @@ def get_decimal_coordinates(info):
         return [info['Latitude'], info['Longitude']]
 
 
+def get_exif(filename):
+    image = Image.open(filename)
+    exif = image._getexif()
+    processed = {}
+    final = defaultdict(dict)
+    final['exif'] = {}
+    if exif is not None:
+        for key, value in exif.items():
+            name = TAGS.get(key, key)
+            processed[name] = value
+
+        pprint(processed)
+
+        if 'FocalLengthIn35mmFilm' in processed:
+            final['exif']['focalLength'] = f'{processed["FocalLengthIn35mmFilm"]}mm'
+        if 'ExposureTime' in processed:
+            numerator, denominator = processed["ExposureTime"]
+            final['exif']['shutterSpeed'] = f"{numerator}/{denominator} s" if denominator > numerator else f"{numerator} s"
+            if len(final['exif']['shutterSpeed']) > 8:
+                base = '{:.1e}'.format(
+                    numerator/denominator)
+                split = base.split('e')
+                final['exif']['shutterSpeed'] = split[0].replace(".0", "") + \
+                    "E" + str(int(split[1])) + " s"
+        if 'FNumber' in processed:
+            numerator, denominator = processed["FNumber"]
+            final['exif']['aperture'] = f"F{numerator / denominator}".replace(
+                ".0", "")
+        if 'ISOSpeedRatings' in processed:
+            # print('FOUND ISO')
+            final['exif']['iso'] = f'ISO {processed["ISOSpeedRatings"]}'
+        if 'GPSInfo' in processed:
+            tmp = {}
+            for key, value in processed['GPSInfo'].items():
+                name = GPSTAGS.get(key, key)
+                tmp[name] = value
+            final['exif']['gps'] = get_decimal_coordinates(
+                tmp)
+
+    return final, image.width, image.height
+
+
 filenames = {}
 
 for filename in os.listdir(basePath):
     if filename.split('.')[-1] in ('jpg', 'jpeg'):
         exif, width, height = get_exif(basePath + os.path.sep + filename)
-        coords = get_decimal_coordinates(
-            exif['GPSInfo']) or []
 
-        filenames[filename] = {'gps': coords, 'width': width, 'height': height}
+        filenames[filename] = {'width': width, 'height': height, **exif}
 
 with open('filenames.js', 'w') as out:
     out.write("module.exports = {};".format(
