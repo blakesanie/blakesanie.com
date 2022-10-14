@@ -4,6 +4,9 @@ from PIL import Image
 import os
 import sys
 from pprint import pprint
+from sklearn.cluster import KMeans
+import numpy as np
+from matplotlib.colors import rgb2hex
 
 path = sys.path[0]
 print(path)
@@ -62,6 +65,26 @@ def get_exif(filename):
                 tmp[name] = value
             final['exif']['gps'] = get_decimal_coordinates(
                 tmp)
+
+        # get background color
+        sampleWidth = 16
+        img = np.asarray(image.resize(
+            (sampleWidth, int(image.size[1]/image.size[0]*sampleWidth))))
+        colors = img.reshape((img.shape[1]*img.shape[0], 3))
+
+        kmeans = KMeans(n_clusters=4)
+        kmeans.fit(colors)
+
+        centroid = kmeans.cluster_centers_
+        labels = list(kmeans.labels_)
+        percentages = np.zeros(len(centroid))
+
+        for i in range(len(centroid)):
+            percentages[i] = labels.count(i) / len(labels)
+
+        mostCommon = centroid[np.argmax(percentages)]
+        hex = rgb2hex(mostCommon / 255)
+        final['color'] = hex
 
     return final, image.width, image.height
 

@@ -16,7 +16,15 @@ export default function MyImage(props) {
         const ctx = canvas.getContext("2d");
         canvas.width = img.width;
         canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
+        // ctx.drawImage(img, 0, 0);
+        setBlurry(canvas.toDataURL("image/webp"));
+        if (props.backgroundColor) {
+          ctx.fillStyle = props.backgroundColor;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else {
+          ctx.drawImage(img, 0, 0);
+        }
+
         setBlurry(canvas.toDataURL("image/webp"));
         // setSrc(props.src);
         if (props.onLoad) props.onLoad();
@@ -32,13 +40,7 @@ export default function MyImage(props) {
 
   if (props.src != src) {
     // setSrc(props.src);
-    return (
-      <img
-        style={{
-          backgroundColor: "#ddd",
-        }}
-      ></img>
-    );
+    return null;
   }
 
   return (
@@ -46,8 +48,11 @@ export default function MyImage(props) {
       loader={myLoader}
       {...(blurry && { placeholder: "blur", blurDataURL: blurry })}
       {...props}
-      src={src}
+      src={props.src}
       onLoadingComplete={() => {}}
+      // style={{
+      //   backgroundColor: props.backgroundColor || "#ddd",
+      // }}
     />
   );
 }

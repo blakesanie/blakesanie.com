@@ -351,6 +351,7 @@ export default function Photo(props) {
           // setFullScreenLoading(false);
         }}
         blurry
+        // backgroundColor={selectedFile.color}
       />
     );
   }, [selectedFile]);
@@ -550,7 +551,7 @@ export default function Photo(props) {
                 >
                   <div className={styles.imageCaption}>
                     <p className={styles.imageTitle}>
-                      {selectedFilename.split(".")[0]}
+                      {selectedFilename.split(".")[0].replaceAll("_", " ")}
                     </p>
                     <div className={styles.exifContainer}>
                       {Object.entries(selectedFile.exif).map((pair) => {
@@ -756,6 +757,7 @@ function GalleryImage({ filename, width }) {
             // setLoaded(true);
           }}
           blurry
+          backgroundColor={files[filename].color}
         />
       </div>
     </>

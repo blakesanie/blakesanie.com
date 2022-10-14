@@ -37,6 +37,10 @@
   transition: filter 0.3s ease;
 }
 
+.masonry img {
+  filter: none !important;
+}
+
 .masonry {
   width: 100%;
 }
@@ -176,7 +180,6 @@
   height: 100% !important;
   width: 100% !important;
 }
-
 
 /* The switch - the box around the slider */
 .switch {
