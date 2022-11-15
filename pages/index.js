@@ -60,7 +60,7 @@ const markupData = [
   },
   {
     text: ["With a sense of photographic expression put on full display."],
-    imageUrl: "/images/portfolio/DSC_0817.jpg",
+    imageUrl: "/images/portfolio/Manhattan_Bridge.jpg",
     links: [
       {
         url: "/photo",
