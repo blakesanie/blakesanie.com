@@ -236,6 +236,9 @@ export default function HeaderAndFooter(props) {
               >
                 Twitter
               </a>
+              <a href={redirects["strava"].href} target="_blank" rel="nofollow">
+                Strava
+              </a>
             </div>
             {/* <div className={styles.navSection}>
               <h3>Links</h3>

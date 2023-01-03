@@ -6,10 +6,8 @@ FN:Blake Sanie
 ORG:Computer Scientist;
 EMAIL;type=INTERNET;type=HOME;type=pref:blake@sanie.com
 TEL;type=CELL;type=VOICE;type=pref:6509245614
-ADR;type=HOME;type=pref:;;;San Francisco Bay Area;CA;;
-ADR;type=WORK:;;;Atlanta Metropolitan Area;GA;;
 X-SOCIALPROFILE;type=linkedin:https://www.linkedin.com/in/blakesanie
-NOTE:Current Computer Science Student at the Georgia Institute of Technology with a concentration in Intelligence and Information Internetworks\, graduating December 2022.
+NOTE:Georgia Tech MSCS '23, BSCS '23. Contact card downloaded from blakesanie.com/contact.vcf
 item1.URL;type=pref:https://blakesanie.com
 item1.X-ABLabel:_$!<HomePage>!$_
 END:VCARD

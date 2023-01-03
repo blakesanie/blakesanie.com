@@ -7,24 +7,24 @@ import { NextSeo } from "next-seo";
 export const redirects = {
   linkedin: {
     href: "https://www.linkedin.com/in/blakesanie/",
-    title: "LinkedIn",
+    title: "Blake's LinkedIn profile",
     headerColor: "#2B66BC",
   },
   blog: {
     href: "https://blakesanie.medium.com/",
-    title: "Blog on Medium",
+    title: "Blake's blog on Medium",
     headerColor: "#666666",
   },
   instagram: {
     href: "https://www.instagram.com/blake_sanie/",
-    title: "Instagram",
+    title: "Blake's Instagram profile",
     headerGradient:
       "radial-gradient(circle farthest-corner at 35% 90%, #fec564, transparent 50%), radial-gradient(circle farthest-corner at 0 140%, #fec564, transparent 50%), radial-gradient(ellipse farthest-corner at 0 -25%, #5258cf, transparent 50%), radial-gradient(ellipse farthest-corner at 20% -50%, #5258cf, transparent 50%), radial-gradient(ellipse farthest-corner at 100% 0, #893dc2, transparent 50%), radial-gradient(ellipse farthest-corner at 60% -20%, #893dc2, transparent 50%), radial-gradient(ellipse farthest-corner at 100% 100%, #d9317a, transparent), linear-gradient(#6559ca, #bc318f 30%, #e33f5f 50%, #f77638 70%, #fec66d 100%)",
     headerColor: "black",
   },
   github: {
     href: "https://github.com/blakesanie",
-    title: "GitHub",
+    title: "Blake's GitHub profile",
     headerColor: "#171B21",
   },
   balance: {
@@ -35,17 +35,17 @@ export const redirects = {
   },
   twitter: {
     href: "https://twitter.com/blakesanie",
-    title: "Twitter",
+    title: "Blake's Twitter timeline",
     headerColor: "#489BE9",
   },
   paypal: {
     href: "https://www.paypal.com/paypalme/blakesanie",
-    title: "PayPal",
+    title: "Blake's PayPal",
     headerColor: "#051D60",
   },
   venmo: {
     href: "https://account.venmo.com/u/Blake-Sanie",
-    title: "Venmo",
+    title: "Blake's Venmo",
     headerColor: "#3A8CF7",
   },
   youtube: {
@@ -55,7 +55,7 @@ export const redirects = {
   },
   spotify: {
     href: "https://open.spotify.com/user/blake_sanie?si=uvhN4kfdTQWy4jnrlhKTVg",
-    title: "Spotify",
+    title: "Blake's Spotify profile",
     headerColor: "#60C868",
   },
   source: {
@@ -65,6 +65,11 @@ export const redirects = {
   blakeOS: {
     href: "https://www.notion.so/blakesanie/blakeOS-5ddea8783f0f40088effd7720bf059f5",
     title: "blakeOS on Notion",
+  },
+  strava: {
+    href: "https://www.strava.com/athletes/44274878",
+    title: "Blake's Strava profile",
+    headerColor: "#E95E2A",
   },
 };
 
