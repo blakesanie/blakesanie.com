@@ -20,7 +20,7 @@ const markupData = [
   },
   {
     text: [
-      "I am a Computer Science undergrad student at the Georgia Institute of Technology, concentrating in Information Internetworks and Intelligence.",
+      "I am a graduate student studying Computer Science at the Georgia Institute of Technology, concentrating in Machine Learning.",
     ],
     imageUrl: "/images/crosland.jpg",
     links: [],
@@ -45,7 +45,7 @@ const markupData = [
   },
   {
     text: [
-      "Fascinated with Machine Learning and Automation surrounding stock market research and trading.",
+      "Fascinated with Artificial Intelligence and Automation surrounding stock market research and trading.",
     ],
     imageUrl: "/images/stock.png",
     links: [
