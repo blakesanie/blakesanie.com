@@ -170,16 +170,50 @@ export default function Home(props) {
   }, []);
 
   useEffect(() => {
-    typed.current.innerHTML = "";
-    const t = new Typed(typed.current, {
-      strings: [
-        "^500 Hi, ^500I'm Blake ^2000",
-        "^500 Scroll to learn more ^1000",
-      ],
-      typeSpeed: 50,
-      backSpeed: 40,
-      loop: true,
-    });
+    // typed.current.innerHTML = "";
+    let t;
+    setTimeout(() => {
+      t = new Typed("#typed", {
+        strings: ["Hi, I'm Blake", ""],
+        typeSpeed: 50,
+        backSpeed: 40,
+        loop: false,
+        // loopCount: 1,
+        onComplete: (param) => {
+          t.destroy();
+          t = new Typed("#typed", {
+            strings: [
+              "^500 Scroll to learn more... ^1000",
+              "^500 Hi, ^500I'm Blake. ^2000",
+            ],
+            typeSpeed: 50,
+            backSpeed: 40,
+            loop: true,
+            smartBackspace: true,
+          });
+        },
+      });
+    }, 2000);
+    // setTimeout(() => {
+    //   const t = new Typed(typed.current, {
+    //     strings: [
+    //       "^500 Hi, ^500I'm Blake ^2000",
+    //       "^500 Scroll to learn more ^1000",
+    //     ],
+    //     typeSpeed: 50,
+    //     backSpeed: 40,
+    //     loop: true,
+    //   });
+    // }, 5000);
+    // const t = new Typed(typed.current, {
+    //   strings: [
+    //     "^500 Hi, ^500I'm Blake ^2000",
+    //     "^500 Scroll to learn more ^1000",
+    //   ],
+    //   typeSpeed: 50,
+    //   backSpeed: 40,
+    //   loop: true,
+    // });
     return () => {
       t.destroy();
     };
@@ -275,7 +309,9 @@ export default function Home(props) {
                       transform: `translateY(${adjustedScroll * -0.1}px)`,
                     }}
                   >
-                    <span ref={typed}>Hi, I'm Blake.</span>
+                    <span ref={typed} id="typed">
+                      Hi, I'm Blake.
+                    </span>
                   </h1>
                   {/* <Typed
                     strings={item.text}
@@ -295,6 +331,7 @@ export default function Home(props) {
                     width: "100%",
                     opacity: 1 - Math.abs(adjustedScroll) / frameHeight,
                     transform: `translateY(${scroll * 0.1}px)`,
+                    zIndex: -10,
                   }}
                   className={styles.imageWrapper}
                 >

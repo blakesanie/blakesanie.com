@@ -107,7 +107,7 @@
 
 .typed {
   font-size: 50px !important;
-  max-height: 60px !important;
+  /* max-height: 60px !important; */
   margin: 0 !important;
 }
 
