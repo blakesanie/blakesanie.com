@@ -171,6 +171,11 @@ export default function Home(props) {
 
   useEffect(() => {
     // typed.current.innerHTML = "";
+    if (
+      /bot|google|baidu|bing|msn|teoma|slurp|yandex/i.test(navigator.userAgent)
+    ) {
+      return;
+    }
     let t;
     setTimeout(() => {
       t = new Typed("#typed", {

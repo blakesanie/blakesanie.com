@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "export NODE_OPTIONS=--openssl-legacy-provider && next dev",
     "build": "node preBuild.js && next build",
     "deploy": "npm run build && gh-pages -d out -b gh-pages-nextjs -t true",
     "start": "next start"

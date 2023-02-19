@@ -27,6 +27,7 @@ function shuffleArray(array) {
 }
 
 const filenames = Object.keys(files);
+// console.log("filenames", filenames);
 shuffleArray(filenames);
 
 let minLat = Infinity;
