@@ -5,7 +5,7 @@ import { NextSeo } from "next-seo";
 import { referrals } from "../";
 
 function getReferralId(referral) {
-  return referral.id || referral.name.toLowerCase().replaceAll(" ", "_");
+  return referral.id || referral.name.toLowerCase().split(" ").join("_");
 }
 
 export async function getStaticPaths() {
