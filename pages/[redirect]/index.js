@@ -89,10 +89,14 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  return { props: {} };
+  return {
+    props: {
+      redirects,
+    },
+  };
 }
 
-export default function Redirect(props) {
+export default function Redirect({ redirects }) {
   const router = useRouter();
   const { redirect } = router.query;
   useEffect(() => {

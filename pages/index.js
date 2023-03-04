@@ -389,7 +389,7 @@ export default function Home(props) {
                     {item.links ? (
                       <div className={styles.buttonContainer}>
                         {item.links.map((link, i) => {
-                          console.log("link", link);
+                          // console.log("link", link);
                           return (
                             <Link
                               key={i}

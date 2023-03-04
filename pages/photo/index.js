@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import files from "../../extras/photo/filenames.js";
-console.log("files", files);
+// console.log("files", files);
 import Masonry from "react-masonry-component";
 import Copyright from "../../components/Copyright";
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.js";
@@ -97,7 +97,7 @@ export default function Photo(props) {
   // the above works, dont touch
 
   const [selectedFilename, selectedFile, selectedAspectRatio] = useMemo(() => {
-    console.log("new selected photo");
+    // console.log("new selected photo");
     const filename = filenames[selectedPhoto];
     const file = files[filename] || undefined;
     const ratio = file ? file.height / file.width : undefined;
@@ -112,7 +112,7 @@ export default function Photo(props) {
     return [filename, file, ratio];
   }, [selectedPhoto]);
 
-  console.log("aspect from outside", selectedAspectRatio);
+  // console.log("aspect from outside", selectedAspectRatio);
 
   const handleResize = (window) => {
     setWidth(getImageWidth(window));
@@ -557,7 +557,7 @@ export default function Photo(props) {
                     <div className={styles.exifContainer}>
                       {Object.entries(selectedFile.exif).map((pair) => {
                         const [key, value] = pair;
-                        console.log("exif", key, value);
+                        // console.log("exif", key, value);
                         return (
                           <p
                             className={styles.exif}

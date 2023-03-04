@@ -51,7 +51,7 @@ export default function MLBVis(props) {
   useEffect(async () => {
     const res = await fetch(`/api/mlbVis`);
     const json = await res.json();
-    console.log("posts", json.posts);
+    // console.log("posts", json.posts);
     setPosts(
       json.posts.map((post) => {
         const lines = post.title.split(" || ");

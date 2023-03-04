@@ -68,12 +68,12 @@ export default function nowPlaying(props) {
     const stored = localStorage.getItem("nowPlaying");
     if (stored) {
       const parsed = JSON.parse(stored);
-      console.log("date in localstorage:", new Date(parsed.timestamp));
+      // console.log("date in localstorage:", new Date(parsed.timestamp));
       if (new Date() - new Date(parsed.timestamp) < 15000) {
         return parsed.track;
       }
     }
-    console.log("track stored in localstorage:", stored);
+    // console.log("track stored in localstorage:", stored);
     const res = await fetch(`/api/nowPlaying`);
     const json = await res.json();
     localStorage.setItem(

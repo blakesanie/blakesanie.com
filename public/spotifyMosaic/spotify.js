@@ -30,7 +30,7 @@ var access_token = params.access_token,
   storedState = localStorage.getItem(stateKey);
 
 $(document).on("click", "#login", async function () {
-  console.log("login click");
+  // console.log("login click");
   var client_id = "ea58eca152454aed8601582fd602ce90"; // faked for tutorial
   var redirect_uri = window.location.href;
   //var redirect_uri = "http://localhost:8888/app.html"; // development
@@ -41,12 +41,12 @@ $(document).on("click", "#login", async function () {
   url += "&client_id=" + encodeURIComponent(client_id);
   url += "&redirect_uri=" + encodeURIComponent(redirect_uri);
   url += "&state=" + encodeURIComponent(state);
-  console.log(url);
+  // console.log(url);
   window.location.href = url;
 });
 
 if (access_token && (state == null || state !== storedState)) {
-  console.log("error");
+  // console.log("error");
 } else {
   if (access_token) {
     $("#login").remove();
@@ -148,7 +148,7 @@ async function getAlbumCoversForPlaylist(id) {
       Authorization: "Bearer " + access_token,
     },
     error: function (jqXHR, status, err) {
-      console.log(err);
+      // console.log(err);
     },
     success: function (res) {
       for (var song of res.items) {

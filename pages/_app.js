@@ -23,7 +23,7 @@ function isObj(val) {
 
 function addVisitRecursively(path, obj) {
   if (path) {
-    console.log(path);
+    // console.log(path);
     // ${path.substring(path.lastIndexOf("/") + 1)}
     eval(
       `obj.visit = function () {
