@@ -2,11 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { NextSeo } from "next-seo";
-import { referrals } from "../";
-
-function getReferralId(referral) {
-  return referral.id || referral.name.toLowerCase().split(" ").join("_");
-}
+import { referrals, getReferralId } from "../";
 
 export async function getStaticPaths() {
   const paths = referrals.map((referral) => {
@@ -43,6 +39,12 @@ export default function Referral({ referrals }) {
         title={referrals[product].name + " Referral"}
         nofollow={true}
         noindex={true}
+        additionalMetaTags={[
+          {
+            name: "theme-color",
+            content: "white",
+          },
+        ]}
       />
       <Head>
         <meta

@@ -37,6 +37,10 @@ export const referrals = [
   },
 ];
 
+export function getReferralId(referral) {
+  return referral.id || referral.name.toLowerCase().split(" ").join("_");
+}
+
 export async function getStaticProps() {
   // read json from local file
   //   const json = await fs.readFile("./referrals.json", "utf8");
@@ -67,7 +71,8 @@ export default function Referrals(props) {
             name?.includes(query) || url?.includes(query) || id?.includes(query)
           );
         })
-        .map(({ name, url }) => {
+        .map((referral) => {
+          const { name, url } = referral;
           return (
             <a
               href={url}
@@ -79,7 +84,7 @@ export default function Referrals(props) {
                 // window.open(url, "_blank");
                 try {
                   navigator.share({
-                    url: e.target.href,
+                    url: window.location.href + "/" + getReferralId(referral),
                   });
                   e.preventDefault();
                 } catch (e) {}
