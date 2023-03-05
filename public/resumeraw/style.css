@@ -48,7 +48,7 @@
 }
 
 .section:not(.header) {
-    gap: 1.2vw;
+    gap: 1.1vw;
 }
 
 #root > div:last-child{
