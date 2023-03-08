@@ -1,0 +1,65 @@
+.main ul {
+   margin: 1em 0; 
+   text-indent: 0.3em;
+   padding-left: 2em;
+}
+
+.main li {
+   font-weight: 500 !important;
+}
+
+.callToAction {
+    color: black;
+    font-size: 20px;
+    box-shadow: 0 0 40px 0 rgba(0,0,0,0.14);
+    background-color: white;
+    padding: 0.7em 1.3em;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.callToAction:hover {
+    box-shadow: 0 0 0px 1px rgba(0,0,0,0.1);
+}
+
+.testimonials {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    margin-top: 10px;
+    max-width: 1000px;
+}
+
+.testimonial {
+    display: flex;
+    flex-direction: column;
+    min-width: 400px;
+    font-size: 16px;
+    padding: 1em;
+    box-shadow: 0 0 20px 0 rgba(0,0,0,0.06);
+    border-radius: 10px;
+    margin: 1em;
+    flex: 1;
+}
+
+.testText {
+    opacity: 0.7;
+    font-weight: 500;
+    flex: 1;
+    /* display: inline; */
+}
+
+.main h3 {
+    font-size: 28px;
+    margin: 30px 0;
+    font-weight: 500;
+    margin-bottom: 0.5em;
+}
+
+.testName {
+    /* font-weight: 500; */
+    text-align: right;
+    margin-top: 0.3em;
+    /* display: inline; */
+}

@@ -140,10 +140,14 @@ export default function HeaderAndFooter(props) {
           <a id="myName">Blake Sanie</a>
         </Link>
         <p class={styles.headerSubLine}>
-          <span>‌‌Inquisitive student.</span>
+          <span>Software Engineer.</span>
+          <span>Photographer.</span>
+          <span>Writer & Instructor.</span>
+          <span>Lifelong Student.</span>
+          {/* <span>‌‌Inquisitive student.</span>
           <span>Aspiring engineer.</span>
           <span>Photography enthusiast.</span>
-          <span>Curious stock trader.</span>
+          <span>Curious stock trader.</span> */}
         </p>
         <nav>
           <ul className={styles.nav}>
@@ -156,6 +160,9 @@ export default function HeaderAndFooter(props) {
               </li>
               <li>
                 <Link href="/projects">Projects</Link>
+              </li>
+              <li>
+                <Link href="/consultation">Consultation</Link>
               </li>
               <li>
                 <a
