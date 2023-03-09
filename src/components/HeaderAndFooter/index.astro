@@ -8,100 +8,119 @@ const mobileHeaderHeight = 80;
 const headerHeightTransitionDuration = 0.1;
 const headerPositionTransitionDuration = 0.3;
 const headerColor = "rgb(0, 126, 204, 0.8)";
+console.log("entire astro", Astro);
 // icons from https://icons8.com/icons/sf-regular--static
 ---
 
-<GoogleFontsOptimizer
-  url="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&display=swap"
-/>
-<header>
-  <!-- <svg id="hamburger">
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <GoogleFontsOptimizer
+      url="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&display=swap"
+    />
+    <header>
+      <!-- <svg id="hamburger">
 
   </svg> -->
-  <!-- create hamburger svg icon -->
-  <svg id="hamburger" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <line x1="10" y1="20" x2="90" y2="20"></line>
-    <line x1="10" y1="50" x2="90" y2="50"></line>
-    <line x1="10" y1="80" x2="90" y2="80"></line>
-  </svg>
-  <a id="logo" href="/">Blake Sanie</a>
-  <div id="bio">
-    <span>Software Engineer.</span>
-    <span>Photographer.</span>
-    <span>Writer & Instructor.</span>
-    <span>Lifelong Student.</span>
-  </div>
-  <nav>
-    <ul>
-      <div class="navSection">
-        <p>Engineering</p>
-        <NavLink icon="layers-outline" href="/projects">Projects</NavLink>
-        <NavLink
-          icon="ribbon-outline"
-          href="/projects"
-          chip="M.S."
-          chipIcon="school-outline"
-        >
-          Résumé
-        </NavLink>
-        <NavLink icon="people-outline" href="/projects">Consultations</NavLink>
-        <NavLink
-          icon="git-branch-outline"
-          href="/projects"
-          chip="512"
-          chipIcon="star-outline"
-        >
-          GitHub
-        </NavLink>
+      <!-- create hamburger svg icon -->
+      <svg
+        id="hamburger"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100 100"
+      >
+        <line x1="10" y1="20" x2="90" y2="20"></line>
+        <line x1="10" y1="50" x2="90" y2="50"></line>
+        <line x1="10" y1="80" x2="90" y2="80"></line>
+      </svg>
+      <a id="logo" href="/">Blake Sanie</a>
+      <div id="bio">
+        <span>Software Engineer.</span>
+        <span>Photographer.</span>
+        <span>Writer & Instructor.</span>
+        <span>Lifelong Student.</span>
       </div>
-      <div class="navSection">
-        <p>Photography</p>
-        <NavLink icon="image-outline" href="/projects">Gallery</NavLink>
-        <NavLink icon="map-outline" href="/projects">Capture Map</NavLink>
-        <NavLink
-          icon="calendar-outline"
-          href="/projects"
-          chip="ATL"
-          chipIcon="location-outline"
-        >
-          Booking
-        </NavLink>
-      </div>
-      <div class="navSection">
-        <p>Ventures</p>
-        <NavLink icon="stats-chart-outline" href="/projects">
-          Quant Research
-        </NavLink>
-        <NavLink
-          icon="newspaper-outline"
-          href="/projects"
-          chip="11K"
-          chipIcon="eye-outline"
-        >
-          Blog
-        </NavLink>
-        <NavLink icon="baseball-outline" href="/projects">r/mlbVis</NavLink>
-      </div>
-      <div class="navSection">
-        <p>Connect</p>
-        <NavLink icon="mail-unread-outline" href="/projects">Email</NavLink>
-        <NavLink icon="logo-twitter" href="/projects">Twitter</NavLink>
-        <NavLink icon="logo-instagram" href="/projects">Instagram</NavLink>
-        <NavLink icon="bicycle-outline" href="/projects">Strava</NavLink>
-      </div>
-    </ul>
-  </nav>
-  <p id="made">
-    Made by Blake Sanie with <Icon icon="code-outline" /> and <Icon
-      icon="heart-outline"
-    />
-  </p>
-</header>
+      <nav>
+        <ul>
+          <div class="navSection">
+            <p>Engineering</p>
+            <NavLink icon="layers-outline" href="/projects">Projects</NavLink>
+            <NavLink
+              icon="ribbon-outline"
+              href="/projects"
+              chip="M.S."
+              chipIcon="school-outline"
+            >
+              Résumé
+            </NavLink>
+            <NavLink icon="people-outline" href="/projects">
+              Consultations
+            </NavLink>
+            <NavLink
+              icon="git-branch-outline"
+              href="/projects"
+              chip="512"
+              chipIcon="star-outline"
+            >
+              GitHub
+            </NavLink>
+          </div>
+          <div class="navSection">
+            <p>Photography</p>
+            <NavLink icon="image-outline" href="/projects">Gallery</NavLink>
+            <NavLink icon="map-outline" href="/projects">Capture Map</NavLink>
+            <NavLink
+              icon="calendar-outline"
+              href="/projects"
+              chip="ATL"
+              chipIcon="location-outline"
+            >
+              Booking
+            </NavLink>
+          </div>
+          <div class="navSection">
+            <p>Ventures</p>
+            <NavLink icon="stats-chart-outline" href="/projects">
+              Quant Research
+            </NavLink>
+            <NavLink
+              icon="newspaper-outline"
+              href="/projects"
+              chip="11K"
+              chipIcon="eye-outline"
+            >
+              Blog
+            </NavLink>
+            <NavLink icon="baseball-outline" href="/projects">r/mlbVis</NavLink>
+          </div>
+          <div class="navSection">
+            <p>Connect</p>
+            <NavLink icon="mail-unread-outline" href="/projects">Email</NavLink>
+            <NavLink icon="logo-twitter-outline" href="/projects">
+              Twitter
+            </NavLink>
+            <NavLink icon="logo-instagram" href="/projects">Instagram</NavLink>
+            <NavLink icon="logo-strava-outline" href="/projects">
+              Strava
+            </NavLink>
+          </div>
+        </ul>
+      </nav>
+      <p id="made">
+        Crafted by Blake Sanie with <a
+          href="https://docs.astro.build/en/getting-started/"
+          target="_blank"><Icon icon="logo-astro-outline" id="astroIcon" /></a
+        > and <Icon icon="heart-outline" id="heartIcon" />
+      </p>
+    </header>
 
-<main>
-  <slot />
-</main>
-<footer></footer>
+    <main>
+      <slot />
+    </main>
+    <footer></footer>
+  </body>
+</html>
 
 <script
   define:vars={{
@@ -373,6 +392,16 @@ const headerColor = "rgb(0, 126, 204, 0.8)";
     color: rgba(255, 255, 255, 0.5);
   }
 
+  #made :global(svg) {
+    margin: 0 0.5em;
+    height: 2.2em;
+    width: 1.2em;
+  }
+
+  #made :global(svg *) {
+    stroke: white !important;
+  }
+
   @media screen and (max-width: 800px) {
     header {
       width: 100%;
@@ -382,6 +411,7 @@ const headerColor = "rgb(0, 126, 204, 0.8)";
       /* margin-top: calc(-1 * var(--mobileHeaderHeight)); */
       top: 0;
       backdrop-filter: blur(6px);
+      overflow: hidden;
       /* overflow: visible; */
     }
     .headerTransitionable {
@@ -392,6 +422,7 @@ const headerColor = "rgb(0, 126, 204, 0.8)";
     }
     #hamburger {
       display: block;
+      stroke: white;
     }
     main {
       margin-top: var(--mobileHeaderHeight);
@@ -438,22 +469,31 @@ const headerColor = "rgb(0, 126, 204, 0.8)";
   }
 </style> -->
 
-<style is:inline>
-  header svg {
+<!-- <style>
+  :global(header svg) {
     width: 1.2em;
     height: 1.2em;
-    /* opacity: 0.5; */
   }
-  header svg * {
+  :global(header svg *) {
     stroke: white !important;
   }
-  #made svg {
+  :global(nav a > svg) {
+    margin-right: 0.6em;
+  }
+  :global(#made > *) {
     margin: 0 0.4em;
   }
-  #made svg * {
-    stroke-width: 60px !important;
+  :global(#made svg) {
+    width: 1.2em;
+    height: 1.8em !important;
   }
-</style>
+  :global(#heartIcon *) {
+    stroke-width: 9% !important;
+  }
+  :global(#astroIcon *) {
+    stroke-width: 7% !important;
+  }
+</style> -->
 
 <style is:global>
   * {

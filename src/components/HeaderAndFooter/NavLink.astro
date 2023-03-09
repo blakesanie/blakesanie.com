@@ -1,11 +1,13 @@
 ---
 import Icon from "./Icon.astro";
-const { icon, chip, chipIcon } = Astro.props;
+const { icon, chip, href, chipIcon } = Astro.props;
+
+const active = Astro.url.pathname.startsWith(href);
 ---
 
-<li>
-  <a
-    ><Icon icon={icon} />
+<li class={`${active ? active : ""}`}>
+  <a href={href}
+    ><Icon icon={icon} class="icon" />
     <span class="navLinkText">
       <slot />
     </span>
@@ -13,7 +15,7 @@ const { icon, chip, chipIcon } = Astro.props;
       chip && (
         <span class="navChip">
           {chip}
-          {chipIcon && <Icon icon={chipIcon} />}
+          {chipIcon && <Icon icon={chipIcon} class="icon" />}
         </span>
       )
     }
@@ -23,17 +25,32 @@ const { icon, chip, chipIcon } = Astro.props;
 <style>
   li {
     list-style: none;
+    --borderRounding: 0.5em;
     padding-right: var(--side-padding);
   }
   a {
+    position: relative;
     display: flex;
     align-items: center;
     padding: 0.6em;
+    padding-right: 0.6em;
     font-size: 1em;
-    border-radius: 0.4em;
-    transition: all 0.2s ease;
+    border-radius: var(--borderRounding);
+    --flangeRadius: calc(var(--borderRounding) * 2);
+    transition: background-color 0.2s ease;
+    /* padding-right: var(--side-padding); */
   }
-  a:hover {
+  a,
+  a::before,
+  a::after {
+    background-color: all 0.2s ease;
+  }
+  a:hover,
+  a:hover::before,
+  a:hover::after,
+  .active a,
+  .active a::before,
+  .active a::after {
     background-color: rgba(255, 255, 255, 0.14);
   }
   .navLinkText {
@@ -41,8 +58,8 @@ const { icon, chip, chipIcon } = Astro.props;
   }
   .navChip {
     /* flex: 1; */
-    background-color: rgba(0, 0, 0, 0.02);
-    backdrop-filter: saturate(100%);
+    background-color: var(--headerColor);
+    /* backdrop-filter: saturate(100%); */
     border-radius: 0.6em;
     padding: 0.3em 0.8em;
     font-size: 0.8em;
@@ -52,17 +69,65 @@ const { icon, chip, chipIcon } = Astro.props;
     /* justify-self: flex-end; */
     /* self */
   }
-</style>
-
-<style is:inline>
-  nav a > svg {
+  .icon {
+    width: 1.2em !important;
+    height: 1.2em !important;
     margin-right: 0.6em;
   }
-  /* nav svg * {
-  } */
-  .navChip svg {
+  :global(.icon *) {
+    stroke: white !important;
+    /* fill: none;
+    stroke-width: 14px; */
+  }
+  .navChip .icon {
+    margin: 0;
     margin-left: 0.4em;
-    /* width: 1em;
-    height: 1em; */
+  }
+
+  @media screen and (min-width: 801px) {
+    a {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+      padding-right: calc(0.6em + var(--side-padding));
+    }
+    li {
+      padding-right: 0;
+    }
+    a::before,
+    a::after {
+      /* background-color: red; */
+      content: "";
+      height: calc(2 * var(--flangeRadius));
+      width: calc(2 * var(--flangeRadius));
+      /* background-color: red; */
+      position: absolute;
+      right: -0.6em;
+      right: 0;
+    }
+    a::before {
+      top: 0;
+      transform: translate(50%, -50%);
+      mask-image: radial-gradient(
+        circle at top left,
+        /* transparent 0, */ transparent var(--flangeRadius),
+        black var(--flangeRadius)
+      );
+      mask-position: top left;
+      mask-repeat: no-repeat;
+      mask-size: 50% 50%;
+    }
+
+    a::after {
+      bottom: 0;
+      transform: translate(50%, 50%);
+      mask-image: radial-gradient(
+        circle at bottom left,
+        /* transparent 0, */ transparent var(--flangeRadius),
+        black var(--flangeRadius)
+      );
+      mask-position: bottom left;
+      mask-repeat: no-repeat;
+      mask-size: 50% 50%;
+    }
   }
 </style>
