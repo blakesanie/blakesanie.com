@@ -1,0 +1,68 @@
+---
+import Icon from "./Icon.astro";
+const { icon, chip, chipIcon } = Astro.props;
+---
+
+<li>
+  <a
+    ><Icon icon={icon} />
+    <span class="navLinkText">
+      <slot />
+    </span>
+    {
+      chip && (
+        <span class="navChip">
+          {chip}
+          {chipIcon && <Icon icon={chipIcon} />}
+        </span>
+      )
+    }
+  </a>
+</li>
+
+<style>
+  li {
+    list-style: none;
+    padding-right: var(--side-padding);
+  }
+  a {
+    display: flex;
+    align-items: center;
+    padding: 0.6em;
+    font-size: 1em;
+    border-radius: 0.4em;
+    transition: all 0.2s ease;
+  }
+  a:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+  }
+  .navLinkText {
+    flex: 1;
+  }
+  .navChip {
+    /* flex: 1; */
+    background-color: rgba(0, 0, 0, 0.02);
+    backdrop-filter: saturate(100%);
+    border-radius: 0.6em;
+    padding: 0.3em 0.8em;
+    font-size: 0.8em;
+    display: flex;
+    align-items: center;
+    margin-left: 1em;
+    /* justify-self: flex-end; */
+    /* self */
+  }
+</style>
+
+<style is:inline>
+  nav a > svg {
+    margin-right: 0.6em;
+  }
+  /* nav svg * {
+  } */
+  .navChip svg {
+    margin-left: 0.4em;
+    /* width: 1em;
+    height: 1em; */
+  }
+</style>

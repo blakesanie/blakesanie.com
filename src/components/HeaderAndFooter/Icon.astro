@@ -1,0 +1,6 @@
+---
+const { icon } = Astro.props;
+const { default: innerHTML } = await import(`/public/ionicons/${icon}.svg?raw`);
+---
+
+<Fragment set:html={innerHTML} />

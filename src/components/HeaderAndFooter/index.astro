@@ -1,0 +1,468 @@
+---
+import { GoogleFontsOptimizer } from "astro-google-fonts-optimizer";
+import Icon from "./Icon.astro";
+import NavLink from "./NavLink.astro";
+const mobileMaxWidth = 800; // still manually declared in media query declaration
+const headerWidth = 200;
+const mobileHeaderHeight = 80;
+const headerHeightTransitionDuration = 0.1;
+const headerPositionTransitionDuration = 0.3;
+const headerColor = "rgb(0, 126, 204, 0.8)";
+// icons from https://icons8.com/icons/sf-regular--static
+---
+
+<GoogleFontsOptimizer
+  url="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&display=swap"
+/>
+<header>
+  <!-- <svg id="hamburger">
+
+  </svg> -->
+  <!-- create hamburger svg icon -->
+  <svg id="hamburger" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <line x1="10" y1="20" x2="90" y2="20"></line>
+    <line x1="10" y1="50" x2="90" y2="50"></line>
+    <line x1="10" y1="80" x2="90" y2="80"></line>
+  </svg>
+  <a id="logo" href="/">Blake Sanie</a>
+  <div id="bio">
+    <span>Software Engineer.</span>
+    <span>Photographer.</span>
+    <span>Writer & Instructor.</span>
+    <span>Lifelong Student.</span>
+  </div>
+  <nav>
+    <ul>
+      <div class="navSection">
+        <p>Engineering</p>
+        <NavLink icon="layers-outline" href="/projects">Projects</NavLink>
+        <NavLink
+          icon="ribbon-outline"
+          href="/projects"
+          chip="M.S."
+          chipIcon="school-outline"
+        >
+          Résumé
+        </NavLink>
+        <NavLink icon="people-outline" href="/projects">Consultations</NavLink>
+        <NavLink
+          icon="git-branch-outline"
+          href="/projects"
+          chip="512"
+          chipIcon="star-outline"
+        >
+          GitHub
+        </NavLink>
+      </div>
+      <div class="navSection">
+        <p>Photography</p>
+        <NavLink icon="image-outline" href="/projects">Gallery</NavLink>
+        <NavLink icon="map-outline" href="/projects">Capture Map</NavLink>
+        <NavLink
+          icon="calendar-outline"
+          href="/projects"
+          chip="ATL"
+          chipIcon="location-outline"
+        >
+          Booking
+        </NavLink>
+      </div>
+      <div class="navSection">
+        <p>Ventures</p>
+        <NavLink icon="stats-chart-outline" href="/projects">
+          Quant Research
+        </NavLink>
+        <NavLink
+          icon="newspaper-outline"
+          href="/projects"
+          chip="11K"
+          chipIcon="eye-outline"
+        >
+          Blog
+        </NavLink>
+        <NavLink icon="baseball-outline" href="/projects">r/mlbVis</NavLink>
+      </div>
+      <div class="navSection">
+        <p>Connect</p>
+        <NavLink icon="mail-unread-outline" href="/projects">Email</NavLink>
+        <NavLink icon="logo-twitter" href="/projects">Twitter</NavLink>
+        <NavLink icon="logo-instagram" href="/projects">Instagram</NavLink>
+        <NavLink icon="bicycle-outline" href="/projects">Strava</NavLink>
+      </div>
+    </ul>
+  </nav>
+  <p id="made">
+    Made by Blake Sanie with <Icon icon="code-outline" /> and <Icon
+      icon="heart-outline"
+    />
+  </p>
+</header>
+
+<main>
+  <slot />
+</main>
+<footer></footer>
+
+<script
+  define:vars={{
+    mobileHeaderHeight: mobileHeaderHeight,
+    headerHeightTransitionDuration,
+    headerPositionTransitionDuration,
+    mobileMaxWidth,
+  }}
+>
+  let menuExpanded = false;
+  const hamburger = document.getElementById("hamburger");
+  const header = document.querySelector("header");
+
+  let wasMobile = false;
+  const evaluateTransitionable = () => {
+    const isMobile = window.innerWidth <= mobileMaxWidth;
+    console.log(isMobile);
+    if (isMobile && !wasMobile) {
+      header.classList.add("headerTransitionable");
+    } else if (!isMobile && wasMobile) {
+      header.classList.remove("headerTransitionable");
+    }
+    wasMobile = isMobile;
+  };
+  evaluateTransitionable();
+  window.addEventListener("resize", evaluateTransitionable);
+
+  let prevScroll = 0;
+  let prevScrollTimestamp = 0;
+  let menuIsDown = false;
+  // const handleScrollHeaderChange = (currentScroll) => {
+  //   if (currentScroll <= mobileHeaderHeight && !menuIsDown && !menuExpanded) {
+  //     console.log("top zone");
+  //     header.style.transition = "none";
+  //     header.style.position = "absolute";
+  //     header.style.transform = `translateY(0)`;
+  //   } else if (!menuExpanded) {
+  //     header.style.position = "fixed";
+  //     if (
+  //       prevScroll <= mobileHeaderHeight &&
+  //       currentScroll > mobileHeaderHeight
+  //     ) {
+  //       header.style.transition = "none";
+  //       header.style.transform = `translateY(${-100}%)`;
+  //     } else {
+  //       header.style.transition = "transform 0.2s ease";
+  //       console.log("header tranform", menuIsDown || menuExpanded ? 0 : "-100");
+  //       header.style.transform = `translateY(${
+  //         menuIsDown || menuExpanded ? 0 : "-100"
+  //       }%)`;
+  //     }
+  //   }
+  // };
+  var existingInterval;
+  const moveHeaderDown = (isDown, isAnimated) => {
+    header.style.position = "fixed";
+    if (existingInterval) {
+      clearTimeout(existingInterval);
+    }
+    if (isAnimated) {
+      header.classList.add("transitionHeaderPosition");
+    }
+    if (isDown) {
+      header.style.transform = "none";
+    } else if (!menuExpanded) {
+      header.style.transform = `translateY(${-100}%)`;
+    }
+    // header.style.transform = `translateY(${isDown ? 0 : -100}%)`;
+    if (isAnimated) {
+      existingInterval = setTimeout(() => {
+        header.classList.remove("transitionHeaderPosition");
+      }, headerPositionTransitionDuration * 1000);
+    }
+  };
+  window.addEventListener("scroll", () => {
+    if (window.innerWidth > mobileMaxWidth) {
+      return;
+    }
+    const currentScroll = window.scrollY;
+    const timestamp = new Date();
+    const scrollVelocity =
+      (currentScroll - prevScroll) / (timestamp - prevScrollTimestamp);
+    if (currentScroll <= 0) {
+      menuIsDown = false;
+      header.style.position = "fixed";
+      // header.style.transform = "none";
+    } else if (currentScroll <= mobileHeaderHeight) {
+      if (menuIsDown) {
+        if (scrollVelocity > 0) {
+        }
+        // menuIsDown = false;
+        // header.style.position = "fixed";
+        // header.style.transform = "none";
+      } else if (!menuExpanded) {
+        header.style.position = "absolute";
+        header.style.transform = "none";
+      }
+    } else if (
+      currentScroll > mobileHeaderHeight &&
+      prevScroll <= mobileHeaderHeight
+    ) {
+      if (menuIsDown) {
+      } else {
+        moveHeaderDown(false, false);
+        menuIsDown = false;
+      }
+    } else if (scrollVelocity > 0) {
+      moveHeaderDown(false, true);
+      menuIsDown = false;
+    } else if (scrollVelocity < -0.8) {
+      moveHeaderDown(true, true);
+      menuIsDown = true;
+    }
+
+    // else if (scrollVelocity > 0) {
+    //   handleScrollHeaderChange(currentScroll);
+    //   console.log("menu is up");
+    //   menuIsDown = false;
+    // } else if (scrollVelocity < -0.6) {
+    //   handleScrollHeaderChange(currentScroll);
+    //   console.log("menu is down");
+    //   menuIsDown = true;
+    // }
+    prevScroll = currentScroll;
+    prevScrollTimestamp = timestamp;
+    // console.log("scroll velo", scrollVelocity);
+  });
+
+  hamburger?.addEventListener("click", () => {
+    const innerHeight = header.scrollHeight;
+    if (menuExpanded) {
+      header?.classList.remove("expanded");
+      header.style.setProperty("--headerHeight", innerHeight + "px");
+      setTimeout(() => {
+        header.style.setProperty("--headerHeight", mobileHeaderHeight + "px");
+      }, 0);
+    } else {
+      header?.classList.add("expanded");
+      header.style.setProperty("--headerHeight", innerHeight + "px");
+      setTimeout(() => {
+        header.style.setProperty("--headerHeight", "auto");
+      }, headerHeightTransitionDuration * 1000);
+      header.position = "fixed";
+    }
+    menuExpanded = !menuExpanded;
+  });
+</script>
+
+<style
+  define:vars={{
+    headerWidth: headerWidth + "px",
+    mobileHeaderHeight: mobileHeaderHeight + "px",
+    headerHeight: mobileHeaderHeight + "px",
+    headerHeightTransitionDuration: headerHeightTransitionDuration + "s",
+    headerPositionTransitionDuration: headerPositionTransitionDuration + "s",
+    headerColor,
+    mobileMaxWidth: mobileMaxWidth + "px",
+  }}
+>
+  body {
+    font-size: 16px;
+    font-family: "Assistant", sans-serif;
+    font-weight: 500;
+  }
+  header {
+    background: var(--headerColor);
+    position: fixed;
+    width: var(--headerWidth);
+    height: 100vh;
+    overflow: hidden;
+    overflow-x: hidden;
+    color: white;
+    fill: white;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    padding: 1.4em 0;
+    --side-padding: 0.7em;
+    overflow-y: scroll;
+    /* padding-left: var(--side-padding); */
+  }
+  #hamburger {
+    display: none;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    opacity: 0.4;
+    height: 24px;
+    width: 24px;
+    stroke-width: 12px;
+    stroke-linecap: round;
+    cursor: pointer;
+    transition: all 0.1s ease;
+  }
+  #hamburger:hover {
+    opacity: 1;
+  }
+  .expanded #hamburger {
+    transform: rotate(90deg);
+  }
+  main {
+    flex: 1;
+    background-color: white;
+    margin-left: var(--headerWidth);
+  }
+  #logo {
+    font-size: 1.5em;
+    font-weight: 500;
+    padding: 0.3em 0.9em;
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='white' stroke-width='3' stroke-dasharray='2%2c 8' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square'/%3e%3c/svg%3e");
+  }
+  #bio {
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1em;
+    margin-bottom: 2em;
+    opacity: 0.8;
+  }
+  #bio > * {
+    padding: 0.1em 0;
+  }
+  nav {
+    width: 100%;
+    padding-left: var(--side-padding);
+    /* border: 1px solid red; */
+  }
+  nav ul {
+    display: flex;
+    flex-direction: column;
+  }
+  /* nav li {
+    list-style: none;
+    padding-right: var(--side-padding);
+  } */
+  /* nav li a {
+    display: flex;
+    align-items: center;
+    padding: 0.6em;
+    font-size: 1em;
+    border-radius: 0.4em;
+    transition: all 0.2s ease;
+  } */
+  /* nav li a:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+  } */
+  .navSection {
+    margin-bottom: 1.4em;
+    display: flex;
+    flex-direction: column;
+  }
+  .navSection p {
+    font-size: 0.8em;
+    opacity: 0.8;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    /* font-weight: 600; */
+  }
+
+  #made {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2em;
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  @media screen and (max-width: 800px) {
+    header {
+      width: 100%;
+      padding: 0.7em 0;
+      /* height: auto; */
+      height: var(--headerHeight);
+      /* margin-top: calc(-1 * var(--mobileHeaderHeight)); */
+      top: 0;
+      backdrop-filter: blur(6px);
+      /* overflow: visible; */
+    }
+    .headerTransitionable {
+      transition: height var(--headerHeightTransitionDuration) ease;
+    }
+    .transitionHeaderPosition {
+      transition: transform var(--headerPositionTransitionDuration) ease;
+    }
+    #hamburger {
+      display: block;
+    }
+    main {
+      margin-top: var(--mobileHeaderHeight);
+      margin-left: 0;
+    }
+    #logo {
+      font-size: 1.2em;
+      padding: 0.3em 0.9em;
+    }
+    #bio {
+      flex-direction: row;
+      font-size: 0.8em;
+      margin-top: 0.5em;
+      margin-bottom: 2em;
+    }
+    #bio > * {
+      padding: 0 0.3em;
+    }
+    nav {
+      padding: 0 var(--side-padding);
+    }
+    nav ul {
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    nav ul > * {
+      /* min-width: 140px; */
+    }
+    .navSection {
+      /* align-items: center; */
+    }
+  }
+</style>
+
+<!-- <style is:inline>
+  nav svg {
+    width: 1.2em;
+    height: 1.2em;
+    margin-right: 0.6em;
+  }
+  nav svg * {
+    stroke: white !important;
+  }
+</style> -->
+
+<style is:inline>
+  header svg {
+    width: 1.2em;
+    height: 1.2em;
+    /* opacity: 0.5; */
+  }
+  header svg * {
+    stroke: white !important;
+  }
+  #made svg {
+    margin: 0 0.4em;
+  }
+  #made svg * {
+    stroke-width: 60px !important;
+  }
+</style>
+
+<style is:global>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  a {
+    text-decoration: initial;
+    color: inherit;
+  }
+</style>
