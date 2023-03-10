@@ -1,5 +1,6 @@
 ---
 import { GoogleFontsOptimizer } from "astro-google-fonts-optimizer";
+import HoverZone from "./HoverZone.astro";
 import Icon from "./Icon.astro";
 import NavLink from "./NavLink.astro";
 const mobileMaxWidth = 800; // still manually declared in media query declaration
@@ -8,14 +9,16 @@ const mobileHeaderHeight = 80;
 const headerHeightTransitionDuration = 0.1;
 const headerPositionTransitionDuration = 0.3;
 const headerColor = Astro.props.color || "rgb(0, 126, 204, 0.8)";
+const headerColorOpaque = "#1c81ce";
 const chipColor = Astro.props.chipColor || headerColor;
-const navPadding = 1;
+const navPadding = 1.4;
+const isHome = Astro.url.pathname === "/";
 // console.log("entire astro", Astro);s
 // const {color} = Astro.props
 // icons from https://icons8.com/icons/sf-regular--static
 ---
 
-<html lang="en">
+<html lang="en" class:list={[{ isHome: isHome }]}>
   <head>
     <meta charset="utf-8" />
   </head>
@@ -45,6 +48,7 @@ const navPadding = 1;
         <span>Lifelong Student.</span>
       </div>
       <nav>
+        {isHome && <HoverZone style="height:0;opacity:0;" />}
         <ul>
           <div class="navSection">
             <p>Engineering</p>
@@ -136,6 +140,7 @@ const navPadding = 1;
     headerPositionTransitionDuration,
     mobileMaxWidth,
     navPadding,
+    isHome,
   }}
 >
   let menuExpanded = false;
@@ -276,6 +281,7 @@ const navPadding = 1;
     menuExpanded = !menuExpanded;
   });
 
+  // if (!isHome) {
   const nav = document.querySelector("nav");
   const anchors = document.querySelectorAll("nav a");
   const mouseOffSections = document.querySelectorAll(
@@ -284,48 +290,99 @@ const navPadding = 1;
   );
 
   let activeNavHoverZone = document.querySelector(".active .navHoverZone");
+  let activeAnchor = activeNavHoverZone?.parentElement;
   let hoverZone;
   let baseHeight;
+  let baseWidth;
   let baseY;
+  let baseX;
+
+  let currentHoverAnchor;
 
   const moveHoverToAnchor = (anchor) => {
     if (!hoverZone) {
-      // debugger;
-      baseHeight = activeNavHoverZone.clientHeight;
-      baseY = activeNavHoverZone.parentElement.offsetTop;
-      // const leftPad = nav.style.getPropertyValue("navPadding");
-      // console.log(nav);
-      // console.log("BASEY", baseY, activeNavHoverZone.style, leftPad);
-      hoverZone = nav.appendChild(activeNavHoverZone);
-      hoverZone.style.transform = `translateY(${baseY}px)`;
-      hoverZone.style.marginLeft = navPadding * 0.5 + "em";
-      // hoverZone.style.display = "block";
-      hoverZone.style.height = baseHeight + "px";
+      if (isHome) {
+        hoverZone = document.querySelector(".navHoverZone");
+        hoverZone.style.transition = "none";
+        hoverZone.style.height = anchor.offsetHeight + "px";
+        hoverZone.style.width = anchor.offsetWidth + "px";
+        // hoverZone.style.backgroundColor = "red";
+      } else {
+        // debugger;
+        baseHeight = activeNavHoverZone.offsetHeight;
+        baseWidth = activeNavHoverZone.offsetWidth;
+        baseY = activeNavHoverZone.parentElement.offsetTop;
+        baseX = activeNavHoverZone.parentElement.offsetLeft;
+        // const leftPad = nav.style.getPropertyValue("navPadding");
+        // console.log(nav);
+        // console.log("BASEY", baseY, activeNavHoverZone.style, leftPad);
+        hoverZone = nav.appendChild(activeNavHoverZone);
+        hoverZone.style.transform = `translate(${baseX}px,${baseY}px)`;
+        // hoverZone.style.marginLeft = navPadding * 0.5 + "em";
+        // hoverZone.style.display = "block";
+        hoverZone.style.height = baseHeight + "px";
+        hoverZone.style.width = baseWidth + "px";
+      }
     }
     if (!anchor) {
-      console.log("off");
-      // alert("back to default");
-      // debugger;
-      hoverZone.style.transform = `translateY(${baseY}px)`;
-      hoverZone.style.height = baseHeight + "px";
+      if (isHome) {
+        hoverZone.style.opacity = 0;
+      } else {
+        if (currentHoverAnchor) {
+          currentHoverAnchor.classList.remove("hover");
+        }
+        hoverZone.style.transform = `translate(${activeAnchor.offsetLeft}px, ${activeAnchor.offsetTop}px)`;
+        hoverZone.style.height = activeAnchor.offsetHeight + "px";
+        hoverZone.style.width = activeAnchor.offsetWidth + "px";
+        // if (window.innerWidth > 800) {
+        // hoverZone.style.transform = `translate(${baseX}px, ${baseY}px)`;
+        // hoverZone.style.height = baseHeight + "px";
+        // hoverZone.style.width = baseWidth + "px";
+        // }
+      }
       return;
     }
     // const originY = baseY;
     const targetY = anchor.offsetTop;
+    const targetX = anchor.offsetLeft;
+    if (currentHoverAnchor) {
+      currentHoverAnchor.classList.remove("hover");
+    }
+    anchor.classList.add("hover");
+    currentHoverAnchor = anchor;
     // console.log(targetY);
     // console.log(navHoverZone, anchor);
     // console.log(anchor);
-    console.log(
-      anchor,
-      "offset by",
-      baseY - targetY,
-      "baseY",
-      baseY,
-      "targetY",
-      targetY
-    );
-    hoverZone.style.transform = `translateY(${targetY}px)`;
-    // hoverZone.style.height = anchor.innerHeight + "px";
+    // console.log(
+    //   anchor,
+    //   "offset by",
+    //   baseY - targetY,
+    //   "baseY",
+    //   baseY,
+    //   "targetY",
+    //   targetY
+    // );
+    if (hoverZone.style.opacity != 1) {
+      // alert("non-1 opacity");
+      // debugger;
+      hoverZone.style.transition = "none";
+    }
+    hoverZone.style.transform = `translate(${targetX}px, ${targetY}px)`;
+    hoverZone.style.height = anchor.offsetHeight + "px";
+
+    if (window.innerWidth <= 800) {
+      hoverZone.style.width = `calc(${anchor.offsetWidth + "px"})`;
+    } else {
+      hoverZone.style.width = `calc(${
+        anchor.offsetWidth + "px - var(--navPadding)"
+      })`;
+    }
+
+    if (hoverZone.style.opacity != 1) {
+      hoverZone.style.transition = "all 0.2s ease";
+    }
+    console.log("hover anchor", anchor, anchor.offsetHeight);
+    hoverZone.style.opacity = 1;
   };
 
   for (let i = 0; i < anchors.length; i++) {
@@ -340,10 +397,16 @@ const navPadding = 1;
       moveHoverToAnchor();
     });
   }
+  if (isHome) {
+    // nav.addEventListener("mousemove", (e) => {
+    //   document.querySelector(".navHoverZone").style.opacity = 1;
+    // });
+  }
   // nav.addEventListener("mouseleave", (e) => {
   //   console.log("LEAVE");
   //   moveHoverToAnchor();
   // });
+  // }
 </script>
 
 <style
@@ -356,6 +419,7 @@ const navPadding = 1;
     headerColor,
     mobileMaxWidth: mobileMaxWidth + "px",
     navPadding: navPadding + "em",
+    headerColorOpaque,
   }}
 >
   body {
@@ -525,7 +589,7 @@ const navPadding = 1;
       padding: 0 0.3em;
     }
     nav {
-      --navPadding: 0.6em;
+      --navPadding: 0.7em;
     }
     nav ul {
       flex-direction: row;

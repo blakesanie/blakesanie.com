@@ -1,0 +1,51 @@
+---
+const { style } = Astro.props;
+---
+
+<div class="navHoverZone" style={style}></div>
+
+<style>
+  :global(.navHoverZone:not(.isHome)) {
+    /* margin-left: calc(var(--navPadding) * 0.5); */
+  }
+  :global(.active .navHoverZone) {
+    margin-left: calc(var(--navPadding) * -0.5);
+  }
+  :global(.navHoverZone) {
+    /* background-color: red; */
+    /* opacity: 0.3; */
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    min-width: 100%;
+    transition: all 0.2s ease;
+
+    margin-left: calc(var(--navPadding) * 0.5);
+    border-top-left-radius: var(--borderRounding);
+    border-bottom-left-radius: var(--borderRounding);
+  }
+  :global(.navHoverZone) {
+    backdrop-filter: invert(100%) grayscale(100%) brightness(2.4);
+  }
+  :global(.isHome .navHoverZone) {
+    min-width: 0;
+    backdrop-filter: none;
+    border-radius: var(--borderRounding) !important;
+    background-color: rgba(255, 255, 255, 0.14);
+    /* left: calc(var(--navPadding) / 2); */
+    width: calc(100% - var(--navPadding));
+  }
+  @media screen and (max-width: 800px) {
+    :global(.navHoverZone) {
+      /* width: auto; */
+      min-width: 0;
+      border-radius: var(--borderRounding) !important;
+      margin-left: 0;
+    }
+    :global(.isHome .navHoverZone) {
+      left: 0;
+      /* width: 100%; */
+    }
+  }
+</style>
