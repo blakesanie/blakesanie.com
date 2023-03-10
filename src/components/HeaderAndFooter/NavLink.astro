@@ -1,13 +1,15 @@
 ---
 import Icon from "./Icon.astro";
-const { icon, chip, href, chipIcon } = Astro.props;
+const { icon, chip, chipIcon, chipColor, href } = Astro.props;
 
 const active = Astro.url.pathname.startsWith(href);
+console.log("pathname", Astro.url.pathname, "href", href, "active", active);
 ---
 
-<li class={`${active ? active : ""}`}>
-  <a href={href}
-    ><Icon icon={icon} class="icon" />
+<li class:list={[{ active: active }]}>
+  <!-- <div class="navHoverZone"></div> -->
+  <a href={href}>
+    <Icon icon={icon} class="icon" />
     <span class="navLinkText">
       <slot />
     </span>
@@ -19,115 +21,199 @@ const active = Astro.url.pathname.startsWith(href);
         </span>
       )
     }
+    {
+      active && (
+        <div class="navHoverZone">
+          <div id="invertedCurveTop" />
+          <div id="invertedMain" />
+          <div id="invertedCurveBottom" />
+        </div>
+      )
+    }
   </a>
-</li>
 
-<style>
-  li {
-    list-style: none;
-    --borderRounding: 0.5em;
-    padding-right: var(--side-padding);
-  }
-  a {
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding: 0.6em;
-    padding-right: 0.6em;
-    font-size: 1em;
-    border-radius: var(--borderRounding);
-    --flangeRadius: calc(var(--borderRounding) * 2);
-    transition: background-color 0.2s ease;
-    /* padding-right: var(--side-padding); */
-  }
-  a,
-  a::before,
-  a::after {
-    background-color: all 0.2s ease;
-  }
-  a:hover,
-  a:hover::before,
-  a:hover::after,
-  .active a,
-  .active a::before,
-  .active a::after {
-    background-color: rgba(255, 255, 255, 0.14);
-  }
-  .navLinkText {
-    flex: 1;
-  }
-  .navChip {
-    /* flex: 1; */
-    background-color: var(--headerColor);
-    /* backdrop-filter: saturate(100%); */
-    border-radius: 0.6em;
-    padding: 0.3em 0.8em;
-    font-size: 0.8em;
-    display: flex;
-    align-items: center;
-    margin-left: 1em;
-    /* justify-self: flex-end; */
-    /* self */
-  }
-  .icon {
-    width: 1.2em !important;
-    height: 1.2em !important;
-    margin-right: 0.6em;
-  }
-  :global(.icon *) {
-    stroke: white !important;
-    /* fill: none;
-    stroke-width: 14px; */
-  }
-  .navChip .icon {
-    margin: 0;
-    margin-left: 0.4em;
-  }
-
-  @media screen and (min-width: 801px) {
-    a {
-      border-bottom-right-radius: 0;
-      border-top-right-radius: 0;
-      padding-right: calc(0.6em + var(--side-padding));
-    }
+  <style define:vars={{ chipColor: chipColor }}>
     li {
-      padding-right: 0;
+      list-style: none;
     }
-    a::before,
-    a::after {
+
+    :global(.navHoverZone) {
       /* background-color: red; */
-      content: "";
+      /* opacity: 0.3; */
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      transition: transform 0.2s ease;
+
+      margin-left: calc(var(--navPadding) * -0.5);
+      border-top-left-radius: var(--borderRounding);
+      border-bottom-left-radius: var(--borderRounding);
+    }
+    :global(.navHoverZone > div) {
+      backdrop-filter: invert(100%) grayscale(100%) brightness(2.4);
+    }
+    :global(.navHoverZone > div) {
       height: calc(2 * var(--flangeRadius));
       width: calc(2 * var(--flangeRadius));
       /* background-color: red; */
       position: absolute;
-      right: -0.6em;
-      right: 0;
+      right: calc(0.5 * var(--flangeRadius));
     }
-    a::before {
+    :global(#invertedCurveTop::before, #invertedCurveBottom::before) {
+      content: "";
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      background-color: rgb(73, 152, 214);
+    }
+    :global(#invertedCurveTop) {
+      /* transform: translateY(-100%); */
+      transform: translateY(-100%);
+    }
+    :global(#invertedCurveTop::before) {
       top: 0;
-      transform: translate(50%, -50%);
-      mask-image: radial-gradient(
-        circle at top left,
-        /* transparent 0, */ transparent var(--flangeRadius),
-        black var(--flangeRadius)
-      );
-      mask-position: top left;
-      mask-repeat: no-repeat;
-      mask-size: 50% 50%;
+      border-bottom-right-radius: 100px;
+    }
+    :global(#invertedCurveBottom) {
+      bottom: 0;
+      transform: translateY(100%);
+    }
+    :global(#invertedCurveBottom::before) {
+      border-top-right-radius: 100px;
+    }
+    :global(#invertedMain) {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      top: 0;
+      left: 0;
+      border-bottom-left-radius: var(--flangeRadius);
+      border-top-left-radius: var(--flangeRadius);
+      overflow: hidden;
+    }
+    a {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 0 var(--navPadding);
+      /* padding-left: calc(0.6em + var(--side-padding));
+      padding-right: 0.6em; */
+      font-size: 1em;
+      /* border: 1px solid red; */
+      border-radius: var(--borderRounding);
+      /* backdrop-filter: saturate(0) contrast(0.5);
+      opacity: 0.2; */
+      /* padding-right: var(--side-padding); */
+    }
+    a:hover .icon,
+    .active .icon {
+      opacity: 1;
+    }
+    /* a,
+    a::before,
+    a::after {
+    }
+    a:hover,
+    a:hover::before,
+    a:hover::after {
     }
 
-    a::after {
-      bottom: 0;
-      transform: translate(50%, 50%);
-      mask-image: radial-gradient(
-        circle at bottom left,
-        /* transparent 0, */ transparent var(--flangeRadius),
-        black var(--flangeRadius)
-      );
-      mask-position: bottom left;
-      mask-repeat: no-repeat;
-      mask-size: 50% 50%;
+    .active a,
+    .active a::before,
+    .active a::after {
+      background-color: rgba(255, 255, 255, 1);
     }
-  }
-</style>
+
+    .active * {
+      color: black;
+    }
+    .active .icon {
+      filter: none !important;
+    } */
+    .navLinkText {
+      flex: 1;
+      padding: 0.6em 0;
+    }
+    .navChip {
+      /* flex: 1; */
+      /* background-color: var(--headerColor); */
+      /* background-color: rgba(255, 255, 255, 0.2); */
+      /* backdrop-filter: saturate(100%); */
+      background-color: var(--headerColor);
+      border-radius: 100px;
+      padding: 0.3em 0.8em;
+      font-size: 0.8em;
+      display: flex;
+      align-items: center;
+      margin-left: 1em;
+      transition: background-color 0.2s ease;
+      /* justify-self: flex-end; */
+      /* self */
+    }
+    a:hover .navChip {
+      /* color: black; */
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    .icon {
+      width: 1.2em !important;
+      height: 1.2em !important;
+      margin-right: 0.6em;
+      filter: contrast(0.5) brightness(1000);
+      opacity: 0.6;
+      transition: opacity 0.2s ease;
+      /* color: red; */
+    }
+    .navChip .icon {
+      margin: 0;
+      margin-left: 0.4em;
+      opacity: 1;
+    }
+
+    @media screen and (min-width: 801px) {
+      a {
+        border-bottom-right-radius: 0;
+        border-top-right-radius: 0;
+        /* padding-right: calc(0.6em + var(--side-padding)); */
+      }
+      li {
+        padding-right: 0;
+      }
+      /* a::before,
+      a::after {
+        content: "";
+        height: calc(2 * var(--flangeRadius));
+        width: calc(2 * var(--flangeRadius));
+        position: absolute;
+        right: -0.6em;
+        right: 0;
+      }
+      a::before {
+        top: 0;
+        transform: translate(50%, -50%);
+        mask-image: radial-gradient(
+          circle at top left,
+          transparent var(--flangeRadius),
+          black var(--flangeRadius)
+        );
+        mask-position: top left;
+        mask-repeat: no-repeat;
+        mask-size: 50% 50%;
+      }
+
+      a::after {
+        bottom: 0;
+        transform: translate(50%, 50%);
+        mask-image: radial-gradient(
+          circle at bottom left,
+          transparent var(--flangeRadius),
+          black var(--flangeRadius)
+        );
+        mask-position: bottom left;
+        mask-repeat: no-repeat;
+        mask-size: 50% 50%;
+      } */
+    }
+  </style>
+</li>

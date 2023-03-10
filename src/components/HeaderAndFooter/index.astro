@@ -7,8 +7,11 @@ const headerWidth = 200;
 const mobileHeaderHeight = 80;
 const headerHeightTransitionDuration = 0.1;
 const headerPositionTransitionDuration = 0.3;
-const headerColor = "rgb(0, 126, 204, 0.8)";
-console.log("entire astro", Astro);
+const headerColor = Astro.props.color || "rgb(0, 126, 204, 0.8)";
+const chipColor = Astro.props.chipColor || headerColor;
+const navPadding = 1;
+// console.log("entire astro", Astro);s
+// const {color} = Astro.props
 // icons from https://icons8.com/icons/sf-regular--static
 ---
 
@@ -48,62 +51,66 @@ console.log("entire astro", Astro);
             <NavLink icon="layers-outline" href="/projects">Projects</NavLink>
             <NavLink
               icon="ribbon-outline"
-              href="/projects"
+              href="/resume"
               chip="M.S."
               chipIcon="school-outline"
+              chipColor={chipColor}
             >
               Résumé
             </NavLink>
-            <NavLink icon="people-outline" href="/projects">
+            <NavLink icon="people-outline" href="/consultation">
               Consultations
             </NavLink>
             <NavLink
               icon="git-branch-outline"
-              href="/projects"
+              href="/github"
               chip="512"
               chipIcon="star-outline"
+              chipColor={chipColor}
             >
               GitHub
             </NavLink>
           </div>
           <div class="navSection">
             <p>Photography</p>
-            <NavLink icon="image-outline" href="/projects">Gallery</NavLink>
-            <NavLink icon="map-outline" href="/projects">Capture Map</NavLink>
+            <NavLink icon="image-outline" href="/photo">Gallery</NavLink>
+            <NavLink icon="map-outline" href="/photo/map">Capture Map</NavLink>
             <NavLink
               icon="calendar-outline"
-              href="/projects"
+              href="/photo/book"
               chip="ATL"
               chipIcon="location-outline"
+              chipColor={chipColor}
             >
               Booking
             </NavLink>
           </div>
           <div class="navSection">
             <p>Ventures</p>
-            <NavLink icon="stats-chart-outline" href="/projects">
+            <NavLink icon="stats-chart-outline" href="/quant">
               Quant Research
             </NavLink>
             <NavLink
               icon="newspaper-outline"
-              href="/projects"
+              href="/blog"
               chip="11K"
               chipIcon="eye-outline"
+              chipColor={chipColor}
             >
               Blog
             </NavLink>
-            <NavLink icon="baseball-outline" href="/projects">r/mlbVis</NavLink>
+            <NavLink icon="baseball-outline" href="/mlbVis">r/mlbVis</NavLink>
           </div>
           <div class="navSection">
             <p>Connect</p>
-            <NavLink icon="mail-unread-outline" href="/projects">Email</NavLink>
-            <NavLink icon="logo-twitter-outline" href="/projects">
+            <NavLink icon="mail-unread-outline" href="mailto:blake@sanie.com">
+              Email
+            </NavLink>
+            <NavLink icon="logo-twitter-outline" href="/twitter">
               Twitter
             </NavLink>
-            <NavLink icon="logo-instagram" href="/projects">Instagram</NavLink>
-            <NavLink icon="logo-strava-outline" href="/projects">
-              Strava
-            </NavLink>
+            <NavLink icon="logo-instagram" href="/instagram">Instagram</NavLink>
+            <NavLink icon="logo-strava-outline" href="/strava">Strava</NavLink>
           </div>
         </ul>
       </nav>
@@ -128,6 +135,7 @@ console.log("entire astro", Astro);
     headerHeightTransitionDuration,
     headerPositionTransitionDuration,
     mobileMaxWidth,
+    navPadding,
   }}
 >
   let menuExpanded = false;
@@ -267,6 +275,75 @@ console.log("entire astro", Astro);
     }
     menuExpanded = !menuExpanded;
   });
+
+  const nav = document.querySelector("nav");
+  const anchors = document.querySelectorAll("nav a");
+  const mouseOffSections = document.querySelectorAll(
+    //".navSection, .navSection p"
+    "nav"
+  );
+
+  let activeNavHoverZone = document.querySelector(".active .navHoverZone");
+  let hoverZone;
+  let baseHeight;
+  let baseY;
+
+  const moveHoverToAnchor = (anchor) => {
+    if (!hoverZone) {
+      // debugger;
+      baseHeight = activeNavHoverZone.clientHeight;
+      baseY = activeNavHoverZone.parentElement.offsetTop;
+      // const leftPad = nav.style.getPropertyValue("navPadding");
+      // console.log(nav);
+      // console.log("BASEY", baseY, activeNavHoverZone.style, leftPad);
+      hoverZone = nav.appendChild(activeNavHoverZone);
+      hoverZone.style.transform = `translateY(${baseY}px)`;
+      hoverZone.style.marginLeft = navPadding * 0.5 + "em";
+      // hoverZone.style.display = "block";
+      hoverZone.style.height = baseHeight + "px";
+    }
+    if (!anchor) {
+      console.log("off");
+      // alert("back to default");
+      // debugger;
+      hoverZone.style.transform = `translateY(${baseY}px)`;
+      hoverZone.style.height = baseHeight + "px";
+      return;
+    }
+    // const originY = baseY;
+    const targetY = anchor.offsetTop;
+    // console.log(targetY);
+    // console.log(navHoverZone, anchor);
+    // console.log(anchor);
+    console.log(
+      anchor,
+      "offset by",
+      baseY - targetY,
+      "baseY",
+      baseY,
+      "targetY",
+      targetY
+    );
+    hoverZone.style.transform = `translateY(${targetY}px)`;
+    // hoverZone.style.height = anchor.innerHeight + "px";
+  };
+
+  for (let i = 0; i < anchors.length; i++) {
+    anchors[i].addEventListener("mouseenter", (e) => {
+      // console.log("entered a", anchors[i]);
+      moveHoverToAnchor(anchors[i]);
+    });
+  }
+  for (let i = 0; i < mouseOffSections.length; i++) {
+    mouseOffSections[i].addEventListener("mouseleave", (e) => {
+      // console.log("entered a", anchors[i]);
+      moveHoverToAnchor();
+    });
+  }
+  // nav.addEventListener("mouseleave", (e) => {
+  //   console.log("LEAVE");
+  //   moveHoverToAnchor();
+  // });
 </script>
 
 <style
@@ -278,6 +355,7 @@ console.log("entire astro", Astro);
     headerPositionTransitionDuration: headerPositionTransitionDuration + "s",
     headerColor,
     mobileMaxWidth: mobileMaxWidth + "px",
+    navPadding: navPadding + "em",
   }}
 >
   body {
@@ -324,7 +402,7 @@ console.log("entire astro", Astro);
   }
   main {
     flex: 1;
-    background-color: white;
+    /* background-color: white; */
     margin-left: var(--headerWidth);
   }
   #logo {
@@ -347,7 +425,10 @@ console.log("entire astro", Astro);
   }
   nav {
     width: 100%;
-    padding-left: var(--side-padding);
+    position: relative;
+    --borderRounding: 0.6em;
+    --flangeRadius: 0.6em;
+    /* padding-left: var(--side-padding); */
     /* border: 1px solid red; */
   }
   nav ul {
@@ -373,12 +454,14 @@ console.log("entire astro", Astro);
     margin-bottom: 1.4em;
     display: flex;
     flex-direction: column;
+    /* border: 1px solid red; */
   }
   .navSection p {
     font-size: 0.8em;
     opacity: 0.8;
     font-weight: 600;
     margin-bottom: 0.5em;
+    padding-left: var(--navPadding);
     /* font-weight: 600; */
   }
 
@@ -442,7 +525,7 @@ console.log("entire astro", Astro);
       padding: 0 0.3em;
     }
     nav {
-      padding: 0 var(--side-padding);
+      --navPadding: 0.6em;
     }
     nav ul {
       flex-direction: row;
@@ -501,8 +584,10 @@ console.log("entire astro", Astro);
     padding: 0;
     box-sizing: border-box;
   }
-  a {
+  a,
+  a:visited,
+  a:active {
     text-decoration: initial;
-    color: inherit;
+    color: white;
   }
 </style>
