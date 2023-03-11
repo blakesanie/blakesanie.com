@@ -1,6 +1,8 @@
 ---
 const { icon, ...attrs } = Astro.props;
-let { default: innerHTML } = await import(`/public/ionicons/${icon}.svg?raw`);
+let { default: innerHTML } = await import(
+  icon.startsWith("/") ? icon + "?raw" : `/public/ionicons/${icon}.svg?raw`
+);
 const parts = innerHTML.split("<svg");
 let customSvg = "<svg";
 for (const [key, value] of Object.entries(attrs)) {
@@ -10,16 +12,6 @@ innerHTML = parts.join(customSvg);
 if (attrs["style"]) {
   console.log("attrs", attrs, innerHTML);
 }
-// console.log(parts, innerHTML);
 ---
 
 <Fragment set:html={innerHTML} />
-<!-- <svg><g><Fragment set:html={innerHTML} /></g></svg>
-
-<style>
-  g {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-</style> -->

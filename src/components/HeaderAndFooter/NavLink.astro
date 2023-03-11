@@ -8,7 +8,6 @@ console.log("pathname", Astro.url.pathname, "href", href, "active", active);
 ---
 
 <li class:list={[{ active: active }]}>
-  <!-- <div class="navHoverZone"></div> -->
   <a href={href}>
     <Icon icon={icon} class="icon" />
     <span class="navLinkText">
@@ -18,10 +17,6 @@ console.log("pathname", Astro.url.pathname, "href", href, "active", active);
       chip && (
         <div class="navChips">
           <span class="navChip">
-            {chip}
-            {chipIcon && <Icon icon={chipIcon} class="icon" />}
-          </span>
-          <span class="navChip navChipNested">
             {chip}
             {chipIcon && <Icon icon={chipIcon} class="icon" />}
           </span>
@@ -40,78 +35,40 @@ console.log("pathname", Astro.url.pathname, "href", href, "active", active);
       position: relative;
       display: flex;
       align-items: center;
-      padding: 0 var(--navPadding);
-      /* padding-left: calc(0.6em + var(--side-padding));
-      padding-right: 0.6em; */
+      padding: 0 calc(var(--navPadding) * 2);
       font-size: 1em;
-      /* border: 1px solid red; */
       border-radius: var(--borderRounding);
-      /* backdrop-filter: saturate(0) contrast(0.5);
-      opacity: 0.2; */
-      /* padding-right: var(--side-padding); */
     }
 
-    a.hover .icon,
-    a:hover .icon,
-    .active .icon {
-      /* opacity: 1; */
-    }
-    /* a,
-    a::before,
-    a::after {
-    }
-    a:hover,
-    a:hover::before,
-    a:hover::after {
-    }
-
-    .active a,
-    .active a::before,
-    .active a::after {
-      background-color: rgba(255, 255, 255, 1);
-    }
-
-    .active * {
-      color: black;
-    }
-    .active .icon {
-      filter: none !important;
-    } */
     .navLinkText {
       flex: 1;
       padding: 0.6em 0;
     }
     .navChips {
       position: relative;
+      margin-left: 1em;
     }
     .navChip {
-      /* flex: 1; */
-      /* background-color: var(--headerColorOpaque); */
-      /* background-color: rgba(255, 255, 255, 0.2); */
-      /* backdrop-filter: saturate(100%); */
-      /* filter: saturate(1.3); */
-      /* color: black; */
       border-radius: 100px;
       padding: 0.3em 0.8em;
       font-size: 0.8em;
       display: flex;
       align-items: center;
-      margin-left: 1em;
+      /* left: 1em; */
       transition: background-color 0.2s ease;
-      /* box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2); */
-      /* border: 2px solid rgba(0, 0, 0, 0.2); */
       z-index: 999999;
-      /* justify-self: flex-end; */
-      /* self */
     }
-    .navChipNested {
+    .navChip::after {
+      content: "";
       position: absolute;
       background-color: rgba(0, 0, 0, 0.01);
       backdrop-filter: brightness(0.83) contrast(1.3) saturate(130%);
       top: 0;
       left: 0;
-      color: transparent;
-      /* display: none; */
+      right: 0;
+      bottom: 0;
+      border-radius: 100px;
+      z-index: 999999;
     }
     .icon {
       width: 1.2em !important;
@@ -120,7 +77,6 @@ console.log("pathname", Astro.url.pathname, "href", href, "active", active);
       filter: contrast(0.5) brightness(1000);
       opacity: 0.5;
       transition: opacity 0.2s ease;
-      /* color: red; */
     }
     .navChip .icon {
       margin: 0;
@@ -128,54 +84,14 @@ console.log("pathname", Astro.url.pathname, "href", href, "active", active);
       opacity: 1;
     }
 
-    .navChipNested .icon {
-      opacity: 0;
-      visibility: hidden;
-    }
-
     @media screen and (min-width: 801px) {
       a {
         border-bottom-right-radius: 0;
         border-top-right-radius: 0;
-        /* padding-right: calc(0.6em + var(--side-padding)); */
       }
       li {
         padding-right: 0;
       }
-      /* a::before,
-      a::after {
-        content: "";
-        height: calc(2 * var(--flangeRadius));
-        width: calc(2 * var(--flangeRadius));
-        position: absolute;
-        right: -0.6em;
-        right: 0;
-      }
-      a::before {
-        top: 0;
-        transform: translate(50%, -50%);
-        mask-image: radial-gradient(
-          circle at top left,
-          transparent var(--flangeRadius),
-          black var(--flangeRadius)
-        );
-        mask-position: top left;
-        mask-repeat: no-repeat;
-        mask-size: 50% 50%;
-      }
-
-      a::after {
-        bottom: 0;
-        transform: translate(50%, 50%);
-        mask-image: radial-gradient(
-          circle at bottom left,
-          transparent var(--flangeRadius),
-          black var(--flangeRadius)
-        );
-        mask-position: bottom left;
-        mask-repeat: no-repeat;
-        mask-size: 50% 50%;
-      } */
     }
   </style>
 </li>
