@@ -4,18 +4,29 @@ import Icon from "./Icon.astro";
 ---
 
 <div class="navHoverZone" style={style}>
-  <!-- <Icon icon="/public/misc/invertedCurve.svg" class="curveIcon" /> -->
+  <Icon icon="/public/misc/invertedCurve.svg" class="curveIcon" />
+  <Icon
+    icon="/public/misc/invertedCurve.svg"
+    class="curveIcon"
+    id="curveIconFlip"
+  />
 </div>
 
-<!-- <style>
+<style>
   .curveIcon {
     position: absolute;
     top: 0;
-    right: 0;
+    right: var(--navPadding);
     width: var(--navPadding);
     height: calc(var(--navPadding) / 5 * 6);
+    transform: translateY(calc(-100% / 6 * 5));
   }
-</style> -->
+  #curveIconFlip {
+    top: auto;
+    bottom: 0;
+    transform: translateY(calc(100% / 6 * 5)) scaleY(-1);
+  }
+</style>
 
 <style is:global>
   .navHoverZone {
@@ -30,7 +41,7 @@ import Icon from "./Icon.astro";
     left: 0;
   }
   .active .navHoverZone {
-    margin-left: calc(var(--navPadding) * -1);
+    margin-left: calc(var(--navPadding) * 1);
     height: 100%;
   }
   .isHome .navHoverZone {
@@ -39,10 +50,16 @@ import Icon from "./Icon.astro";
     background-color: rgba(255, 255, 255, 0.14);
     width: calc(100% - var(--navPadding) * 2);
   }
+  .isHome .navHoverZone > * {
+    display: none;
+  }
   .hoverZoneTransition {
     transition: opacity 0.2s ease, transform 0.2s ease;
   }
   @media screen and (max-width: 800px) {
+    .navHoverZone > * {
+      display: none;
+    }
     .navHoverZone {
       border-radius: var(--borderRounding) !important;
       margin-left: 0 !important;
