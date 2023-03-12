@@ -1,5 +1,104 @@
 ---
 import HeaderAndFooter from "../components/HeaderAndFooter/index.astro";
+import HomePageSection from "../components/HomePageSection.astro";
+const markupData = [
+  // {
+  //   imageUrl: "/images/macbook3.jpeg",
+  //   links: [],
+  // },
+  {
+    text: [
+      "I am a graduate student studying Computer Science at the Georgia Institute of Technology, concentrating in Machine Learning.",
+    ],
+    imageUrl: "/images/bg/crosland.jpg",
+    links: [],
+  },
+  {
+    text: [
+      "Ultimately, I am an exuberant software engineer at heart, and a problem-solver at my core,",
+    ],
+    imageUrl: "/images/bg/macCode.jpg",
+    links: [
+      {
+        href: "/projects",
+        label: "Projects",
+      },
+      {
+        href: "/github",
+        label: "GitHub",
+        target: "_blank",
+        nofollow: true,
+      },
+    ],
+  },
+  {
+    text: ["With a sense of photographic expression put on full display."],
+    imageUrl: "/images/portfolio/Manhattan_Bridge.jpg",
+    links: [
+      {
+        href: "/photo",
+        label: "Gallery",
+      },
+      {
+        href: "/photo?map=true",
+        label: "Capture Map",
+        nofollow: true,
+      },
+      {
+        href: "/photo/gear",
+        label: "Gear",
+      },
+    ],
+  },
+  {
+    text: ["I encourage you to learn about my various ventures, old and new,"],
+    imageUrl: "/images/bg/mandel.png",
+    links: [{ href: "/blog", label: "Blog", target: "_blank", nofollow: true }],
+  },
+  {
+    text: [
+      "Reach out with professional inquiries surrounding new opportunities,",
+    ],
+    imageUrl: "/images/bg/startup.jpg",
+    links: [
+      {
+        href: "/linkedin",
+        label: "LinkedIn",
+        target: "_blank",
+        nofollow: true,
+      },
+      {
+        href: "/resume",
+        label: "Resume",
+        target: "_blank",
+        nofollow: true,
+      },
+    ],
+  },
+  {
+    text: ["Or connect with me further through my online presence."],
+    imageUrl: "/images/bg/connect.jpg",
+    links: [
+      {
+        href: "mailto:blake@sanie.com",
+        label: "Email",
+        nofollow: true,
+      },
+      {
+        href: "/instagram",
+        label: "Instagram",
+        target: "_blank",
+        nofollow: true,
+      },
+      {
+        href: "/twitter",
+        label: "Twitter",
+        target: "_blank",
+        nofollow: true,
+      },
+    ],
+  },
+];
 ---
 
 <HeaderAndFooter color="rgba(0,0,0,0.8)">
@@ -14,83 +113,125 @@ import HeaderAndFooter from "../components/HeaderAndFooter/index.astro";
       display: none;
     }
   </style>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
-  <p>sdasd</p>
+  <HomePageSection style="max-height: 1000px;">
+    <div class="nameZone fullCenter">
+      <div id="wwdc">
+        <img src="/images/wwdc_blake.png" />
+      </div>
+      <h1 class="typed">
+        <span id="typed"> Hi, I'm Blake.</span>
+      </h1>
+    </div>
+    <img id="mainMac" src="/images/bg/macbook.jpg" />
+  </HomePageSection>
+  {
+    markupData.map((data, i) => (
+      <HomePageSection
+        imageUrl={data.imageUrl}
+        text={data.text}
+        links={data.links}
+        class="sectionTransitionParent"
+      />
+    ))
+  }
 </HeaderAndFooter>
+
+<script>
+  const sections = document.querySelectorAll(".sectionTransitionParent");
+
+  const onScreen: Set<Element> = new Set();
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const intersecting = entry.isIntersecting;
+        // console.log(entry.target, "intersecting", intersecting);
+        if (intersecting) {
+          onScreen.add(entry.target);
+        } else {
+          onScreen.delete(entry.target);
+        }
+      }
+    },
+    {
+      rootMargin: "200px",
+    }
+  );
+
+  for (let i = 0; i < sections.length; i++) {
+    const section = sections[i];
+    observer.observe(section);
+  }
+
+  window.addEventListener("scroll", (e) => {
+    // console.log(
+    //   "onscreen",
+    //   Array.from(onScreen).map((element: Element) =>
+    //     element.querySelector("h2")?.textContent?.substring(0, 10)
+    //   )
+    // );
+    const screenCenter = window.scrollY + window.innerHeight / 2;
+    onScreen.forEach((section) => {
+      if (!(section instanceof HTMLElement)) {
+        return;
+      }
+      const sectionCenter = section.offsetTop + section.offsetHeight / 2;
+      const diff = (sectionCenter - screenCenter) / section.offsetHeight;
+      const bg = section.querySelector(".bg");
+      if (!(bg instanceof HTMLElement)) {
+        return;
+      }
+      // bg.style.transform = `translateY(${-diff * 300}px)`;
+      bg.style.opacity = `${0.2 + 0.6 * Math.max(0, 1 - Math.abs(diff) * 1)}`;
+      const children = section.childNodes;
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i];
+        if (!(child instanceof HTMLElement)) {
+          continue;
+        }
+        if (!child.classList.contains("bg")) {
+          child.style.transform = `translateY(${diff * 200}px)`;
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  body {
+    color: white;
+  }
+  .nameZone {
+    padding: 2em;
+    border: 1px solid green;
+  }
+  #wwdc {
+    width: 9em;
+    padding: 0.5em;
+    background: radial-gradient(
+      closest-side at 4.5em 5em,
+      rgb(255, 166, 0) 0%,
+      transparent 100%
+    );
+    overflow: visible;
+  }
+  #wwdc img {
+    width: 100%;
+  }
+  h1 {
+    font-size: 3.4em;
+    /* margin-top: 0.5em; */
+  }
+  .fullCenter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  #mainMac {
+    flex: 1;
+    width: 100%;
+    object-fit: cover;
+    border: 1px solid yellow;
+  }
+</style>

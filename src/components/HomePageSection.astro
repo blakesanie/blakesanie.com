@@ -1,0 +1,72 @@
+---
+const { text, imageUrl, links, style, class: className } = Astro.props;
+const maxImageOpacity = 0.5;
+---
+
+<div style={style} class:list={["section", className]}>
+  {imageUrl && <img src={imageUrl} class="bg" />}
+  <!-- {(text || links) && <} -->
+  {text && <h2>{text}</h2>}
+  {
+    links && (
+      <div class="links">
+        {links.map(({ target, href, label }) => {
+          return (
+            <a class="link" href={href} target={target}>
+              {label}
+            </a>
+          );
+        })}
+      </div>
+    )
+  }
+  <slot />
+</div>
+
+<style>
+  .section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    transition: transform 0.1s ease-out;
+    /* opacity: 0.5; */
+    /* filter: brightness(0.5); */
+  }
+  h2 {
+    font-size: 2.7em;
+    text-align: center;
+    padding: 0 2em;
+  }
+  .links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1em;
+  }
+  .link {
+    font-size: 1.3em;
+    margin: 0.5em;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.5em 1em;
+    backdrop-filter: blur(5px);
+    border-radius: 8px;
+    /* border: 2px solid rgba(255, 255, 255, 0.2); */
+  }
+</style>

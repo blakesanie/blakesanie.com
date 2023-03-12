@@ -430,6 +430,8 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     padding: 1.4em 0;
     --side-padding: 0.7em;
     overflow-y: scroll;
+    isolation: isolate;
+    z-index: 10;
     /* padding-left: var(--side-padding); */
   }
   #hamburger {
@@ -455,6 +457,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     flex: 1;
     /* background-color: white; */
     margin-left: var(--headerWidth);
+    isolation: isolate;
   }
   #logo {
     font-size: 1.5em;
@@ -576,7 +579,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       padding: 0 0.3em;
     }
     nav {
-      --navPadding: 0.7em;
+      --navPadding: 0.4em;
       padding: 0 0.5em;
     }
     nav ul {
