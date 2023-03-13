@@ -1,10 +1,18 @@
 ---
-const { text, imageUrl, links, style, class: className } = Astro.props;
+import FullScreenImage from "./Image/FullScreenImage.astro";
+const {
+  text,
+  imageUrl,
+  links,
+  style,
+  class: className,
+  ...props
+} = Astro.props;
 const maxImageOpacity = 0.5;
 ---
 
-<div style={style} class:list={["section", className]}>
-  {imageUrl && <img src={imageUrl} class="bg" />}
+<div style={style} class:list={["section", className]} {...props}>
+  {imageUrl && <FullScreenImage src={imageUrl} class="bg" />}
   <!-- {(text || links) && <} -->
   {text && <h2>{text}</h2>}
   {
@@ -44,7 +52,7 @@ const maxImageOpacity = 0.5;
     height: 100%;
     object-fit: cover;
     z-index: -1;
-    transition: transform 0.1s ease-out;
+    /* transition: transform 0.1s ease-out; */
     /* opacity: 0.5; */
     /* filter: brightness(0.5); */
   }

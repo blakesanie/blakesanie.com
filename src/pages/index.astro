@@ -1,6 +1,7 @@
 ---
 import HeaderAndFooter from "../components/HeaderAndFooter/index.astro";
 import HomePageSection from "../components/HomePageSection.astro";
+import Particles from "../components/Particles.astro";
 const markupData = [
   // {
   //   imageUrl: "/images/macbook3.jpeg",
@@ -113,8 +114,22 @@ const markupData = [
       display: none;
     }
   </style>
-  <HomePageSection style="max-height: 1000px;">
-    <div class="nameZone fullCenter">
+  <HomePageSection id="firstSection">
+    <!-- <canvas id="canvas3d"></canvas> -->
+    <iframe id="canvas3d" src="/hero/index.html"></iframe>
+    <div id="wwdc">
+      <img src="/images/wwdc_blake.png" />
+    </div>
+    <h1><span id="typed">Hi, I'm Blake.</span></h1>
+    <!-- <script
+      type="module"
+      src="https://unpkg.com/@splinetool/viewer@0.9.261/build/spline-viewer.js"
+    ></script>
+    <spline-viewer
+      id="spline-viewer"
+      url="https://prod.spline.design/KDmGPoqNmLmqK9H2/scene.splinecode"
+    ></spline-viewer> -->
+    <!-- <div class="nameZone fullCenter">
       <div id="wwdc">
         <img src="/images/wwdc_blake.png" />
       </div>
@@ -123,6 +138,7 @@ const markupData = [
       </h1>
     </div>
     <img id="mainMac" src="/images/bg/macbook.jpg" />
+    <Particles id="particles-js" /> -->
   </HomePageSection>
   {
     markupData.map((data, i) => (
@@ -136,32 +152,68 @@ const markupData = [
   }
 </HeaderAndFooter>
 
+<!-- <script>
+  // import { Application } from "@splinetool/runtime";
+  import { Application } from "../../public/hero/runtime.js";
+  const canvas = document.getElementById("canvas3d");
+  const app = new Application(canvas);
+  // spline.load("https://prod.spline.design/KDmGPoqNmLmqK9H2/scene.splinecode");
+  app.load("/hero/scene.splinecode");
+</script> -->
+
 <script>
+  // document.getElementById("canvas3d").onload = function () {
+  //   alert("myframe is loaded");
+  // };
+  import Typed from "typed.js";
+  setTimeout(() => {
+    let typed = new Typed("#typed", {
+      strings: ["Hi, I'm Blake", ""],
+      typeSpeed: 50,
+      backSpeed: 40,
+      loop: false,
+      // loopCount: 1,
+      onComplete: (param) => {
+        typed.destroy();
+        typed = new Typed("#typed", {
+          strings: [
+            "^500 Scroll to learn more... ^1000",
+            "^500 Hi, ^500I'm Blake. ^2000",
+          ],
+          typeSpeed: 50,
+          backSpeed: 40,
+          loop: true,
+          smartBackspace: true,
+        });
+      },
+    });
+  }, 4000);
+
   const sections = document.querySelectorAll(".sectionTransitionParent");
 
-  const onScreen: Set<Element> = new Set();
+  // const onScreen: Set<Element> = new Set();
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        const intersecting = entry.isIntersecting;
-        // console.log(entry.target, "intersecting", intersecting);
-        if (intersecting) {
-          onScreen.add(entry.target);
-        } else {
-          onScreen.delete(entry.target);
-        }
-      }
-    },
-    {
-      rootMargin: "200px",
-    }
-  );
+  // const observer = new IntersectionObserver(
+  //   (entries) => {
+  //     for (const entry of entries) {
+  //       const intersecting = entry.isIntersecting;
+  //       // console.log(entry.target, "intersecting", intersecting);
+  //       if (intersecting) {
+  //         onScreen.add(entry.target);
+  //       } else {
+  //         onScreen.delete(entry.target);
+  //       }
+  //     }
+  //   },
+  //   {
+  //     rootMargin: "200px",
+  //   }
+  // );
 
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i];
-    observer.observe(section);
-  }
+  // for (let i = 0; i < sections.length; i++) {
+  //   const section = sections[i];
+  //   observer.observe(section);
+  // }
 
   window.addEventListener("scroll", (e) => {
     // console.log(
@@ -171,7 +223,7 @@ const markupData = [
     //   )
     // );
     const screenCenter = window.scrollY + window.innerHeight / 2;
-    onScreen.forEach((section) => {
+    sections.forEach((section) => {
       if (!(section instanceof HTMLElement)) {
         return;
       }
@@ -201,6 +253,12 @@ const markupData = [
   body {
     color: white;
   }
+  #firstSection {
+    max-height: min(1000px, 150vw);
+  }
+  #firstSection > *:not(iframe) {
+    pointer-events: none;
+  }
   .nameZone {
     padding: 2em;
     border: 1px solid green;
@@ -208,18 +266,28 @@ const markupData = [
   #wwdc {
     width: 9em;
     padding: 0.5em;
-    background: radial-gradient(
+    /* background: radial-gradient(
       closest-side at 4.5em 5em,
-      rgb(255, 166, 0) 0%,
+      rgba(255, 123, 0, 0.344) 0%,
       transparent 100%
-    );
+    ); */
     overflow: visible;
+    z-index: 9;
+    animation: fadeIn 6s ease-in;
   }
   #wwdc img {
     width: 100%;
   }
   h1 {
+    animation: fadeIn 3s ease-in;
+    z-index: 9;
     font-size: 3.4em;
+    /* mix-blend-mode: soft-light; */
+    opacity: 1;
+    /* pointer-events: none; */
+    /* filter: contrast(4); */
+    /* backdrop-filter: contrast(4); */
+    /* clip-path: ; */
     /* margin-top: 0.5em; */
   }
   .fullCenter {
@@ -233,5 +301,29 @@ const markupData = [
     width: 100%;
     object-fit: cover;
     border: 1px solid yellow;
+  }
+  :global(#particles-js) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* z-index: -1; */
+  }
+  :global(#canvas3d) {
+    position: absolute;
+    width: 100%;
+    min-width: 60vh;
+    height: 100%;
+    border: none;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 </style>

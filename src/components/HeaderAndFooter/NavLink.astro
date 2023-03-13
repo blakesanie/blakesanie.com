@@ -4,7 +4,6 @@ import HoverZone from "./HoverZone.astro";
 const { icon, chip, chipIcon, chipColor, href } = Astro.props;
 
 const active = Astro.url.pathname.startsWith(href);
-console.log("pathname", Astro.url.pathname, "href", href, "active", active);
 ---
 
 <li class:list={[{ active: active }]}>

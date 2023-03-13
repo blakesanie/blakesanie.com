@@ -1,0 +1,77 @@
+---
+// import sharp from "sharp";
+
+const { src, ...props } = Astro.props;
+const q = Astro.props.quality || 100;
+// const path = src;
+// const imageData = await import(/* @vite-ignore */ path);
+// const image = await sharp(imageData.default);
+// const resized = await image.resize(200);
+// const newPath = path.replace("public", "public/optimized");
+// console.log(path, "=>", newPath);
+// await resized.toFile(newPath);
+// // console.log("imageData", imageData);
+// // console.log("full screen image path", path);
+// const image = await sharp(imageData.default);
+// console.log("original image", Object.keys(image));
+// const pathSplit = path.split(".");
+// const ext = pathSplit.slice(-1)[0];
+// const beforeExt = pathSplit.slice(0, -1).join(".");
+
+// const widths = [2000, 1600, 1200, 800, 400];
+
+// for (const width of widths) {
+//   const filePath = `/public/optimized${beforeExt}__w=${width}&q=${q}.${ext}`;
+//   let importedImage = await import(/* @vite-ignore */ filePath);
+//   if (Object.keys(importedImage).length > 1) {
+//     continue;
+//   }
+//   console.log("NOT FOUND", filePath);
+//   const resized = await image.resize(width);
+//   await resized.toFile(filePath);
+//   console.log("written to", filePath);
+// }
+
+// try {
+//   console.log("imageData", imageData.default);
+//   image.resize(200);
+//   // const image = sharp(imageData.default);
+//   // console.log("image", image);
+//   // const pathSplit = path.split(".");
+//   // const ext = pathSplit.slice(-1)[0];
+//   // const beforeExt = pathSplit.slice(0, -1).join(".");
+//   // const metadata = await image.metadata();
+//   // const imageData = await import(/* @vite-ignore */ path + "asdasds");
+// } catch (error) {
+//   throw Error("error loading file " + path);
+
+// interface resizeOptions {
+//   width?: number;
+//   height?: number;
+// }
+
+// const resizeOptions: resizeOptions = {};
+// for (const edge of longEdges) {
+//   const filePath = `/public/optimized/${beforeExt}-w=${edge}&q=${q}.${ext}`;
+//   try {
+//     // const fileExists = await import(/* @vite-ignore */ filePath);
+//   } catch (error) {
+//     console.log("error", error);
+//   }
+//   // console.log("exists", fileExists);
+//   if (metadata.width > metadata.height) {
+//     resizeOptions.width = edge;
+//   } else {
+//     resizeOptions.height = edge;
+//   }
+// }
+// console.log("image", image.resize(200));
+---
+
+<!-- <picture>
+  <source media="(min-width: 650px)" srcset="./src/images/img-large.png" />
+  <source media="(min-width: 465px)" srcset="./src/images/img-medium.png" />
+  For browsers that do not support picture element
+  
+</picture> -->
+<img src={src} {...props} />
