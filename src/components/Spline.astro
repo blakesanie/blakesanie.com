@@ -1,0 +1,23 @@
+---
+const { ...props } = Astro.props;
+---
+
+<!-- <iframe
+  src="https://my.spline.design/hero-571064fe63d5da8731de8c887025fa22/"
+  {...props}></iframe> --><!-- <script
+  type="module"
+  src="https://unpkg.com/@splinetool/viewer@0.9.261/build/spline-viewer.js"
+></script>
+<spline-viewer
+  {...props}
+  url="https://prod.spline.design/KDmGPoqNmLmqK9H2/scene.splinecode"
+></spline-viewer> -->
+<canvas {...props}></canvas>
+
+<script>
+  import { Application } from "@splinetool/runtime";
+
+  const canvas = document.getElementById("canvas3d");
+  const app = new Application(canvas);
+  app.load("https://prod.spline.design/KDmGPoqNmLmqK9H2/scene.splinecode");
+</script>

@@ -1,15 +1,16 @@
 ---
 const { style } = Astro.props;
-import Icon from "./Icon.astro";
+import Icon from "astro-icon";
 ---
 
 <div class="navHoverZone" style={style}>
-  <Icon icon="/misc/invertedCurve.svg" class="curveIcon" />
-  <Icon icon="/misc/invertedCurve.svg" class="curveIcon" id="curveIconFlip" />
+  <Icon name="invertedCurve" />
+  <Icon name="invertedCurve" id="curveIconFlip" />
 </div>
 
 <style>
-  .curveIcon {
+  [astro-icon] {
+    color: white;
     position: absolute;
     top: 0;
     right: var(--navPadding);
@@ -33,6 +34,9 @@ import Icon from "./Icon.astro";
     margin-left: calc(var(--navPadding));
     border-top-left-radius: var(--borderRounding);
     border-bottom-left-radius: var(--borderRounding);
+    /* mix-blend-mode: soft-light; */
+    /* background-color: white; */
+    /* backdrop-filter: invert(100%); */
     backdrop-filter: invert(100%) grayscale(100%) brightness(2.4);
     left: 0;
   }

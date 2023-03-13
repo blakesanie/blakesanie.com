@@ -1,5 +1,6 @@
 ---
 import FullScreenImage from "./Image/FullScreenImage.astro";
+import { Img } from "astro-imagetools/components";
 const {
   text,
   imageUrl,
@@ -12,7 +13,25 @@ const maxImageOpacity = 0.5;
 ---
 
 <div style={style} class:list={["section", className]} {...props}>
-  {imageUrl && <FullScreenImage src={imageUrl} class="bg" />}
+  {
+    imageUrl && (
+      <Img
+        src={imageUrl}
+        alt="A random image"
+        decoding="async"
+        loading="lazy"
+        placeholder="blurred"
+        format="webp"
+        breakpoints={[400, 800, 1200, 1600, 2000]}
+        quality={50}
+        attributes={{
+          img: {
+            class: "bg",
+          },
+        }}
+      />
+    )
+  }
   <!-- {(text || links) && <} -->
   {text && <h2>{text}</h2>}
   {
@@ -44,14 +63,15 @@ const maxImageOpacity = 0.5;
     justify-content: center;
     overflow: hidden;
   }
-  .bg {
+  :global(.bg) {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
     object-fit: cover;
     z-index: -1;
+    opacity: 0.6;
     /* transition: transform 0.1s ease-out; */
     /* opacity: 0.5; */
     /* filter: brightness(0.5); */

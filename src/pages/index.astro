@@ -1,7 +1,8 @@
 ---
 import HeaderAndFooter from "../components/HeaderAndFooter/index.astro";
 import HomePageSection from "../components/HomePageSection.astro";
-import Particles from "../components/Particles.astro";
+import Spline from "../components/Spline.astro";
+import { Img } from "astro-imagetools/components";
 const markupData = [
   // {
   //   imageUrl: "/images/macbook3.jpeg",
@@ -34,7 +35,7 @@ const markupData = [
   },
   {
     text: ["With a sense of photographic expression put on full display."],
-    imageUrl: "/images/portfolio/Manhattan_Bridge.jpg",
+    imageUrl: "/images/bg/macCode.jpg",
     links: [
       {
         href: "/photo",
@@ -116,9 +117,18 @@ const markupData = [
   </style>
   <HomePageSection id="firstSection">
     <!-- <canvas id="canvas3d"></canvas> -->
-    <iframe id="canvas3d" src="/hero/index.html"></iframe>
+    <!-- <iframe id="canvas3d" src="/hero/index.html"></iframe> -->
+    <Spline id="canvas3d" />
     <div id="wwdc">
-      <img src="/images/wwdc_blake.png" />
+      <!-- <img src="/images/wwdc_blake.png" /> -->
+      <Img
+        src="/images/wwdc_blake.png"
+        alt="Blake in WWDC style"
+        breakpoints={[200]}
+        quality={20}
+        preload="webp"
+        layout="fullWidth"
+      />
     </div>
     <h1><span id="typed">Hi, I'm Blake.</span></h1>
     <!-- <script
@@ -233,8 +243,8 @@ const markupData = [
       if (!(bg instanceof HTMLElement)) {
         return;
       }
-      // bg.style.transform = `translateY(${-diff * 300}px)`;
-      bg.style.opacity = `${0.2 + 0.6 * Math.max(0, 1 - Math.abs(diff) * 1)}`;
+      bg.style.transform = `translateY(${-diff * 100}px)`;
+      // bg.style.opacity = `${0.2 + 0.6 * Math.max(0, 1 - Math.abs(diff) * 1)}`;
       const children = section.childNodes;
       for (let i = 0; i < children.length; i++) {
         const child = children[i];
@@ -243,6 +253,8 @@ const markupData = [
         }
         if (!child.classList.contains("bg")) {
           child.style.transform = `translateY(${diff * 200}px)`;
+        } else {
+          // child.style.transform = `translateY(${diff * 300}px)`;
         }
       }
     });
@@ -256,7 +268,7 @@ const markupData = [
   #firstSection {
     max-height: min(1000px, 150vw);
   }
-  #firstSection > *:not(iframe) {
+  #firstSection > *:not(#canvas3d) {
     pointer-events: none;
   }
   .nameZone {
@@ -273,13 +285,13 @@ const markupData = [
     ); */
     overflow: visible;
     z-index: 9;
-    animation: fadeIn 6s ease-in;
+    /* animation: fadeIn 6s ease-in; */
   }
   #wwdc img {
     width: 100%;
   }
   h1 {
-    animation: fadeIn 3s ease-in;
+    /* animation: fadeIn 3s ease-in; */
     z-index: 9;
     font-size: 3.4em;
     /* mix-blend-mode: soft-light; */

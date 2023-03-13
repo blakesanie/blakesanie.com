@@ -1,7 +1,7 @@
 ---
 import { GoogleFontsOptimizer } from "astro-google-fonts-optimizer";
 import HoverZone from "./HoverZone.astro";
-import Icon from "./Icon.astro";
+import Icon from "astro-icon";
 import NavLink from "./NavLink.astro";
 const mobileMaxWidth = 800; // still manually declared in media query declaration
 const headerWidth = 200;
@@ -10,7 +10,6 @@ const headerHeightTransitionDuration = 0.1;
 const headerPositionTransitionDuration = 0.3;
 const headerColor = Astro.props.color || "rgb(0, 126, 204, 0.8)";
 const headerColorOpaque = "#1c81ce";
-const chipColor = Astro.props.chipColor || headerColor;
 const navPadding = 0.6;
 const isHome = Astro.url.pathname === "/";
 ---
@@ -45,77 +44,79 @@ const isHome = Astro.url.pathname === "/";
         <ul>
           <div class="navSection">
             <p>Engineering</p>
-            <NavLink icon="layers-outline" href="/projects">Projects</NavLink>
+            <NavLink icon="majesticons:applications-add-line" href="/projects">
+              Projects
+            </NavLink>
             <NavLink
-              icon="ribbon-outline"
+              icon="majesticons:paper-clip-line"
               href="/resume"
               chip="M.S."
-              chipIcon="school-outline"
-              chipColor={chipColor}
+              chipIcon="majesticons:academic-cap-line"
             >
               Résumé
             </NavLink>
-            <NavLink icon="people-outline" href="/consultation">
+            <NavLink icon="majesticons:users-line" href="/consultation">
               Consultations
             </NavLink>
             <NavLink
-              icon="git-branch-outline"
+              icon="charm:git-request"
               href="/github"
               chip="512"
-              chipIcon="star-outline"
-              chipColor={chipColor}
+              chipIcon="majesticons:star-line"
             >
               GitHub
             </NavLink>
           </div>
           <div class="navSection">
             <p>Photography</p>
-            <NavLink icon="image-outline" href="/photo">Gallery</NavLink>
-            <NavLink icon="map-outline" href="/photo/map">Capture Map</NavLink>
+            <NavLink icon="majesticons:dashboard-line" href="/photo">
+              Gallery
+            </NavLink>
+            <NavLink icon="tabler:map-2" href="/photo/map">Capture Map</NavLink>
             <NavLink
-              icon="calendar-outline"
+              icon="ion:calendar-outline"
               href="/photo/book"
               chip="ATL"
-              chipIcon="location-outline"
-              chipColor={chipColor}
+              chipIcon="uil:map-pin"
             >
               Booking
             </NavLink>
           </div>
           <div class="navSection">
             <p>Ventures</p>
-            <NavLink icon="stats-chart-outline" href="/quant">
+            <NavLink icon="ic:round-candlestick-chart" href="/quant">
               Quant Research
             </NavLink>
             <NavLink
-              icon="newspaper-outline"
+              icon="majesticons:newspaper-line"
               href="/blog"
               chip="11K"
-              chipIcon="eye-outline"
-              chipColor={chipColor}
+              chipIcon="majesticons:eye-line"
             >
               Blog
             </NavLink>
-            <NavLink icon="baseball-outline" href="/mlbVis">r/mlbVis</NavLink>
+            <NavLink icon="ion:baseball-outline" href="/mlbVis">
+              r/mlbVis
+            </NavLink>
           </div>
           <div class="navSection">
             <p>Connect</p>
-            <NavLink icon="mail-unread-outline" href="mailto:blake@sanie.com">
+            <NavLink icon="majesticons:mail-line" href="mailto:blake@sanie.com">
               Email
             </NavLink>
-            <NavLink icon="logo-twitter-outline" href="/twitter">
-              Twitter
+            <NavLink icon="lucide:twitter" href="/twitter">Twitter</NavLink>
+            <NavLink icon="lucide:instagram" href="/instagram">
+              Instagram
             </NavLink>
-            <NavLink icon="logo-instagram" href="/instagram">Instagram</NavLink>
-            <NavLink icon="logo-strava-outline" href="/strava">Strava</NavLink>
+            <NavLink icon="la:strava" href="/strava">Strava</NavLink>
           </div>
         </ul>
       </nav>
       <p id="made">
         Crafted by Blake Sanie with <a
           href="https://docs.astro.build/en/getting-started/"
-          target="_blank"><Icon icon="logo-astro-outline" id="astroIcon" /></a
-        > and <Icon icon="heart-outline" id="heartIcon" />
+          target="_blank"><Icon pack="simple-icons" name="astro" /></a
+        > and <Icon pack="ri" name="heart-2-line" />
       </p>
     </header>
 
@@ -529,14 +530,10 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     color: rgba(255, 255, 255, 0.5);
   }
 
-  #made :global(svg) {
-    margin: 0 0.5em;
-    height: 2.2em;
-    width: 1.2em;
-  }
-
-  #made :global(svg *) {
-    stroke: white !important;
+  #made [astro-icon] {
+    display: block;
+    height: 1.6em;
+    margin: 0.4em;
   }
 
   @media screen and (max-width: 800px) {
