@@ -17,6 +17,11 @@ const isHome = Astro.url.pathname === "/";
 <html lang="en" class:list={[{ isHome: isHome }]}>
   <head>
     <meta charset="utf-8" />
+    <!-- <meta viewport="width=device-width, initial-scale=1" /> -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
   </head>
   <body>
     <GoogleFontsOptimizer
@@ -342,7 +347,10 @@ const isHome = Astro.url.pathname === "/";
     const innerHeight = header.scrollHeight;
     if (menuExpanded) {
       header?.classList.remove("expanded");
-      header.style.setProperty("--headerHeight", innerHeight + "px");
+      header.style.setProperty(
+        "--headerHeight",
+        Math.min(innerHeight, window.innerHeight) + "px"
+      );
       setTimeout(() => {
         header.style.setProperty("--headerHeight", mobileHeaderHeight + "px");
       }, 0);
@@ -350,7 +358,10 @@ const isHome = Astro.url.pathname === "/";
       moveHoverToAnchor();
 
       header?.classList.add("expanded");
-      header.style.setProperty("--headerHeight", innerHeight + "px");
+      header.style.setProperty(
+        "--headerHeight",
+        Math.min(innerHeight, window.innerHeight) + "px"
+      );
       setTimeout(() => {
         header.style.setProperty("--headerHeight", "auto");
       }, headerHeightTransitionDuration * 1000);
@@ -476,7 +487,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     opacity: 0.8;
   }
   #bio > * {
-    padding: 0.1em 0;
+    padding: 0.15em 0;
   }
   nav {
     width: 100%;
@@ -548,6 +559,11 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       overflow: hidden;
       /* overflow: visible; */
     }
+    header.expanded {
+      overflow-y: scroll;
+      max-height: 100vh;
+      /* position: absolute !important; */
+    }
     .headerTransitionable {
       transition: height var(--headerHeightTransitionDuration) ease;
     }
@@ -571,6 +587,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       font-size: 0.8em;
       margin-top: 0.5em;
       margin-bottom: 2em;
+      padding: 0 0.6em;
     }
     #bio > * {
       padding: 0 0.3em;
@@ -589,6 +606,34 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     }
     .navSection {
       /* align-items: center; */
+    }
+  }
+
+  @media screen and (max-width: 430px) {
+    header {
+      padding-top: 0;
+    }
+    #logo {
+      padding: 0 1em;
+      line-height: 46px;
+      margin: 17px 0;
+      font-size: 1.4em;
+    }
+    #bio {
+      /* display: none; */
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 0;
+    }
+    nav ul {
+      flex-direction: column;
+      /* padding-left: 1em; */
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .navSection {
+      width: 100%;
     }
   }
 </style>

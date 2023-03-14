@@ -1,14 +1,14 @@
 ---
 import FullScreenImage from "./Image/FullScreenImage.astro";
+// @ts-ignore
 import { Img } from "astro-imagetools/components";
-const {
-  text,
-  imageUrl,
-  links,
-  style,
-  class: className,
-  ...props
-} = Astro.props;
+interface LinkInterface {
+  target: string;
+  href: string;
+  label: string;
+}
+const links: LinkInterface[] = Astro.props.links;
+const { text, imageUrl, style, class: className, ...props } = Astro.props;
 const maxImageOpacity = 0.5;
 ---
 
@@ -86,6 +86,7 @@ const maxImageOpacity = 0.5;
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
+    padding: 0.5em;
     margin-top: 1em;
   }
   .link {

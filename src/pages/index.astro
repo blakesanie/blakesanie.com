@@ -2,6 +2,7 @@
 import HeaderAndFooter from "../components/HeaderAndFooter/index.astro";
 import HomePageSection from "../components/HomePageSection.astro";
 import Spline from "../components/Spline.astro";
+//@ts-ignore
 import { Img } from "astro-imagetools/components";
 const markupData = [
   // {
@@ -115,10 +116,10 @@ const markupData = [
       display: none;
     }
   </style>
-  <HomePageSection id="firstSection">
+  <HomePageSection id="firstSection" class="homePageSection">
     <!-- <canvas id="canvas3d"></canvas> -->
     <!-- <iframe id="canvas3d" src="/hero/index.html"></iframe> -->
-    <Spline id="canvas3d" />
+    <!-- <Spline id="canvas3d" /> -->
     <div id="wwdc">
       <!-- <img src="/images/wwdc_blake.png" /> -->
       <Img
@@ -156,7 +157,7 @@ const markupData = [
         imageUrl={data.imageUrl}
         text={data.text}
         links={data.links}
-        class="sectionTransitionParent"
+        class="homePageSection sectionTransitionParent"
       />
     ))
   }
@@ -183,7 +184,7 @@ const markupData = [
       backSpeed: 40,
       loop: false,
       // loopCount: 1,
-      onComplete: (param) => {
+      onComplete: () => {
         typed.destroy();
         typed = new Typed("#typed", {
           strings: [
@@ -265,8 +266,8 @@ const markupData = [
   body {
     color: white;
   }
-  #firstSection {
-    max-height: min(1000px, 150vw);
+  .homePageSection {
+    max-height: min(1000px, 170vw);
   }
   #firstSection > *:not(#canvas3d) {
     pointer-events: none;
@@ -296,6 +297,8 @@ const markupData = [
     font-size: 3.4em;
     /* mix-blend-mode: soft-light; */
     opacity: 1;
+    padding: 0 1em;
+    height: 1.4em;
     /* pointer-events: none; */
     /* filter: contrast(4); */
     /* backdrop-filter: contrast(4); */
@@ -325,7 +328,7 @@ const markupData = [
   :global(#canvas3d) {
     position: absolute;
     width: 100%;
-    min-width: 60vh;
+    min-width: 100vh;
     height: 100%;
     border: none;
   }
@@ -336,6 +339,25 @@ const markupData = [
     }
     to {
       opacity: 1;
+    }
+  }
+
+  @media screen and (max-width: 800px) {
+    #firstSection {
+      height: calc(100vh - 80px);
+      height: calc(100svh - 80px);
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    :global(main) {
+      font-size: calc(0.4em + 1.6vmin);
+    }
+    .homePageSection :global(h2) {
+      padding: 0 1em;
+    }
+    .homePageSection :global(a) {
+      font-size: 1.6em;
     }
   }
 </style>
