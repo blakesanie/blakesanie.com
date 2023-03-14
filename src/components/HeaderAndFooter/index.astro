@@ -12,6 +12,7 @@ const headerColor = Astro.props.color || "rgb(0, 126, 204, 0.8)";
 const headerColorOpaque = "#1c81ce";
 const navPadding = 0.6;
 const isHome = Astro.url.pathname === "/";
+const { allowMainStyles } = Astro.props;
 ---
 
 <html lang="en" class:list={[{ isHome: isHome }]}>
@@ -125,7 +126,7 @@ const isHome = Astro.url.pathname === "/";
       </p>
     </header>
 
-    <main>
+    <main class:list={{ pageContent: allowMainStyles }}>
       <slot />
     </main>
     <footer></footer>
@@ -382,6 +383,7 @@ const isHome = Astro.url.pathname === "/";
       moveHoverToAnchor();
     } else if (!isMobile && wasMobile) {
       header.classList.remove("headerTransitionable");
+      header.style.transform = "none";
       // hoverZone.style.transition = "none";
       hoverZone?.classList.remove("hoverZoneTransition");
       moveHoverToAnchor();
@@ -434,7 +436,6 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     overflow: hidden;
     overflow-x: hidden;
     color: white;
-    fill: white;
     display: flex;
     flex-direction: column;
     /* justify-content: center; */
@@ -445,6 +446,11 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     isolation: isolate;
     z-index: 10;
     /* padding-left: var(--side-padding); */
+  }
+  header :global(a),
+  header :global(a:visited),
+  header :global(a:active) {
+    /* color: white; */
   }
   #hamburger {
     display: none;
@@ -638,6 +644,39 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   }
 </style>
 
+<style>
+  .pageContent {
+    padding: 2em 2em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pageContent > :global(*) {
+    max-width: 1100px;
+  }
+
+  .pageContent :global(h1),
+  .pageContent :global(h2),
+  .pageContent :global(h3) {
+    text-align: center;
+  }
+
+  .pageContent :global(h1) {
+    font-size: 2em;
+    padding: 1em 0;
+  }
+
+  .pageContent :global(p) {
+    font-size: 1.2em;
+    line-height: 150%;
+    text-indent: 2em;
+    padding: 1em 0;
+    color: rgba(0, 0, 0, 0.6);
+    /* padding: 0.5em 0; */
+  }
+</style>
+
 <!-- <style is:inline>
   nav svg {
     width: 1.2em;
@@ -685,6 +724,6 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   a:visited,
   a:active {
     text-decoration: initial;
-    color: white;
+    color: inherit !important;
   }
 </style>

@@ -1,5 +1,249 @@
 ---
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
+import { Icon } from "astro-icon";
+//@ts-ignore
+import { Img } from "astro-imagetools/components";
+
+interface ProjectInterface {
+  title: string;
+  description: string;
+  image?: string;
+  tech: {
+    icon: string;
+    name: string;
+  }[];
+  links?: {
+    label: string;
+    href: string;
+    target?: string;
+    icon?: string;
+  }[];
+}
+
+const projects: ProjectInterface[] = [
+  {
+    title: "Quantitative Research Platform",
+    description:
+      "Intelligent stock market investing tools for the long-term. View the market's top investments at a glance, browse our vast array of rankings, and construct your personal portfolio with optimal growth versus volatility characteristics. Available on web, and soon mobile!",
+    image: "/public/images/projects/fund_chart.png",
+    links: [
+      {
+        label: "Learn More",
+        href: "/quant",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:chrome",
+        name: "Google Chrome Extension v3",
+      },
+      {
+        icon: "logos:figma",
+        name: "Figma",
+      },
+      {
+        icon: "logos:firebase",
+        name: "Firebase",
+      },
+      {
+        icon: "logos:github-actions",
+        name: "GitHub Actions",
+      },
+      {
+        icon: "logos:google-cloud",
+        name: "Google Cloud Platform",
+      },
+      {
+        icon: "simple-icons:ifttt",
+        name: "IFTTT",
+      },
+      {
+        icon: "logos:netlify",
+        name: "Netlify",
+      },
+      {
+        icon: "logos:nextjs-icon",
+        name: "Next.js",
+      },
+      {
+        icon: "logos:tensorflow",
+        name: "TensorFlow",
+      },
+    ],
+  },
+  {
+    title: "Distal Radius Object Identification (DROID)",
+    description:
+      "As my Georgia Tech capstone project, I worked alongside Emory Dept. of Orthopaedics to craft a state-of-the-art utility to identify wrist implant manufacturers from a simple x-ray, allowing surgeons to immediately discover the proper tools and techniques for implant extraction during emergency operations. To optimize accuracy, we leveraged an unsupervised data augmentation pipeline followed by Transfer Learning for inference.",
+    image: "/public/images/projects/droid.png",
+    links: [
+      {
+        label: "Design Documentation",
+        href: "/droid.pdf",
+      },
+      {
+        label: "Github",
+        href: "https://github.com/dmace2/distal-radius-implant-identifier",
+        icon: "uil:github-alt",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:apple-app-store",
+        name: "App Store Connect",
+      },
+      {
+        icon: "logos:figma",
+        name: "Figma",
+      },
+      {
+        icon: "logos:heroku-icon",
+        name: "Heroku",
+      },
+      {
+        icon: "logos:jupyter",
+        name: "Jupyter",
+      },
+      {
+        icon: "logos:postgresql",
+        name: "PostgreSQL",
+      },
+      {
+        icon: "vscode-icons:file-type-swift",
+        name: "Swift",
+      },
+      {
+        icon: "logos:tensorflow",
+        name: "TensorFlow",
+      },
+      {
+        icon: "vscode-icons:file-type-xcode",
+        name: "Xcode",
+      },
+    ],
+  },
+];
 ---
 
-<HeaderAndFooter />
+<HeaderAndFooter allowMainStyles>
+  <h1>Projects</h1>
+  <p>
+    My software engineering journey is grounded on and continues to build upon
+    hands-on projects. Explore my growing portfolio of applications, products,
+    and services. From "Hello World!" at age 14 to the completion of my Master's
+    Degree in Computer Science, these projects mark key milestones as my
+    proficencies continue to evolve.
+  </p>
+  <div id="projects">
+    {
+      projects.map(({ title, description, tech, ...project }) => {
+        return (
+          <div class="project">
+            <div class="info">
+              <h2 class="title">{title}</h2>
+              <p class="desc">{description}</p>
+              <div class="tech">
+                {tech.map(({ icon, name }) => {
+                  return <Icon name={icon} />;
+                })}
+              </div>
+              {project.links && (
+                <div class="links">
+                  {project.links.map(({ label, href, ...link }) => {
+                    return (
+                      <a href={href} target="_blank">
+                        {label}
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            <div class="demo">
+              <Img
+                src={project.image}
+                alt={"Image for " + title}
+                loading="lazy"
+                placeholder="blurred"
+                format="webp"
+                breakpoints={[900]}
+                format="webp"
+                quality={50}
+                attributes={{}}
+              />
+            </div>
+          </div>
+        );
+      })
+    }
+  </div>
+</HeaderAndFooter>
+
+<style>
+  .project {
+    padding: 2em 1.25em;
+    box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.06);
+    border-radius: 1em;
+    margin: 2em 0;
+    display: flex;
+    position: relative;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+  .project:nth-of-type(2n) {
+    flex-direction: row-reverse;
+  }
+  .info {
+    display: flex;
+    flex: 1;
+    min-width: min(100%, 400px);
+    /* padding-right: 1.5em; */
+  }
+  .project:nth-of-type(2n) .info {
+    /* padding-right: 0;
+    padding-left: 1.5em; */
+  }
+  .demo {
+    flex: 1;
+    /* border: 1px solid red; */
+    min-width: min(100%, 300px);
+    max-width: min(100%, 450px);
+    /* overflow: visible; */
+  }
+  .demo :global(img) {
+    /* object-fit: contain; */
+    background-repeat: no-repeat;
+  }
+  .project > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 0.75em;
+  }
+  .title {
+    font-size: 1.4em;
+    margin-bottom: 0.6em;
+  }
+  .desc {
+    font-size: 1em;
+    /* opacity: 0.7; */
+  }
+  .tech {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 0.8em;
+  }
+  [astro-icon] {
+    /* width: 40px; */
+    height: 1.8em;
+    margin: 0.4em;
+    transition: all 0.1s ease;
+    cursor: pointer;
+  }
+
+  [astro-icon]:hover {
+    transform: scale(1.2);
+  }
+</style>
