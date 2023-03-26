@@ -3,6 +3,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import { Icon } from "astro-icon";
 //@ts-ignore
 import { Img } from "astro-imagetools/components";
+import Button from "../../components/basic/Button.astro";
 
 interface ProjectInterface {
   title: string;
@@ -82,7 +83,7 @@ const projects: ProjectInterface[] = [
         href: "/droid.pdf",
       },
       {
-        label: "Github",
+        label: "GitHub",
         href: "https://github.com/dmace2/distal-radius-implant-identifier",
         icon: "uil:github-alt",
       },
@@ -122,6 +123,115 @@ const projects: ProjectInterface[] = [
       },
     ],
   },
+  {
+    title: "UX-AI",
+    description:
+      "A web-based AI agent that strengthens user experience by intelligently inferring user behavior status given demonstrated page interactions. With these valuable insights, UX-AI encourages sites to dynamically adjust user experience with the goal of optimizing engagement during casual, fast-paced, and distracted browsing sessions.",
+    image: "/public/images/projects/uxai.png",
+    links: [
+      {
+        label: "Demo",
+        href: "https://uxai.blakesanie.com/#demo",
+      },
+      {
+        label: "Download",
+        href: "https://www.npmjs.com/package/ux-ai",
+      },
+      {
+        label: "GitHub",
+        href: "https://github.com/blakesanie/UX-AI",
+
+        icon: "uil:github-alt",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:chrome",
+        name: "Google Chrome Extension v3",
+      },
+      {
+        icon: "logos:javascript",
+        name: "JavaScript",
+      },
+      {
+        icon: "logos:jupyter",
+        name: "Jupyter",
+      },
+      {
+        icon: "logos:npm-2",
+        name: "NPM",
+      },
+      {
+        icon: "logos:nextjs-icon",
+        name: "Next.js",
+      },
+      {
+        icon: "logos:tensorflow",
+        name: "Tensorflow",
+      },
+    ],
+  },
+  {
+    title: "Evaluating the Effectiveness of Technical Indicators",
+    description:
+      "My final project for Georgia Tech's CS 4641 Course, Machine Learning, taught by Mahdi Roozbahani. Utilizing numerous supervised and non-supervised methods, my team aims to analyze the significance and approximate information gain provided by industry-standard technical indicators by classifying a high-dimensional indicator feature set into various simulated trading strategies.",
+    links: [
+      {
+        label: "Write-Up",
+        href: "https://blakesanie.github.io/analyzing-financial-methods/",
+      },
+    ],
+    image: "/public/images/projects/indicator_clusters.png",
+    tech: [
+      {
+        icon: "logos:jupyter",
+        name: "Jupyter",
+      },
+      {
+        icon: "logos:tensorflow",
+        name: "Tensorflow",
+      },
+    ],
+  },
+  {
+    title: "React Bubble UI",
+    description:
+      "A highly configurable Bubble UI React.js component, similar to the iconic Apple Watch app layout. This custom element provides a playful and curious feel that trumps dull grid-based webpage layouts. Download this open source package or contribute on GitHub today!",
+    image: "/public/images/projects/bubble.png",
+    links: [
+      {
+        label: "Demo",
+        href: "https://bubbleui.blakesanie.com/",
+      },
+      {
+        label: "Download",
+        href: "https://www.npmjs.com/package/react-bubble-ui",
+      },
+      {
+        label: "Design Overview",
+        href: "https://codeburst.io/deconstructing-the-iconic-apple-watch-bubble-ui-aba68a405689",
+      },
+      {
+        label: "GitHub",
+        href: "https://github.com/blakesanie/React-Bubble-UI",
+        icon: "uil:github-alt",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:npm-2",
+        name: "NPM",
+      },
+      {
+        icon: "logos:nodejs-icon",
+        name: "Node.js",
+      },
+      {
+        icon: "logos:react",
+        name: "React.js",
+      },
+    ],
+  },
 ];
 ---
 
@@ -144,15 +254,17 @@ const projects: ProjectInterface[] = [
               <p class="desc">{description}</p>
               <div class="tech">
                 {tech.map(({ icon, name }) => {
-                  return <Icon name={icon} />;
+                  return <Icon name={icon} tech={name} />;
                 })}
+                <div class="selectedTech" />
               </div>
+
               {project.links && (
                 <div class="links">
                   {project.links.map(({ label, href, ...link }) => {
                     return (
-                      <a href={href} target="_blank">
-                        {label}
+                      <a href={href} target="_blank" class="link">
+                        <Button icon={link.icon}>{label}</Button>
                       </a>
                     );
                   })}
@@ -179,9 +291,40 @@ const projects: ProjectInterface[] = [
   </div>
 </HeaderAndFooter>
 
+<script>
+  const techIcons = document.querySelectorAll(".tech svg");
+
+  for (let i = 0; i < techIcons.length; i++) {
+    techIcons[i].addEventListener("mouseenter", (e) => {
+      const target = e.target as HTMLElement;
+      if (target) {
+        const attr = target.getAttribute("tech");
+        const selected = target.parentNode?.querySelector(".selectedTech");
+        if (attr && selected) {
+          selected.innerHTML = attr;
+        }
+      }
+    });
+  }
+
+  const containers = document.querySelectorAll(".tech");
+  for (let i = 0; i < containers.length; i++) {
+    const container = containers[i];
+    container.addEventListener("mouseleave", (e) => {
+      const target = e.target as HTMLElement;
+      if (target) {
+        const selected = target.querySelector(".selectedTech");
+        if (selected) {
+          selected.innerHTML = "";
+        }
+      }
+    });
+  }
+</script>
+
 <style>
   .project {
-    padding: 2em 1.25em;
+    padding: 1em 1.25em;
     box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.06);
     border-radius: 1em;
     margin: 2em 0;
@@ -206,6 +349,7 @@ const projects: ProjectInterface[] = [
   }
   .demo {
     flex: 1;
+    /* padding: 1em 0; */
     /* border: 1px solid red; */
     min-width: min(100%, 300px);
     max-width: min(100%, 450px);
@@ -214,16 +358,18 @@ const projects: ProjectInterface[] = [
   .demo :global(img) {
     /* object-fit: contain; */
     background-repeat: no-repeat;
+    border-radius: 4%;
   }
   .project > div {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 0 0.75em;
+    padding: 1em 0;
   }
   .title {
     font-size: 1.4em;
-    margin-bottom: 0.6em;
+    /* margin-bottom: 0.6em; */
   }
   .desc {
     font-size: 1em;
@@ -233,11 +379,12 @@ const projects: ProjectInterface[] = [
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 0.8em;
+    /* margin-top: 0.8em; */
   }
   [astro-icon] {
     /* width: 40px; */
     height: 1.8em;
+    border-radius: 0.2em;
     margin: 0.4em;
     transition: all 0.1s ease;
     cursor: pointer;
@@ -245,5 +392,32 @@ const projects: ProjectInterface[] = [
 
   [astro-icon]:hover {
     transform: scale(1.2);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1em;
+  }
+
+  .selectedTech {
+    width: 100%;
+    font-size: 1em;
+    line-height: 1em;
+    height: 1em;
+    margin-top: 0.3em;
+    /* background-color: green; */
+    text-align: center;
+    /* opacity: 0; */
+    /* transition: all 0.3s ease; */
+  }
+
+  /* .tech:hover .selectedTech {
+    opacity: 1;
+  } */
+
+  .link {
+    margin: 0.5em;
   }
 </style>
