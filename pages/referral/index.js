@@ -5,7 +5,7 @@ import { useState } from "react";
 export const referrals = [
   {
     name: "Chase Freedom",
-    url: "https://www.referyourchasecard.com/18o/QQ5AO1UQTL",
+    url: "https://www.referyourchasecard.com/18P/RI2NF5K4FV",
   },
   {
     name: "Capital One Savor One",
