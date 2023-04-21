@@ -1,14 +1,18 @@
 ---
 import { Icon } from "astro-icon";
 import HoverZone from "./HoverZone.astro";
+import redirects from "../../redirects.json";
 const { icon, chip, chipIcon, chipColor, href } = Astro.props;
 const [iconPack, iconName] = icon.split(":");
 let [chipPack, chipName] = chipIcon ? chipIcon.split(":") : [0, 0];
 const active = Astro.url.pathname.startsWith(href);
+const redirect = redirects[href.substring(1)];
+const redirectHref = redirect?.href;
+console.log("redirect is", redirectHref);
 ---
 
 <li class:list={[{ active: active }]}>
-  <a href={href}>
+  <a href={redirectHref || href}>
     <!-- <Icon icon={icon} class="icon" /> -->
     <Icon pack={iconPack} name={iconName} />
     <span class="navLinkText">

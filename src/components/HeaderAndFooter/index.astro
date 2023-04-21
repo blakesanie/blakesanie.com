@@ -23,6 +23,7 @@ const { allowMainStyles, noContentPadding } = Astro.props;
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
+    <slot name="head" />
   </head>
   <body>
     <GoogleFontsOptimizer
@@ -61,9 +62,9 @@ const { allowMainStyles, noContentPadding } = Astro.props;
             >
               Résumé
             </NavLink>
-            <NavLink icon="majesticons:users-line" href="/consultation">
+            <!-- <NavLink icon="majesticons:users-line" href="/consultation">
               Consultations
-            </NavLink>
+            </NavLink> -->
             <NavLink
               icon="charm:git-request"
               href="/github"
@@ -79,20 +80,20 @@ const { allowMainStyles, noContentPadding } = Astro.props;
               Gallery
             </NavLink>
             <NavLink icon="tabler:map-2" href="/photo/map">Capture Map</NavLink>
-            <NavLink
+            <!-- <NavLink
               icon="ion:calendar-outline"
               href="/photo/book"
               chip="ATL"
               chipIcon="uil:map-pin"
             >
               Booking
-            </NavLink>
+            </NavLink> -->
           </div>
           <div class="navSection">
             <p>Ventures</p>
-            <NavLink icon="ic:round-candlestick-chart" href="/quant">
+            <!-- <NavLink icon="ic:round-candlestick-chart" href="/quant">
               Quant Research
-            </NavLink>
+            </NavLink> -->
             <NavLink
               icon="majesticons:newspaper-line"
               href="/blog"
@@ -107,9 +108,7 @@ const { allowMainStyles, noContentPadding } = Astro.props;
           </div>
           <div class="navSection">
             <p>Connect</p>
-            <NavLink icon="majesticons:mail-line" href="mailto:blake@sanie.com">
-              Email
-            </NavLink>
+            <NavLink icon="majesticons:mail-line" href="/email">Email</NavLink>
             <NavLink icon="lucide:twitter" href="/twitter">Twitter</NavLink>
             <NavLink icon="lucide:instagram" href="/instagram">
               Instagram

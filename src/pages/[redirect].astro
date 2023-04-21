@@ -1,0 +1,30 @@
+---
+import redirects from "../redirects.json";
+import HeaderAndFooter from "../components/HeaderAndFooter/index.astro";
+
+export function getStaticPaths() {
+  return Object.keys(redirects).map((endpoint) => {
+    return {
+      params: {
+        redirect: endpoint,
+      },
+    };
+  });
+}
+
+const { redirect } = Astro.params;
+const { title, href } = redirects[redirect];
+---
+
+<HeaderAndFooter allowMainStyles>
+  <meta http-equiv="refresh" content={`0; url=${href}`} slot="head" />
+  <h1>Redirecting to {title}</h1>
+</HeaderAndFooter>
+
+<script
+  define:vars={{
+    redirect: redirect,
+  }}
+>
+  window.location.href = href;
+</script>
