@@ -12,7 +12,7 @@ const headerColor = Astro.props.color || "rgb(0, 126, 204, 0.8)";
 const headerColorOpaque = "#1c81ce";
 const navPadding = 0.6;
 const isHome = Astro.url.pathname === "/";
-const { allowMainStyles } = Astro.props;
+const { allowMainStyles, noContentPadding } = Astro.props;
 ---
 
 <html lang="en" class:list={[{ isHome: isHome }]}>
@@ -126,7 +126,12 @@ const { allowMainStyles } = Astro.props;
       </p>
     </header>
 
-    <main class:list={{ pageContent: allowMainStyles }}>
+    <main
+      class:list={{
+        pageContent: allowMainStyles,
+        noPageContentPadding: noContentPadding,
+      }}
+    >
       <slot />
     </main>
     <footer></footer>
@@ -674,6 +679,10 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     padding: 1em 0;
     color: rgba(0, 0, 0, 0.6);
     /* padding: 0.5em 0; */
+  }
+
+  .noPageContentPadding {
+    padding: 0 !important;
   }
 </style>
 

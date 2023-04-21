@@ -1,0 +1,21 @@
+---
+import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
+---
+
+<HeaderAndFooter>
+  <iframe src="/resume.pdf"> </iframe>
+</HeaderAndFooter>
+
+<style>
+  iframe {
+    width: 100%;
+    height: 100vh;
+    border: none;
+  }
+
+  @media screen and (max-width: 800px) {
+    iframe {
+      height: calc(100vh - 80px);
+    }
+  }
+</style>
