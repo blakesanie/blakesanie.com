@@ -126,10 +126,13 @@ const { allowMainStyles, noContentPadding } = Astro.props;
     </header>
 
     <main
-      class:list={{
-        pageContent: allowMainStyles,
-        noPageContentPadding: noContentPadding,
-      }}
+      class:list={[
+        {
+          pageContent: allowMainStyles,
+          noPageContentPadding: noContentPadding,
+        },
+        Astro.props.mainClass,
+      ]}
     >
       <slot />
     </main>

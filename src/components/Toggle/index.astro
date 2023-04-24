@@ -1,0 +1,82 @@
+---
+const { actions, defaultAction } = Astro.props;
+console.log(actions);
+---
+
+<div class="toggle">
+  <div class="toggleFloater"></div>
+  {
+    actions.map(({ id, label }) => {
+      return (
+        <button
+          class:list={["toggleButton", { active: id == defaultAction }]}
+          id={id}
+        >
+          {label}
+        </button>
+      );
+    })
+  }
+</div>
+
+<style>
+  .toggle {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 4px;
+    position: relative;
+  }
+  button {
+    font-size: 1em;
+    background: none;
+    border: none;
+    padding: 0.5em 1em;
+    font-family: inherit;
+    font-weight: 600;
+    /* border-right: 1px solid rgba(0, 0, 0, 0.05);
+    border-left: 1px solid rgba(0, 0, 0, 0.05); */
+    cursor: pointer;
+  }
+  button.active,
+  .toggleFloater {
+    /* border: 4px solid rgba(0, 0, 0, 0.1); */
+    background-color: #f4f4f4;
+    border-radius: 8px;
+  }
+  .toggleFloater {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    opacity: 0;
+    transition: width 0.1s ease, transform 0.1s ease;
+  }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll(
+    ".toggleButton"
+  ) as NodeListOf<HTMLElement>;
+  let activeButton = document.querySelector(
+    ".toggleButton.active"
+  ) as HTMLElement;
+  const floater = document.querySelector(".toggleFloater") as HTMLElement;
+  let initialIsActive = true;
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener("click", () => {
+      if (initialIsActive) {
+        initialIsActive = false;
+        floater.style.width = activeButton?.clientWidth + "px";
+        floater.style.height = activeButton.clientHeight + "px";
+        floater.style.transform = `translate(${activeButton?.offsetLeft}px, ${activeButton?.offsetTop}px)`;
+        floater.style.opacity = "1";
+        activeButton.classList.remove("active");
+      }
+      floater.style.transform = `translate(${buttons[i].offsetLeft}px, ${buttons[i].offsetTop}px)`;
+      floater.style.width = buttons[i].clientWidth + "px";
+      activeButton = buttons[i];
+    });
+  }
+</script>

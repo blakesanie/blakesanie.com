@@ -5,7 +5,7 @@ import redirects from "../../redirects.json";
 const { icon, chip, chipIcon, chipColor, href } = Astro.props;
 const [iconPack, iconName] = icon.split(":");
 let [chipPack, chipName] = chipIcon ? chipIcon.split(":") : [0, 0];
-const active = Astro.url.pathname.startsWith(href);
+const active = Astro.url.pathname.split("?")[0] == href.split("?")[0];
 const redirect = redirects[href.substring(1)];
 const redirectHref = redirect?.href;
 console.log("redirect is", redirectHref);

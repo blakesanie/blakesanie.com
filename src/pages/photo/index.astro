@@ -1,0 +1,100 @@
+---
+import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
+import Toggle from "../../components/Toggle/index.astro";
+
+const initialMode = Astro.props.initialMode || "gallery";
+---
+
+<HeaderAndFooter allowMainStyles mainClass={initialMode}>
+  <h1>Photography</h1>
+  <p>
+    My enthusiasm for capturing photographs lends me a creative release from my
+    logical, algorithmic side. It also enables me to truly admire the
+    compositional beauty in front of my eyes every day, from San Francisco, to
+    Venice, to my own backyard.
+  </p>
+  <Toggle
+    actions={[
+      {
+        id: "galleryButton",
+        label: "Gallery",
+      },
+      {
+        id: "mapButton",
+        label: "Map",
+      },
+    ]}
+    defaultAction={initialMode == "gallery" ? "galleryButton" : "mapButton"}
+  />
+  <div id="photoContent">
+    <div id="gallery">
+      <p>gallery</p>
+    </div>
+    <div id="map">
+      <p>map</p>
+    </div>
+  </div>
+</HeaderAndFooter>
+
+<style>
+  #photoContent > div {
+    display: none;
+    width: 100%;
+  }
+  :global(main.gallery) #photoContent > #gallery {
+    display: block;
+  }
+
+  #photoContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+</style>
+
+<script
+  define:vars={{
+    initialMode: initialMode,
+  }}
+>
+  let mode = initialMode;
+
+  const galleryButton = document.getElementById("galleryButton");
+  const mapButton = document.getElementById("mapButton");
+
+  const gallery = document.getElementById("gallery");
+  const map = document.getElementById("map");
+
+  galleryButton?.addEventListener("click", () => {
+    if (mode != "gallery") {
+      mode = "gallery";
+      activateGallery();
+    }
+  });
+  mapButton?.addEventListener("click", () => {
+    if (mode != "map") {
+      mode = "map";
+      activateMap();
+    }
+  });
+
+  function activateGallery() {
+    map.style.display = "none";
+    gallery.style.display = "block";
+    history.pushState({}, null, "/photo");
+  }
+
+  function activateMap() {
+    gallery.style.display = "none";
+    map.style.display = "block";
+    history.pushState({}, null, "/photo/map");
+  }
+
+  if (initialMode === "gallery") {
+    activateGallery();
+  } else if (initialMode === "map") {
+    activateMap();
+  } else {
+  }
+</script>
