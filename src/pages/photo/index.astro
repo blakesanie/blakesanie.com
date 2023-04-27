@@ -2,6 +2,8 @@
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import Toggle from "../../components/Toggle/index.astro";
 import { Img } from "astro-imagetools/components";
+import exifr from "exifr";
+import { Icon } from "astro-icon";
 
 const initialMode = Astro.props.initialMode || "gallery";
 
@@ -15,13 +17,24 @@ const initialMode = Astro.props.initialMode || "gallery";
 //   return out;
 // });
 
-const images = await import.meta.glob("/src/pages/photo/portfolio/*");
+const glob = await import.meta.glob("/src/pages/photo/portfolio/*");
+const images = {};
+await Promise.all(
+  Object.keys(glob).map(async (path) => {
+    const exif = await exifr.parse("." + path);
+    const name = path.split("/").pop();
+    images[name] = { path, ...exif };
+  })
+);
+
+// for (const path of Object.keys(glob)) {
+//   const filename = path.split("/").pop().split("@")[0];
+//   images[filename] = glob[path];
+// }
+
+// console.log("exif", imageExif);
+// console.log("first buffer", await images[imageNames[0]]());
 console.log("images", images);
-
-const imageNames = Object.keys(images);
-
-console.log("first buffer", await images[imageNames[0]]());
-
 const gutter = 10;
 ---
 
@@ -51,23 +64,25 @@ const gutter = 10;
     <div id="gallery">
       <p>gallery</p>
       {
-        Object.keys(images).map((image) => (
+        Object.values(images).map((image) => (
           <div class="galleryImage">
             <Img
-              src={image}
+              src={image.path}
               alt="alt text"
-              breakpoints={[700]}
-              quality={60}
+              breakpoints={[600]}
+              quality={40}
               preload="webp"
               placeholder="dominantColor"
               loading="lazy"
             />
+            {image.latitude && (
+              <Icon pack="mdi" name="map-marker" color="white" />
+            )}
           </div>
         ))
       }
     </div>
     <div id="map">
-      <p>map</p>
       <div id="exploreMap"></div>
     </div>
   </div>
@@ -97,6 +112,15 @@ const gutter = 10;
       position: relative;
       /* width: calc(50% - var(--gutter) / 2); */
       margin-bottom: var(--gutter);
+      cursor: pointer;
+    }
+
+    .galleryImage > svg {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      width: 25px;
+      opacity: 0.7;
     }
 
     #exploreMap {
@@ -107,7 +131,7 @@ const gutter = 10;
 
     @media screen and (max-width: 600px) {
       #photoContent {
-        width: calc(100vw - 20px);
+        width: calc(100vw - var(--gutter) * 2);
       }
     }
   </style>
