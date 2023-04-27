@@ -3,7 +3,7 @@ const { actions, defaultAction } = Astro.props;
 console.log(actions);
 ---
 
-<div class="toggle">
+<div class="toggle" {...Astro.props}>
   <div class="toggleFloater"></div>
   {
     actions.map(({ id, label }) => {
@@ -52,6 +52,10 @@ console.log(actions);
     z-index: -1;
     opacity: 0;
     transition: width 0.1s ease, transform 0.1s ease;
+  }
+
+  :global(#photoToggle) {
+    margin-bottom: 2em;
   }
 </style>
 

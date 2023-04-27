@@ -1,8 +1,26 @@
 ---
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import Toggle from "../../components/Toggle/index.astro";
+import { Img } from "astro-imagetools/components";
 
 const initialMode = Astro.props.initialMode || "gallery";
+
+// const images = await Astro.glob("./portfolio/*").then((files) => {
+//   console.log("files", files);
+//   const out = {};
+//   for (const file of files) {
+//     const filename = file.default.split("/").pop().split("@")[0];
+//     out[filename] = file;
+//   }
+//   return out;
+// });
+
+const images = await import.meta.glob("/src/pages/photo/portfolio/*");
+console.log("images", images);
+
+const imageNames = Object.keys(images);
+
+const gutter = 10;
 ---
 
 <HeaderAndFooter allowMainStyles mainClass={initialMode}>
@@ -25,76 +43,157 @@ const initialMode = Astro.props.initialMode || "gallery";
       },
     ]}
     defaultAction={initialMode == "gallery" ? "galleryButton" : "mapButton"}
+    id="photoToggle"
   />
   <div id="photoContent">
     <div id="gallery">
       <p>gallery</p>
-    </div>
-    <div id="map">
-      <p>map</p>
+      {
+        Object.keys(images).map((image) => (
+          <div class="galleryImage">
+            <Img
+              src={image}
+              alt="alt text"
+              breakpoints={[700]}
+              quality={60}
+              preload="webp"
+              placeholder="dominantColor"
+              loading="lazy"
+            />
+          </div>
+        ))
+      }
+      <div id="map">
+        <p>map</p>
+      </div>
     </div>
   </div>
-</HeaderAndFooter>
 
-<style>
-  #photoContent > div {
-    display: none;
-    width: 100%;
-  }
-  :global(main.gallery) #photoContent > #gallery {
-    display: block;
-  }
+  <style
+    define:vars={{
+      gutter: gutter + "px",
+    }}
+  >
+    #photoContent > div {
+      display: none;
+      width: 100%;
+    }
+    /* :global(main.gallery) #photoContent > #gallery {
+      display: block;
+    } */
 
-  #photoContent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-</style>
+    #photoContent {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      position: relative;
+    }
 
-<script
-  define:vars={{
-    initialMode: initialMode,
-  }}
->
-  let mode = initialMode;
+    .galleryImage {
+      position: relative;
+      width: calc(50% - var(--gutter) / 2);
+      margin-bottom: var(--gutter);
+    }
+  </style>
 
-  const galleryButton = document.getElementById("galleryButton");
-  const mapButton = document.getElementById("mapButton");
+  <script
+    define:vars={{
+      initialMode: initialMode,
+      gutter: gutter,
+    }}
+  >
+    let mode = initialMode;
 
-  const gallery = document.getElementById("gallery");
-  const map = document.getElementById("map");
+    const galleryButton = document.getElementById("galleryButton");
+    const mapButton = document.getElementById("mapButton");
 
-  galleryButton?.addEventListener("click", () => {
-    if (mode != "gallery") {
-      mode = "gallery";
+    const gallery = document.getElementById("gallery");
+    const map = document.getElementById("map");
+
+    galleryButton?.addEventListener("click", () => {
+      if (mode != "gallery") {
+        mode = "gallery";
+        activateGallery();
+      }
+    });
+    mapButton?.addEventListener("click", () => {
+      if (mode != "map") {
+        mode = "map";
+        activateMap();
+      }
+    });
+
+    let msnry;
+
+    function activateGallery() {
+      function showGallery() {
+        map.style.display = "none";
+        gallery.style.display = "block";
+        history.pushState({}, null, "/photo");
+        console.log("show gallery!");
+      }
+      function afterMasonryLoad() {
+        if (!msnry) {
+          function getImageWidth() {
+            const usableWidth = gallery.clientWidth;
+            let numCols = Math.floor(Math.pow(usableWidth, 0.6) / 18);
+            return usableWidth / numCols - (gutter * (numCols - 1)) / numCols;
+          }
+
+          function setGalleryImageWidths() {
+            const width = getImageWidth();
+            const images = document.getElementsByClassName("galleryImage");
+            for (let i = 0; i < images.length; i++) {
+              images[i].style.width = width + "px";
+            }
+          }
+
+          setGalleryImageWidths();
+
+          window.addEventListener("resize", setGalleryImageWidths);
+
+          // gallery.style.opacity = 0;
+          showGallery();
+          msnry = new Masonry("#gallery", {
+            columnWidth: ".galleryImage",
+            itemSelector: ".galleryImage",
+            gutter: gutter,
+            transitionDuration: 200,
+          });
+          // msnry.on("layoutComplete", function () {
+          //   gallery.style.opacity = 1;
+          // });
+          console.log("masonry", msnry);
+        } else {
+          showGallery();
+        }
+      }
+
+      if (document.getElementById("masonryScript")) {
+        afterMasonryLoad();
+      } else {
+        const script = document.createElement("script");
+        script.src = "https://masonry.desandro.com/masonry.pkgd.js";
+        script.id = "masonryScript";
+        script.addEventListener("load", function () {
+          afterMasonryLoad();
+        });
+        document.body.appendChild(script);
+      }
+    }
+
+    function activateMap() {
+      gallery.style.display = "none";
+      map.style.display = "block";
+      history.pushState({}, null, "/photo/map");
+    }
+
+    if (initialMode === "gallery") {
       activateGallery();
-    }
-  });
-  mapButton?.addEventListener("click", () => {
-    if (mode != "map") {
-      mode = "map";
+    } else if (initialMode === "map") {
       activateMap();
+    } else {
     }
-  });
-
-  function activateGallery() {
-    map.style.display = "none";
-    gallery.style.display = "block";
-    history.pushState({}, null, "/photo");
-  }
-
-  function activateMap() {
-    gallery.style.display = "none";
-    map.style.display = "block";
-    history.pushState({}, null, "/photo/map");
-  }
-
-  if (initialMode === "gallery") {
-    activateGallery();
-  } else if (initialMode === "map") {
-    activateMap();
-  } else {
-  }
-</script>
+  </script>
+</HeaderAndFooter>
