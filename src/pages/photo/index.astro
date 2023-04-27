@@ -20,6 +20,8 @@ console.log("images", images);
 
 const imageNames = Object.keys(images);
 
+console.log("first buffer", await images[imageNames[0]]());
+
 const gutter = 10;
 ---
 
@@ -63,9 +65,10 @@ const gutter = 10;
           </div>
         ))
       }
-      <div id="map">
-        <p>map</p>
-      </div>
+    </div>
+    <div id="map">
+      <p>map</p>
+      <div id="exploreMap"></div>
     </div>
   </div>
 
@@ -95,6 +98,18 @@ const gutter = 10;
       /* width: calc(50% - var(--gutter) / 2); */
       margin-bottom: var(--gutter);
     }
+
+    #exploreMap {
+      width: 100%;
+      height: calc(100vh - 70px);
+      /* background-color: pink; */
+    }
+
+    @media screen and (max-width: 600px) {
+      #photoContent {
+        width: calc(100vw - 20px);
+      }
+    }
   </style>
 
   <script
@@ -108,8 +123,8 @@ const gutter = 10;
     const galleryButton = document.getElementById("galleryButton");
     const mapButton = document.getElementById("mapButton");
 
-    const gallery = document.getElementById("gallery");
-    const map = document.getElementById("map");
+    const galleryContainer = document.getElementById("gallery");
+    const mapContainer = document.getElementById("map");
 
     galleryButton?.addEventListener("click", () => {
       if (mode != "gallery") {
@@ -146,52 +161,46 @@ const gutter = 10;
       return array;
     }
 
-    // const shuffledOrder = shuffle(imageNames);
     let shuffled = false;
+
+    let resizedSinceSwitchedToMap = false;
 
     function activateGallery() {
       function showGallery() {
         if (!shuffled) {
-          // function swap(node1, node2) {
-          //   const afterNode2 = node2.nextElementSibling;
-          //   const parent = node2.parentNode;
-          //   node1.replaceWith(node2);
-          //   parent.insertBefore(node1, afterNode2);
-          // }
-          // const imageTiles = document.getElementsByClassName("galleryImage");
-          // for (let i = 0; i < imageTiles.length; i++) {
-          //   // imageTiles[i].
-          // }
-          // shuffled = true;
-          for (var i = gallery.children.length; i >= 0; i--) {
-            gallery.appendChild(gallery.children[(Math.random() * i) | 0]);
+          for (var i = galleryContainer.children.length; i >= 0; i--) {
+            galleryContainer.appendChild(
+              galleryContainer.children[(Math.random() * i) | 0]
+            );
           }
           shuffled = true;
         }
 
-        map.style.display = "none";
-        gallery.style.display = "block";
+        mapContainer.style.display = "none";
+        galleryContainer.style.display = "block";
         history.pushState({}, null, "/photo");
+      }
+      function getImageWidth() {
+        const usableWidth = galleryContainer.clientWidth;
+        let numCols = Math.floor(Math.pow(usableWidth, 0.6) / 18);
+        return usableWidth / numCols - (gutter * (numCols - 1)) / numCols - 0.5;
+      }
+
+      function setGalleryImageWidths() {
+        if (mode == "map") {
+          resizedSinceSwitchedToMap = true;
+          console.log("resized since switch to map", resizedSinceSwitchedToMap);
+          return;
+        }
+        const width = getImageWidth();
+        console.log("new image width", width);
+        const images = document.getElementsByClassName("galleryImage");
+        for (let i = 0; i < images.length; i++) {
+          images[i].style.width = width + "px";
+        }
       }
       function afterMasonryLoad() {
         if (!msnry) {
-          function getImageWidth() {
-            const usableWidth = gallery.clientWidth;
-            let numCols = Math.floor(Math.pow(usableWidth, 0.6) / 18);
-            return (
-              usableWidth / numCols - (gutter * (numCols - 1)) / numCols - 0.5
-            );
-          }
-
-          function setGalleryImageWidths() {
-            const width = getImageWidth();
-            console.log("new image width", width);
-            const images = document.getElementsByClassName("galleryImage");
-            for (let i = 0; i < images.length; i++) {
-              images[i].style.width = width + "px";
-            }
-          }
-
           showGallery();
           setGalleryImageWidths();
 
@@ -205,12 +214,22 @@ const gutter = 10;
             transitionDuration: 200,
           });
           msnry.on("layoutComplete", function () {
-            gallery.style.opacity = 1;
+            galleryContainer.style.opacity = 1;
             console.log("layout complete");
           });
           console.log("masonry", msnry);
         } else {
+          if (resizedSinceSwitchedToMap) {
+            galleryContainer.style.opacity = 0;
+          }
+
           showGallery();
+          if (resizedSinceSwitchedToMap) {
+            console.log("RESIZE AFTER SWITCH");
+            setGalleryImageWidths();
+            msnry.layout();
+            resizedSinceSwitchedToMap = false;
+          }
         }
       }
 
@@ -227,10 +246,112 @@ const gutter = 10;
       }
     }
 
+    let map;
+
     function activateMap() {
-      gallery.style.display = "none";
-      map.style.display = "block";
-      history.pushState({}, null, "/photo/map");
+      resizedSinceSwitchedToMap = false;
+      function showMap() {
+        console.log("show map");
+        galleryContainer.style.display = "none";
+        mapContainer.style.display = "block";
+        history.pushState({}, null, "/photo/map");
+      }
+      function afterMapsLoad() {
+        console.log("after map load");
+        showMap();
+        const width = mapContainer.clientWidth;
+        const zoom = Math.floor(1.73 * Math.log(width) - 9.26);
+
+        if (!map) {
+          map = new google.maps.Map(
+            document.getElementById("exploreMap"),
+
+            {
+              // center: { lat: (maxLat + minLat) / 2, lng: (maxLng + minLng) / 2 },
+              center: { lat: 0, lng: 0 },
+              zoom: zoom,
+              zoomControl: true,
+              zoomControlOptions: {
+                position: google.maps.ControlPosition.RIGHT_CENTER,
+              },
+              streetViewControl: true,
+              streetViewControlOptions: {
+                position: google.maps.ControlPosition.RIGHT_CENTER,
+              },
+              fullscreenControl: true,
+              fullscreenControlOptions: {
+                position: google.maps.ControlPosition.RIGHT_CENTER,
+              },
+              rotateControl: true,
+              rotateControlOptions: {
+                position: google.maps.ControlPosition.RIGHT_CENTER,
+              },
+            }
+          );
+        }
+        // infoWindow = new google.maps.InfoWindow();
+        // for (let i = 0; i < filenames.length; i++) {
+        //   const filename = filenames[i];
+        //   const { gps } = files[filename].exif;
+        //   if (gps) {
+        //     const [lat, lng] = gps;
+        //     const [name, ext] = filename.split(".");
+        //     const marker = new google.maps.Marker({
+        //       position: { lat: lat, lng: lng },
+        //       map: map,
+        //     });
+        //     function openFullScreen() {
+        //       setSelectedPhotoWithLoading(i);
+        //     }
+        //     function showPreview() {
+        //       let img = document.createElement("img");
+        //       img.src = myLoader({
+        //         src: `/images/portfolio/${name}.${ext}`,
+        //         width: 384,
+        //         quality: 75,
+        //       });
+        //       img.addEventListener("click", (e) => {
+        //         e.stopPropagation();
+        //         openFullScreen();
+        //       });
+        //       img.style.width = "192px";
+        //       img.style.marginBottom = "-10px";
+        //       img.style.cursor = "pointer";
+
+        //       // infoWindow.close();
+        //       infoWindow.setContent(img);
+        //       infoWindow.open(marker.getMap(), marker);
+        //     }
+        //     marker.addListener("mouseover", function () {
+        //       canHover = true;
+        //       showPreview();
+        //     });
+        //     marker.addListener("mouseout", function () {
+        //       if (canHover) {
+        //         infoWindow.close();
+        //       }
+        //     });
+        //     marker.addListener("click", (e) => {
+        //       e.domEvent.stopPropagation();
+        //       if (canHover) {
+        //         openFullScreen(e);
+        //       } else {
+        //         showPreview();
+        //       }
+        //     });
+        //   }
+        // }
+      }
+      if (!document.getElementById("mapsScript")) {
+        const script = document.createElement("script");
+        script.src =
+          "https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp";
+        script.id = "mapsScript";
+        script.addEventListener("load", afterMapsLoad);
+        document.body.append(script);
+      } else {
+        afterMapsLoad();
+      }
     }
 
     if (initialMode === "gallery") {
