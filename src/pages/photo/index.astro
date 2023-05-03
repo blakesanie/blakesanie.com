@@ -4,6 +4,7 @@ import Toggle from "../../components/Toggle/index.astro";
 import { Img } from "astro-imagetools/components";
 import exifr from "exifr";
 import { Icon } from "astro-icon";
+import sizeOf from "image-size";
 
 const initialMode = Astro.props.initialMode || "gallery";
 
@@ -17,15 +18,52 @@ const initialMode = Astro.props.initialMode || "gallery";
 //   return out;
 // });
 
+function removeEmpty(obj) {
+  return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
+}
+
 const glob = await import.meta.glob("/src/pages/photo/portfolio/*");
 const images = {};
 await Promise.all(
   Object.keys(glob).map(async (path) => {
     const exif = await exifr.parse("." + path);
     const name = path.split("/").pop();
-    images[name] = { path, ...exif };
+    const { width, height } = await sizeOf("." + path);
+    console.log("exif", exif);
+    const extracted = {
+      path,
+      ...removeEmpty({
+        latitude: exif.latitude,
+        longitude: exif.longitude,
+        aperture: exif.ApertureValue || exif.FNumber,
+        shutter: exif.ExposureTime,
+        iso: exif.ISO,
+        focalLength: exif.FocalLengthIn35mmFormat,
+        camera: exif.Make + " " + exif.Model,
+        lens: exif.LensModel,
+        date: exif.DateTimeOriginal,
+        width,
+        height,
+      }),
+    };
+
+    images[name] = extracted;
   })
 );
+
+let minLat = Infinity;
+let maxLat = -Infinity;
+let minLng = Infinity;
+let maxLng = -Infinity;
+
+for (const image of Object.values(images)) {
+  if (image.latitude) {
+    minLat = Math.min(minLat, image.latitude);
+    maxLat = Math.max(maxLat, image.latitude);
+    minLng = Math.min(minLng, image.longitude);
+    maxLng = Math.max(maxLng, image.longitude);
+  }
+}
 
 // for (const path of Object.keys(glob)) {
 //   const filename = path.split("/").pop().split("@")[0];
@@ -64,14 +102,14 @@ const gutter = 10;
     <div id="gallery">
       <p>gallery</p>
       {
-        Object.values(images).map((image) => (
-          <div class="galleryImage">
+        Object.entries(images).map(([name, image]) => (
+          <div class="galleryImage" name={name}>
             <Img
               src={image.path}
               alt="alt text"
               breakpoints={[600]}
               quality={40}
-              preload="webp"
+              format="webp"
               placeholder="dominantColor"
               loading="lazy"
             />
@@ -85,7 +123,91 @@ const gutter = 10;
     <div id="map">
       <div id="exploreMap"></div>
     </div>
+    <div class="fullScreenReserves">
+      {
+        Object.entries(images).map(([name, image]) => (
+          <div id={`fullScreen-${name}`} class="full">
+            <Img
+              src={image.path}
+              alt="alt text"
+              breakpoints={[400, 800, 1200, 1600, 2000]}
+              quality={60}
+              format="webp"
+              placeholder="blurred"
+              loading="lazy"
+            />
+          </div>
+        ))
+      }
+    </div>
+    <div class="thumbnailReserves">
+      {
+        Object.entries(images).map(([name, image]) => (
+          <div id={`thumbnail-${name}`} class="thumb">
+            <Img
+              src={image.path}
+              alt="alt text"
+              breakpoints={[300]}
+              quality={50}
+              format="webp"
+              placeholder="blurred"
+              loading="lazy"
+            />
+          </div>
+        ))
+      }
+    </div>
   </div>
+
+  <div id="fullScreen" slot="topLevel">
+    <div class="section" id="photoFullScreen">
+      <div id="imageInfo">
+        <div id="imageName">image name</div>
+        <div id="metaData">
+          <div>10s</div>
+          <div>f2.8</div>
+        </div>
+        <div id="fullScreenActions">
+          <div id="prev">Prev</div>
+          <div id="next">Next</div>
+          <div id="exit">Exit</div>
+        </div>
+      </div>
+    </div>
+    <div class="section" id="mapFullScreen">
+      <div id="selectedMap"></div>
+    </div>
+  </div>
+
+  {
+    initialMode == "map" ? (
+      <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp"
+        id="mapsScript"
+      />
+    ) : (
+      <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp"
+        id="mapsScript"
+        defer
+      />
+    )
+  }
+
+  {
+    initialMode == "gallery" ? (
+      <script
+        src="https://masonry.desandro.com/masonry.pkgd.js"
+        id="masonryScript"
+      />
+    ) : (
+      <script
+        src="https://masonry.desandro.com/masonry.pkgd.js"
+        id="masonryScript"
+        defer
+      />
+    )
+  }
 
   <style
     define:vars={{
@@ -106,6 +228,7 @@ const gutter = 10;
       align-items: center;
       width: 100%;
       position: relative;
+      max-width: none;
     }
 
     .galleryImage {
@@ -129,6 +252,107 @@ const gutter = 10;
       /* background-color: pink; */
     }
 
+    .thumb {
+      width: 192px;
+      border: 8px solid white;
+      /* height: 100px; */
+    }
+
+    :global(div[role="dialog"], div[role="dialog"] *) {
+      padding: 0 !important;
+      overflow: hidden !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+
+    :global(.gm-ui-hover-effect) {
+      display: none !important;
+    }
+
+    #fullScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      max-width: none;
+      height: 100vh;
+      background-color: white;
+      /* border: 10px solid yellow; */
+      z-index: 9999999;
+      overflow: scroll;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #fullScreen.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #fullScreen .section {
+      height: 100vh;
+      width: 100%;
+      /* border: 10px solid yellow; */
+      padding: var(--gutter);
+    }
+
+    #photoFullScreen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #imageInfo {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #imageName {
+      font-size: 1.2em;
+      margin-bottom: 0.2em;
+    }
+
+    #metaData,
+    #fullScreenActions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    :global(#metaData > div) {
+      margin: 0.3em;
+      font-size: 0.9em;
+      padding: 0.2em 0.5em;
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 0.3em;
+      white-space: nowrap;
+    }
+
+    #fullScreenActions > div {
+      padding: 0.2em 0.5em;
+      opacity: 0.4;
+      transition: opacity 0.2s ease;
+      cursor: pointer;
+    }
+
+    #fullScreenActions > div:hover {
+      opacity: 1;
+    }
+
+    #photoFullScreen .full {
+    }
+
+    #selectedMap {
+      height: 100%;
+      width: 100%;
+    }
+
+    :global(.stop-scrolling) {
+      height: 100%;
+      overflow: hidden;
+    }
+
     @media screen and (max-width: 600px) {
       #photoContent {
         width: calc(100vw - var(--gutter) * 2);
@@ -140,14 +364,75 @@ const gutter = 10;
     define:vars={{
       initialMode: initialMode,
       gutter: gutter,
+      images: images,
+      minLat: minLat,
+      maxLat: maxLat,
+      minLng: minLng,
+      maxLng: maxLng,
     }}
   >
+    //  __
+    // /  |
+    // $$/  _____  ____    ______          ______    ______    _______
+    // /  |/     \/    \  /      \        /      \  /      \  /       |
+    // $$ |$$$$$$ $$$$  |/$$$$$$  |      /$$$$$$  |/$$$$$$  |/$$$$$$$/
+    // $$ |$$ | $$ | $$ |$$ |  $$ |      $$ |  $$ |$$ |  $$ |$$      \
+    // $$ |$$ | $$ | $$ |$$ \__$$ |      $$ \__$$ |$$ |__$$ | $$$$$$  |
+    // $$ |$$ | $$ | $$ |$$    $$ |      $$    $$/ $$    $$/ /     $$/
+    // $$/ $$/  $$/  $$/  $$$$$$$ |       $$$$$$/  $$$$$$$/  $$$$$$$/
+    //                   /  \__$$ |                $$ |
+    //                   $$    $$/                 $$ |
+    //                    $$$$$$/                  $$/
+
+    const galleryContainer = document.getElementById("gallery");
+
+    // do the shuffling regardless
+    for (var i = galleryContainer.children.length; i >= 0; i--) {
+      const index = Math.random() * i;
+      galleryContainer.appendChild(galleryContainer.children[index | 0]);
+    }
+
+    let imageOrder = [];
+
+    for (var i = 0; i < galleryContainer.children.length; i++) {
+      const name = galleryContainer.children[i].getAttribute("name");
+      imageOrder.push(name);
+      galleryContainer.children[i].addEventListener("click", () => {
+        activateFullScreen(name);
+      });
+    }
+
+    let imageChanges = {};
+
+    let prev = undefined;
+    for (let i = 0; i < imageOrder.length; i++) {
+      const curr = imageOrder[i];
+      if (prev) {
+        imageChanges[prev]["next"] = curr;
+      }
+      imageChanges[curr] = {
+        prev: prev,
+      };
+      prev = curr;
+    }
+
+    console.log("image changes", imageChanges);
+
+    //                                __
+    //                               /  |
+    //  _____  ____    ______    ____$$ |  ______
+    // /     \/    \  /      \  /    $$ | /      \
+    // $$$$$$ $$$$  |/$$$$$$  |/$$$$$$$ |/$$$$$$  |
+    // $$ | $$ | $$ |$$ |  $$ |$$ |  $$ |$$    $$ |
+    // $$ | $$ | $$ |$$ \__$$ |$$ \__$$ |$$$$$$$$/
+    // $$ | $$ | $$ |$$    $$/ $$    $$ |$$       |
+    // $$/  $$/  $$/  $$$$$$/   $$$$$$$/  $$$$$$$/
+
     let mode = initialMode;
 
     const galleryButton = document.getElementById("galleryButton");
     const mapButton = document.getElementById("mapButton");
 
-    const galleryContainer = document.getElementById("gallery");
     const mapContainer = document.getElementById("map");
 
     galleryButton?.addEventListener("click", () => {
@@ -165,41 +450,10 @@ const gutter = 10;
 
     let msnry;
 
-    function shuffle(array) {
-      let currentIndex = array.length,
-        randomIndex;
-
-      // While there remain elements to shuffle.
-      while (currentIndex != 0) {
-        // Pick a remaining element.
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [
-          array[randomIndex],
-          array[currentIndex],
-        ];
-      }
-
-      return array;
-    }
-
-    let shuffled = false;
-
     let resizedSinceSwitchedToMap = false;
 
     function activateGallery() {
       function showGallery() {
-        if (!shuffled) {
-          for (var i = galleryContainer.children.length; i >= 0; i--) {
-            galleryContainer.appendChild(
-              galleryContainer.children[(Math.random() * i) | 0]
-            );
-          }
-          shuffled = true;
-        }
-
         mapContainer.style.display = "none";
         galleryContainer.style.display = "block";
         history.pushState({}, null, "/photo");
@@ -223,158 +477,116 @@ const gutter = 10;
           images[i].style.width = width + "px";
         }
       }
-      function afterMasonryLoad() {
-        if (!msnry) {
-          showGallery();
-          setGalleryImageWidths();
+      if (!msnry) {
+        showGallery();
+        setGalleryImageWidths();
 
-          window.addEventListener("resize", setGalleryImageWidths);
+        window.addEventListener("resize", setGalleryImageWidths);
 
-          // gallery.style.opacity = 0;
-          msnry = new Masonry("#gallery", {
-            columnWidth: ".galleryImage",
-            itemSelector: ".galleryImage",
-            gutter: gutter,
-            transitionDuration: 200,
-          });
-          msnry.on("layoutComplete", function () {
-            galleryContainer.style.opacity = 1;
-            console.log("layout complete");
-          });
-          console.log("masonry", msnry);
-        } else {
-          if (resizedSinceSwitchedToMap) {
-            galleryContainer.style.opacity = 0;
-          }
-
-          showGallery();
-          if (resizedSinceSwitchedToMap) {
-            console.log("RESIZE AFTER SWITCH");
-            setGalleryImageWidths();
-            msnry.layout();
-            resizedSinceSwitchedToMap = false;
-          }
-        }
-      }
-
-      if (document.getElementById("masonryScript")) {
-        afterMasonryLoad();
-      } else {
-        const script = document.createElement("script");
-        script.src = "https://masonry.desandro.com/masonry.pkgd.js";
-        script.id = "masonryScript";
-        script.addEventListener("load", function () {
-          afterMasonryLoad();
+        // gallery.style.opacity = 0;
+        msnry = new Masonry("#gallery", {
+          columnWidth: ".galleryImage",
+          itemSelector: ".galleryImage",
+          gutter: gutter,
+          transitionDuration: 200,
         });
-        document.body.appendChild(script);
+        msnry.on("layoutComplete", function () {
+          galleryContainer.style.opacity = 1;
+          console.log("layout complete");
+        });
+        console.log("masonry", msnry);
+      } else {
+        if (resizedSinceSwitchedToMap) {
+          galleryContainer.style.opacity = 0;
+        }
+
+        showGallery();
+        if (resizedSinceSwitchedToMap) {
+          console.log("RESIZE AFTER SWITCH");
+          setGalleryImageWidths();
+          msnry.layout();
+          resizedSinceSwitchedToMap = false;
+        }
       }
     }
 
     let map;
+    let blurInterval;
 
     function activateMap() {
       resizedSinceSwitchedToMap = false;
       function showMap() {
-        console.log("show map");
         galleryContainer.style.display = "none";
         mapContainer.style.display = "block";
         history.pushState({}, null, "/photo/map");
       }
-      function afterMapsLoad() {
-        console.log("after map load");
-        showMap();
-        const width = mapContainer.clientWidth;
-        const zoom = Math.floor(1.73 * Math.log(width) - 9.26);
 
-        if (!map) {
-          map = new google.maps.Map(
-            document.getElementById("exploreMap"),
+      showMap();
+      const width = mapContainer.clientWidth;
+      const zoom = Math.floor(1.73 * Math.log(width) - 9.26);
 
-            {
-              // center: { lat: (maxLat + minLat) / 2, lng: (maxLng + minLng) / 2 },
-              center: { lat: 0, lng: 0 },
-              zoom: zoom,
-              zoomControl: true,
-              zoomControlOptions: {
-                position: google.maps.ControlPosition.RIGHT_CENTER,
-              },
-              streetViewControl: true,
-              streetViewControlOptions: {
-                position: google.maps.ControlPosition.RIGHT_CENTER,
-              },
-              fullscreenControl: true,
-              fullscreenControlOptions: {
-                position: google.maps.ControlPosition.RIGHT_CENTER,
-              },
-              rotateControl: true,
-              rotateControlOptions: {
-                position: google.maps.ControlPosition.RIGHT_CENTER,
-              },
-            }
-          );
+      if (!map) {
+        map = new google.maps.Map(document.getElementById("exploreMap"), {
+          center: {
+            lat: (maxLat + minLat) / 2,
+            lng: (maxLng + minLng) / 2,
+          },
+          zoom: zoom,
+          zoomControl: true,
+          zoomControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+          streetViewControl: true,
+          streetViewControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+          fullscreenControl: true,
+          fullscreenControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+          rotateControl: true,
+          rotateControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+        });
+        const infoWindow = new google.maps.InfoWindow();
+
+        for (const [name, image] of Object.entries(images)) {
+          const lat = image.latitude;
+          const lng = image.longitude;
+          const marker = new google.maps.Marker({
+            position: { lat: lat, lng: lng },
+            map: map,
+          });
+
+          function showPreview() {
+            const element = document
+              .getElementById("thumbnail-" + name)
+              .cloneNode(true);
+            console.log("cloned thumb", element);
+            infoWindow.setContent(element);
+            infoWindow.open(marker.getMap(), marker);
+          }
+
+          marker.addListener("mouseover", function () {
+            showPreview();
+          });
+          marker.addListener("mouseout", function () {
+            infoWindow.close();
+          });
+          marker.addListener("click", (e) => {
+            blurInterval = setInterval(() => {
+              document.activeElement.blur();
+            }, 100);
+            activateFullScreen(name);
+            e.domEvent.stopPropagation();
+            e.domEvent.preventDefault();
+            console.log("active before", document.activeElement);
+            document.activeElement.blur();
+            console.log("active after", document.activeElement);
+            // console.log("click event", e.domEvent);
+          });
         }
-        // infoWindow = new google.maps.InfoWindow();
-        // for (let i = 0; i < filenames.length; i++) {
-        //   const filename = filenames[i];
-        //   const { gps } = files[filename].exif;
-        //   if (gps) {
-        //     const [lat, lng] = gps;
-        //     const [name, ext] = filename.split(".");
-        //     const marker = new google.maps.Marker({
-        //       position: { lat: lat, lng: lng },
-        //       map: map,
-        //     });
-        //     function openFullScreen() {
-        //       setSelectedPhotoWithLoading(i);
-        //     }
-        //     function showPreview() {
-        //       let img = document.createElement("img");
-        //       img.src = myLoader({
-        //         src: `/images/portfolio/${name}.${ext}`,
-        //         width: 384,
-        //         quality: 75,
-        //       });
-        //       img.addEventListener("click", (e) => {
-        //         e.stopPropagation();
-        //         openFullScreen();
-        //       });
-        //       img.style.width = "192px";
-        //       img.style.marginBottom = "-10px";
-        //       img.style.cursor = "pointer";
-
-        //       // infoWindow.close();
-        //       infoWindow.setContent(img);
-        //       infoWindow.open(marker.getMap(), marker);
-        //     }
-        //     marker.addListener("mouseover", function () {
-        //       canHover = true;
-        //       showPreview();
-        //     });
-        //     marker.addListener("mouseout", function () {
-        //       if (canHover) {
-        //         infoWindow.close();
-        //       }
-        //     });
-        //     marker.addListener("click", (e) => {
-        //       e.domEvent.stopPropagation();
-        //       if (canHover) {
-        //         openFullScreen(e);
-        //       } else {
-        //         showPreview();
-        //       }
-        //     });
-        //   }
-        // }
-      }
-      if (!document.getElementById("mapsScript")) {
-        const script = document.createElement("script");
-        script.src =
-          "https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp";
-        script.id = "mapsScript";
-        script.addEventListener("load", afterMapsLoad);
-        document.body.append(script);
-      } else {
-        afterMapsLoad();
       }
     }
 
@@ -383,6 +595,255 @@ const gutter = 10;
     } else if (initialMode === "map") {
       activateMap();
     } else {
+    }
+
+    //  __                                                    __                        __      __
+    // /  |                                                  /  |                      /  |    /  |
+    // $$/  _____  ____    ______          _______   ______  $$ |  ______    _______  _$$ |_   $$/   ______   _______
+    // /  |/     \/    \  /      \        /       | /      \ $$ | /      \  /       |/ $$   |  /  | /      \ /       \
+    // $$ |$$$$$$ $$$$  |/$$$$$$  |      /$$$$$$$/ /$$$$$$  |$$ |/$$$$$$  |/$$$$$$$/ $$$$$$/   $$ |/$$$$$$  |$$$$$$$  |
+    // $$ |$$ | $$ | $$ |$$ |  $$ |      $$      \ $$    $$ |$$ |$$    $$ |$$ |        $$ | __ $$ |$$ |  $$ |$$ |  $$ |
+    // $$ |$$ | $$ | $$ |$$ \__$$ |       $$$$$$  |$$$$$$$$/ $$ |$$$$$$$$/ $$ \_____   $$ |/  |$$ |$$ \__$$ |$$ |  $$ |
+    // $$ |$$ | $$ | $$ |$$    $$ |      /     $$/ $$       |$$ |$$       |$$       |  $$  $$/ $$ |$$    $$/ $$ |  $$ |
+    // $$/ $$/  $$/  $$/  $$$$$$$ |      $$$$$$$/   $$$$$$$/ $$/  $$$$$$$/  $$$$$$$/    $$$$/  $$/  $$$$$$/  $$/   $$/
+    //                   /  \__$$ |
+    //                   $$    $$/
+    //                    $$$$$$/
+
+    let fullScreenElement;
+    let photoFullScreenElement;
+    let mapFullScreenElement;
+    let imageNameElement;
+    let metaDataElement;
+    let prevElement;
+    let nextElement;
+    let fullScreenOpen = false;
+    let openFileName;
+    let selectedMapElement;
+
+    let currentImageElement;
+
+    function prevImage() {
+      if (!openFileName) return;
+      const newFilename = imageChanges[openFileName]["prev"];
+      activateFullScreen(newFilename);
+    }
+
+    function nextImage() {
+      if (!openFileName) return;
+      const newFilename = imageChanges[openFileName]["next"];
+      activateFullScreen(newFilename);
+    }
+
+    const minCardWidth = 150;
+    const minCardHeight = 132;
+
+    function maxWidthThatFits(spaceWidth, spaceHeight, width, height) {
+      // assume full width
+      const spaceAspect = spaceWidth / spaceHeight;
+      const aspect = width / height;
+      if (aspect > spaceAspect) {
+        return spaceWidth;
+      }
+      return spaceHeight * aspect;
+    }
+
+    function bestImgWidth(filename) {
+      const usableWidth = window.innerWidth - gutter * 2;
+      const usableHeight = window.innerHeight - gutter * 2;
+      const { width, height } = images[filename];
+      // assume horizontal layout
+      let widthIfHorizontal = maxWidthThatFits(
+        usableWidth - minCardWidth,
+        usableHeight,
+        width,
+        height
+      );
+      //asume vertical layout
+      let widthIfVertical = maxWidthThatFits(
+        usableWidth,
+        usableHeight - minCardHeight,
+        width,
+        height
+      );
+
+      return [
+        Math.max(widthIfHorizontal, widthIfVertical),
+        widthIfHorizontal > widthIfVertical,
+      ]; // is horizontal layout
+    }
+
+    function setCurrentImageWidthAndLayout() {
+      const [bestWidth, isHorizontal] = bestImgWidth(openFileName);
+      currentImageElement.style.width = bestWidth + "px";
+      if (isHorizontal) {
+        photoFullScreenElement.style.flexDirection = "row";
+      } else {
+        photoFullScreenElement.style.flexDirection = "column";
+      }
+    }
+
+    function activateFullScreen(filename) {
+      if (!filename) {
+        return;
+      }
+      openFileName = filename;
+      if (!fullScreenOpen) {
+        if (!fullScreenElement) {
+          fullScreenElement = document.getElementById("fullScreen");
+          photoFullScreenElement = document.getElementById("photoFullScreen");
+          mapFullScreenElement = document.getElementById("mapFullScreen");
+          selectedMapElement = document.getElementById("selectedMap");
+          prevElement = document.getElementById("prev");
+          prevElement.addEventListener("click", prevImage);
+          nextElement = document.getElementById("next");
+          nextElement.addEventListener("click", nextImage);
+          document.getElementById("exit").addEventListener("click", () => {
+            fullScreenElement.classList.remove("active");
+            fullScreenOpen = false;
+
+            document.body.classList.remove("stop-scrolling");
+          });
+          imageNameElement = document.getElementById("imageName");
+          metaDataElement = document.getElementById("metaData");
+        }
+        fullScreenElement.classList.add("active");
+        fullScreenOpen = true;
+      }
+      buildSelectedMap(filename);
+
+      document.body.classList.add("stop-scrolling");
+
+      // set prev and next blocks
+      const { prev, next } = imageChanges[filename];
+      console.log("prev", prev, "next", next);
+      imageNameElement.innerHTML = filename;
+      prevElement.style.display = prev ? "block" : "none";
+      nextElement.style.display = next ? "block" : "none";
+
+      // set full screen image
+      if (currentImageElement) {
+        currentImageElement.remove();
+      }
+      currentImageElement = document
+        .getElementById(`fullScreen-${filename}`)
+        .cloneNode(true);
+      setCurrentImageWidthAndLayout();
+      photoFullScreenElement.appendChild(currentImageElement);
+
+      // set meta data
+      metaDataElement.innerHTML = "";
+      const captured = images[filename];
+      if (captured.shutter) {
+        if (captured.shutter < 0) {
+        }
+        metaDataElement.innerHTML += `<div>${
+          captured.shutter < 1
+            ? `1/${Math.round(1 / captured.shutter)}`
+            : captured.shutter
+        }s</div>`;
+      }
+      if (captured.aperture) {
+        metaDataElement.innerHTML += `<div>f/${
+          Math.round(captured.aperture * 10) / 10
+        }</div>`;
+      }
+      if (captured.iso) {
+        metaDataElement.innerHTML += `<div>ISO ${captured.iso}</div>`;
+      }
+      if (captured.latitude) {
+        metaDataElement.innerHTML += `<div>GPS Below</div>`;
+      }
+      mapFullScreenElement.style.display = captured.latitude ? "block" : "none";
+    }
+
+    window.addEventListener("resize", () => {
+      if (fullScreenOpen) {
+        setCurrentImageWidthAndLayout();
+      }
+    });
+
+    //  __                            __                                            __
+    // /  |                          /  |                                          /  |
+    // $$ |   __   ______   __    __ $$ |____    ______    ______    ______    ____$$ |
+    // $$ |  /  | /      \ /  |  /  |$$      \  /      \  /      \  /      \  /    $$ |
+    // $$ |_/$$/ /$$$$$$  |$$ |  $$ |$$$$$$$  |/$$$$$$  | $$$$$$  |/$$$$$$  |/$$$$$$$ |
+    // $$   $$<  $$    $$ |$$ |  $$ |$$ |  $$ |$$ |  $$ | /    $$ |$$ |  $$/ $$ |  $$ |
+    // $$$$$$  \ $$$$$$$$/ $$ \__$$ |$$ |__$$ |$$ \__$$ |/$$$$$$$ |$$ |      $$ \__$$ |
+    // $$ | $$  |$$       |$$    $$ |$$    $$/ $$    $$/ $$    $$ |$$ |      $$    $$ |
+    // $$/   $$/  $$$$$$$/  $$$$$$$ |$$$$$$$/   $$$$$$/   $$$$$$$/ $$/        $$$$$$$/
+    //                     /  \__$$ |
+    //                     $$    $$/
+    //                      $$$$$$/
+
+    function setKeyDown() {
+      document.onkeydown = function (evt) {
+        evt = evt || window.event;
+        if (evt.key === "Escape" || evt.key === "Esc") {
+          document.getElementById("exit").click();
+        } else if (evt.key === "ArrowLeft") {
+          clearInterval(blurInterval);
+          prevImage();
+        } else if (evt.key === "ArrowRight") {
+          clearInterval(blurInterval);
+          nextImage();
+        }
+      };
+    }
+
+    setKeyDown();
+
+    //                      __                        __                      __
+    //                     /  |                      /  |                    /  |
+    //   _______   ______  $$ |  ______    _______  _$$ |_     ______    ____$$ |       _____  ____    ______    ______
+    //  /       | /      \ $$ | /      \  /       |/ $$   |   /      \  /    $$ |      /     \/    \  /      \  /      \
+    // /$$$$$$$/ /$$$$$$  |$$ |/$$$$$$  |/$$$$$$$/ $$$$$$/   /$$$$$$  |/$$$$$$$ |      $$$$$$ $$$$  | $$$$$$  |/$$$$$$  |
+    // $$      \ $$    $$ |$$ |$$    $$ |$$ |        $$ | __ $$    $$ |$$ |  $$ |      $$ | $$ | $$ | /    $$ |$$ |  $$ |
+    //  $$$$$$  |$$$$$$$$/ $$ |$$$$$$$$/ $$ \_____   $$ |/  |$$$$$$$$/ $$ \__$$ |      $$ | $$ | $$ |/$$$$$$$ |$$ |__$$ |
+    // /     $$/ $$       |$$ |$$       |$$       |  $$  $$/ $$       |$$    $$ |      $$ | $$ | $$ |$$    $$ |$$    $$/
+    // $$$$$$$/   $$$$$$$/ $$/  $$$$$$$/  $$$$$$$/    $$$$/   $$$$$$$/  $$$$$$$/       $$/  $$/  $$/  $$$$$$$/ $$$$$$$/
+    //                                                                                                         $$ |
+    //                                                                                                         $$ |
+    //                                                                                                         $$/
+
+    let selectedMap;
+
+    function buildSelectedMap(filename) {
+      // if
+      const { longitude, latitude } = images[filename];
+      if (!longitude) {
+        mapFullScreenElement.style.display = "none";
+        return;
+      } else {
+        mapFullScreenElement.style.display = "block";
+      }
+      selectedMap = new google.maps.Map(selectedMapElement, {
+        center: {
+          lat: latitude,
+          lng: longitude,
+        },
+        zoom: 16,
+        zoomControl: true,
+        zoomControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_CENTER,
+        },
+        streetViewControl: true,
+        streetViewControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_CENTER,
+        },
+        fullscreenControl: true,
+        fullscreenControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_CENTER,
+        },
+        rotateControl: true,
+        rotateControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_CENTER,
+        },
+      });
+      const marker = new google.maps.Marker({
+        position: { lat: latitude, lng: longitude },
+        map: selectedMap,
+      });
     }
   </script>
 </HeaderAndFooter>
