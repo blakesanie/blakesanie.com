@@ -51,11 +51,6 @@ console.log(actions);
     left: 0;
     z-index: -1;
     opacity: 0;
-    transition: width 0.1s ease, transform 0.1s ease;
-  }
-
-  :global(#photoToggle) {
-    margin-bottom: 2em;
   }
 </style>
 
@@ -69,14 +64,15 @@ console.log(actions);
   const floater = document.querySelector(".toggleFloater") as HTMLElement;
   let initialIsActive = true;
   for (let i = 0; i < buttons.length; i++) {
-    buttons[i].addEventListener("click", () => {
+    buttons[i].addEventListener("click", async () => {
       if (initialIsActive) {
         initialIsActive = false;
+        floater.style.transform = `translate(${activeButton?.offsetLeft}px, ${activeButton?.offsetTop}px)`;
         floater.style.width = activeButton?.clientWidth + "px";
         floater.style.height = activeButton.clientHeight + "px";
-        floater.style.transform = `translate(${activeButton?.offsetLeft}px, ${activeButton?.offsetTop}px)`;
         floater.style.opacity = "1";
         activeButton.classList.remove("active");
+        floater.style.transition = "width 0.1s ease, transform 0.1s ease";
       }
       floater.style.transform = `translate(${buttons[i].offsetLeft}px, ${buttons[i].offsetTop}px)`;
       floater.style.width = buttons[i].clientWidth + "px";
