@@ -98,10 +98,10 @@ const gutter = 10;
     defaultAction={initialMode == "gallery" ? "galleryButton" : "mapButton"}
     id="photoToggle"
   />
+  <div id="advancedLabel">AI Image Search Query</div>
   <div id="AISearch" class="minimized">
     <input type="text" placeholder='AI Search Query, ex. "New York Sunset"' />
   </div>
-  <div id="advancedLabel">AI Image Search Query</div>
   <div id="photoContent">
     <div id="gallery">
       <p>gallery</p>
@@ -219,13 +219,12 @@ const gutter = 10;
     }}
   >
     :global(#photoToggle) {
-      margin-bottom: 0.5em;
+      margin-bottom: 1em;
     }
     #advancedLabel {
       font-size: 0.8em;
       opacity: 0.5;
       margin-bottom: 1em;
-      margin-top: 0.5em;
       cursor: pointer;
       transition: opacity 0.2s ease;
     }
@@ -239,7 +238,7 @@ const gutter = 10;
       max-width: 500px;
       height: 2.4em;
       transition: all 0.15s ease;
-      padding: 0.5em 0;
+      padding-bottom: 1em;
       box-sizing: content-box;
     }
 
@@ -910,7 +909,7 @@ const gutter = 10;
         advancedLabel.innerHTML = "AI Image Search Query";
         AISearch.classList.add("minimized");
       } else {
-        advancedLabel.innerHTML = "Minimize and Ignore";
+        advancedLabel.innerHTML = "Ignore Query";
         AISearch.classList.remove("minimized");
       }
       advancedOpen = !advancedOpen;
