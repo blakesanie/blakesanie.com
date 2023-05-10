@@ -21,4 +21,4 @@ pnpm-debug.log*
 .DS_Store
 
 .idea/
-src/pages/photo/portfolio/*
+# src/pages/photo/portfolio/*

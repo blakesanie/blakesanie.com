@@ -5,6 +5,9 @@ import { Img } from "astro-imagetools/components";
 import exifr from "exifr";
 import { Icon } from "astro-icon";
 import sizeOf from "image-size";
+import exiftoolJson from "./metadata.json";
+
+// console.log("exiftool", exiftoolJson["DSC05014.jpg"]);
 
 const initialMode = Astro.props.initialMode || "gallery";
 
@@ -22,31 +25,84 @@ function removeEmpty(obj) {
   return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
 }
 
+const cameraRenamings = {
+  "SONY ILCE-7": "Sony a7",
+  "NIKON CORPORATION NIKON D3200": "Nikon D3200",
+};
+
+const lensRenamings = {
+  "FE 28-70mm F3.5-5.6 OSS": "Sony FE 28-70mm",
+  "18.0-105.0 mm f/3.5-5.6": "Nikkor 18-105mm DX",
+  "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED": "Nikkor 18-105mm DX",
+  "SAMYANG AF 24mm F2.8": "Rokinon 24mm F2.8",
+  "AF-S DX Nikkor 35mm f/1.8G": "Nikkor 35mm f/1.8G DX",
+};
+
+function applyRenamings(str, renamings) {
+  if (!str) {
+    return str;
+  }
+  console.log("str is", str);
+  for (const [key, value] of Object.entries(renamings)) {
+    str = str.replace(key, value);
+  }
+  return str;
+}
+
 const glob = await import.meta.glob("/src/pages/photo/portfolio/*");
 const images = {};
 await Promise.all(
   Object.keys(glob).map(async (path) => {
-    const exif = await exifr.parse("." + path);
-    const name = path.split("/").pop();
+    // console.log("get exif from", path);
+    const exif = await exifr.parse("." + path, {
+      makerNote: true,
+      userComment: true,
+      xmp: true,
+      icc: true,
+      jfif: true,
+    });
+    const name = path.split("/").pop()?.split(".")[0];
     const { width, height } = await sizeOf("." + path);
-    console.log("exif", exif);
     const extracted = {
       path,
-      ...removeEmpty({
-        latitude: exif.latitude,
-        longitude: exif.longitude,
-        aperture: exif.ApertureValue || exif.FNumber,
-        shutter: exif.ExposureTime,
-        iso: exif.ISO,
-        focalLength: exif.FocalLengthIn35mmFormat,
-        camera: exif.Make + " " + exif.Model,
-        lens: exif.LensModel,
-        date: exif.DateTimeOriginal,
-        width,
-        height,
-      }),
+      ...removeEmpty(
+        exif
+          ? {
+              latitude: exif.latitude,
+              longitude: exif.longitude,
+              aperture: exif.ApertureValue || exif.FNumber,
+              shutter: exif.ExposureTime,
+              iso: exif.ISO,
+              focalLength: exif.FocalLengthIn35mmFormat || exif.FocalLength,
+              camera:
+                exif.Make &&
+                exif.Model &&
+                applyRenamings(exif.Make + " " + exif.Model, cameraRenamings),
+              lens: applyRenamings(
+                exif.LensModel ||
+                  exif.Lens ||
+                  (exiftoolJson[name] &&
+                    (exiftoolJson[name]["Lens ID"] ||
+                      exiftoolJson[name]["Lens Spec"])),
+                lensRenamings
+              ),
+              date: exif.DateTimeOriginal || exif.CreateDate,
+              width,
+              height,
+              decoded:
+                exif.makerNode &&
+                String.fromCharCode.apply(null, exif.makerNote),
+            }
+          : {}
+      ),
     };
-
+    // console.log(
+    //   "decode",
+    //   exif.makerNote,
+    //   "to",
+    //   String.fromCharCode.apply(null, exif.makerNote)
+    // );
+    // console.log("exif", exif, extracted);
     images[name] = extracted;
   })
 );
@@ -72,7 +128,7 @@ for (const image of Object.values(images)) {
 
 // console.log("exif", imageExif);
 // console.log("first buffer", await images[imageNames[0]]());
-console.log("images", images);
+// console.log("images", images);
 const gutter = 10;
 ---
 
@@ -369,7 +425,8 @@ const gutter = 10;
       margin: 0.3em;
       font-size: 0.9em;
       padding: 0.2em 0.5em;
-      background-color: rgba(0, 0, 0, 0.1);
+      background-color: rgba(0, 0, 0, 0.04);
+      color: #888;
       border-radius: 0.3em;
       white-space: nowrap;
     }
@@ -795,6 +852,18 @@ const gutter = 10;
       }
       if (captured.iso) {
         metaDataElement.innerHTML += `<div>ISO ${captured.iso}</div>`;
+      }
+      if (captured.focalLength) {
+        metaDataElement.innerHTML += `<div>${captured.focalLength}mm</div>`;
+      }
+      if (captured.camera) {
+        let cam = captured.camera;
+        cam = cam.replace("SONY ILCE-7", "Sony A7");
+
+        metaDataElement.innerHTML += `<div>${cam}</div>`;
+      }
+      if (captured.lens) {
+        metaDataElement.innerHTML += `<div>${captured.lens}</div>`;
       }
       if (captured.latitude) {
         metaDataElement.innerHTML += `<div>GPS Below</div>`;

@@ -89,11 +89,11 @@ const { allowMainStyles, noContentPadding } = Astro.props;
               Booking
             </NavLink> -->
           </div>
-          <div class="navSection">
-            <p>Features</p>
-            <!-- <NavLink icon="ic:round-candlestick-chart" href="/quant">
+          <!-- <div class="navSection">
+            <p>Content</p>
+            <NavLink icon="ic:round-candlestick-chart" href="/quant">
               Quant Research
-            </NavLink> -->
+            </NavLink>
             <NavLink
               icon="majesticons:newspaper-line"
               href="/blog"
@@ -105,7 +105,7 @@ const { allowMainStyles, noContentPadding } = Astro.props;
             <NavLink icon="ion:baseball-outline" href="/mlbVis">
               r/mlbVis
             </NavLink>
-          </div>
+          </div> -->
           <div class="navSection">
             <p>Connect</p>
             <NavLink icon="majesticons:mail-line" href="/email">Email</NavLink>
@@ -140,274 +140,273 @@ const { allowMainStyles, noContentPadding } = Astro.props;
     <footer></footer>
     <slot name="topLevel" />
   </body>
-</html>
 
-<script
-  define:vars={{
-    mobileHeaderHeight: mobileHeaderHeight,
-    headerHeightTransitionDuration,
-    headerPositionTransitionDuration,
-    mobileMaxWidth,
-    navPadding,
-    isHome,
-  }}
->
-  //  __    __                             __    __
-  // /  \  /  |                           /  |  /  |
-  // $$  \ $$ |  ______   __     __       $$ |  $$ |  ______   __     __  ______    ______
-  // $$$  \$$ | /      \ /  \   /  |      $$ |__$$ | /      \ /  \   /  |/      \  /      \
-  // $$$$  $$ | $$$$$$  |$$  \ /$$/       $$    $$ |/$$$$$$  |$$  \ /$$//$$$$$$  |/$$$$$$  |
-  // $$ $$ $$ | /    $$ | $$  /$$/        $$$$$$$$ |$$ |  $$ | $$  /$$/ $$    $$ |$$ |  $$/
-  // $$ |$$$$ |/$$$$$$$ |  $$ $$/         $$ |  $$ |$$ \__$$ |  $$ $$/  $$$$$$$$/ $$ |
-  // $$ | $$$ |$$    $$ |   $$$/          $$ |  $$ |$$    $$/    $$$/   $$       |$$ |
-  // $$/   $$/  $$$$$$$/     $/           $$/   $$/  $$$$$$/      $/     $$$$$$$/ $$/
-  const nav = document.querySelector("nav");
-  const anchors = document.querySelectorAll("nav a");
-  const mouseOffSections = document.querySelectorAll(
-    //".navSection, .navSection p"
-    "nav"
-  );
+  <script
+    define:vars={{
+      mobileHeaderHeight: mobileHeaderHeight,
+      headerHeightTransitionDuration,
+      headerPositionTransitionDuration,
+      mobileMaxWidth,
+      navPadding,
+      isHome,
+    }}
+  >
+    //  __    __                             __    __
+    // /  \  /  |                           /  |  /  |
+    // $$  \ $$ |  ______   __     __       $$ |  $$ |  ______   __     __  ______    ______
+    // $$$  \$$ | /      \ /  \   /  |      $$ |__$$ | /      \ /  \   /  |/      \  /      \
+    // $$$$  $$ | $$$$$$  |$$  \ /$$/       $$    $$ |/$$$$$$  |$$  \ /$$//$$$$$$  |/$$$$$$  |
+    // $$ $$ $$ | /    $$ | $$  /$$/        $$$$$$$$ |$$ |  $$ | $$  /$$/ $$    $$ |$$ |  $$/
+    // $$ |$$$$ |/$$$$$$$ |  $$ $$/         $$ |  $$ |$$ \__$$ |  $$ $$/  $$$$$$$$/ $$ |
+    // $$ | $$$ |$$    $$ |   $$$/          $$ |  $$ |$$    $$/    $$$/   $$       |$$ |
+    // $$/   $$/  $$$$$$$/     $/           $$/   $$/  $$$$$$/      $/     $$$$$$$/ $$/
+    const nav = document.querySelector("nav");
+    const anchors = document.querySelectorAll("nav a");
+    const mouseOffSections = document.querySelectorAll(
+      //".navSection, .navSection p"
+      "nav"
+    );
 
-  for (let i = 0; i < anchors.length; i++) {
-    anchors[i].addEventListener("mouseenter", (e) => {
-      moveHoverToAnchor(anchors[i]);
-    });
-  }
-  for (let i = 0; i < mouseOffSections.length; i++) {
-    mouseOffSections[i].addEventListener("mouseleave", (e) => {
-      moveHoverToAnchor();
-    });
-  }
-
-  let activeNavHoverZone = document.querySelector(".active .navHoverZone");
-  let activeAnchor = activeNavHoverZone?.parentElement;
-  let hoverZone;
-  let baseHeight;
-  let baseWidth;
-  let baseY;
-  let baseX;
-
-  let currentHoverAnchor;
-
-  function moveHoverToAnchor(anchor) {
-    if (!hoverZone) {
-      if (isHome) {
-        // if active page not in nav, hover zone is already a direct child of nav
-        // without transition, move directly to the hovered anchor
-        hoverZone = document.querySelector(".navHoverZone");
-        hoverZone.classList.remove("hoverZoneTransition");
-        // hoverZone.style.transition = "none";
-        hoverZone.style.height = anchor.offsetHeight + "px";
-        hoverZone.style.width = anchor.offsetWidth + "px";
-      } else {
-        // active page in nav
-        // move hover zone to direct child of nav, and relocate to original space
-        baseHeight = activeNavHoverZone.offsetHeight;
-        baseWidth = activeNavHoverZone.offsetWidth;
-        baseY = activeNavHoverZone.parentElement.offsetTop;
-        baseX = activeNavHoverZone.parentElement.offsetLeft;
-        hoverZone = nav.appendChild(activeNavHoverZone);
-        hoverZone.style.transform = `translate(${baseX}px,${baseY}px)`;
-        hoverZone.style.height = baseHeight + "px";
-        hoverZone.style.width = baseWidth + "px";
-        hoverZone.classList.add("hoverZoneTransition");
-      }
+    for (let i = 0; i < anchors.length; i++) {
+      anchors[i].addEventListener("mouseenter", (e) => {
+        moveHoverToAnchor(anchors[i]);
+      });
     }
-    if (!anchor) {
-      // no paramter means hover interaction is done
-      if (isHome) {
-        // just fade out
-        hoverZone.style.opacity = 0;
-      } else {
-        if (currentHoverAnchor) {
-          // remove hover class from last hovered anchor
-          currentHoverAnchor.classList.remove("hover");
+    for (let i = 0; i < mouseOffSections.length; i++) {
+      mouseOffSections[i].addEventListener("mouseleave", (e) => {
+        moveHoverToAnchor();
+      });
+    }
+
+    let activeNavHoverZone = document.querySelector(".active .navHoverZone");
+    let activeAnchor = activeNavHoverZone?.parentElement;
+    let hoverZone;
+    let baseHeight;
+    let baseWidth;
+    let baseY;
+    let baseX;
+
+    let currentHoverAnchor;
+
+    function moveHoverToAnchor(anchor) {
+      if (!hoverZone) {
+        if (isHome) {
+          // if active page not in nav, hover zone is already a direct child of nav
+          // without transition, move directly to the hovered anchor
+          hoverZone = document.querySelector(".navHoverZone");
+          hoverZone.classList.remove("hoverZoneTransition");
+          // hoverZone.style.transition = "none";
+          hoverZone.style.height = anchor.offsetHeight + "px";
+          hoverZone.style.width = anchor.offsetWidth + "px";
+        } else {
+          // active page in nav
+          // move hover zone to direct child of nav, and relocate to original space
+          baseHeight = activeNavHoverZone.offsetHeight;
+          baseWidth = activeNavHoverZone.offsetWidth;
+          baseY = activeNavHoverZone.parentElement.offsetTop;
+          baseX = activeNavHoverZone.parentElement.offsetLeft;
+          hoverZone = nav.appendChild(activeNavHoverZone);
+          hoverZone.style.transform = `translate(${baseX}px,${baseY}px)`;
+          hoverZone.style.height = baseHeight + "px";
+          hoverZone.style.width = baseWidth + "px";
+          hoverZone.classList.add("hoverZoneTransition");
         }
-        // move hover zone back to original space
-        // debugger;
-        hoverZone.style.transform = `translate(${activeAnchor.offsetLeft}px, ${activeAnchor.offsetTop}px)`;
-        hoverZone.style.height = activeAnchor.offsetHeight + "px";
-        hoverZone.style.width = activeAnchor.offsetWidth + "px";
       }
-      hoverZone.classList.add("hoverZoneTransition");
-      return;
-    }
-    // at this point, move hover zone to hovered anchor
-    const targetY = anchor.offsetTop;
-    const targetX = anchor.offsetLeft;
-    if (currentHoverAnchor) {
-      // old hovered anchor is no longer hovered
-      currentHoverAnchor.classList.remove("hover");
-    }
-    anchor.classList.add("hover");
-    currentHoverAnchor = anchor;
-    if (isHome && hoverZone.style.opacity != 1) {
-      hoverZone.classList.remove("hoverZoneTransition");
-    }
-    // move to target space
-    hoverZone.style.transform = `translate(${targetX}px, ${targetY}px)`;
-    hoverZone.style.height = anchor.offsetHeight + "px";
+      if (!anchor) {
+        // no paramter means hover interaction is done
+        if (isHome) {
+          // just fade out
+          hoverZone.style.opacity = 0;
+        } else {
+          if (currentHoverAnchor) {
+            // remove hover class from last hovered anchor
+            currentHoverAnchor.classList.remove("hover");
+          }
+          // move hover zone back to original space
+          // debugger;
+          hoverZone.style.transform = `translate(${activeAnchor.offsetLeft}px, ${activeAnchor.offsetTop}px)`;
+          hoverZone.style.height = activeAnchor.offsetHeight + "px";
+          hoverZone.style.width = activeAnchor.offsetWidth + "px";
+        }
+        hoverZone.classList.add("hoverZoneTransition");
+        return;
+      }
+      // at this point, move hover zone to hovered anchor
+      const targetY = anchor.offsetTop;
+      const targetX = anchor.offsetLeft;
+      if (currentHoverAnchor) {
+        // old hovered anchor is no longer hovered
+        currentHoverAnchor.classList.remove("hover");
+      }
+      anchor.classList.add("hover");
+      currentHoverAnchor = anchor;
+      if (isHome && hoverZone.style.opacity != 1) {
+        hoverZone.classList.remove("hoverZoneTransition");
+      }
+      // move to target space
+      hoverZone.style.transform = `translate(${targetX}px, ${targetY}px)`;
+      hoverZone.style.height = anchor.offsetHeight + "px";
 
-    if (window.innerWidth <= 800) {
-      hoverZone.style.width = `calc(${anchor.offsetWidth + "px"})`;
-    } else {
-      if (isHome) {
-        hoverZone.style.width = `calc(${
-          anchor.offsetWidth + "px"
-        } - var(--navPadding) * 2)`;
-      } else {
+      if (window.innerWidth <= 800) {
         hoverZone.style.width = `calc(${anchor.offsetWidth + "px"})`;
-      }
-    }
-
-    // if (isHome && hoverZone.style.opacity != 1) {
-    //   hoverZone.style.transition = "all 0.2s ease";
-    // }
-    // hoverZone.style.transition = "all 0.2s ease";
-    hoverZone.classList.add("hoverZoneTransition");
-    hoverZone.style.opacity = 1;
-  }
-  //  __    __                            __                             ______                                 __  __
-  // /  |  /  |                          /  |                           /      \                               /  |/  |
-  // $$ |  $$ |  ______    ______    ____$$ |  ______    ______        /$$$$$$  |  _______   ______    ______  $$ |$$ |
-  // $$ |__$$ | /      \  /      \  /    $$ | /      \  /      \       $$ \__$$/  /       | /      \  /      \ $$ |$$ |
-  // $$    $$ |/$$$$$$  | $$$$$$  |/$$$$$$$ |/$$$$$$  |/$$$$$$  |      $$      \ /$$$$$$$/ /$$$$$$  |/$$$$$$  |$$ |$$ |
-  // $$$$$$$$ |$$    $$ | /    $$ |$$ |  $$ |$$    $$ |$$ |  $$/        $$$$$$  |$$ |      $$ |  $$/ $$ |  $$ |$$ |$$ |
-  // $$ |  $$ |$$$$$$$$/ /$$$$$$$ |$$ \__$$ |$$$$$$$$/ $$ |            /  \__$$ |$$ \_____ $$ |      $$ \__$$ |$$ |$$ |
-  // $$ |  $$ |$$       |$$    $$ |$$    $$ |$$       |$$ |            $$    $$/ $$       |$$ |      $$    $$/ $$ |$$ |
-  // $$/   $$/  $$$$$$$/  $$$$$$$/  $$$$$$$/  $$$$$$$/ $$/              $$$$$$/   $$$$$$$/ $$/        $$$$$$/  $$/ $$/
-  let prevScroll = 0;
-  let prevScrollTimestamp = 0;
-  let menuIsDown = false;
-  var existingInterval;
-  const moveHeaderDown = (isDown, isAnimated) => {
-    header.style.position = "fixed";
-    if (existingInterval) {
-      clearTimeout(existingInterval);
-    }
-    if (isAnimated) {
-      header.classList.add("transitionHeaderPosition");
-    }
-    if (isDown) {
-      header.style.transform = "none";
-    } else if (!menuExpanded) {
-      header.style.transform = `translateY(${-100}%)`;
-    }
-    // header.style.transform = `translateY(${isDown ? 0 : -100}%)`;
-    if (isAnimated) {
-      existingInterval = setTimeout(() => {
-        header.classList.remove("transitionHeaderPosition");
-      }, headerPositionTransitionDuration * 1000);
-    }
-  };
-  window.addEventListener("scroll", () => {
-    if (window.innerWidth > mobileMaxWidth) {
-      return;
-    }
-    const currentScroll = window.scrollY;
-    const timestamp = new Date();
-    const scrollVelocity =
-      (currentScroll - prevScroll) / (timestamp - prevScrollTimestamp);
-    if (currentScroll <= 0) {
-      menuIsDown = false;
-      header.style.position = "fixed";
-    } else if (currentScroll <= mobileHeaderHeight) {
-      if (menuIsDown) {
-      } else if (!menuExpanded) {
-        header.style.position = "absolute";
-        header.style.transform = "none";
-      }
-    } else if (
-      currentScroll > mobileHeaderHeight &&
-      prevScroll <= mobileHeaderHeight
-    ) {
-      if (menuIsDown) {
       } else {
-        moveHeaderDown(false, false);
-        menuIsDown = false;
+        if (isHome) {
+          hoverZone.style.width = `calc(${
+            anchor.offsetWidth + "px"
+          } - var(--navPadding) * 2)`;
+        } else {
+          hoverZone.style.width = `calc(${anchor.offsetWidth + "px"})`;
+        }
       }
-    } else if (scrollVelocity > 0) {
-      moveHeaderDown(false, true);
-      menuIsDown = false;
-    } else if (scrollVelocity < -0.8) {
-      moveHeaderDown(true, true);
-      menuIsDown = true;
-    }
-    prevScroll = currentScroll;
-    prevScrollTimestamp = timestamp;
-  });
-  //  __       __                                      ________                                                    __
-  // /  \     /  |                                    /        |                                                  /  |
-  // $$  \   /$$ |  ______   _______   __    __       $$$$$$$$/  __    __   ______    ______   _______    _______ $$/   ______   _______
-  // $$$  \ /$$$ | /      \ /       \ /  |  /  |      $$ |__    /  \  /  | /      \  /      \ /       \  /       |/  | /      \ /       \
-  // $$$$  /$$$$ |/$$$$$$  |$$$$$$$  |$$ |  $$ |      $$    |   $$  \/$$/ /$$$$$$  | $$$$$$  |$$$$$$$  |/$$$$$$$/ $$ |/$$$$$$  |$$$$$$$  |
-  // $$ $$ $$/$$ |$$    $$ |$$ |  $$ |$$ |  $$ |      $$$$$/     $$  $$<  $$ |  $$ | /    $$ |$$ |  $$ |$$      \ $$ |$$ |  $$ |$$ |  $$ |
-  // $$ |$$$/ $$ |$$$$$$$$/ $$ |  $$ |$$ \__$$ |      $$ |_____  /$$$$  \ $$ |__$$ |/$$$$$$$ |$$ |  $$ | $$$$$$  |$$ |$$ \__$$ |$$ |  $$ |
-  // $$ | $/  $$ |$$       |$$ |  $$ |$$    $$/       $$       |/$$/ $$  |$$    $$/ $$    $$ |$$ |  $$ |/     $$/ $$ |$$    $$/ $$ |  $$ |
-  // $$/      $$/  $$$$$$$/ $$/   $$/  $$$$$$/        $$$$$$$$/ $$/   $$/ $$$$$$$/   $$$$$$$/ $$/   $$/ $$$$$$$/  $$/  $$$$$$/  $$/   $$/
-  //                                                                      $$ |
-  //                                                                      $$ |
-  //                                                                      $$/
-  let menuExpanded = false;
-  const header = document.querySelector("header");
 
-  const hamburger = document.getElementById("hamburger");
-
-  hamburger?.addEventListener("click", () => {
-    const innerHeight = header.scrollHeight;
-    if (menuExpanded) {
-      header?.classList.remove("expanded");
-      header.style.setProperty(
-        "--headerHeight",
-        Math.min(innerHeight, window.innerHeight) + "px"
-      );
-      setTimeout(() => {
-        header.style.setProperty("--headerHeight", mobileHeaderHeight + "px");
-      }, 0);
-    } else {
-      moveHoverToAnchor();
-
-      header?.classList.add("expanded");
-      header.style.setProperty(
-        "--headerHeight",
-        Math.min(innerHeight, window.innerHeight) + "px"
-      );
-      setTimeout(() => {
-        header.style.setProperty("--headerHeight", "auto");
-      }, headerHeightTransitionDuration * 1000);
-      header.position = "fixed";
+      // if (isHome && hoverZone.style.opacity != 1) {
+      //   hoverZone.style.transition = "all 0.2s ease";
+      // }
+      // hoverZone.style.transition = "all 0.2s ease";
+      hoverZone.classList.add("hoverZoneTransition");
+      hoverZone.style.opacity = 1;
     }
-    menuExpanded = !menuExpanded;
-    console.log("menuExpanded: ", menuExpanded);
-  });
+    //  __    __                            __                             ______                                 __  __
+    // /  |  /  |                          /  |                           /      \                               /  |/  |
+    // $$ |  $$ |  ______    ______    ____$$ |  ______    ______        /$$$$$$  |  _______   ______    ______  $$ |$$ |
+    // $$ |__$$ | /      \  /      \  /    $$ | /      \  /      \       $$ \__$$/  /       | /      \  /      \ $$ |$$ |
+    // $$    $$ |/$$$$$$  | $$$$$$  |/$$$$$$$ |/$$$$$$  |/$$$$$$  |      $$      \ /$$$$$$$/ /$$$$$$  |/$$$$$$  |$$ |$$ |
+    // $$$$$$$$ |$$    $$ | /    $$ |$$ |  $$ |$$    $$ |$$ |  $$/        $$$$$$  |$$ |      $$ |  $$/ $$ |  $$ |$$ |$$ |
+    // $$ |  $$ |$$$$$$$$/ /$$$$$$$ |$$ \__$$ |$$$$$$$$/ $$ |            /  \__$$ |$$ \_____ $$ |      $$ \__$$ |$$ |$$ |
+    // $$ |  $$ |$$       |$$    $$ |$$    $$ |$$       |$$ |            $$    $$/ $$       |$$ |      $$    $$/ $$ |$$ |
+    // $$/   $$/  $$$$$$$/  $$$$$$$/  $$$$$$$/  $$$$$$$/ $$/              $$$$$$/   $$$$$$$/ $$/        $$$$$$/  $$/ $$/
+    let prevScroll = 0;
+    let prevScrollTimestamp = 0;
+    let menuIsDown = false;
+    var existingInterval;
+    const moveHeaderDown = (isDown, isAnimated) => {
+      header.style.position = "fixed";
+      if (existingInterval) {
+        clearTimeout(existingInterval);
+      }
+      if (isAnimated) {
+        header.classList.add("transitionHeaderPosition");
+      }
+      if (isDown) {
+        header.style.transform = "none";
+      } else if (!menuExpanded) {
+        header.style.transform = `translateY(${-100}%)`;
+      }
+      // header.style.transform = `translateY(${isDown ? 0 : -100}%)`;
+      if (isAnimated) {
+        existingInterval = setTimeout(() => {
+          header.classList.remove("transitionHeaderPosition");
+        }, headerPositionTransitionDuration * 1000);
+      }
+    };
+    window.addEventListener("scroll", () => {
+      if (window.innerWidth > mobileMaxWidth) {
+        return;
+      }
+      const currentScroll = window.scrollY;
+      const timestamp = new Date();
+      const scrollVelocity =
+        (currentScroll - prevScroll) / (timestamp - prevScrollTimestamp);
+      if (currentScroll <= 0) {
+        menuIsDown = false;
+        header.style.position = "fixed";
+      } else if (currentScroll <= mobileHeaderHeight) {
+        if (menuIsDown) {
+        } else if (!menuExpanded) {
+          header.style.position = "absolute";
+          header.style.transform = "none";
+        }
+      } else if (
+        currentScroll > mobileHeaderHeight &&
+        prevScroll <= mobileHeaderHeight
+      ) {
+        if (menuIsDown) {
+        } else {
+          moveHeaderDown(false, false);
+          menuIsDown = false;
+        }
+      } else if (scrollVelocity > 0) {
+        moveHeaderDown(false, true);
+        menuIsDown = false;
+      } else if (scrollVelocity < -0.8) {
+        moveHeaderDown(true, true);
+        menuIsDown = true;
+      }
+      prevScroll = currentScroll;
+      prevScrollTimestamp = timestamp;
+    });
+    //  __       __                                      ________                                                    __
+    // /  \     /  |                                    /        |                                                  /  |
+    // $$  \   /$$ |  ______   _______   __    __       $$$$$$$$/  __    __   ______    ______   _______    _______ $$/   ______   _______
+    // $$$  \ /$$$ | /      \ /       \ /  |  /  |      $$ |__    /  \  /  | /      \  /      \ /       \  /       |/  | /      \ /       \
+    // $$$$  /$$$$ |/$$$$$$  |$$$$$$$  |$$ |  $$ |      $$    |   $$  \/$$/ /$$$$$$  | $$$$$$  |$$$$$$$  |/$$$$$$$/ $$ |/$$$$$$  |$$$$$$$  |
+    // $$ $$ $$/$$ |$$    $$ |$$ |  $$ |$$ |  $$ |      $$$$$/     $$  $$<  $$ |  $$ | /    $$ |$$ |  $$ |$$      \ $$ |$$ |  $$ |$$ |  $$ |
+    // $$ |$$$/ $$ |$$$$$$$$/ $$ |  $$ |$$ \__$$ |      $$ |_____  /$$$$  \ $$ |__$$ |/$$$$$$$ |$$ |  $$ | $$$$$$  |$$ |$$ \__$$ |$$ |  $$ |
+    // $$ | $/  $$ |$$       |$$ |  $$ |$$    $$/       $$       |/$$/ $$  |$$    $$/ $$    $$ |$$ |  $$ |/     $$/ $$ |$$    $$/ $$ |  $$ |
+    // $$/      $$/  $$$$$$$/ $$/   $$/  $$$$$$/        $$$$$$$$/ $$/   $$/ $$$$$$$/   $$$$$$$/ $$/   $$/ $$$$$$$/  $$/  $$$$$$/  $$/   $$/
+    //                                                                      $$ |
+    //                                                                      $$ |
+    //                                                                      $$/
+    let menuExpanded = false;
+    const header = document.querySelector("header");
 
-  let wasMobile = false;
-  const evaluateTransitionable = () => {
-    const isMobile = window.innerWidth <= mobileMaxWidth;
-    console.log(isMobile);
-    if (isMobile && !wasMobile) {
-      header.classList.add("headerTransitionable");
-      // hoverZone.style.transition = "none";
-      hoverZone?.classList.remove("hoverZoneTransition");
-      moveHoverToAnchor();
-    } else if (!isMobile && wasMobile) {
-      header.classList.remove("headerTransitionable");
-      header.style.transform = "none";
-      // hoverZone.style.transition = "none";
-      hoverZone?.classList.remove("hoverZoneTransition");
-      moveHoverToAnchor();
-    }
-    wasMobile = isMobile;
-    if (menuExpanded) {
-      // debugger;
-      hoverZone?.classList.remove("hoverZoneTransition");
-      moveHoverToAnchor();
-    }
-  };
-  evaluateTransitionable();
-  window.addEventListener("resize", evaluateTransitionable);
-</script>
-<!-- __                __           
+    const hamburger = document.getElementById("hamburger");
+
+    hamburger?.addEventListener("click", () => {
+      const innerHeight = header.scrollHeight;
+      if (menuExpanded) {
+        header?.classList.remove("expanded");
+        header.style.setProperty(
+          "--headerHeight",
+          Math.min(innerHeight, window.innerHeight) + "px"
+        );
+        setTimeout(() => {
+          header.style.setProperty("--headerHeight", mobileHeaderHeight + "px");
+        }, 0);
+      } else {
+        moveHoverToAnchor();
+
+        header?.classList.add("expanded");
+        header.style.setProperty(
+          "--headerHeight",
+          Math.min(innerHeight, window.innerHeight) + "px"
+        );
+        setTimeout(() => {
+          header.style.setProperty("--headerHeight", "auto");
+        }, headerHeightTransitionDuration * 1000);
+        header.position = "fixed";
+      }
+      menuExpanded = !menuExpanded;
+      console.log("menuExpanded: ", menuExpanded);
+    });
+
+    let wasMobile = false;
+    const evaluateTransitionable = () => {
+      const isMobile = window.innerWidth <= mobileMaxWidth;
+      console.log(isMobile);
+      if (isMobile && !wasMobile) {
+        header.classList.add("headerTransitionable");
+        // hoverZone.style.transition = "none";
+        hoverZone?.classList.remove("hoverZoneTransition");
+        moveHoverToAnchor();
+      } else if (!isMobile && wasMobile) {
+        header.classList.remove("headerTransitionable");
+        header.style.transform = "none";
+        // hoverZone.style.transition = "none";
+        hoverZone?.classList.remove("hoverZoneTransition");
+        moveHoverToAnchor();
+      }
+      wasMobile = isMobile;
+      if (menuExpanded) {
+        // debugger;
+        hoverZone?.classList.remove("hoverZoneTransition");
+        moveHoverToAnchor();
+      }
+    };
+    evaluateTransitionable();
+    window.addEventListener("resize", evaluateTransitionable);
+  </script>
+  <!-- __                __           
             /  |              /  |          
   _______  _$$ |_    __    __ $$ |  ______  
  /       |/ $$   |  /  |  /  |$$ | /      \ 
@@ -419,111 +418,111 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
                     /  \__$$ |              
                     $$    $$/               
                      $$$$$$/                 -->
-<style
-  define:vars={{
-    headerWidth: headerWidth + "px",
-    mobileHeaderHeight: mobileHeaderHeight + "px",
-    headerHeight: mobileHeaderHeight + "px",
-    headerHeightTransitionDuration: headerHeightTransitionDuration + "s",
-    headerPositionTransitionDuration: headerPositionTransitionDuration + "s",
-    headerColor,
-    mobileMaxWidth: mobileMaxWidth + "px",
-    navPadding: navPadding + "em",
-    headerColorOpaque,
-  }}
->
-  body {
-    font-size: 16px;
-    font-weight: 500;
-  }
-  :global(*) {
-    font-family: "Assistant", sans-serif;
-  }
-  header {
-    background: var(--headerColor);
-    position: fixed;
-    width: var(--headerWidth);
-    height: 100vh;
-    overflow: hidden;
-    overflow-x: hidden;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    /* justify-content: center; */
-    align-items: center;
-    padding: 1.4em 0;
-    --side-padding: 0.7em;
-    overflow-y: scroll;
-    isolation: isolate;
-    z-index: 1;
-    /* padding-left: var(--side-padding); */
-  }
-  header :global(a),
-  header :global(a:visited),
-  header :global(a:active) {
-    /* color: white; */
-  }
-  #hamburger {
-    display: none;
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    opacity: 0.4;
-    height: 24px;
-    width: 24px;
-    stroke-width: 12px;
-    stroke-linecap: round;
-    cursor: pointer;
-    transition: all 0.1s ease;
-  }
-  #hamburger:hover {
-    opacity: 1;
-  }
-  .expanded #hamburger {
-    transform: rotate(90deg);
-  }
-  main {
-    flex: 1;
-    /* background-color: white; */
-    margin-left: var(--headerWidth);
-    isolation: isolate;
-    /* z-index: -10; */
-  }
-  #logo {
-    font-size: 1.5em;
-    font-weight: 500;
-    padding: 0.3em 0.9em;
-    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='white' stroke-width='3' stroke-dasharray='2%2c 8' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square'/%3e%3c/svg%3e");
-  }
-  #bio {
-    font-size: 0.9em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 1em;
-    margin-bottom: 2em;
-    opacity: 0.8;
-  }
-  #bio > * {
-    padding: 0.15em 0;
-  }
-  nav {
-    width: 100%;
-    position: relative;
-    --borderRounding: 0.6em;
-    --flangeRadius: 0.6em;
-    /* padding-left: var(--side-padding); */
-    /* border: 1px solid red; */
-  }
-  nav ul {
-    display: flex;
-    flex-direction: column;
-  }
-  /* nav li {
+  <style
+    define:vars={{
+      headerWidth: headerWidth + "px",
+      mobileHeaderHeight: mobileHeaderHeight + "px",
+      headerHeight: mobileHeaderHeight + "px",
+      headerHeightTransitionDuration: headerHeightTransitionDuration + "s",
+      headerPositionTransitionDuration: headerPositionTransitionDuration + "s",
+      headerColor,
+      mobileMaxWidth: mobileMaxWidth + "px",
+      navPadding: navPadding + "em",
+      headerColorOpaque,
+    }}
+  >
+    body {
+      font-size: 16px;
+      font-weight: 500;
+    }
+    :global(*) {
+      font-family: "Assistant", sans-serif;
+    }
+    header {
+      background: var(--headerColor);
+      position: fixed;
+      width: var(--headerWidth);
+      height: 100vh;
+      overflow: hidden;
+      overflow-x: hidden;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      /* justify-content: center; */
+      align-items: center;
+      padding: 1.4em 0;
+      --side-padding: 0.7em;
+      overflow-y: scroll;
+      isolation: isolate;
+      z-index: 1;
+      /* padding-left: var(--side-padding); */
+    }
+    header :global(a),
+    header :global(a:visited),
+    header :global(a:active) {
+      /* color: white; */
+    }
+    #hamburger {
+      display: none;
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      opacity: 0.4;
+      height: 24px;
+      width: 24px;
+      stroke-width: 12px;
+      stroke-linecap: round;
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+    #hamburger:hover {
+      opacity: 1;
+    }
+    .expanded #hamburger {
+      transform: rotate(90deg);
+    }
+    main {
+      flex: 1;
+      /* background-color: white; */
+      margin-left: var(--headerWidth);
+      isolation: isolate;
+      /* z-index: -10; */
+    }
+    #logo {
+      font-size: 1.5em;
+      font-weight: 500;
+      padding: 0.3em 0.9em;
+      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='white' stroke-width='3' stroke-dasharray='2%2c 8' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square'/%3e%3c/svg%3e");
+    }
+    #bio {
+      font-size: 0.9em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 1em;
+      margin-bottom: 2em;
+      opacity: 0.8;
+    }
+    #bio > * {
+      padding: 0.15em 0;
+    }
+    nav {
+      width: 100%;
+      position: relative;
+      --borderRounding: 0.6em;
+      --flangeRadius: 0.6em;
+      /* padding-left: var(--side-padding); */
+      /* border: 1px solid red; */
+    }
+    nav ul {
+      display: flex;
+      flex-direction: column;
+    }
+    /* nav li {
     list-style: none;
     padding-right: var(--side-padding);
   } */
-  /* nav li a {
+    /* nav li a {
     display: flex;
     align-items: center;
     padding: 0.6em;
@@ -531,169 +530,169 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     border-radius: 0.4em;
     transition: all 0.2s ease;
   } */
-  /* nav li a:hover {
+    /* nav li a:hover {
     background-color: rgba(255, 255, 255, 0.14);
   } */
-  .navSection {
-    margin-bottom: 1.4em;
-    display: flex;
-    flex-direction: column;
-    /* border: 1px solid red; */
-  }
-  .navSection p {
-    font-size: 0.8em;
-    opacity: 0.8;
-    font-weight: 600;
-    margin-bottom: 0.5em;
-    padding-left: calc(var(--navPadding) * 2);
-    /* font-weight: 600; */
-  }
-
-  #made {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    padding: 0 2em;
-    font-size: 0.8em;
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  #made [astro-icon] {
-    display: block;
-    height: 1.6em;
-    margin: 0.4em;
-  }
-
-  @media screen and (max-width: 800px) {
-    header {
-      width: 100%;
-      padding: 0.7em 0;
-      /* height: auto; */
-      height: var(--headerHeight);
-      /* margin-top: calc(-1 * var(--mobileHeaderHeight)); */
-      top: 0;
-      backdrop-filter: blur(6px);
-      overflow: hidden;
-      /* overflow: visible; */
-    }
-    header.expanded {
-      overflow-y: scroll;
-      max-height: 100vh;
-      /* position: absolute !important; */
-    }
-    .headerTransitionable {
-      transition: height var(--headerHeightTransitionDuration) ease;
-    }
-    .transitionHeaderPosition {
-      transition: transform var(--headerPositionTransitionDuration) ease;
-    }
-    #hamburger {
-      display: block;
-      stroke: white;
-    }
-    main {
-      margin-top: var(--mobileHeaderHeight);
-      margin-left: 0;
-    }
-    #logo {
-      font-size: 1.2em;
-      padding: 0.3em 0.9em;
-    }
-    #bio {
-      flex-direction: row;
-      font-size: 0.8em;
-      margin-top: 0.5em;
-      margin-bottom: 2em;
-      padding: 0 0.6em;
-    }
-    #bio > * {
-      padding: 0 0.3em;
-    }
-    nav {
-      --navPadding: 0.4em;
-      padding: 0 0.5em;
-    }
-    nav ul {
-      flex-direction: row;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    nav ul > * {
-      /* min-width: 140px; */
-    }
     .navSection {
-      /* align-items: center; */
-    }
-  }
-
-  @media screen and (max-width: 430px) {
-    header {
-      padding-top: 0;
-    }
-    #logo {
-      padding: 0 1em;
-      line-height: 46px;
-      margin: 17px 0;
-      font-size: 1.4em;
-    }
-    #bio {
-      /* display: none; */
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 0;
-    }
-    nav ul {
+      margin-bottom: 1.4em;
+      display: flex;
       flex-direction: column;
-      /* padding-left: 1em; */
-      max-width: 300px;
-      margin-left: auto;
-      margin-right: auto;
+      /* border: 1px solid red; */
     }
-    .navSection {
-      width: 100%;
+    .navSection p {
+      font-size: 0.8em;
+      opacity: 0.8;
+      font-weight: 600;
+      margin-bottom: 0.5em;
+      padding-left: calc(var(--navPadding) * 2);
+      /* font-weight: 600; */
     }
-  }
-</style>
 
-<style>
-  .pageContent {
-    padding: 2em 2em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    #made {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      padding: 0 2em;
+      font-size: 0.8em;
+      color: rgba(255, 255, 255, 0.5);
+    }
 
-  .pageContent > :global(*) {
-    max-width: 1100px;
-  }
+    #made [astro-icon] {
+      display: block;
+      height: 1.6em;
+      margin: 0.4em;
+    }
 
-  .pageContent :global(h1),
-  .pageContent :global(h2),
-  .pageContent :global(h3) {
-    text-align: center;
-  }
+    @media screen and (max-width: 800px) {
+      header {
+        width: 100%;
+        padding: 0.7em 0;
+        /* height: auto; */
+        height: var(--headerHeight);
+        /* margin-top: calc(-1 * var(--mobileHeaderHeight)); */
+        top: 0;
+        backdrop-filter: blur(6px);
+        overflow: hidden;
+        /* overflow: visible; */
+      }
+      header.expanded {
+        overflow-y: scroll;
+        max-height: 100vh;
+        /* position: absolute !important; */
+      }
+      .headerTransitionable {
+        transition: height var(--headerHeightTransitionDuration) ease;
+      }
+      .transitionHeaderPosition {
+        transition: transform var(--headerPositionTransitionDuration) ease;
+      }
+      #hamburger {
+        display: block;
+        stroke: white;
+      }
+      main {
+        margin-top: var(--mobileHeaderHeight);
+        margin-left: 0;
+      }
+      #logo {
+        font-size: 1.2em;
+        padding: 0.3em 0.9em;
+      }
+      #bio {
+        flex-direction: row;
+        font-size: 0.8em;
+        margin-top: 0.5em;
+        margin-bottom: 2em;
+        padding: 0 0.6em;
+      }
+      #bio > * {
+        padding: 0 0.3em;
+      }
+      nav {
+        --navPadding: 0.4em;
+        padding: 0 0.5em;
+      }
+      nav ul {
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      nav ul > * {
+        /* min-width: 140px; */
+      }
+      .navSection {
+        /* align-items: center; */
+      }
+    }
 
-  .pageContent :global(h1) {
-    font-size: 2em;
-    padding: 1em 0;
-  }
+    @media screen and (max-width: 430px) {
+      header {
+        padding-top: 0;
+      }
+      #logo {
+        padding: 0 1em;
+        line-height: 46px;
+        margin: 17px 0;
+        font-size: 1.4em;
+      }
+      #bio {
+        /* display: none; */
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 0;
+      }
+      nav ul {
+        flex-direction: column;
+        /* padding-left: 1em; */
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .navSection {
+        width: 100%;
+      }
+    }
+  </style>
 
-  .pageContent :global(p) {
-    font-size: 1.2em;
-    line-height: 150%;
-    text-indent: 2em;
-    padding: 1em 0;
-    color: rgba(0, 0, 0, 0.6);
-    /* padding: 0.5em 0; */
-  }
+  <style>
+    .pageContent {
+      padding: 2em 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-  .noPageContentPadding {
-    padding: 0 !important;
-  }
-</style>
+    .pageContent > :global(*) {
+      max-width: 1100px;
+    }
 
-<!-- <style is:inline>
+    .pageContent :global(h1),
+    .pageContent :global(h2),
+    .pageContent :global(h3) {
+      text-align: center;
+    }
+
+    .pageContent :global(h1) {
+      font-size: 2em;
+      padding: 1em 0;
+    }
+
+    .pageContent :global(p) {
+      font-size: 1.2em;
+      line-height: 150%;
+      text-indent: 2em;
+      padding: 1em 0;
+      color: rgba(0, 0, 0, 0.6);
+      /* padding: 0.5em 0; */
+    }
+
+    .noPageContentPadding {
+      padding: 0 !important;
+    }
+  </style>
+
+  <!-- <style is:inline>
   nav svg {
     width: 1.2em;
     height: 1.2em;
@@ -704,7 +703,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   }
 </style> -->
 
-<!-- <style>
+  <!-- <style>
   :global(header svg) {
     width: 1.2em;
     height: 1.2em;
@@ -730,16 +729,17 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   }
 </style> -->
 
-<style is:global>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  a,
-  a:visited,
-  a:active {
-    text-decoration: initial;
-    color: inherit !important;
-  }
-</style>
+  <style is:global>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    a,
+    a:visited,
+    a:active {
+      text-decoration: initial;
+      color: inherit !important;
+    }
+  </style>
+</html>

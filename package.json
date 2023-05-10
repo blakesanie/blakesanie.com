@@ -10,8 +10,9 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/vercel": "^3.3.0",
     "@splinetool/runtime": "^0.9.261",
-    "astro": "^2.0.18",
+    "astro": "^2.4.4",
     "astro-google-fonts-optimizer": "^0.2.2",
     "astro-icon": "^0.8.0",
     "astro-imagetools": "^0.8.1",
