@@ -2,17 +2,19 @@
 import { Icon } from "astro-icon";
 import HoverZone from "./HoverZone.astro";
 import redirects from "../../redirects.json";
-const { icon, chip, chipIcon, chipColor, href } = Astro.props;
+const { icon, chip, chipIcon, chipColor, href, id } = Astro.props;
 const [iconPack, iconName] = icon.split(":");
 let [chipPack, chipName] = chipIcon ? chipIcon.split(":") : [0, 0];
 const active = Astro.url.pathname.split("?")[0] == href.split("?")[0];
+// const firstRouteMatches =
+//   Astro.url.pathname.split("/")[1] == href.split("/")[1];
 const redirect = redirects[href.substring(1)];
 const redirectHref = redirect?.href;
 console.log("redirect is", redirectHref);
 ---
 
 <li class:list={[{ active: active }]}>
-  <a href={redirectHref || href}>
+  <a href={redirectHref || href} id={id}>
     <!-- <Icon icon={icon} class="icon" /> -->
     <Icon pack={iconPack} name={iconName} />
     <span class="navLinkText">
@@ -43,6 +45,7 @@ console.log("redirect is", redirectHref);
       padding: 0 calc(var(--navPadding) * 2);
       font-size: 1em;
       border-radius: var(--borderRounding);
+      cursor: pointer;
     }
 
     .navLinkText {

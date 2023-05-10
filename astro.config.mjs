@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import { astroImageTools } from "astro-imagetools";
+import compress from "astro-compress";
 // import vercelStatic from "@astrojs/vercel/static";
 
 // https://astro.build/config
@@ -12,5 +13,10 @@ import { astroImageTools } from "astro-imagetools";
 export default defineConfig({
   // output: "static",
   // adapter: vercelStatic(),
-  integrations: [astroImageTools],
+  integrations: [
+    astroImageTools,
+    compress({
+      img: false,
+    }),
+  ],
 });

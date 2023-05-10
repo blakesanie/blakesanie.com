@@ -76,10 +76,16 @@ const { allowMainStyles, noContentPadding } = Astro.props;
           </div>
           <div class="navSection">
             <p>Photography</p>
-            <NavLink icon="majesticons:dashboard-line" href="/photo">
+            <NavLink
+              icon="majesticons:dashboard-line"
+              href="/photo"
+              id="photoNavLink"
+            >
               Gallery
             </NavLink>
-            <NavLink icon="tabler:map-2" href="/photo/map">Capture Map</NavLink>
+            <NavLink icon="tabler:map-2" href="/photo/map" id="mapNavLink">
+              Capture Map
+            </NavLink>
             <!-- <NavLink
               icon="ion:calendar-outline"
               href="/photo/book"
@@ -167,8 +173,24 @@ const { allowMainStyles, noContentPadding } = Astro.props;
       "nav"
     );
 
+    let activeNavHoverZone = document.querySelector(".active .navHoverZone");
+    let activeAnchor = activeNavHoverZone?.parentElement;
+    let hoverZone;
+    let baseHeight;
+    let baseWidth;
+    let baseY;
+    let baseX;
+
     for (let i = 0; i < anchors.length; i++) {
       anchors[i].addEventListener("mouseenter", (e) => {
+        moveHoverToAnchor(anchors[i]);
+      });
+      anchors[i].addEventListener("click", (e) => {
+        console.log("clicked anchor", anchors[i]);
+        // activeAnchor.classList.remove("active"); // line not necessary since activeAnchor variable changed anyways
+        activeAnchor = anchors[i];
+        // activeAnchor.classList.add("active");
+        // anchors[i].parentElement.classList.add("active"); // line not necessary since activeAnchor variable changed anyways
         moveHoverToAnchor(anchors[i]);
       });
     }
@@ -177,14 +199,6 @@ const { allowMainStyles, noContentPadding } = Astro.props;
         moveHoverToAnchor();
       });
     }
-
-    let activeNavHoverZone = document.querySelector(".active .navHoverZone");
-    let activeAnchor = activeNavHoverZone?.parentElement;
-    let hoverZone;
-    let baseHeight;
-    let baseWidth;
-    let baseY;
-    let baseX;
 
     let currentHoverAnchor;
 

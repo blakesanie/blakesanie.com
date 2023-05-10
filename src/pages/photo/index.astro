@@ -36,6 +36,7 @@ const lensRenamings = {
   "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED": "Nikkor 18-105mm DX",
   "SAMYANG AF 24mm F2.8": "Rokinon 24mm F2.8",
   "AF-S DX Nikkor 35mm f/1.8G": "Nikkor 35mm f/1.8G DX",
+  "----": "Helios 44/2",
 };
 
 function applyRenamings(str, renamings) {
@@ -44,6 +45,9 @@ function applyRenamings(str, renamings) {
   }
   console.log("str is", str);
   for (const [key, value] of Object.entries(renamings)) {
+    if (!value) {
+      return undefined;
+    }
     str = str.replace(key, value);
   }
   return str;
@@ -407,6 +411,7 @@ const gutter = 10;
       display: flex;
       flex-direction: column;
       align-items: center;
+      /* flex: 1; */
     }
 
     #imageName {
@@ -540,12 +545,14 @@ const gutter = 10;
     galleryButton?.addEventListener("click", () => {
       if (mode != "gallery") {
         mode = "gallery";
+        document.getElementById("photoNavLink").click();
         activateGallery();
       }
     });
     mapButton?.addEventListener("click", () => {
       if (mode != "map") {
         mode = "map";
+        document.getElementById("mapNavLink").click();
         activateMap();
       }
     });
@@ -715,6 +722,7 @@ const gutter = 10;
     let fullScreenElement;
     let photoFullScreenElement;
     let mapFullScreenElement;
+    let imageInfoElement;
     let imageNameElement;
     let metaDataElement;
     let prevElement;
@@ -737,7 +745,7 @@ const gutter = 10;
       activateFullScreen(newFilename);
     }
 
-    const minCardWidth = 150;
+    const minCardWidth = 160;
     const minCardHeight = 132;
 
     function maxWidthThatFits(spaceWidth, spaceHeight, width, height) {
@@ -780,8 +788,11 @@ const gutter = 10;
       currentImageElement.style.width = bestWidth + "px";
       if (isHorizontal) {
         photoFullScreenElement.style.flexDirection = "row";
+        imageInfoElement.style.maxWidth =
+          window.innerWidth - gutter * 2 - bestWidth + "px";
       } else {
         photoFullScreenElement.style.flexDirection = "column";
+        imageInfoElement.style.maxWidth = "none";
       }
     }
 
@@ -796,6 +807,7 @@ const gutter = 10;
           photoFullScreenElement = document.getElementById("photoFullScreen");
           mapFullScreenElement = document.getElementById("mapFullScreen");
           selectedMapElement = document.getElementById("selectedMap");
+          imageInfoElement = document.getElementById("imageInfo");
           prevElement = document.getElementById("prev");
           prevElement.addEventListener("click", prevImage);
           nextElement = document.getElementById("next");
@@ -982,6 +994,24 @@ const gutter = 10;
         AISearch.classList.remove("minimized");
       }
       advancedOpen = !advancedOpen;
+    });
+
+    //  _______    ______   __     __
+    // /       \  /      \ /  \   /  |
+    // $$$$$$$  | $$$$$$  |$$  \ /$$/
+    // $$ |  $$ | /    $$ | $$  /$$/
+    // $$ |  $$ |/$$$$$$$ |  $$ $$/
+    // $$ |  $$ |$$    $$ |   $$$/
+    // $$/   $$/  $$$$$$$/     $/
+
+    document.getElementById("mapNavLink").addEventListener("click", (e) => {
+      e.preventDefault();
+      document.getElementById("mapButton").click();
+    });
+
+    document.getElementById("photoNavLink").addEventListener("click", (e) => {
+      e.preventDefault();
+      document.getElementById("galleryButton").click();
     });
   </script>
 </HeaderAndFooter>
