@@ -6,12 +6,11 @@ import vercelStatic from "@astrojs/vercel/static";
 // export default defineConfig({});
 
 // export default {
-
-// integrations: [astroImageTools],
+//   integrations: [astroImageTools],
 // };
 
 export default defineConfig({
-  output: "server",
-  adapter: vercelStatic(),
+  // output: "static",
+  // adapter: vercelStatic(),
   integrations: [astroImageTools],
 });
