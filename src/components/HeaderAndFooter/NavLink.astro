@@ -7,7 +7,7 @@ const [iconPack, iconName] = icon.split(":");
 let [chipPack, chipName] = chipIcon ? chipIcon.split(":") : [0, 0];
 const active =
   Astro.url.pathname.substring(1).split("?")[0] ==
-  href.split("/").slice(1).join("/").split("?")[0];
+  href.replace("://", "").split("/").slice(1).join("/").split("?")[0];
 // const firstRouteMatches =
 //   Astro.url.pathname.split("/")[1] == href.split("/")[1];
 const redirect = redirects[href.substring(1)];
