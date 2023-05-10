@@ -16,6 +16,14 @@ console.log("redirect is", redirectHref);
 ---
 
 <li class:list={[{ active: active }]}>
+  <p>
+    {
+      Astro.url.pathname.substring(1).split("?")[0] +
+        " == " +
+        href.replace("://", "").split("/").slice(1).join("/").split("?")[0]
+    }
+  </p>
+
   <a href={redirectHref || href} id={id}>
     <!-- <Icon icon={icon} class="icon" /> -->
     <Icon pack={iconPack} name={iconName} />
