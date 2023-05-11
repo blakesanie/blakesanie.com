@@ -181,10 +181,22 @@ const { allowMainStyles, noContentPadding } = Astro.props;
     let baseY;
     let baseX;
 
+    function isTouchScreen() {
+      return (
+        "ontouchstart" in window ||
+        navigator.maxTouchPoints > 0 ||
+        navigator.msMaxTouchPoints > 0
+      );
+    }
+
+    const isTouch = isTouchScreen();
+
     for (let i = 0; i < anchors.length; i++) {
-      anchors[i].addEventListener("mouseenter", (e) => {
-        moveHoverToAnchor(anchors[i]);
-      });
+      if (!isTouch) {
+        anchors[i].addEventListener("mouseenter", (e) => {
+          moveHoverToAnchor(anchors[i]);
+        });
+      }
       anchors[i].addEventListener("click", (e) => {
         console.log("clicked anchor", anchors[i]);
         // activeAnchor.classList.remove("active"); // line not necessary since activeAnchor variable changed anyways
@@ -194,10 +206,12 @@ const { allowMainStyles, noContentPadding } = Astro.props;
         moveHoverToAnchor(anchors[i]);
       });
     }
-    for (let i = 0; i < mouseOffSections.length; i++) {
-      mouseOffSections[i].addEventListener("mouseleave", (e) => {
-        moveHoverToAnchor();
-      });
+    if (!isTouch) {
+      for (let i = 0; i < mouseOffSections.length; i++) {
+        mouseOffSections[i].addEventListener("mouseleave", (e) => {
+          moveHoverToAnchor();
+        });
+      }
     }
 
     let currentHoverAnchor;
