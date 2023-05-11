@@ -295,7 +295,7 @@ const projects: ProjectInterface[] = [
   const techIcons = document.querySelectorAll(".tech svg");
 
   for (let i = 0; i < techIcons.length; i++) {
-    techIcons[i].addEventListener("mouseenter", (e) => {
+    function showTech(e) {
       const target = e.target as HTMLElement;
       if (target) {
         const attr = target.getAttribute("tech");
@@ -304,7 +304,8 @@ const projects: ProjectInterface[] = [
           selected.innerHTML = attr;
         }
       }
-    });
+    }
+    techIcons[i].addEventListener("mouseenter", showTech);
   }
 
   const containers = document.querySelectorAll(".tech");
