@@ -8,7 +8,7 @@ const headerWidth = 200;
 const mobileHeaderHeight = 80;
 const headerHeightTransitionDuration = 0.1;
 const headerPositionTransitionDuration = 0.3;
-const headerColor = Astro.props.color || "rgb(0, 126, 204, 0.8)";
+const headerColor = Astro.props.color || "#007ED4bb";
 const headerColorOpaque = "#1c81ce";
 const navPadding = 0.6;
 const isHome = Astro.url.pathname === "/";
@@ -191,6 +191,8 @@ const { allowMainStyles, noContentPadding } = Astro.props;
 
     const isTouch = isTouchScreen();
 
+    let menuExpanded = false;
+
     for (let i = 0; i < anchors.length; i++) {
       if (!isTouch) {
         anchors[i].addEventListener("mouseenter", (e) => {
@@ -201,6 +203,9 @@ const { allowMainStyles, noContentPadding } = Astro.props;
         console.log("clicked anchor", anchors[i]);
         // activeAnchor.classList.remove("active"); // line not necessary since activeAnchor variable changed anyways
         activeAnchor = anchors[i];
+        if (menuExpanded) {
+          header.style.setProperty("--headerHeight", mobileHeaderHeight + "px");
+        }
         // activeAnchor.classList.add("active");
         // anchors[i].parentElement.classList.add("active"); // line not necessary since activeAnchor variable changed anyways
         moveHoverToAnchor(anchors[i]);
@@ -375,7 +380,7 @@ const { allowMainStyles, noContentPadding } = Astro.props;
     //                                                                      $$ |
     //                                                                      $$ |
     //                                                                      $$/
-    let menuExpanded = false;
+    // let menuExpanded = false;
     const header = document.querySelector("header");
 
     const hamburger = document.getElementById("hamburger");
@@ -464,6 +469,8 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       font-weight: 500;
     }
     :global(*) {
+      font-family: Georgia;
+      letter-spacing: -0.5px;
       font-family: "Assistant", sans-serif;
     }
     header {
@@ -489,6 +496,9 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     header :global(a:visited),
     header :global(a:active) {
       /* color: white; */
+    }
+    :global(a:visited) {
+      color: initial;
     }
     #hamburger {
       display: none;

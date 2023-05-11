@@ -323,6 +323,10 @@ const gutter = 10;
       display: none;
       width: 100%;
     }
+
+    img[!src] {
+      text-indent: -9999px;
+    }
     /* :global(main.gallery) #photoContent > #gallery {
       display: block;
     } */
@@ -395,6 +399,7 @@ const gutter = 10;
 
     #fullScreen .section {
       height: 100vh;
+      height: 100svh;
       width: 100%;
       /* border: 10px solid yellow; */
       padding: var(--gutter);
