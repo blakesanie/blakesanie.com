@@ -2,7 +2,8 @@
 import { Icon } from "astro-icon";
 import HoverZone from "./HoverZone.astro";
 import redirects from "../../redirects.json";
-const { icon, chip, chipIcon, chipColor, href, id } = Astro.props;
+const { icon, chip, chipIcon, chipColor, href, id, hoverZoneBehind } =
+  Astro.props;
 const [iconPack, iconName] = icon.split(":");
 let [chipPack, chipName] = chipIcon ? chipIcon.split(":") : [0, 0];
 let path = Astro.url.pathname.substring(1).split("?")[0];
@@ -28,6 +29,7 @@ const { textColor } = Astro.props;
 <li class:list={[{ active: active }]}>
   <a href={redirectHref || href} id={id}>
     <!-- <Icon icon={icon} class="icon" /> -->
+    {active && hoverZoneBehind && <HoverZone />}
     <Icon pack={iconPack} name={iconName} />
     <span class="navLinkText">
       <slot />
@@ -42,7 +44,7 @@ const { textColor } = Astro.props;
         </div>
       )
     }
-    {active && <HoverZone />}
+    {active && !hoverZoneBehind && <HoverZone />}
   </a>
 
   <style define:vars={{ chipColor: chipColor, textColor }}>
@@ -63,6 +65,7 @@ const { textColor } = Astro.props;
     .navLinkText {
       flex: 1;
       padding: 0.6em 0;
+      z-index: 0;
     }
     .navChips {
       position: relative;

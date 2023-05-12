@@ -141,6 +141,7 @@ const gutter = 10;
   mainClass={initialMode}
   headerColor="#eee"
   darkText
+  hoverZoneBehind
 >
   <h1>Photography</h1>
   <p>
@@ -469,6 +470,10 @@ const gutter = 10;
     :global(.stop-scrolling) {
       height: 100%;
       overflow: hidden;
+    }
+    :global(.navHoverZone) {
+      backdrop-filter: none;
+      background-color: white;
     }
 
     @media screen and (max-width: 600px) {
