@@ -391,6 +391,7 @@ const gutter = 10;
       overflow: scroll;
       opacity: 0;
       pointer-events: none;
+      transition: opacity 0.1s ease;
     }
     #fullScreen.active {
       opacity: 1;
@@ -483,6 +484,63 @@ const gutter = 10;
       maxLng: maxLng,
     }}
   >
+    let fullScreenElement;
+    let photoFullScreenElement;
+    let mapFullScreenElement;
+    let imageInfoElement;
+    let imageNameElement;
+    let metaDataElement;
+    let prevElement;
+    let nextElement;
+    let fullScreenOpen = false;
+    let openFileName;
+    let selectedMapElement;
+
+    let currentImageElement;
+
+    //  __                            __
+    // /  |                          /  |
+    // $$ |  ______    ______    ____$$ |        ______   __    __   ______    ______   __    __
+    // $$ | /      \  /      \  /    $$ |       /      \ /  |  /  | /      \  /      \ /  |  /  |
+    // $$ |/$$$$$$  | $$$$$$  |/$$$$$$$ |      /$$$$$$  |$$ |  $$ |/$$$$$$  |/$$$$$$  |$$ |  $$ |
+    // $$ |$$ |  $$ | /    $$ |$$ |  $$ |      $$ |  $$ |$$ |  $$ |$$    $$ |$$ |  $$/ $$ |  $$ |
+    // $$ |$$ \__$$ |/$$$$$$$ |$$ \__$$ |      $$ \__$$ |$$ \__$$ |$$$$$$$$/ $$ |      $$ \__$$ |
+    // $$ |$$    $$/ $$    $$ |$$    $$ |      $$    $$ |$$    $$/ $$       |$$ |      $$    $$ |
+    // $$/  $$$$$$/   $$$$$$$/  $$$$$$$/        $$$$$$$ | $$$$$$/   $$$$$$$/ $$/        $$$$$$$ |
+    //                                               $$ |                              /  \__$$ |
+    //                                               $$ |                              $$    $$/
+    //                                               $$/                                $$$$$$/
+
+    function getUrlQuery() {
+      var search = location.search.substring(1);
+      if (!search) {
+        return {};
+      }
+      return JSON.parse(
+        '{"' +
+          decodeURI(search)
+            .replace(/"/g, '\\"')
+            .replace(/&/g, '","')
+            .replace(/=/g, '":"') +
+          '"}'
+      );
+    }
+
+    const initialUrlQuery = getUrlQuery();
+    console.log("initial query", initialUrlQuery);
+
+    if (initialUrlQuery.im) {
+      let initialQueryInterval;
+      function initialFullScreen() {
+        try {
+          activateFullScreen(initialUrlQuery.im);
+          clearInterval(initialQueryInterval);
+        } catch {}
+      }
+      initialQueryInterval = setInterval(initialFullScreen, 10);
+      initialFullScreen();
+    }
+
     //  __
     // /  |
     // $$/  _____  ____    ______          ______    ______    _______
@@ -724,20 +782,6 @@ const gutter = 10;
     //                   $$    $$/
     //                    $$$$$$/
 
-    let fullScreenElement;
-    let photoFullScreenElement;
-    let mapFullScreenElement;
-    let imageInfoElement;
-    let imageNameElement;
-    let metaDataElement;
-    let prevElement;
-    let nextElement;
-    let fullScreenOpen = false;
-    let openFileName;
-    let selectedMapElement;
-
-    let currentImageElement;
-
     function prevImage() {
       if (!openFileName) return;
       const newFilename = imageChanges[openFileName]["prev"];
@@ -801,11 +845,24 @@ const gutter = 10;
       }
     }
 
+    function setImUrlQuery(filename) {
+      var newurl =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        window.location.pathname;
+      if (filename) {
+        newurl += "?im=" + encodeURIComponent(filename);
+      }
+      window.history.pushState({ path: newurl }, "", newurl);
+    }
+
     function activateFullScreen(filename) {
-      if (!filename) {
+      if (!filename || !images[filename]) {
         return;
       }
       openFileName = filename;
+      setImUrlQuery(filename);
       if (!fullScreenOpen) {
         if (!fullScreenElement) {
           fullScreenElement = document.getElementById("fullScreen");
@@ -820,7 +877,7 @@ const gutter = 10;
           document.getElementById("exit").addEventListener("click", () => {
             fullScreenElement.classList.remove("active");
             fullScreenOpen = false;
-
+            setImUrlQuery();
             document.body.classList.remove("stop-scrolling");
           });
           imageNameElement = document.getElementById("imageName");
