@@ -1,0 +1,51 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/linkedin",
+      "destination": "https://www.linkedin.com/in/blakesanie/"
+    },
+    { "source": "/blog", "destination": "https://blakesanie.medium.com/" },
+    {
+      "source": "/instagram",
+      "destination": "https://www.instagram.com/blake_sanie/"
+    },
+    { "source": "/github", "destination": "https://github.com/blakesanie" },
+    {
+      "source": "/balance",
+      "destination": "https://music.apple.com/us/album/balance/1478925861"
+    },
+    { "source": "/twitter", "destination": "https://twitter.com/blakesanie" },
+    {
+      "source": "/paypal",
+      "destination": "https://www.paypal.com/paypalme/blakesanie"
+    },
+    {
+      "source": "/venmo",
+      "destination": "https://account.venmo.com/u/Blake-Sanie"
+    },
+    {
+      "source": "/youtube",
+      "destination": "https://www.youtube.com/channel/UC5DbrnJtkkXNw-txM7NVWfw"
+    },
+    {
+      "source": "/spotify",
+      "destination": "https://open.spotify.com/user/blake_sanie?si=uvhN4kfdTQWy4jnrlhKTVg"
+    },
+    {
+      "source": "/source",
+      "destination": "https://github.com/blakesanie/blakesanie.com"
+    },
+    {
+      "source": "/blakeOS",
+      "destination": "https://www.notion.so/blakesanie/blakeOS-5ddea8783f0f40088effd7720bf059f5"
+    },
+    {
+      "source": "/strava",
+      "destination": "https://www.strava.com/athletes/44274878"
+    }
+  ]
+}
