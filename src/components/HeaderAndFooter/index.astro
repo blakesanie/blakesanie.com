@@ -8,11 +8,14 @@ const headerWidth = 200;
 const mobileHeaderHeight = 80;
 const headerHeightTransitionDuration = 0.1;
 const headerPositionTransitionDuration = 0.3;
-const headerColor = Astro.props.headerColor || "#007ED4bb";
+let headerColor = Astro.props.headerColor || "#007ED4bb";
 const textColor = Astro.props.darkText ? "black" : "white";
 const headerColorOpaque = "#1c81ce";
 const navPadding = 0.6;
 const isHome = Astro.url.pathname === "/";
+if (isHome) {
+  headerColor = "rgba(0,0,0,0.7)";
+}
 const { allowMainStyles, noContentPadding } = Astro.props;
 ---
 
