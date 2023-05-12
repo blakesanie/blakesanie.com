@@ -8,7 +8,8 @@ const headerWidth = 200;
 const mobileHeaderHeight = 80;
 const headerHeightTransitionDuration = 0.1;
 const headerPositionTransitionDuration = 0.3;
-const headerColor = Astro.props.color || "#007ED4bb";
+const headerColor = Astro.props.headerColor || "#007ED4bb";
+const textColor = Astro.props.darkText ? "black" : "white";
 const headerColorOpaque = "#1c81ce";
 const navPadding = 0.6;
 const isHome = Astro.url.pathname === "/";
@@ -29,7 +30,7 @@ const { allowMainStyles, noContentPadding } = Astro.props;
     <GoogleFontsOptimizer
       url="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&display=swap"
     />
-    <header>
+    <header class:list={[{ darkText: textColor == "black" }]}>
       <svg
         id="hamburger"
         xmlns="http://www.w3.org/2000/svg"
@@ -51,7 +52,11 @@ const { allowMainStyles, noContentPadding } = Astro.props;
         <ul>
           <div class="navSection">
             <p>Engineering</p>
-            <NavLink icon="majesticons:applications-add-line" href="/projects">
+            <NavLink
+              icon="majesticons:applications-add-line"
+              href="/projects"
+              textColor={textColor}
+            >
               Projects
             </NavLink>
             <NavLink
@@ -462,6 +467,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       mobileMaxWidth: mobileMaxWidth + "px",
       navPadding: navPadding + "em",
       headerColorOpaque,
+      textColor,
     }}
   >
     body {
@@ -479,7 +485,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       height: 100vh;
       overflow: hidden;
       overflow-x: hidden;
-      color: white;
+      color: var(--textColor);
       display: flex;
       flex-direction: column;
       /* justify-content: center; */
@@ -530,6 +536,9 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       font-weight: 500;
       padding: 0.3em 0.9em;
       background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='white' stroke-width='3' stroke-dasharray='2%2c 8' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square'/%3e%3c/svg%3e");
+    }
+    :global(.darkText) #logo {
+      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='black' stroke-width='3' stroke-dasharray='2%2c 8' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square'/%3e%3c/svg%3e");
     }
     #bio {
       font-size: 0.9em;
@@ -592,7 +601,9 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       justify-content: center;
       padding: 0 2em;
       font-size: 0.8em;
-      color: rgba(255, 255, 255, 0.5);
+      /* color: rgba(255, 255, 255, 0.5); */
+      color: var(--textColor);
+      opacity: 0.5;
     }
 
     #made [astro-icon] {
@@ -626,7 +637,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       }
       #hamburger {
         display: block;
-        stroke: white;
+        stroke: var(--textColor);
       }
       main {
         margin-top: var(--mobileHeaderHeight);

@@ -21,6 +21,8 @@ const active = path == route;
 const redirect = redirects[href.substring(1)];
 const redirectHref = redirect?.href;
 console.log("redirect is", redirectHref);
+
+const { textColor } = Astro.props;
 ---
 
 <li class:list={[{ active: active }]}>
@@ -43,7 +45,7 @@ console.log("redirect is", redirectHref);
     {active && <HoverZone />}
   </a>
 
-  <style define:vars={{ chipColor: chipColor }}>
+  <style define:vars={{ chipColor: chipColor, textColor }}>
     li {
       list-style: none;
     }
@@ -95,7 +97,7 @@ console.log("redirect is", redirectHref);
       min-height: 1.2em;
       max-height: 1.2em;
       margin-right: 0.6em;
-      color: white;
+      color: --var(textColor);
       opacity: 0.5;
       /* OR */
       /* fill: blue; */
