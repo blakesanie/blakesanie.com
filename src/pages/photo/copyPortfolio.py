@@ -6,14 +6,16 @@ from tqdm import tqdm
 import subprocess
 import json
 
+dest = '../../assets/images/portfolio'
 
-if os.path.exists('portfolio'):
-    dir = os.listdir('portfolio')
+
+if os.path.exists(dest):
+    dir = os.listdir(dest)
     if len(dir) > 0:
         print('portfolio folder (not empty) already exists')
         sys.exit(0)
 else:
-    os.mkdir('portfolio')
+    os.mkdir(dest)
 
 
 
@@ -40,7 +42,7 @@ for filepath in tqdm(glob(path + '/*')):
     exif = info['exif']
     filename = filepath.split('/')[-1]
     img.thumbnail((2000, 2000),Image.ANTIALIAS)
-    newPath = 'portfolio/'+filename
+    newPath = dest + '/' + filename
     img.save(newPath, 'JPEG', quality=100, exif=exif)
     escapedPath = filepath.replace(' ', '\\ ')
     escapedNew = newPath.replace(' ', '\\  ')

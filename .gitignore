@@ -24,3 +24,4 @@ pnpm-debug.log*
 .idea/
 # src/pages/photo/portfolio/*
 .vercel
+.vscode

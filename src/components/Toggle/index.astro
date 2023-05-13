@@ -55,13 +55,9 @@ console.log(actions);
 </style>
 
 <script>
-  const buttons = document.querySelectorAll(
-    ".toggleButton"
-  ) as NodeListOf<HTMLElement>;
-  let activeButton = document.querySelector(
-    ".toggleButton.active"
-  ) as HTMLElement;
-  const floater = document.querySelector(".toggleFloater") as HTMLElement;
+  const buttons = document.querySelectorAll(".toggleButton");
+  let activeButton = document.querySelector(".toggleButton.active");
+  const floater = document.querySelector(".toggleFloater");
   let initialIsActive = true;
   for (let i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener("click", async () => {

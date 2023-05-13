@@ -123,7 +123,7 @@ const markupData = [
     <div id="wwdc">
       <!-- <img src="/images/wwdc_blake.png" /> -->
       <Img
-        src="/images/wwdc_blake.png"
+        src="/src/assets/images/wwdc_blake.png"
         alt="Blake in WWDC style"
         breakpoints={[200]}
         quality={20}
@@ -154,7 +154,7 @@ const markupData = [
   {
     markupData.map((data, i) => (
       <HomePageSection
-        imageUrl={data.imageUrl}
+        imageUrl={"/src/assets" + data.imageUrl}
         text={data.text}
         links={data.links}
         class="homePageSection sectionTransitionParent"

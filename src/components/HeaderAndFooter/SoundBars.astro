@@ -1,0 +1,66 @@
+---
+let n = Astro.props.n || 5;
+console.log("n is ", n);
+---
+
+<span class="soundBars">
+  {
+    "x"
+      .repeat(n)
+      .split("")
+      .map(() => {
+        return <span />;
+      })
+  }
+</span>
+
+<style
+  define:vars={{
+    // maxWidth: maxWidth || "none",
+  }}
+>
+  .soundBars {
+    flex: 1;
+    max-width: 40px;
+    /* height: 1.4em; */
+    display: none;
+    overflow: hidden;
+    margin-left: 0.5em;
+    opacity: 0;
+  }
+  .soundBars > span {
+    background-color: white;
+    flex: 1;
+    margin: 0 0.1em;
+    border-top-right-radius: 100px;
+    border-top-left-radius: 100px;
+    transform: translateY(100%);
+    opacity: 0;
+    animation-name: soundBarBounce;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+  }
+  @keyframes soundBarBounce {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    50% {
+      transform: translateY(0%);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  const bars = document.querySelectorAll(".soundBars > span");
+  console.log("bars", bars);
+  bars.forEach((bar, i) => {
+    const duration = 0.8 + Math.random() * 1.5;
+    bar.style.animationDuration = `${duration}s`;
+  });
+</script>

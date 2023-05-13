@@ -53,7 +53,7 @@ function applyRenamings(str, renamings) {
   return str;
 }
 
-const glob = await import.meta.glob("/src/pages/photo/portfolio/*");
+const glob = await import.meta.glob("/src/assets/images/portfolio/*");
 const images = {};
 await Promise.all(
   Object.keys(glob).map(async (path) => {
@@ -139,7 +139,7 @@ const gutter = 10;
 <HeaderAndFooter
   allowMainStyles
   mainClass={initialMode}
-  headerColor="#eee"
+  headerColor="#f1f1f1"
   darkText
   hoverZoneBehind
 >
