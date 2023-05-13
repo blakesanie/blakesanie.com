@@ -30,7 +30,7 @@ const description =
   Astro.props.description ||
   "Software Engineer. Photographer. Writer & Instructor. Lifelong Student.";
 const { noindex } = Astro.props;
-const image = Astro.props.image || "/og/thumb.png";
+const image = Astro.props.image || "/og/thumb.jpg";
 const { width, height } = await sizeOf("public" + image);
 ---
 
