@@ -16,7 +16,11 @@ const { redirect } = Astro.params;
 const { title, href } = redirects[redirect];
 ---
 
-<HeaderAndFooter allowMainStyles>
+<HeaderAndFooter
+  allowMainStyles
+  title={title}
+  description={`Redirect to ${title}, found at ${href}`}
+>
   <meta http-equiv="refresh" content={`0; url=${href}`} slot="head" />
   <h1>Redirecting to {title}</h1>
 </HeaderAndFooter>
