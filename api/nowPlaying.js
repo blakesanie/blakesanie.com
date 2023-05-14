@@ -116,6 +116,6 @@ export default async function handler(req, res) {
   //   }
 
   const out = await getLastSong();
-
+  res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate");
   return res.status(200).json(out);
 }
