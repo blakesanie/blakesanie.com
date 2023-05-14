@@ -112,7 +112,7 @@ const markupData = [
 ];
 ---
 
-<HeaderAndFooter color="rgba(0,0,0,0.8)" title="Home">
+<HeaderAndFooter color="rgba(0,0,0,0.8)" title="Home" themeColor="black">
   <style>
     html {
       background-color: black;
@@ -261,7 +261,8 @@ const markupData = [
           continue;
         }
         if (!child.classList.contains("bg")) {
-          child.style.transform = `translateY(${diff * -200}px)`;
+          const rate = window.innerHeight * 0.1;
+          child.style.transform = `translateY(${diff * rate}px)`;
         } else {
           // child.style.transform = `translateY(${diff * 300}px)`;
         }

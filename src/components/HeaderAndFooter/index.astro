@@ -12,14 +12,12 @@ const headerWidth = 200;
 const mobileHeaderHeight = 80;
 const headerHeightTransitionDuration = 0.1;
 const headerPositionTransitionDuration = 0.3;
-let headerColor = Astro.props.headerColor || "#007ED4bb";
+let headerColor = Astro.props.color || "#007ED4bb";
+let themeColor = Astro.props.themeColor || "rgb(73, 163, 224)";
 const textColor = Astro.props.darkText ? "black" : "white";
 const headerColorOpaque = "#1c81ce";
 const navPadding = 0.6;
 const isHome = Astro.url.pathname === "/";
-if (isHome) {
-  headerColor = "rgba(0,0,0,0.7)";
-}
 const { allowMainStyles, noContentPadding, hideSpotify } = Astro.props;
 const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
 
@@ -76,6 +74,7 @@ const { width, height } = await sizeOf("public" + image);
       name="google-site-verification"
       content="ePB1GvvA8L5Hza96sGcmDLw_jIzjhQ2JhXbIAg_8hlA"
     />
+    <meta name="theme-color" content={themeColor} />
     <Fragment
       set:html={`<script type="application/ld+json">{
       "@context": "https://schema.org",
