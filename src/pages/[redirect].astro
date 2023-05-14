@@ -20,6 +20,7 @@ const { title, href } = redirects[redirect];
   allowMainStyles
   title={title}
   description={`Redirect to ${title}, found at ${href}`}
+  noindex
 >
   <meta http-equiv="refresh" content={`0; url=${href}`} slot="head" />
   <h1>Redirecting to {title}</h1>

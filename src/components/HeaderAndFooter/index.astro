@@ -201,6 +201,15 @@ const { width, height } = await sizeOf("public" + image);
             </NavLink>
             <NavLink
               hoverZoneBehind={hoverZoneBehind}
+              icon="majesticons:newspaper-line"
+              href="/blog"
+              chip="11K"
+              chipIcon="majesticons:eye-line"
+            >
+              Blog
+            </NavLink>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
               icon="lucide:linkedin"
               href="/linkedin"
             >
@@ -737,6 +746,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
         /* color: rgba(255, 255, 255, 0.5); */
         color: var(--textColor);
         opacity: 0.5;
+        text-align: center;
       }
 
       #made [astro-icon] {

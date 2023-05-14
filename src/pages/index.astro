@@ -36,7 +36,7 @@ const markupData = [
   },
   {
     text: ["With a sense of photographic expression put on full display."],
-    imageUrl: "/images/bg/macCode.jpg",
+    imageUrl: "/images/portfolio/DSC_0831.jpg",
     links: [
       {
         href: "/photo",
@@ -47,16 +47,24 @@ const markupData = [
         label: "Capture Map",
         nofollow: true,
       },
-      {
-        href: "/photo/gear",
-        label: "Gear",
-      },
+      // {
+      //   href: "/photo/gear",
+      //   label: "Gear",
+      // },
     ],
   },
   {
     text: ["I encourage you to learn about my various ventures, old and new,"],
     imageUrl: "/images/bg/mandel.png",
-    links: [{ href: "/blog", label: "Blog", target: "_blank", nofollow: true }],
+    links: [
+      { href: "/blog", label: "Blog", target: "_blank", nofollow: true },
+      {
+        href: "/twitter",
+        label: "Twitter",
+        target: "_blank",
+        nofollow: true,
+      },
+    ],
   },
   {
     text: [
@@ -72,7 +80,7 @@ const markupData = [
       },
       {
         href: "/resume",
-        label: "Resume",
+        label: "Résumé",
         target: "_blank",
         nofollow: true,
       },
@@ -94,8 +102,8 @@ const markupData = [
         nofollow: true,
       },
       {
-        href: "/twitter",
-        label: "Twitter",
+        href: "/strava",
+        label: "Strava",
         target: "_blank",
         nofollow: true,
       },
@@ -119,7 +127,7 @@ const markupData = [
   <HomePageSection id="firstSection" class="homePageSection">
     <!-- <canvas id="canvas3d"></canvas> -->
     <!-- <iframe id="canvas3d" src="/hero/index.html"></iframe> -->
-    <!-- <Spline id="canvas3d" /> -->
+    <Spline />
     <div id="wwdc">
       <!-- <img src="/images/wwdc_blake.png" /> -->
       <Img
@@ -244,7 +252,7 @@ const markupData = [
       if (!(bg instanceof HTMLElement)) {
         return;
       }
-      bg.style.transform = `translateY(${-diff * 100}px)`;
+      // bg.style.transform = `translateY(${-diff * 100}px)`;
       // bg.style.opacity = `${0.2 + 0.6 * Math.max(0, 1 - Math.abs(diff) * 1)}`;
       const children = section.childNodes;
       for (let i = 0; i < children.length; i++) {
@@ -253,7 +261,7 @@ const markupData = [
           continue;
         }
         if (!child.classList.contains("bg")) {
-          child.style.transform = `translateY(${diff * 200}px)`;
+          child.style.transform = `translateY(${diff * -200}px)`;
         } else {
           // child.style.transform = `translateY(${diff * 300}px)`;
         }
@@ -269,8 +277,9 @@ const markupData = [
   .homePageSection {
     max-height: min(1000px, 170vw);
   }
-  #firstSection > *:not(#canvas3d) {
+  #firstSection > *:not(#spline) {
     pointer-events: none;
+    z-index: 1;
   }
   .nameZone {
     padding: 2em;

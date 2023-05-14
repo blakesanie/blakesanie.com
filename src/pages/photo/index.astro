@@ -178,7 +178,7 @@ const gutter = 10;
           <div class="galleryImage" name={name}>
             <Img
               src={image.path}
-              alt="alt text"
+              alt=""
               breakpoints={[600]}
               quality={40}
               format="webp"
@@ -201,7 +201,7 @@ const gutter = 10;
           <div id={`fullScreen-${name}`} class="full">
             <Img
               src={image.path}
-              alt="alt text"
+              alt=""
               breakpoints={[400, 800, 1200, 1600, 2000]}
               quality={60}
               format="webp"
@@ -218,7 +218,7 @@ const gutter = 10;
           <div id={`thumbnail-${name}`} class="thumb">
             <Img
               src={image.path}
-              alt="alt text"
+              alt=""
               breakpoints={[300]}
               quality={50}
               format="webp"
@@ -332,9 +332,19 @@ const gutter = 10;
       width: 100%;
     }
 
-    img {
-      color: transparent;
-    }
+    /* img {
+      color: transparent !important;
+      text-indent: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+    } */
+
+    /* img:first {
+      postition: absolute;
+      left: -9999px;
+      top: -9999px;
+      z-index: -100;
+    } */
     /* :global(main.gallery) #photoContent > #gallery {
       display: block;
     } */
