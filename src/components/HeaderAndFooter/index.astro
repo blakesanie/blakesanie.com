@@ -48,13 +48,15 @@ const { width, height } = await sizeOf("public" + image);
         basic: {
           title: title,
           type: "website",
-          description: description,
           image: image,
+        },
+        optional: {
+          description: description,
         },
         image: {
           type: "image/png",
-          width: "" + width,
-          height: "" + height,
+          width: width,
+          height: height,
           alt: "Open Graph Thumbnail Image for blakesanie.com",
         },
       }}
