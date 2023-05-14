@@ -26,14 +26,14 @@ const projects: ProjectInterface[] = [
   {
     title: "Quantitative Research Platform",
     description:
-      "Intelligent stock market investing tools for the long-term. View the market's top investments at a glance, browse our vast array of rankings, and construct your personal portfolio with optimal growth versus volatility characteristics. Available on web, and soon mobile!",
+      "My personalized financial management platform surrounding the research, implementation, and deployment of AI trading strategies, portfolio optimization measures, and risk management considerations. Initially founded as a Reinforcement Learning framework with industry-standard technical analysis, the platform has evolved to leverage adaptive quantitative methods, intuitive UI, and realtime integrations.",
     image: "/src/assets/images/projects/fund_chart.png",
-    links: [
-      {
-        label: "Learn More",
-        href: "/quant",
-      },
-    ],
+    // links: [
+    //   {
+    //     label: "Learn More",
+    //     href: "/quant",
+    //   },
+    // ],
     tech: [
       {
         icon: "logos:chrome",
@@ -68,6 +68,10 @@ const projects: ProjectInterface[] = [
         name: "Next.js",
       },
       {
+        icon: "logos:python",
+        name: "Python",
+      },
+      {
         icon: "logos:tensorflow",
         name: "TensorFlow",
       },
@@ -76,11 +80,11 @@ const projects: ProjectInterface[] = [
   {
     title: "Distal Radius Object Identification (DROID)",
     description:
-      "As my Georgia Tech capstone project, I worked alongside Emory Dept. of Orthopaedics to craft a state-of-the-art utility to identify wrist implant manufacturers from a simple x-ray, allowing surgeons to immediately discover the proper tools and techniques for implant extraction during emergency operations. To optimize accuracy, we leveraged an unsupervised data augmentation pipeline followed by Transfer Learning for inference.",
+      "As my Georgia Tech capstone project, I worked alongside Emory Dept. of Orthopaedics to craft a state-of-the-art utility to identify wrist implant manufacturers from a simple x-ray, allowing surgeons to immediately discover the proper tools and techniques for implant extraction during emergency operations. To optimize accuracy, we leveraged an unsupervised data augmentation pipeline followed by YOLOv3 transfer learning for inference.",
     image: "/src/assets/images/projects/droid.png",
     links: [
       {
-        label: "Design Documentation",
+        label: "Paper",
         href: "/droid.pdf",
       },
       {
@@ -101,6 +105,10 @@ const projects: ProjectInterface[] = [
       {
         icon: "logos:heroku-icon",
         name: "Heroku",
+      },
+      {
+        icon: "logos:python",
+        name: "Python",
       },
       {
         icon: "logos:jupyter",
@@ -126,7 +134,8 @@ const projects: ProjectInterface[] = [
   },
   {
     title: "White Balancing via Deep Learning",
-    description: "some desc",
+    description:
+      "Applying novel Deep Learning methods towards accurate automatic color calibration of off-neutral images. Learning from the Unsplash dataset of properly white-balanced stock images, this experiment follows a technical exploration of digital color space, lossless graphical augmentation, computer vision and perception, and state-of-the-art ML model architectures such as ViT (Vision Transformer) alongside convolutional approaches.",
     image: "/src/assets/images/projects/whitebalance.png",
     links: [
       {
@@ -140,6 +149,10 @@ const projects: ProjectInterface[] = [
       },
     ],
     tech: [
+      {
+        icon: "logos:python",
+        name: "Python",
+      },
       {
         icon: "logos:pytorch",
         name: "PyTorch",
@@ -156,12 +169,16 @@ const projects: ProjectInterface[] = [
   },
   {
     title: "The Perfect Pitch",
-    description: "some desc",
+    description: `In a research domain where Computing, Physics, and Baseball collide, I combine modern numerical and simulation methods with precise mechanical motion models to test the validity of the controversial "rising fastball" theory. Beyond a simple conclusion, my results present the detailed frontier of minimum physical abilities, such as pitch speed, spin rate, and release location, required to achieve a rising fastball, among other urban legend pitch deliveries.`,
     image: "/src/assets/images/projects/theperfectpitch.png",
     links: [
       {
         label: "Paper",
         href: "/thePerfectPitch.pdf",
+      },
+      {
+        label: "Poster",
+        href: "/thePerfectPitchPoster.pdf",
       },
       {
         label: "GitHub",
@@ -170,6 +187,10 @@ const projects: ProjectInterface[] = [
       },
     ],
     tech: [
+      {
+        icon: "logos:python",
+        name: "Python",
+      },
       {
         icon: "logos:jupyter",
         name: "Jupyter",
@@ -215,6 +236,10 @@ const projects: ProjectInterface[] = [
         name: "JavaScript",
       },
       {
+        icon: "logos:python",
+        name: "Python",
+      },
+      {
         icon: "logos:jupyter",
         name: "Jupyter",
       },
@@ -235,15 +260,19 @@ const projects: ProjectInterface[] = [
   {
     title: "Evaluating the Effectiveness of Technical Indicators",
     description:
-      "My final project for Georgia Tech's CS 4641 Course, Machine Learning, taught by Mahdi Roozbahani. Utilizing numerous supervised and non-supervised methods, my team aims to analyze the significance and approximate information gain provided by industry-standard technical indicators by classifying a high-dimensional indicator feature set into various simulated trading strategies.",
+      "Utilizing numerous supervised and non-supervised methods to analyze the significance and approximate information gain provided by industry-standard technical indicators. By evaluating the classification behavior of high-dimensional indicator vectors into various simulated trading strategies, clear overlaps and distinctions arise between commonly observed trading signals.",
     links: [
       {
-        label: "Write-Up",
+        label: "Paper",
         href: "https://blakesanie.github.io/analyzing-financial-methods/",
       },
     ],
     image: "/src/assets/images/projects/indicator_clusters.png",
     tech: [
+      {
+        icon: "logos:python",
+        name: "Python",
+      },
       {
         icon: "logos:jupyter",
         name: "Jupyter",
@@ -504,24 +533,29 @@ const projects: ProjectInterface[] = [
   <p>
     My software engineering journey is grounded on and continues to build upon
     hands-on projects. Explore my growing portfolio of applications, products,
-    and services. From "Hello World!" at age 14 to the completion of my Master's
-    Degree in Computer Science, these projects mark key milestones as my
-    proficencies continue to evolve.
+    and services focused on Full-Stack, Data, and Machine Learning domains. From
+    "Hello World!" at age 14 to the completion of my Master's Degree in Computer
+    Science, these projects mark key milestones as my proficencies, curiosities,
+    and impact continue to evolve.
   </p>
   <div id="projects">
     {
       projects.map(({ title, description, tech, ...project }) => {
+        const defaultLink =
+          project.links && project.links[0] && project.links[0].href;
         return (
           <div class="project">
             <div class="info">
               <h2 class="title">{title}</h2>
               <p class="desc">{description}</p>
-              <div class="tech">
-                {tech.map(({ icon, name }) => {
-                  return <Icon name={icon} tech={name} />;
-                })}
-                <div class="selectedTech" />
-              </div>
+              {tech && (
+                <div class="tech">
+                  {tech.map(({ icon, name }) => {
+                    return <Icon name={icon} tech={name} />;
+                  })}
+                  <div class="selectedTech" />
+                </div>
+              )}
 
               {project.links && (
                 <div class="links">
@@ -535,7 +569,7 @@ const projects: ProjectInterface[] = [
                 </div>
               )}
             </div>
-            <div class="demo">
+            <a class="demo" href={defaultLink} target="_blank">
               {project.image ? (
                 <Img
                   src={project.image}
@@ -556,7 +590,7 @@ const projects: ProjectInterface[] = [
                   class="youtube"
                 />
               ) : null}
-            </div>
+            </a>
           </div>
         );
       })
@@ -579,6 +613,7 @@ const projects: ProjectInterface[] = [
       }
     }
     techIcons[i].addEventListener("mouseenter", showTech);
+    techIcons[i].addEventListener("click", showTech);
   }
 
   const containers = document.querySelectorAll(".tech");

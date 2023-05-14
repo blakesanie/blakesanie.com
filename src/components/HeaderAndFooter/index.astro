@@ -15,7 +15,6 @@ const headerPositionTransitionDuration = 0.3;
 let headerColor = Astro.props.color || "#007ED4bb";
 let themeColor = Astro.props.themeColor || "rgb(73, 163, 224)";
 const textColor = Astro.props.darkText ? "black" : "white";
-const headerColorOpaque = "#1c81ce";
 const navPadding = 0.6;
 const isHome = Astro.url.pathname === "/";
 const { allowMainStyles, noContentPadding, hideSpotify } = Astro.props;
@@ -138,7 +137,7 @@ const { width, height } = await sizeOf("public" + image);
             </NavLink> -->
             <NavLink
               hoverZoneBehind={hoverZoneBehind}
-              icon="charm:git-request"
+              icon="uil:github-alt"
               href="/github"
               chip="512"
               chipIcon="majesticons:star-line"
@@ -606,7 +605,6 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
         headerColor,
         mobileMaxWidth: mobileMaxWidth + "px",
         navPadding: navPadding + "em",
-        headerColorOpaque,
         textColor,
       }}
     >
@@ -857,6 +855,20 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
         display: flex;
         flex-direction: column;
         align-items: center;
+      }
+
+      .pageContent :global(*)::selection {
+        /* background: rgba(255, 170, 0, 0.576); */
+        /* color: white; */
+        /* background: var(--headerColor); */
+        /* background: linear-gradient(
+          rgba(255, 170, 0, 0.576) 0%,
+          rgba(255, 170, 0, 0.576) 100%
+        );
+        color: red; */
+        /* text-shadow: 1px 1px 2px black; */
+        /* color: white;
+        background: rgba(0, 0, 0, 0.131); */
       }
 
       .pageContent > :global(*) {
