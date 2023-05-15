@@ -664,10 +664,11 @@ const projects: ProjectInterface[] = [
     max-width: min(100%, 450px);
     /* overflow: visible; */
   }
-  .demo :global(img) {
+  .demo :global(img),
+  .demo iframe.youtube {
     /* object-fit: contain; */
     background-repeat: no-repeat;
-    border-radius: 4%;
+    border-radius: 12px;
   }
   .demo iframe.youtube {
     aspect-ratio: calc(16 / 9);

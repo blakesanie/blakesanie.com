@@ -113,17 +113,6 @@ const markupData = [
 ---
 
 <HeaderAndFooter color="rgba(0,0,0,0.8)" title="Home" themeColor="black">
-  <style>
-    html {
-      background-color: black;
-    }
-    :global(.navChip) {
-      background: rgb(0, 126, 204, 0.8);
-    }
-    :global(.navChipNested) {
-      display: none;
-    }
-  </style>
   <HomePageSection id="firstSection" class="homePageSection">
     <!-- <canvas id="canvas3d"></canvas> -->
     <!-- <iframe id="canvas3d" src="/hero/index.html"></iframe> -->
@@ -272,6 +261,16 @@ const markupData = [
 </script>
 
 <style>
+  html {
+    color-scheme: only dark;
+    background-color: black;
+  }
+  :global(.navChip) {
+    background: rgb(0, 126, 204, 0.8);
+  }
+  :global(.navChipNested) {
+    display: none;
+  }
   body {
     color: white;
   }
@@ -309,6 +308,7 @@ const markupData = [
     opacity: 1;
     padding: 0 1em;
     height: 1.4em;
+    text-align: center;
     /* pointer-events: none; */
     /* filter: contrast(4); */
     /* backdrop-filter: contrast(4); */

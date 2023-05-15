@@ -1,6 +1,7 @@
 ---
 let n = Astro.props.n || 5;
 console.log("n is ", n);
+const color = Astro.props.color || "white";
 ---
 
 <span class="soundBars">
@@ -17,11 +18,13 @@ console.log("n is ", n);
 <style
   define:vars={{
     // maxWidth: maxWidth || "none",
+    color: color,
   }}
 >
   .soundBars {
     flex: 1;
-    max-width: 40px;
+    max-width: 1.7em;
+    height: 1em;
     /* height: 1.4em; */
     display: none;
     overflow: hidden;
@@ -29,9 +32,9 @@ console.log("n is ", n);
     opacity: 0;
   }
   .soundBars > span {
-    background-color: white;
+    background-color: var(--color);
     flex: 1;
-    margin: 0 0.1em;
+    margin: 0 0.05em;
     border-top-right-radius: 100px;
     border-top-left-radius: 100px;
     transform: translateY(100%);
@@ -47,7 +50,7 @@ console.log("n is ", n);
     }
     50% {
       transform: translateY(0%);
-      opacity: 1;
+      opacity: 0.8;
     }
     100% {
       transform: translateY(100%);

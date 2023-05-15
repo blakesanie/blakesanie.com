@@ -1,6 +1,7 @@
 ---
 // import { Img } from "astro-imagetools/components";
 import Icon from "astro-icon";
+const { shadowColor, textColor } = Astro.props;
 ---
 
 <a id="nowPlaying" target="_blank">
@@ -10,15 +11,34 @@ import Icon from "astro-icon";
     <div id="songArtist" class="loading">song artist</div>
     <div id="songAlbum" class="loading">song album</div>
   </div>
+  <div id="windowCover"></div>
 </a>
 
-<style>
+<style
+  define:vars={{
+    textColor: textColor,
+    shadowColor: shadowColor,
+  }}
+>
+  #windowCover {
+    position: fixed;
+    height: 100%;
+    width: 100vw;
+    background: var(--shadowColor);
+    top: 0;
+    left: 0;
+    opacity: 0;
+    z-index: 2;
+    pointer-events: none;
+    transition: opacity 0.16s ease;
+  }
   #nowPlaying {
     display: flex;
     padding: 0.5em var(--navPadding);
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+    cursor: ;
   }
   @keyframes placeHolderShimmer {
     0% {
@@ -46,18 +66,29 @@ import Icon from "astro-icon";
     opacity: 1 !important;
     border: none;
   }
+  #nowPlaying:hover #windowCover {
+    opacity: 0.9;
+  }
   img {
     aspect-ratio: 1;
     border-radius: 8px;
-    width: 150px;
+    /* width: 150px; */
+    width: 100%;
     margin: 0 0.2em;
-    border: 2px solid rgb(255, 255, 255);
+    border: 2px solid var(--textColor);
+    z-index: 3;
+    box-shadow: 0 0 0 max(100vw, 100vh) rgba(0, 0, 0, 0);
+    transition: box-shadow 0.16s ease;
+  }
+  img.loading {
+    clip-path: inset(1px);
   }
   .right {
     padding: 0.4em 0;
     margin: 0 0.2em;
-    /* width: 100%; */
+    width: 100%;
     min-width: 150px;
+    z-index: 3;
   }
   .right > div {
     margin: 0.2em 0;
