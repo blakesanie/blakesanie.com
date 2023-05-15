@@ -13,7 +13,7 @@ const mobileHeaderHeight = 80;
 const headerHeightTransitionDuration = 0.1;
 const headerPositionTransitionDuration = 0.3;
 let headerColor = Astro.props.color || "#007ED4bb";
-let themeColor = Astro.props.themeColor || "rgb(73, 163, 224)";
+let themeColor = Astro.props.themeColor || "rgb(72, 161, 223)";
 const textColor = Astro.props.darkText ? "black" : "white";
 const navPadding = 0.6;
 const isHome = Astro.url.pathname === "/";
@@ -847,6 +847,10 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
         }
         .navSection {
           width: 100%;
+        }
+        #hamburger {
+          top: 28px;
+          left: 16px;
         }
       }
     </style>
