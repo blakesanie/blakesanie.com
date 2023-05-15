@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;500&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+    list-style-type: circle;
+}
+
+#root {
+    display: flex;
+    height: calc(100vw / 8.5 * 11);
+    overflow: hidden;
+}
+
+#root > div {
+    /* display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; */
+}
+
+#root > div:first-child {
+    width: 28vw;
+    background-color: #262b39;
+    color: white;
+    padding-left: 0;
+    padding-right: 0;
+    gap: 2vw;
+}
+
+#root > div:first-child > * {
+    padding-left: 2vw;
+    padding-right: 2vw;
+}
+
+#root > div:first-child h2 {
+    /* padding: 0; */
+}
+
+.section {
+    padding: 2vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.section:not(.header) {
+    gap: 1.1vw;
+}
+
+#root > div:last-child{
+    flex: 1
+}
+
+#root > div:last-child h2{
+    border-top: 2px solid rgba(0,0,0,0.1);
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+}
+
+#root > div:first-child h2 {
+    background-color: rgba(0,0,0,0.3);
+}
+
+.rowWithGap {
+    display: flex;
+    justify-content: space-between;
+}
+
+.section > * {
+    width: 100%;
+}
+
+
+/* -----------*/
+
+/* .header {
+    text-align: center;
+} */
+
+h1 {
+    font-size: 4.5vw;
+    font-weight: 500;
+}
+
+h2 {
+    padding: 0.6vw 0;
+    font-size: 2vw;
+    font-weight: 400;
+}
+
+#underName {
+    font-size: 2.5vw;
+}
+
+#contact {
+    margin-top: 1vw;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.2em;
+    /* width: 22vw; */
+}
+
+#contact > p {
+    font-size: 1.8vw;
+    /* margin: -0.2em 0; */
+}
+
+.date {
+    text-align: right;
+    font-size: 1.7vw;
+    /* margin-top: 0.33vw; */
+}
+
+.school {
+    font-size: 2.1vw;
+    /* font-style: italic; */
+    font-weight: 500;
+}
+
+.bold {
+    font-weight: 500;
+}
+
+.degreeType {
+    font-size: 1.9vw;
+    /* text-indent: 1em; */
+    margin-top: 0.3em;
+}
+
+.degree > ul {
+    padding-left: 1em;
+}
+
+.degree li {
+    font-size: 1.7vw;
+}
+
+.section table {
+    font-size: 1.7vw;
+    border-spacing: 0;
+    border-collapse: separate;
+}
+
+.section td {
+    padding-top: 0.5em;
+    padding-left: 0.5em;
+}
+
+.section tr:first-child td {
+    padding-top: 0;
+}
+
+.section td:first-child {
+    padding-left: 0;
+}
+
+
+/* -----------*/
+
+.company {
+    font-size: 2.3vw;
+}
+
+.role {
+    font-size: 1.9vw;
+    font-weight: 400;
+}
+
+i {
+    font-weight: inherit;
+}
+
+.experience ul {
+    padding-left: 2vw
+}
+
+.experience li {
+    font-size: 1.7vw;
+}
+
+/* .thin {
+    font-weight: 200;
+} */

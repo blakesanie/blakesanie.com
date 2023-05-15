@@ -4,6 +4,9 @@ import HomePageSection from "../components/HomePageSection.astro";
 import Spline from "../components/Spline.astro";
 //@ts-ignore
 import { Img } from "astro-imagetools/components";
+
+const { message } = Astro.props;
+
 const markupData = [
   // {
   //   imageUrl: "/images/macbook3.jpeg",
@@ -168,6 +171,14 @@ const markupData = [
   // spline.load("https://prod.spline.design/KDmGPoqNmLmqK9H2/scene.splinecode");
   app.load("/hero/scene.splinecode");
 </script> -->
+
+{
+  message && (
+    <Fragment
+      set:html={`<script>setTimeout(function(){history.pushState({}, null, '/');alert("${message}");}, 200)</script>`}
+    />
+  )
+}
 
 <script>
   // document.getElementById("canvas3d").onload = function () {

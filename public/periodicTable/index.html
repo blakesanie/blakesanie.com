@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/periodicTable/style.css" />
+  </head>
+  <body>
+    <div id="head">
+      <div id="img"></div>
+      <h5>Periodic Table of Elements</h5>
+      <div id="zoom">
+        <p id="label">Zoom</p>
+        <p id="percent">100%</p>
+        <p id="fit">fit</p>
+        <input type="range" value="0" step="0.01" oninput="change()" />
+      </div>
+      <div id="key">
+        <p id="label">Key</p>
+        <div id="keyHolder">
+          <p class="keyItem group" id="alk">Alkali metals</p>
+          <p class="keyItem group" id="earth">Alkali earth metals</p>
+          <p class="keyItem group" id="trans">Transition metals</p>
+          <p class="keyItem group" id="other">Other metals</p>
+          <p class="keyItem group" id="oids">Metalloids</p>
+          <p class="keyItem group" id="non">Nonmetals</p>
+          <p class="keyItem group" id="hal">Halogens</p>
+          <p class="keyItem group" id="noble">Noble gases</p>
+          <p class="keyItem group" id="lanth">Lanthanide series</p>
+          <p class="keyItem group" id="act">Actinide series</p>
+          <p class="keyItem orbital" id="s">s orbital</p>
+          <p class="keyItem orbital" id="d">d orbital</p>
+          <p class="keyItem orbital" id="p">p orbital</p>
+          <p class="keyItem orbital" id="f">f orbital</p>
+          <p class="keyItem som" id="solid">Solid</p>
+          <p class="keyItem som" id="liquid">Liquid</p>
+          <p class="keyItem som" id="gas">Gas</p>
+          <p class="keyItem per" id="one">Period one</p>
+          <p class="keyItem per" id="two">Period two</p>
+          <p class="keyItem per" id="three">Period three</p>
+          <p class="keyItem per" id="four">Period four</p>
+          <p class="keyItem per" id="five">Period five</p>
+          <p class="keyItem per" id="six">Period six</p>
+          <p class="keyItem per" id="seven">Period seven</p>
+          <p class="keyItem radio" id="stable">Stable</p>
+          <p class="keyItem radio" id="fifth">h<sub>1/2</sub> < 1 day</p>
+          <p class="keyItem radio" id="fourth">
+            1 day < h<sub>1/2</sub> < 1 yr
+          </p>
+          <p class="keyItem radio" id="third">
+            1 yr < h<sub>1/2</sub> < 10<sup><sup>3</sup></sup> yrs
+          </p>
+          <p class="keyItem radio" id="second">
+            10<sup><sup>3</sup></sup> yrs < h<sub>1/2</sub> < 10<sup
+              ><sup>6</sup></sup
+            >
+            yrs
+          </p>
+          <p class="keyItem radio" id="first">
+            h<sub>1/2</sub> > 10<sup><sup>6</sup></sup> yrs
+          </p>
+          <p class="keyItem radio" id="unknown">Unknown</p>
+        </div>
+      </div>
+      <div id="mode">
+        <div id="icon">
+          <div id="line"></div>
+          <div id="line"></div>
+          <div id="line"></div>
+        </div>
+        <p>Group</p>
+      </div>
+      <div id="modeHolder">
+        <h1>Sort by:</h1>
+        <div id="modeCont">
+          <p id="group">Group</p>
+          <p id="orbital">Orbital</p>
+          <p id="som">State of matter</p>
+          <p id="rad">Radioactivity</p>
+          <p id="period">Period</p>
+        </div>
+      </div>
+    </div>
+    <div id="cont">
+      <div id="table">
+        <span class="item"></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item blank"><h6>57-70</h6></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item blank"><h6>(89-103)</h6></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+      </div>
+    </div>
+    <div id="click">
+      <h4>Click on an element to see more info!</h4>
+    </div>
+    <iframe id="foot" src=""></iframe>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/periodicTable/functions.js"></script>
+  </body>
+</html>
