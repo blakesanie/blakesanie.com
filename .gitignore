@@ -25,3 +25,4 @@ pnpm-debug.log*
 # src/pages/photo/portfolio/*
 .vercel
 .vscode
+portfolio_old

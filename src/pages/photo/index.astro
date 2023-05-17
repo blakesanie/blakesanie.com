@@ -916,7 +916,7 @@ const gutter = 10;
       // set prev and next blocks
       const { prev, next } = imageChanges[filename];
       console.log("prev", prev, "next", next);
-      imageNameElement.innerHTML = filename;
+      imageNameElement.innerHTML = filename.replaceAll("_", " ");
       prevElement.style.display = prev ? "block" : "none";
       nextElement.style.display = next ? "block" : "none";
 
