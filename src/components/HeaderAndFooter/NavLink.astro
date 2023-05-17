@@ -26,7 +26,7 @@ console.log("redirect is", redirectHref);
 const { textColor } = Astro.props;
 ---
 
-<li class:list={[{ active: active }]}>
+<li class:list={[{ active: active }, Astro.props.class]}>
   <a href={redirectHref || href} id={id}>
     <!-- <Icon icon={icon} class="icon" /> -->
     {active && hoverZoneBehind && <HoverZone />}

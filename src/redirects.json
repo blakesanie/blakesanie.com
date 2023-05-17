@@ -68,8 +68,8 @@
     "href": "mailto:blake@sanie.com",
     "title": "Blake's email in your mailbox"
   },
-  "undefined": {
-    "href": "/",
-    "title": ""
+  "contact": {
+    "href": "/contact.vcf",
+    "title": "Blake's Contact Card"
   }
 }

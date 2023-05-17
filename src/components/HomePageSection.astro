@@ -6,6 +6,7 @@ interface LinkInterface {
   target: string;
   href: string;
   label: string;
+  class?: string;
 }
 const links: LinkInterface[] = Astro.props.links;
 const { text, imageUrl, style, class: className, ...props } = Astro.props;
@@ -36,9 +37,9 @@ const maxImageOpacity = 0.5;
   {
     links && (
       <div class="links">
-        {links.map(({ target, href, label }) => {
+        {links.map(({ target, href, label, ...props }) => {
           return (
-            <a class="link" href={href} target={target}>
+            <a href={href} target={target} class:list={[props.class, "link"]}>
               {label}
             </a>
           );

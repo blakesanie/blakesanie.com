@@ -234,7 +234,7 @@ const { width, height } = await sizeOf("public" + image);
               hoverZoneBehind={hoverZoneBehind}
               icon="uil:github-alt"
               href="/github"
-              chip="512"
+              chip="150"
               chipIcon="majesticons:star-line"
             >
               GitHub
@@ -287,6 +287,7 @@ const { width, height } = await sizeOf("public" + image);
           <div class="navSection">
             <p>Connect</p>
             <NavLink
+              class="email"
               hoverZoneBehind={hoverZoneBehind}
               icon="majesticons:mail-line"
               href="/email"
@@ -294,10 +295,18 @@ const { width, height } = await sizeOf("public" + image);
               Email
             </NavLink>
             <NavLink
+              class="contactCard"
+              hoverZoneBehind={hoverZoneBehind}
+              icon="ic:outline-person-pin"
+              href="/contact.vcf"
+            >
+              Contact Card
+            </NavLink>
+            <NavLink
               hoverZoneBehind={hoverZoneBehind}
               icon="majesticons:newspaper-line"
               href="/blog"
-              chip="11K"
+              chip="43K"
               chipIcon="majesticons:eye-line"
             >
               Blog
@@ -416,6 +425,7 @@ const { width, height } = await sizeOf("public" + image);
       }
 
       const isTouch = isTouchScreen();
+      document.body.classList.add(isTouch ? "touch" : "no-touch");
 
       let menuExpanded = false;
 
@@ -836,6 +846,14 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
         align-items: center;
         /* align-items: center; */
         /* font-weight: 600; */
+      }
+
+      :global(.touch .email) {
+        display: none;
+      }
+
+      :global(.no-touch .contactCard) {
+        display: none;
       }
 
       #made {
