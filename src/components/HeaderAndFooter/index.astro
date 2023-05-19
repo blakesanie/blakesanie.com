@@ -440,14 +440,16 @@ const { width, height } = await sizeOf("public" + image);
           // activeAnchor.classList.remove("active"); // line not necessary since activeAnchor variable changed anyways
           activeAnchor = anchors[i];
           if (menuExpanded) {
-            header.style.setProperty(
-              "--headerHeight",
-              mobileHeaderHeight + "px"
-            );
+            // header.style.setProperty(
+            //   "--headerHeight",
+            //   mobileHeaderHeight + "px"
+            // );
           }
           // activeAnchor.classList.add("active");
           // anchors[i].parentElement.classList.add("active"); // line not necessary since activeAnchor variable changed anyways
           moveHoverToAnchor(anchors[i]);
+          // e.preventDefault();
+          // e.stopPropagation();
         });
       }
       if (!isTouch) {
@@ -468,13 +470,14 @@ const { width, height } = await sizeOf("public" + image);
       function moveHoverToAnchor(anchor) {
         if (!hoverZone) {
           if (isHome) {
+            // debugger;
             // if active page not in nav, hover zone is already a direct child of nav
             // without transition, move directly to the hovered anchor
             hoverZone = document.querySelector(".navHoverZone");
-            hoverZone.classList.remove("hoverZoneTransition");
+            // hoverZone.classList.remove("hoverZoneTransition");
             // hoverZone.style.transition = "none";
             hoverZone.style.height = anchor.offsetHeight + "px";
-            hoverZone.style.width = anchor.offsetWidth + "px";
+            // hoverZone.style.width = `calc(${anchor.offsetWidth}px - ${navPadding}em)`;
           } else {
             // active page in nav
             // move hover zone to direct child of nav, and relocate to original space
@@ -508,7 +511,10 @@ const { width, height } = await sizeOf("public" + image);
             hoverZone.style.height = activeAnchor.offsetHeight + "px";
             hoverZone.style.width = activeAnchor.offsetWidth + "px";
           }
-          hoverZone.classList.add("hoverZoneTransition");
+          // setTimeout(() => {
+          //   hoverZone.classList.add("hoverZoneTransition");
+          // }, 10);
+          // hoverZone.classList.add("hoverZoneTransition");
           return;
         }
         // at this point, move hover zone to hovered anchor
@@ -520,9 +526,9 @@ const { width, height } = await sizeOf("public" + image);
         }
         anchor.classList.add("hover");
         currentHoverAnchor = anchor;
-        if (isHome && hoverZone.style.opacity != 1) {
-          hoverZone.classList.remove("hoverZoneTransition");
-        }
+        // if (isHome && hoverZone.style.opacity != 1) {
+        //   hoverZone.classList.remove("hoverZoneTransition");
+        // }
         // move to target space
         hoverZone.style.transform = `translate(${targetX}px, ${targetY}px)`;
         hoverZone.style.height = anchor.offsetHeight + "px";
@@ -546,6 +552,20 @@ const { width, height } = await sizeOf("public" + image);
         hoverZone.classList.add("hoverZoneTransition");
         hoverZone.style.opacity = 1;
       }
+
+      // fixes transition remaining on resize from mobile to desktop
+      let reinstateTransitionTimeout;
+
+      window.addEventListener("resize", function () {
+        if (hoverZone) {
+          clearInterval(reinstateTransitionTimeout);
+          hoverZone.classList.remove("hoverZoneTransition");
+          reinstateTransitionTimeout = setTimeout(() => {
+            hoverZone.classList.add("hoverZoneTransition");
+          }, 50);
+        }
+      });
+
       //  __    __                            __                             ______                                 __  __
       // /  |  /  |                          /  |                           /      \                               /  |/  |
       // $$ |  $$ |  ______    ______    ____$$ |  ______    ______        /$$$$$$  |  _______   ______    ______  $$ |$$ |
@@ -632,7 +652,19 @@ const { width, height } = await sizeOf("public" + image);
 
       const hamburger = document.getElementById("hamburger");
 
-      hamburger?.addEventListener("click", () => {
+      window.pendingHamburgerClick = false;
+      window.remoteHamburgerClick = function () {
+        if (!window.pendingHamburgerClick) {
+          return;
+        }
+        window.hamburgerClick();
+        window.pendingHamburgerClick = false;
+      };
+
+      window.hamburgerClick = () => {
+        if (!pendingHamburgerClick) {
+          pendingHamburgerClick;
+        }
         const innerHeight = header.scrollHeight;
         if (menuExpanded) {
           header?.classList.remove("expanded");
@@ -661,7 +693,19 @@ const { width, height } = await sizeOf("public" + image);
         }
         menuExpanded = !menuExpanded;
         console.log("menuExpanded: ", menuExpanded);
-      });
+      };
+
+      hamburger?.addEventListener("click", window.hamburgerClick);
+
+      // const navLis = querySelectorAll("nav li");
+      // for (let i = 0; i < navLis.length; i++) {
+      //   navLis[i].addEventListener("click", function () {
+      //     alert("click!");
+      //     if (window.innerWidth <= mobileMaxWidth && menuExpanded) {
+      //       // hamburger.click();
+      //     }
+      //   });
+      // }
 
       let wasMobile = false;
       const evaluateTransitionable = () => {

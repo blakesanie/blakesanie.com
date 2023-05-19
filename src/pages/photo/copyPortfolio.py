@@ -5,6 +5,7 @@ import sys
 from tqdm import tqdm
 import subprocess
 import json
+from urllib.parse import quote
 
 dest = '../../assets/images/portfolio'
 
@@ -41,14 +42,15 @@ for filepath in tqdm(glob(path + '/*')):
     info = img.info
     exif = info['exif']
     filename = filepath.split('/')[-1]
+    newFilename = quote(filename.replace('_', ' '))
     img.thumbnail((2000, 2000),Image.ANTIALIAS)
-    newPath = dest + '/' + filename
+    newPath = dest + '/' + newFilename
     img.save(newPath, 'JPEG', quality=100, exif=exif)
-    escapedPath = filepath.replace(' ', '\\ ')
-    escapedNew = newPath.replace(' ', '\\  ')
+    # escapedPath = filepath.replace(' ', '\\ ')
+    # escapedNew = newPath.replace(' ', '\\  ')
     # os.system(f'exiftool -overwrite_original -TagsFromFile {escapedPath} -all:all>all:all {escapedNew}')
     md = exiftoolFile(filepath)
-    allMeta[filename.split('.')[0]] = md
+    allMeta[newFilename.split('.')[0]] = md
     
 with open("metadata.json", "w") as outfile:
     json.dump(allMeta, outfile)
