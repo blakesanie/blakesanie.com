@@ -992,14 +992,26 @@ const gutter = 10;
     function setKeyDown() {
       document.onkeydown = function (evt) {
         evt = evt || window.event;
-        if (evt.key === "Escape" || evt.key === "Esc") {
-          document.getElementById("exit").click();
-        } else if (evt.key === "ArrowLeft") {
-          clearInterval(blurInterval);
-          prevImage();
-        } else if (evt.key === "ArrowRight") {
-          clearInterval(blurInterval);
-          nextImage();
+        if (fullScreenOpen) {
+          if (evt.key === "Escape" || evt.key === "Esc") {
+            document.getElementById("exit").click();
+          } else if (evt.key === "ArrowLeft") {
+            clearInterval(blurInterval);
+            prevImage();
+          } else if (evt.key === "ArrowRight") {
+            clearInterval(blurInterval);
+            nextImage();
+          } else if (evt.key === "ArrowDown") {
+            fullScreenElement.scroll({
+              top: fullScreenElement.scrollHeight,
+              behavior: "smooth",
+            });
+          } else if (evt.key === "ArrowUp") {
+            fullScreenElement.scroll({
+              top: 0,
+              behavior: "smooth",
+            });
+          }
         }
       };
     }
