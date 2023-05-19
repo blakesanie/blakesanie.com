@@ -65,7 +65,7 @@ await Promise.all(
       icc: true,
       jfif: true,
     });
-    const name = path.split("/").pop()?.split(".")[0]; // still URI encoded
+    const name = path.split("/").pop()?.split(".")[0];
     const { width, height } = await sizeOf("." + path);
     const extracted = {
       path,
@@ -441,7 +441,6 @@ const gutter = 10;
     #imageName {
       font-size: 1.2em;
       margin-bottom: 0.2em;
-      text-align: center;
     }
 
     #metaData,
@@ -875,7 +874,7 @@ const gutter = 10;
         window.location.host +
         window.location.pathname;
       if (filename) {
-        newurl += "?im=" + encodeURIComponent(filename);
+        newurl += "?im=" + filename;
       }
       window.history.pushState({ path: newurl }, "", newurl);
     }
@@ -916,7 +915,9 @@ const gutter = 10;
       // set prev and next blocks
       const { prev, next } = imageChanges[filename];
       console.log("prev", prev, "next", next);
-      imageNameElement.innerHTML = decodeURIComponent(filename); //.replaceAll("_", " ");
+      imageNameElement.innerHTML = decodeURIComponent(
+        filename.replaceAll("--", "%")
+      ).replaceAll("_", " ");
       prevElement.style.display = prev ? "block" : "none";
       nextElement.style.display = next ? "block" : "none";
 
@@ -990,26 +991,14 @@ const gutter = 10;
     function setKeyDown() {
       document.onkeydown = function (evt) {
         evt = evt || window.event;
-        if (fullScreenOpen) {
-          if (evt.key === "Escape" || evt.key === "Esc") {
-            document.getElementById("exit").click();
-          } else if (evt.key === "ArrowLeft") {
-            clearInterval(blurInterval);
-            prevImage();
-          } else if (evt.key === "ArrowRight") {
-            clearInterval(blurInterval);
-            nextImage();
-          } else if (evt.key === "ArrowDown") {
-            fullScreenElement.scroll({
-              top: fullScreenElement.scrollHeight,
-              behavior: "smooth",
-            });
-          } else if (evt.key === "ArrowUp") {
-            fullScreenElement.scroll({
-              top: 0,
-              behavior: "smooth",
-            });
-          }
+        if (evt.key === "Escape" || evt.key === "Esc") {
+          document.getElementById("exit").click();
+        } else if (evt.key === "ArrowLeft") {
+          clearInterval(blurInterval);
+          prevImage();
+        } else if (evt.key === "ArrowRight") {
+          clearInterval(blurInterval);
+          nextImage();
         }
       };
     }
@@ -1101,23 +1090,14 @@ const gutter = 10;
     // $$ |  $$ |$$    $$ |   $$$/
     // $$/   $$/  $$$$$$$/     $/
 
-    const header = document.querySelector("header");
-
     document.getElementById("mapNavLink").addEventListener("click", (e) => {
       e.preventDefault();
       document.getElementById("mapButton").click();
-      // header.classList.remove("expanded");
     });
 
     document.getElementById("photoNavLink").addEventListener("click", (e) => {
       e.preventDefault();
       document.getElementById("galleryButton").click();
-      // window.pendingHamburgerClick = true;
-      // window.remoteHamburgerClick();
-      // header.classList.remove("expanded");
-      // setTimeout(() => {
-      //   document.getElementById("hamburger").dispatchEvent(new Event("click"));
-      // }, 1000);
     });
   </script>
 </HeaderAndFooter>

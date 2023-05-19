@@ -42,7 +42,7 @@ for filepath in tqdm(glob(path + '/*')):
     info = img.info
     exif = info['exif']
     filename = filepath.split('/')[-1]
-    newFilename = quote(filename.replace('_', ' '))
+    newFilename = quote(filename).replace('%','--')
     img.thumbnail((2000, 2000),Image.ANTIALIAS)
     newPath = dest + '/' + newFilename
     img.save(newPath, 'JPEG', quality=100, exif=exif)
