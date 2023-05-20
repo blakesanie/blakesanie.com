@@ -1,0 +1,117 @@
+---
+const n = 8;
+// create array of len n
+---
+
+<svg
+  {...Astro.props}
+  viewBox="0 0 100 100"
+  preserveAspectRatio="xMinYMin slice"
+  filter="url(#f1)"
+>
+  <defs>
+    <filter id="f1" x="0" y="0">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="90"></feGaussianBlur>
+    </filter>
+  </defs>
+  <g>
+    {
+      "x"
+        .repeat(n)
+        .split("")
+        .map(() => {
+          const cx = Math.random() * 100;
+          const cy = Math.random() * 100;
+          const rx = 10 + Math.random() * 20;
+          const ry = 10 + Math.random() * 20;
+          let color;
+          let hue;
+          if (Math.random() < 0.5) {
+            color = "#FF5900";
+            hue = 15 + Math.random() * 35;
+          } else {
+            color = "#0042FF";
+            hue = 185 + Math.random() * 40;
+          }
+          color = `hsl(${hue}, 100%, 50%)`;
+          return <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={color} />;
+        })
+    }</g
+  >
+</svg>
+
+<style>
+  svg,
+  g {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* background-color: red; */
+    width: 100%;
+    height: 100%;
+    /* border: 1px solid red; */
+    /* border: 1px solid yellow; */
+    /* filter: blur(30px); */
+  }
+  g {
+    /* border: 1px solid yellow; */
+  }
+  ellipse {
+    /* fill: none; */
+    /* stroke: rgb(255, 255, 255);
+    stroke-width: 2; */
+    mix-blend-mode: color;
+    opacity: 0.2;
+    transform-origin: center;
+    animation-timing-function: ease-in-out;
+  }
+</style>
+
+<script>
+  const blobs = [...document.querySelectorAll("ellipse")];
+  const duration = 6000;
+  const currentKeyframes = blobs.map(() => {
+    return {
+      rotate: 0,
+      scaleX: 1,
+      scaleY: 1,
+      translateX: 0,
+      translateY: 0,
+    };
+  });
+  function formatKeyframe({ rotate, scaleX, scaleY, translateX, translateY }) {
+    return {
+      transform: `rotate(${rotate}deg) scale(${scaleX}, ${scaleY}) translate(${translateX}%, ${translateY}%)`,
+    };
+  }
+  function round(val, places = 0) {
+    const scalar = Math.pow(10, places);
+    return Math.round(val * scalar) / scalar;
+  }
+  function animation() {
+    console.log("new animation");
+    for (let i = 0; i < blobs.length; i++) {
+      const prevKeyFrame = currentKeyframes[i];
+      const nextKeyframe = {
+        rotate: round(prevKeyFrame.rotate + Math.random() * 60 - 30), //Math.round(prevKeyFrame.rotate + Math.random() * 90) % 360,
+        scaleX: 1,
+        scaleY: 1,
+        translateX: round(Math.random() * 50 - 25),
+        translateY: round(Math.random() * 50 - 25),
+      };
+      const keyframePair = [
+        formatKeyframe(prevKeyFrame),
+        formatKeyframe(nextKeyframe),
+      ];
+
+      console.log(keyframePair);
+      blobs[i].animate(keyframePair, {
+        duration: duration,
+        iterations: 1,
+      });
+      currentKeyframes[i] = nextKeyframe;
+    }
+  }
+  setInterval(animation, duration);
+  animation();
+</script>

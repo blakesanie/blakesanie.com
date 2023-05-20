@@ -2,6 +2,7 @@
 import HeaderAndFooter from "../components/HeaderAndFooter/index.astro";
 import HomePageSection from "../components/HomePageSection.astro";
 import Spline from "../components/Spline.astro";
+import Blobs from "../components/Blobs.astro";
 //@ts-ignore
 import { Img } from "astro-imagetools/components";
 
@@ -125,14 +126,15 @@ const markupData = [
   <HomePageSection id="firstSection" class="homePageSection">
     <!-- <canvas id="canvas3d"></canvas> -->
     <!-- <iframe id="canvas3d" src="/hero/index.html"></iframe> -->
-    <Spline />
+    <!-- <Spline /> -->
+    <Blobs />
     <div id="wwdc">
       <!-- <img src="/images/wwdc_blake.png" /> -->
       <Img
         src="/src/assets/images/wwdc_blake.png"
         alt="Blake in WWDC style"
-        breakpoints={[200]}
-        quality={20}
+        breakpoints={[250]}
+        quality={40}
         format="webp"
         layout="fullWidth"
         loading="lazy"
