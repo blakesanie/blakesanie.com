@@ -68,50 +68,50 @@ const n = 8;
 </style>
 
 <script>
-  const blobs = [...document.querySelectorAll("ellipse")];
-  const duration = 6000;
-  const currentKeyframes = blobs.map(() => {
-    return {
-      rotate: 0,
-      scaleX: 1,
-      scaleY: 1,
-      translateX: 0,
-      translateY: 0,
-    };
-  });
-  function formatKeyframe({ rotate, scaleX, scaleY, translateX, translateY }) {
-    return {
-      transform: `rotate(${rotate}deg) scale(${scaleX}, ${scaleY}) translate(${translateX}%, ${translateY}%)`,
-    };
-  }
-  function round(val, places = 0) {
-    const scalar = Math.pow(10, places);
-    return Math.round(val * scalar) / scalar;
-  }
-  function animation() {
-    console.log("new animation");
-    for (let i = 0; i < blobs.length; i++) {
-      const prevKeyFrame = currentKeyframes[i];
-      const nextKeyframe = {
-        rotate: round(prevKeyFrame.rotate + Math.random() * 60 - 30), //Math.round(prevKeyFrame.rotate + Math.random() * 90) % 360,
-        scaleX: 1,
-        scaleY: 1,
-        translateX: round(Math.random() * 50 - 25),
-        translateY: round(Math.random() * 50 - 25),
-      };
-      const keyframePair = [
-        formatKeyframe(prevKeyFrame),
-        formatKeyframe(nextKeyframe),
-      ];
+  //   const blobs = [...document.querySelectorAll("ellipse")];
+  //   const duration = 6000;
+  //   const currentKeyframes = blobs.map(() => {
+  //     return {
+  //       rotate: 0,
+  //       scaleX: 1,
+  //       scaleY: 1,
+  //       translateX: 0,
+  //       translateY: 0,
+  //     };
+  //   });
+  //   function formatKeyframe({ rotate, scaleX, scaleY, translateX, translateY }) {
+  //     return {
+  //       transform: `rotate(${rotate}deg) scale(${scaleX}, ${scaleY}) translate(${translateX}%, ${translateY}%)`,
+  //     };
+  //   }
+  //   function round(val, places = 0) {
+  //     const scalar = Math.pow(10, places);
+  //     return Math.round(val * scalar) / scalar;
+  //   }
+  //   function animation() {
+  //     console.log("new animation");
+  //     for (let i = 0; i < blobs.length; i++) {
+  //       const prevKeyFrame = currentKeyframes[i];
+  //       const nextKeyframe = {
+  //         rotate: round(prevKeyFrame.rotate + Math.random() * 60 - 30), //Math.round(prevKeyFrame.rotate + Math.random() * 90) % 360,
+  //         scaleX: 1,
+  //         scaleY: 1,
+  //         translateX: round(Math.random() * 50 - 25),
+  //         translateY: round(Math.random() * 50 - 25),
+  //       };
+  //       const keyframePair = [
+  //         formatKeyframe(prevKeyFrame),
+  //         formatKeyframe(nextKeyframe),
+  //       ];
 
-      console.log(keyframePair);
-      blobs[i].animate(keyframePair, {
-        duration: duration,
-        iterations: 1,
-      });
-      currentKeyframes[i] = nextKeyframe;
-    }
-  }
-  setInterval(animation, duration);
-  animation();
+  //       console.log(keyframePair);
+  //       blobs[i].animate(keyframePair, {
+  //         duration: duration,
+  //         iterations: 1,
+  //       });
+  //       currentKeyframes[i] = nextKeyframe;
+  //     }
+  //   }
+  //   setInterval(animation, duration);
+  //   animation();
 </script>
