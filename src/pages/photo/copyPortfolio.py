@@ -6,6 +6,7 @@ from tqdm import tqdm
 import subprocess
 import json
 from urllib.parse import quote
+from multiprocessing import Pool
 
 dest = '../../assets/images/portfolio'
 
@@ -37,7 +38,9 @@ path = '/Users/blake/Library/Mobile Documents/com~apple~CloudDocs/Images/portfol
 
 allMeta = {}
 
-for filepath in tqdm(glob(path + '/*')):
+filepaths = glob(path + '/*')
+
+def processFilepath(filepath):
     img = Image.open(filepath)
     info = img.info
     exif = info['exif']
@@ -52,7 +55,28 @@ for filepath in tqdm(glob(path + '/*')):
     md = exiftoolFile(filepath)
     allMeta[newFilename.split('.')[0]] = md
     
-with open("metadata.json", "w") as outfile:
-    json.dump(allMeta, outfile)
+
+if __name__ == '__main__':
+    
+    with Pool(None) as p:
+        r = list(tqdm(p.imap(processFilepath, filepaths), total=len(filepaths)))
+
+# for filepath in tqdm(glob(path + '/*')):
+#     img = Image.open(filepath)
+#     info = img.info
+#     exif = info['exif']
+#     filename = filepath.split('/')[-1]
+#     newFilename = quote(filename).replace('%','--')
+#     img.thumbnail((2000, 2000),Image.ANTIALIAS)
+#     newPath = dest + '/' + newFilename
+#     img.save(newPath, 'JPEG', quality=100, exif=exif)
+#     # escapedPath = filepath.replace(' ', '\\ ')
+#     # escapedNew = newPath.replace(' ', '\\  ')
+#     # os.system(f'exiftool -overwrite_original -TagsFromFile {escapedPath} -all:all>all:all {escapedNew}')
+#     md = exiftoolFile(filepath)
+#     allMeta[newFilename.split('.')[0]] = md
+    
+    with open("metadata.json", "w") as outfile:
+        json.dump(allMeta, outfile)
     
     

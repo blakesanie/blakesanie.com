@@ -40,7 +40,7 @@ const markupData = [
   },
   {
     text: ["With a sense of photographic expression put on full display."],
-    imageUrl: "/images/portfolio/Manhattan_Bridge.jpg",
+    imageUrl: "/images/portfolio/Manhattan--20Bridge.jpg",
     links: [
       {
         href: "/photo",
@@ -103,7 +103,7 @@ const markupData = [
       {
         href: "/contact.vcf",
         label: "Contact Card",
-        class: "email",
+        class: "contactCard",
       },
       {
         href: "/instagram",
@@ -130,16 +130,13 @@ const markupData = [
     <Blobs />
     <div id="wwdc">
       <!-- <img src="/images/wwdc_blake.png" /> -->
-      <Img
-        src="/src/assets/images/wwdc_blake.png"
-        alt="Blake in WWDC style"
-        breakpoints={[250]}
-        quality={40}
-        format="webp"
+      <!-- <Img
+        src="/src/assets/images/wwdc_blake2.png"
+        alt=""
         layout="fullWidth"
-        loading="lazy"
         placeholder="blurred"
-      />
+      /> -->
+      <img src="/assets/wwdc_blake.png" />
     </div>
     <h1><span id="typed">Hi, I'm Blake.</span></h1>
     <!-- <script
@@ -307,7 +304,7 @@ const markupData = [
     border: 1px solid green;
   }
   #wwdc {
-    width: 9em;
+    width: 12em;
     padding: 0.5em;
     /* background: radial-gradient(
       closest-side at 4.5em 5em,
@@ -320,6 +317,7 @@ const markupData = [
   }
   #wwdc img {
     width: 100%;
+    aspect-ratio: 0.7557;
   }
   h1 {
     /* animation: fadeIn 3s ease-in; */
@@ -347,21 +345,6 @@ const markupData = [
     width: 100%;
     object-fit: cover;
     border: 1px solid yellow;
-  }
-  :global(#particles-js) {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* z-index: -1; */
-  }
-  :global(#canvas3d) {
-    position: absolute;
-    width: 100%;
-    min-width: 100vh;
-    height: 100%;
-    border: none;
   }
 
   @keyframes fadeIn {

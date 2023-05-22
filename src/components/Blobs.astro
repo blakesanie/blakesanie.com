@@ -1,117 +1,210 @@
 ---
+import particlesConfig from "./particles.json";
+// import Particles from "astro-particles";
+import particlesScript from "./particles.mjs";
+import Particles from "astro-particles";
 const n = 8;
+// console.log("particlesConfig", particlesConfig);
 // create array of len n
 ---
 
-<svg
-  {...Astro.props}
-  viewBox="0 0 100 100"
-  preserveAspectRatio="xMinYMin slice"
-  filter="url(#f1)"
->
-  <defs>
-    <filter id="f1" x="0" y="0">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="90"></feGaussianBlur>
-    </filter>
-  </defs>
-  <g>
-    {
-      "x"
-        .repeat(n)
-        .split("")
-        .map(() => {
-          const cx = Math.random() * 100;
-          const cy = Math.random() * 100;
-          const rx = 10 + Math.random() * 20;
-          const ry = 10 + Math.random() * 20;
-          let color;
-          let hue;
-          if (Math.random() < 0.5) {
-            color = "#FF5900";
-            hue = 15 + Math.random() * 35;
-          } else {
-            color = "#0042FF";
-            hue = 185 + Math.random() * 40;
-          }
-          color = `hsl(${hue}, 100%, 50%)`;
-          return <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={color} />;
-        })
-    }</g
+<div id="blobField" class="hidden1 hidden2">
+  <svg
+    {...Astro.props}
+    viewBox="0 0 100 100"
+    preserveAspectRatio="xMinYMin slice"
   >
-</svg>
+    <!-- <defs>
+      <filter id="f1" x="0" y="0">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="90"></feGaussianBlur>
+      </filter>
+    </defs> -->
+    <g id="blobs"></g>
+  </svg>
+  <div id="particles-js"></div>
+  <!-- <Particles id="tsparticles" options={particlesConfig} /> -->
+</div>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"
+></script> -->
+
+<!-- <script
+  src="https://cdn.jsdelivr.net/npm/tsparticles-confetti@2.9.3/tsparticles.confetti.bundle.min.js"
+></script> -->
+
+<!-- <script src={particlesScript} type="module"></script> -->
+<!-- <Fragment
+  set:html={`<script type="module">import { tsParticles } from "tsparticles-engine";
+tsParticles
+  .load("particles-js", ${JSON.stringify(particlesConfig)})
+  .then((blobField) => {
+    console.log("callback - tsparticles config loaded");
+  })
+  .catch((error) => {
+    console.error(error);
+  });</script>`}
+/> -->
+
+<!-- <script>
+  import { tsParticles } from "tsparticles-engine";
+  import { loadFull } from "tsparticles";
+
+  (async () => {
+    await loadFull(tsParticles);
+  })();
+</script> -->
 
 <style>
-  svg,
-  g {
+  #blobField {
     position: absolute;
     top: 0;
     left: 0;
-    /* background-color: red; */
     width: 100%;
     height: 100%;
+    transition: opacity 4s ease;
+  }
+  .hidden1,
+  .hidden2 {
+    opacity: 0;
+  }
+  svg {
+    position: absolute;
+    top: -25vmax;
+    left: -25vmax;
+    /* background-color: red; */
+    width: 150vmax;
+    height: 150vmax;
     /* border: 1px solid red; */
     /* border: 1px solid yellow; */
     /* filter: blur(30px); */
   }
   g {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    /* width: calc(sqrt(100vh * 100vh + 100vw * 100vw));
+    height: calc(sqrt(100vh * 100vh + 100vw * 100vw)); */
+  }
+  svg {
+    filter: blur(6vmax);
+    animation: spin 20s linear infinite;
+  }
+  g {
     /* border: 1px solid yellow; */
   }
-  ellipse {
+  #blobField :global(ellipse) {
     /* fill: none; */
     /* stroke: rgb(255, 255, 255);
     stroke-width: 2; */
-    mix-blend-mode: color;
-    opacity: 0.2;
+    opacity: 0.4;
     transform-origin: center;
     animation-timing-function: ease-in-out;
   }
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  /* :global(#tsparticles) {
+    position: relative !important;
+    z-index: -1;
+  } */
+  #particles-js {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* z-index: -1; */
+  }
 </style>
 
-<script>
-  //   const blobs = [...document.querySelectorAll("ellipse")];
-  //   const duration = 6000;
-  //   const currentKeyframes = blobs.map(() => {
-  //     return {
-  //       rotate: 0,
-  //       scaleX: 1,
-  //       scaleY: 1,
-  //       translateX: 0,
-  //       translateY: 0,
-  //     };
-  //   });
-  //   function formatKeyframe({ rotate, scaleX, scaleY, translateX, translateY }) {
-  //     return {
-  //       transform: `rotate(${rotate}deg) scale(${scaleX}, ${scaleY}) translate(${translateX}%, ${translateY}%)`,
-  //     };
-  //   }
-  //   function round(val, places = 0) {
-  //     const scalar = Math.pow(10, places);
-  //     return Math.round(val * scalar) / scalar;
-  //   }
-  //   function animation() {
-  //     console.log("new animation");
-  //     for (let i = 0; i < blobs.length; i++) {
-  //       const prevKeyFrame = currentKeyframes[i];
-  //       const nextKeyframe = {
-  //         rotate: round(prevKeyFrame.rotate + Math.random() * 60 - 30), //Math.round(prevKeyFrame.rotate + Math.random() * 90) % 360,
-  //         scaleX: 1,
-  //         scaleY: 1,
-  //         translateX: round(Math.random() * 50 - 25),
-  //         translateY: round(Math.random() * 50 - 25),
-  //       };
-  //       const keyframePair = [
-  //         formatKeyframe(prevKeyFrame),
-  //         formatKeyframe(nextKeyframe),
-  //       ];
+<!-- <script src="https://cdn.jsdelivr.net/npm/tsparticles@1.0.4/tsparticles.min.js"
+></script> -->
+<!-- <script
+  src="https://cdn.jsdelivr.net/npm/tsparticles@2.9.3/tsparticles.bundle.min.js"
+></script> -->
 
-  //       console.log(keyframePair);
-  //       blobs[i].animate(keyframePair, {
-  //         duration: duration,
-  //         iterations: 1,
-  //       });
-  //       currentKeyframes[i] = nextKeyframe;
-  //     }
-  //   }
-  //   setInterval(animation, duration);
-  //   animation();
+<script
+  define:vars={{
+    particlesConfig: particlesConfig,
+    n,
+  }}
+>
+  const gElement = document.getElementById("blobs");
+
+  for (let i = 0; i < n; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const rx = 6 + Math.random() * 20;
+    const ry = 6 + Math.random() * 20;
+    const posX = 50 + Math.cos(angle) * (20 + Math.random() * 20);
+    const posY = 50 + Math.sin(angle) * (20 + Math.random() * 20);
+    const hue =
+      Math.random() < 0.5 ? 15 + Math.random() * 25 : 185 + Math.random() * 40;
+    const color = `hsl(${hue}, 100%, 50%)`;
+    const ellipse = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "ellipse"
+    );
+    ellipse.setAttribute("fill", color);
+    ellipse.setAttribute("cx", posX);
+    ellipse.setAttribute("cy", posY);
+    ellipse.setAttribute("rx", rx);
+    ellipse.setAttribute("ry", ry);
+
+    gElement.appendChild(ellipse);
+  }
+
+  document.getElementById("blobField").classList.remove("hidden1");
+
+  //   "x"
+  //     .repeat(n)
+  //     .split("")
+  //     .map(() => {
+  //       const angle = Math.random() * Math.PI * 2;
+
+  //       const cx =
+  //         Math.random() < 0.5 ? 20 + Math.random() * 10 : 80 - Math.random() * 10;
+  //       const cy =
+  //         Math.random() < 0.5 ? 20 + Math.random() * 10 : 80 - Math.random() * 10;
+  //       const rx = 10 + Math.random() * 24;
+  //       const ry = 10 + Math.random() * 24;
+  //       // let color;
+  //       let hue;
+  //       if (Math.random() < 0.5) {
+  //         //   color = "#FF5900";
+  //         hue = 15 + Math.random() * 25;
+  //       } else {
+  //         //   color = "#0042FF";
+  //         hue = 185 + Math.random() * 40;
+  //       }
+  //       const color = `hsl(${hue}, 100%, 50%)`;
+  //       return <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={color} />;
+  //     });
+
+  //   import { tsParticles } from "tsparticles-engine";
+  //   import { tsParticles } from "tsparticles-engine";
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/tsparticles";
+  script.addEventListener("load", async () => {
+    await loadParticles();
+    document.getElementById("blobField").classList.remove("hidden2");
+  });
+  document.head.appendChild(script);
+
+  async function loadParticles() {
+    await tsParticles.load("particles-js", {
+      ...particlesConfig,
+      fullScreen: false,
+    });
+  }
+  //   window.addEventListener("load", () => {
+  //     loadParticles();
+  //   });
+  //   document.addEventListener("DOMContentLoaded", () => {
+  //     loadParticles();
+  //   });
 </script>

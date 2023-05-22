@@ -295,6 +295,7 @@ const gutter = 10;
       margin-bottom: 1em;
       cursor: pointer;
       transition: opacity 0.2s ease;
+      display: none;
     }
 
     #advancedLabel:hover {
@@ -541,7 +542,7 @@ const gutter = 10;
       }
       return JSON.parse(
         '{"' +
-          decodeURI(search)
+          search
             .replace(/"/g, '\\"')
             .replace(/&/g, '","')
             .replace(/=/g, '":"') +
@@ -554,9 +555,18 @@ const gutter = 10;
 
     if (initialUrlQuery.im) {
       let initialQueryInterval;
+      const initialFilename = initialUrlQuery.im
+        .replaceAll("_", encodeURI(" "))
+        .replaceAll("%", "--");
+      console.log(
+        "initialFilename",
+        initialFilename,
+        "from",
+        initialUrlQuery.im
+      );
       function initialFullScreen() {
         try {
-          activateFullScreen(initialUrlQuery.im);
+          activateFullScreen(initialFilename);
           clearInterval(initialQueryInterval);
         } catch {}
       }
@@ -875,7 +885,8 @@ const gutter = 10;
         window.location.host +
         window.location.pathname;
       if (filename) {
-        newurl += "?im=" + filename;
+        newurl +=
+          "?im=" + filename.replaceAll("--", "%").replaceAll("%20", "_");
       }
       window.history.pushState({ path: newurl }, "", newurl);
     }
@@ -918,7 +929,7 @@ const gutter = 10;
       console.log("prev", prev, "next", next);
       imageNameElement.innerHTML = decodeURIComponent(
         filename.replaceAll("--", "%")
-      ).replaceAll("_", " ");
+      );
       prevElement.style.display = prev ? "block" : "none";
       nextElement.style.display = next ? "block" : "none";
 

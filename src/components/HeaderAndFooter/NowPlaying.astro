@@ -71,14 +71,12 @@ const { shadowColor, textColor } = Astro.props;
   }
   img {
     aspect-ratio: 1;
-    border-radius: 8px;
+    border-radius: 10px;
     /* width: 150px; */
     width: 100%;
     margin: 0 0.2em;
     border: 2px solid white;
     z-index: 3;
-    box-shadow: 0 0 0 max(100vw, 100vh) rgba(0, 0, 0, 0);
-    transition: box-shadow 0.16s ease;
   }
   img.loading {
     clip-path: inset(1px);
@@ -134,7 +132,7 @@ const { shadowColor, textColor } = Astro.props;
 
   let updateInterval;
 
-  async function getNowPlaying(skipCache) {
+  async function getNowPlaying(skipCache = false) {
     let json;
     if (!skipCache) {
       const cached = window.localStorage.getItem("nowPlaying");
@@ -147,7 +145,9 @@ const { shadowColor, textColor } = Astro.props;
         if (age < maxInterval) {
           console.log("Starting new interval in", maxInterval - age, "ms");
           clearInterval(updateInterval);
-          setTimeout(startInterval, maxInterval - age);
+          setTimeout(function () {
+            startInterval(true);
+          }, maxInterval - age);
           return json;
         }
       }
@@ -185,11 +185,11 @@ const { shadowColor, textColor } = Astro.props;
     loading.forEach((el) => el.classList.remove("loading"));
   }
 
-  function startInterval() {
+  function startInterval(skipCache = false) {
     updateInterval = setInterval(() => {
       setNowPlaying(true);
     }, maxInterval);
-    setNowPlaying();
+    setNowPlaying(skipCache);
   }
 
   startInterval();
