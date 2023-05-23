@@ -20,7 +20,7 @@ print('opened images')
 inputs = processor(images=images, return_tensors="pt")
 print('processed images')
 embeddings = model.get_image_features(**inputs)
-embeddings /= torch.norm(embeddings, dim=-1, keepdim=True)
+embeddings /= torch.norm(embeddings, p=2, dim=-1, keepdim=True)
 embeddings = embeddings.detach().numpy().tolist()
 print('extracted embeddings')
 

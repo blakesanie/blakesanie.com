@@ -167,7 +167,7 @@ const gutter = 10;
     defaultAction={initialMode == "gallery" ? "galleryButton" : "mapButton"}
     id="photoToggle"
   />
-  <div id="advancedLabel">AI search by Zero-Shot Image Classification</div>
+  <div id="advancedLabel">AI search via Zero-Shot Image Classification</div>
   <div id="AISearch" class="minimized">
     <input
       type="text"
@@ -184,7 +184,7 @@ const gutter = 10;
               src={image.path}
               alt=""
               breakpoints={[600]}
-              quality={40}
+              quality={70}
               format="webp"
               placeholder="dominantColor"
               loading="lazy"
@@ -207,7 +207,7 @@ const gutter = 10;
               src={image.path}
               alt=""
               breakpoints={[400, 800, 1200, 1600, 2000]}
-              quality={60}
+              quality={80}
               format="webp"
               placeholder="blurred"
               loading="lazy"
@@ -1132,7 +1132,7 @@ const gutter = 10;
     const script = document.createElement("script");
     script.addEventListener("load", loadModel);
     script.src =
-      "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.10.0/dist/ort.js";
+      "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.12.0/dist/ort.js";
     document.head.appendChild(script);
 
     let modelSession;
@@ -1148,10 +1148,11 @@ const gutter = 10;
 
     advancedLabel.addEventListener("click", () => {
       if (advancedOpen) {
-        advancedLabel.innerHTML = "AI search by Zero-Shot Image Classification";
+        advancedLabel.innerHTML =
+          "AI search via Zero-Shot Image Classification";
         AISearch.classList.add("minimized");
       } else {
-        advancedLabel.innerHTML = "Ignore Query";
+        advancedLabel.innerHTML = "Close AI image search";
         AISearch.classList.remove("minimized");
       }
       advancedOpen = !advancedOpen;
@@ -1159,10 +1160,13 @@ const gutter = 10;
 
     async function loadModel() {
       const modelPath =
-        "https://huggingface.co/rocca/openai-clip-js/resolve/main/clip-text-vit-32-float32-int32.onnx";
-      modelSession = await ort.InferenceSession.create(modelPath, {
-        executionProviders: ["wasm"],
-      });
+        "https://huggingface.co/rocca/openai-clip-js/resolve/main/clip-text-vit-32-uint8.onnx";
+      // `https://huggingface.co/rocca/openai-clip-js/resolve/main/clip-image-vit-32-${quantized ? "uint8" : "float32"}.onnx
+
+      //"https://huggingface.co/rocca/openai-clip-js/resolve/main/clip-text-vit-32-float32-int32.onnx";
+      // modelSession = await ort.InferenceSession.create(modelPath, {
+      //   executionProviders: ["wasm"],
+      // });
       const [session, Tokenizer, imageEmb] = await Promise.all([
         ort.InferenceSession.create(modelPath, {
           executionProviders: ["wasm"],
