@@ -216,7 +216,8 @@ const markupData = [
   }, 4000);
 
   const sections = document.querySelectorAll(".sectionTransitionParent");
-
+  const firstSection = document.getElementById("firstSection");
+  const wwdc = document.getElementById("wwdc");
   // const onScreen: Set<Element> = new Set();
 
   // const observer = new IntersectionObserver(
@@ -248,13 +249,17 @@ const markupData = [
     //     element.querySelector("h2")?.textContent?.substring(0, 10)
     //   )
     // );
+    const rate = window.innerHeight * 0.13;
+
     const screenCenter = window.scrollY + window.innerHeight / 2;
+    let sectionHeight;
     sections.forEach((section) => {
       if (!(section instanceof HTMLElement)) {
         return;
       }
-      const sectionCenter = section.offsetTop + section.offsetHeight / 2;
-      const diff = (sectionCenter - screenCenter) / section.offsetHeight;
+      sectionHeight = section.offsetHeight;
+      const sectionCenter = section.offsetTop + sectionHeight / 2;
+      const diff = (sectionCenter - screenCenter) / sectionHeight;
       const bg = section.querySelector(".bg");
       if (!(bg instanceof HTMLElement)) {
         return;
@@ -268,13 +273,28 @@ const markupData = [
           continue;
         }
         if (!child.classList.contains("bg")) {
-          const rate = window.innerHeight * 0.1;
           child.style.transform = `translateY(${diff * rate}px)`;
         } else {
           // child.style.transform = `translateY(${diff * 300}px)`;
         }
       }
     });
+
+    for (let i = 0; i < firstSection.children.length; i++) {
+      const child = firstSection.children[i];
+      if (child.id == "blobField") {
+        continue;
+      }
+      if (child.id == "wwdc") {
+        child.style.transform = `translateY(${
+          (window.scrollY / sectionHeight) * rate * 1
+        }px)`;
+      } else {
+        child.style.transform = `translateY(${
+          (window.scrollY / sectionHeight) * rate * 2
+        }px)`;
+      }
+    }
   });
 </script>
 
@@ -304,7 +324,7 @@ const markupData = [
     border: 1px solid green;
   }
   #wwdc {
-    width: 12em;
+    width: 10em;
     padding: 0.5em;
     /* background: radial-gradient(
       closest-side at 4.5em 5em,
@@ -318,6 +338,7 @@ const markupData = [
   #wwdc img {
     width: 100%;
     aspect-ratio: 0.7557;
+    animation: fadeIn 4s ease-in;
   }
   h1 {
     /* animation: fadeIn 3s ease-in; */

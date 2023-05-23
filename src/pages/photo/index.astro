@@ -167,9 +167,13 @@ const gutter = 10;
     defaultAction={initialMode == "gallery" ? "galleryButton" : "mapButton"}
     id="photoToggle"
   />
-  <div id="advancedLabel">AI Image Search Query</div>
+  <div id="advancedLabel">AI search by Zero-Shot Image Classification</div>
   <div id="AISearch" class="minimized">
-    <input type="text" placeholder='AI Search Query, ex. "New York Sunset"' />
+    <input
+      type="text"
+      placeholder="Model still mounting..."
+      disabled="disabled"
+    />
   </div>
   <div id="photoContent">
     <div id="gallery">
@@ -295,7 +299,6 @@ const gutter = 10;
       margin-bottom: 1em;
       cursor: pointer;
       transition: opacity 0.2s ease;
-      display: none;
     }
 
     #advancedLabel:hover {
@@ -324,7 +327,7 @@ const gutter = 10;
       font-size: 1em;
       border: none;
       outline: none;
-      box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.07);
+      box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
       border-radius: 8px;
     }
 
@@ -590,34 +593,43 @@ const gutter = 10;
     const galleryContainer = document.getElementById("gallery");
 
     // do the shuffling regardless
-    for (var i = galleryContainer.children.length; i >= 0; i--) {
-      const index = Math.random() * i;
-      galleryContainer.appendChild(galleryContainer.children[index | 0]);
-    }
-
-    let imageOrder = [];
-
-    for (var i = 0; i < galleryContainer.children.length; i++) {
-      const name = galleryContainer.children[i].getAttribute("name");
-      imageOrder.push(name);
-      galleryContainer.children[i].addEventListener("click", () => {
-        activateFullScreen(name);
-      });
-    }
-
     let imageChanges = {};
 
-    let prev = undefined;
-    for (let i = 0; i < imageOrder.length; i++) {
-      const curr = imageOrder[i];
-      if (prev) {
-        imageChanges[prev]["next"] = curr;
+    function setImageOrder() {
+      let imageOrder = [];
+
+      for (var i = 0; i < galleryContainer.children.length; i++) {
+        const name = galleryContainer.children[i].getAttribute("name");
+        imageOrder.push(name);
+        galleryContainer.children[i].addEventListener("click", () => {
+          activateFullScreen(name);
+        });
       }
-      imageChanges[curr] = {
-        prev: prev,
-      };
-      prev = curr;
+
+      imageChanges = {};
+      let prev = undefined;
+      for (let i = 0; i < imageOrder.length; i++) {
+        const curr = imageOrder[i];
+        if (prev) {
+          imageChanges[prev]["next"] = curr;
+        }
+        imageChanges[curr] = {
+          prev: prev,
+        };
+        prev = curr;
+      }
     }
+
+    function shuffleImgElements() {
+      for (var i = galleryContainer.children.length; i >= 0; i--) {
+        const index = Math.random() * i;
+        galleryContainer.appendChild(galleryContainer.children[index | 0]);
+      }
+
+      setImageOrder();
+    }
+
+    shuffleImgElements();
 
     console.log("image changes", imageChanges);
 
@@ -657,7 +669,7 @@ const gutter = 10;
 
     let resizedSinceSwitchedToMap = false;
 
-    function activateGallery() {
+    function activateGallery(reset = false) {
       function showGallery() {
         mapContainer.style.display = "none";
         galleryContainer.style.display = "block";
@@ -682,23 +694,30 @@ const gutter = 10;
           images[i].style.width = width + "px";
         }
       }
-      if (!msnry) {
-        showGallery();
+      if (!msnry || reset) {
+        if (!reset) {
+          showGallery();
+
+          window.addEventListener("resize", setGalleryImageWidths);
+        }
         setGalleryImageWidths();
 
-        window.addEventListener("resize", setGalleryImageWidths);
-
         // gallery.style.opacity = 0;
+        if (msnry) {
+          msnry.destroy();
+        }
         msnry = new Masonry("#gallery", {
           columnWidth: ".galleryImage",
           itemSelector: ".galleryImage",
           gutter: gutter,
           transitionDuration: 200,
         });
-        msnry.on("layoutComplete", function () {
-          galleryContainer.style.opacity = 1;
-          console.log("layout complete");
-        });
+        if (!reset) {
+          msnry.on("layoutComplete", function () {
+            galleryContainer.style.opacity = 1;
+            console.log("layout complete");
+          });
+        }
         console.log("masonry", msnry);
       } else {
         if (resizedSinceSwitchedToMap) {
@@ -1082,30 +1101,6 @@ const gutter = 10;
       });
     }
 
-    //   ______   ______
-    //  /      \ /      |
-    // /$$$$$$  |$$$$$$/
-    // $$ |__$$ |  $$ |
-    // $$    $$ |  $$ |
-    // $$$$$$$$ |  $$ |
-    // $$ |  $$ | _$$ |_
-    // $$ |  $$ |/ $$   |
-    // $$/   $$/ $$$$$$/
-
-    const advancedLabel = document.getElementById("advancedLabel");
-    const AISearch = document.getElementById("AISearch");
-    let advancedOpen = false;
-    advancedLabel.addEventListener("click", () => {
-      if (advancedOpen) {
-        advancedLabel.innerHTML = "AI Image Search Query";
-        AISearch.classList.add("minimized");
-      } else {
-        advancedLabel.innerHTML = "Ignore Query";
-        AISearch.classList.remove("minimized");
-      }
-      advancedOpen = !advancedOpen;
-    });
-
     //  _______    ______   __     __
     // /       \  /      \ /  \   /  |
     // $$$$$$$  | $$$$$$  |$$  \ /$$/
@@ -1123,5 +1118,158 @@ const gutter = 10;
       e.preventDefault();
       document.getElementById("galleryButton").click();
     });
+
+    //   ______   ______
+    // /      \ /      |
+    // /$$$$$$  |$$$$$$/
+    // $$ |__$$ |  $$ |
+    // $$    $$ |  $$ |
+    // $$$$$$$$ |  $$ |
+    // $$ |  $$ | _$$ |_
+    // $$ |  $$ |/ $$   |
+    // $$/   $$/ $$$$$$/
+
+    const script = document.createElement("script");
+    script.addEventListener("load", loadModel);
+    script.src =
+      "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.10.0/dist/ort.js";
+    document.head.appendChild(script);
+
+    let modelSession;
+    let tokenizer;
+    let imageEmbeddings;
+    const AITextField = document.querySelector("#AISearch > input");
+
+    const advancedLabel = document.getElementById("advancedLabel");
+    const AISearch = document.getElementById("AISearch");
+
+    let advancedOpen = false;
+    let textLastSearched;
+
+    advancedLabel.addEventListener("click", () => {
+      if (advancedOpen) {
+        advancedLabel.innerHTML = "AI search by Zero-Shot Image Classification";
+        AISearch.classList.add("minimized");
+      } else {
+        advancedLabel.innerHTML = "Ignore Query";
+        AISearch.classList.remove("minimized");
+      }
+      advancedOpen = !advancedOpen;
+    });
+
+    async function loadModel() {
+      const modelPath =
+        "https://huggingface.co/rocca/openai-clip-js/resolve/main/clip-text-vit-32-float32-int32.onnx";
+      modelSession = await ort.InferenceSession.create(modelPath, {
+        executionProviders: ["wasm"],
+      });
+      const [session, Tokenizer, imageEmb] = await Promise.all([
+        ort.InferenceSession.create(modelPath, {
+          executionProviders: ["wasm"],
+        }),
+        import("https://deno.land/x/clip_bpe@v0.0.6/mod.js"),
+        fetch("/assets/imageEmbeddings.json"),
+      ]);
+      modelSession = session;
+      tokenizer = new Tokenizer.default();
+      imageEmbeddings = await imageEmb.json();
+      console.log("CLIP Model Loaded", modelSession, tokenizer);
+      AITextField.removeAttribute("disabled");
+      AITextField.setAttribute(
+        "placeholder",
+        'Model ready! Try any query, ex. "New York City Sunset"'
+      );
+    }
+
+    async function getTextEmbedding(text) {
+      let textTokens = tokenizer.encodeForCLIP(text);
+      textTokens = Int32Array.from(textTokens);
+      const feeds = { input: new ort.Tensor("int32", textTokens, [1, 77]) };
+      const results = await modelSession.run(feeds);
+      return results["output"].data;
+    }
+
+    async function searchByText(text) {
+      const textEmbedding = await getTextEmbedding(text);
+      const norm = Math.sqrt(
+        textEmbedding.reduce((acc, curr) => {
+          return acc + curr * curr;
+        }, 0)
+      );
+      for (let i = 0; i < textEmbedding.length; i++) {
+        textEmbedding[i] /= norm;
+      }
+      console.log("text embedding", textEmbedding);
+      const similarities = {};
+      for (const [name, embedding] of Object.entries(imageEmbeddings)) {
+        const similarity = embedding.reduce((acc, curr, i) => {
+          return acc + curr * textEmbedding[i];
+        }, 0);
+        similarities[name] = similarity;
+      }
+      const ranking = Object.entries(similarities).sort(function (
+        first,
+        second
+      ) {
+        return second[1] - first[1];
+      });
+      const indices = {};
+      for (let i = 0; i < ranking.length; i++) {
+        const name = ranking[i][0];
+        indices[name] = i;
+      }
+      console.log(
+        "ranking",
+        ranking.map((x) => x[0]),
+        ranking
+      );
+      orderImageElementsByRanking(indices);
+      setImageOrder();
+      // shuffleImgElements();
+      // msnry = undefined;
+      activateGallery(true);
+    }
+
+    async function beginSearchByText() {
+      const text = AITextField.value.trim().toLowerCase();
+      if (advancedOpen && text !== textLastSearched) {
+        textLastSearched = text;
+        await searchByText(textLastSearched);
+      }
+    }
+
+    AITextField.addEventListener("blur", beginSearchByText);
+    AITextField.addEventListener("keydown", async (e) => {
+      if (e.key === "Enter") {
+        await beginSearchByText();
+      }
+    });
+
+    function swapElements(nodeA, nodeB) {
+      const parentA = nodeA.parentNode;
+      const siblingA = nodeA.nextSibling === nodeB ? nodeA : nodeA.nextSibling;
+      // Move `nodeA` to before the `nodeB`
+      nodeB.parentNode.insertBefore(nodeA, nodeB);
+      // Move `nodeB` to before the sibling of `nodeA`
+      parentA.insertBefore(nodeB, siblingA);
+    }
+
+    function orderImageElementsByRanking(indices) {
+      console.log("indices", indices);
+      for (var i = 0; i < galleryContainer.children.length; i++) {
+        const child = galleryContainer.children[i];
+        const name = child.getAttribute("name");
+        const index = indices[name];
+        if (i == index) {
+          // child.style.top = ''
+          // child.style.left = ''
+          // child.removeAttribute("style");
+          continue;
+        }
+        const target = galleryContainer.children[index];
+        swapElements(child, target);
+        i--;
+      }
+    }
   </script>
 </HeaderAndFooter>
