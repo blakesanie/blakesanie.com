@@ -1132,7 +1132,7 @@ const gutter = 10;
     const script = document.createElement("script");
     script.addEventListener("load", loadModel);
     script.src =
-      "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.12.0/dist/ort.js";
+      "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/ort.js";
     document.head.appendChild(script);
 
     let modelSession;
@@ -1243,6 +1243,8 @@ const gutter = 10;
     }
 
     AITextField.addEventListener("blur", beginSearchByText);
+    AITextField.addEventListener("change", beginSearchByText);
+    AITextField.addEventListener("focusout", beginSearchByText);
     AITextField.addEventListener("keydown", async (e) => {
       if (e.key === "Enter") {
         await beginSearchByText();
