@@ -122,7 +122,7 @@ const markupData = [
 ];
 ---
 
-<HeaderAndFooter color="rgba(0,0,0,0.8)" title="Home" themeColor="black">
+<HeaderAndFooter color="rgba(0,0,0,0.5)" title="Home" themeColor="black">
   <HomePageSection id="firstSection" class="homePageSection">
     <!-- <canvas id="canvas3d"></canvas> -->
     <!-- <iframe id="canvas3d" src="/hero/index.html"></iframe> -->
@@ -287,11 +287,11 @@ const markupData = [
       }
       if (child.id == "wwdc") {
         child.style.transform = `translateY(${
-          (window.scrollY / sectionHeight) * rate * 1
-        }px)`;
+          (window.scrollY / sectionHeight) * rate * 2.8
+        }px) scale(${1 - (window.scrollY / sectionHeight) * 0.4})`;
       } else {
         child.style.transform = `translateY(${
-          (window.scrollY / sectionHeight) * rate * 2
+          (window.scrollY / sectionHeight) * rate * 2.5
         }px)`;
       }
     }
@@ -379,8 +379,11 @@ const markupData = [
 
   @media screen and (max-width: 800px) {
     #firstSection {
-      height: calc(100vh - 80px);
-      height: calc(100svh - 80px);
+      /* height: calc(100vh - 80px);
+      height: calc(100svh - 80px); */
+    }
+    :global(main) {
+      margin-top: 0 !important;
     }
   }
 
