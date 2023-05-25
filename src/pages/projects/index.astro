@@ -1,0 +1,739 @@
+---
+import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
+import { Icon } from "astro-icon";
+//@ts-ignore
+import { Img } from "astro-imagetools/components";
+import Button from "../../components/basic/Button.astro";
+
+interface ProjectInterface {
+  title: string;
+  description: string;
+  image?: string;
+  youtube?: string;
+  tech: {
+    icon: string;
+    name: string;
+  }[];
+  links?: {
+    label: string;
+    href: string;
+    target?: string;
+    icon?: string;
+  }[];
+}
+
+const projects: ProjectInterface[] = [
+  {
+    title: "Quantitative Research Platform",
+    description:
+      "My personalized financial management platform surrounding the research, implementation, and deployment of AI trading strategies, portfolio optimization measures, and risk management considerations. Initially founded as a Reinforcement Learning framework with industry-standard technical analysis, the platform has evolved to leverage adaptive quantitative methods, intuitive UI, and realtime integrations.",
+    image: "/src/assets/images/projects/fund_chart.png",
+    // links: [
+    //   {
+    //     label: "Learn More",
+    //     href: "/quant",
+    //   },
+    // ],
+    tech: [
+      {
+        icon: "logos:chrome",
+        name: "Google Chrome Extension v3",
+      },
+      {
+        icon: "logos:figma",
+        name: "Figma",
+      },
+      {
+        icon: "logos:firebase",
+        name: "Firebase",
+      },
+      {
+        icon: "logos:github-actions",
+        name: "GitHub Actions",
+      },
+      {
+        icon: "logos:google-cloud",
+        name: "Google Cloud Platform",
+      },
+      {
+        icon: "simple-icons:ifttt",
+        name: "IFTTT",
+      },
+      {
+        icon: "logos:netlify",
+        name: "Netlify",
+      },
+      {
+        icon: "logos:nextjs-icon",
+        name: "Next.js",
+      },
+      {
+        icon: "logos:python",
+        name: "Python",
+      },
+      {
+        icon: "logos:tensorflow",
+        name: "TensorFlow",
+      },
+    ],
+  },
+  {
+    title: "Distal Radius Object Identification (DROID)",
+    description:
+      "As my Georgia Tech capstone project, I worked alongside Emory Dept. of Orthopaedics to craft a state-of-the-art utility to identify wrist implant manufacturers from a simple x-ray, allowing surgeons to immediately discover the proper tools and techniques for implant extraction during emergency operations. To optimize accuracy, we leveraged an unsupervised data augmentation pipeline followed by YOLOv3 transfer learning for inference.",
+    image: "/src/assets/images/projects/droid.png",
+    links: [
+      {
+        label: "Paper",
+        href: "/droid.pdf",
+      },
+      {
+        label: "GitHub",
+        href: "https://github.com/dmace2/distal-radius-implant-identifier",
+        icon: "uil:github-alt",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:apple-app-store",
+        name: "App Store Connect",
+      },
+      {
+        icon: "logos:figma",
+        name: "Figma",
+      },
+      {
+        icon: "logos:heroku-icon",
+        name: "Heroku",
+      },
+      {
+        icon: "logos:python",
+        name: "Python",
+      },
+      {
+        icon: "logos:jupyter",
+        name: "Jupyter",
+      },
+      {
+        icon: "logos:postgresql",
+        name: "PostgreSQL",
+      },
+      {
+        icon: "vscode-icons:file-type-swift",
+        name: "Swift",
+      },
+      {
+        icon: "logos:tensorflow",
+        name: "TensorFlow",
+      },
+      {
+        icon: "vscode-icons:file-type-xcode",
+        name: "Xcode",
+      },
+    ],
+  },
+  {
+    title: "White Balancing via Deep Learning",
+    description:
+      "Applying novel Deep Learning methods towards accurate automatic color calibration of off-neutral images. Learning from the Unsplash dataset of properly white-balanced stock images, this experiment follows a technical exploration of digital color space, lossless graphical augmentation, computer vision and perception, and state-of-the-art ML model architectures such as ViT (Vision Transformer) alongside convolutional approaches.",
+    image: "/src/assets/images/projects/whitebalance.png",
+    links: [
+      {
+        label: "Paper",
+        href: "/whitebalance.pdf",
+      },
+      {
+        label: "GitHub",
+        href: "https://github.com/dylan-small/DeepColorBalancing",
+        icon: "uil:github-alt",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:python",
+        name: "Python",
+      },
+      {
+        icon: "logos:pytorch",
+        name: "PyTorch",
+      },
+      {
+        icon: "simple-icons:unsplash",
+        name: "Unsplash",
+      },
+      {
+        icon: "twemoji:hugging-face",
+        name: "Hugging Face",
+      },
+    ],
+  },
+  {
+    title: "The Perfect Pitch",
+    description: `In a research domain where Computing, Physics, and Baseball collide, I combine modern numerical and simulation methods with precise mechanical motion models to test the validity of the controversial "rising fastball" theory. Beyond a simple conclusion, my results present the detailed frontier of minimum physical abilities, such as pitch speed, spin rate, and release location, required to achieve a rising fastball, among other urban legend pitch deliveries.`,
+    image: "/src/assets/images/projects/theperfectpitch.png",
+    links: [
+      {
+        label: "Paper",
+        href: "/thePerfectPitch.pdf",
+      },
+      {
+        label: "Poster",
+        href: "/thePerfectPitchPoster.pdf",
+      },
+      {
+        label: "GitHub",
+        href: "https://github.com/blakesanie/PHYS-6260-Project/tree/main",
+        icon: "uil:github-alt",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:python",
+        name: "Python",
+      },
+      {
+        icon: "logos:jupyter",
+        name: "Jupyter",
+      },
+      {
+        icon: "simple-icons:mlb",
+        name: "MLB Savant",
+      },
+      {
+        icon: "logos:numpy",
+        name: "NumPy",
+      },
+    ],
+  },
+  {
+    title: "UX-AI",
+    description:
+      "A web-based AI agent that strengthens user experience by intelligently inferring user behavior status given demonstrated page interactions. With these valuable insights, UX-AI encourages sites to dynamically adjust user experience with the goal of optimizing engagement during casual, fast-paced, and distracted browsing sessions.",
+    image: "/src/assets/images/projects/uxai.png",
+    links: [
+      {
+        label: "Demo",
+        href: "https://uxai.blakesanie.com/#demo",
+      },
+      {
+        label: "Download",
+        href: "https://www.npmjs.com/package/ux-ai",
+      },
+      {
+        label: "GitHub",
+        href: "https://github.com/blakesanie/UX-AI",
+
+        icon: "uil:github-alt",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:chrome",
+        name: "Google Chrome Extension v3",
+      },
+      {
+        icon: "logos:javascript",
+        name: "JavaScript",
+      },
+      {
+        icon: "logos:python",
+        name: "Python",
+      },
+      {
+        icon: "logos:jupyter",
+        name: "Jupyter",
+      },
+      {
+        icon: "logos:npm-2",
+        name: "NPM",
+      },
+      {
+        icon: "logos:nextjs-icon",
+        name: "Next.js",
+      },
+      {
+        icon: "logos:tensorflow",
+        name: "Tensorflow",
+      },
+    ],
+  },
+  {
+    title: "Evaluating the Effectiveness of Technical Indicators",
+    description:
+      "Utilizing numerous supervised and non-supervised methods to analyze the significance and approximate information gain provided by industry-standard technical indicators. By evaluating the classification behavior of high-dimensional indicator vectors into various simulated trading strategies, clear overlaps and distinctions arise between commonly observed trading signals.",
+    links: [
+      {
+        label: "Paper",
+        href: "https://blakesanie.github.io/analyzing-financial-methods/",
+      },
+    ],
+    image: "/src/assets/images/projects/indicator_clusters.png",
+    tech: [
+      {
+        icon: "logos:python",
+        name: "Python",
+      },
+      {
+        icon: "logos:jupyter",
+        name: "Jupyter",
+      },
+      {
+        icon: "logos:tensorflow",
+        name: "Tensorflow",
+      },
+    ],
+  },
+  {
+    title: "React Bubble UI",
+    description:
+      "A highly configurable Bubble UI React.js component, similar to the iconic Apple Watch app layout. This custom element provides a playful and curious feel that trumps dull grid-based webpage layouts. Download this open source package or contribute on GitHub today!",
+    image: "/src/assets/images/projects/bubble.png",
+    links: [
+      {
+        label: "Demo",
+        href: "https://bubbleui.blakesanie.com/",
+      },
+      {
+        label: "Download",
+        href: "https://www.npmjs.com/package/react-bubble-ui",
+      },
+      {
+        label: "Design Overview",
+        href: "https://codeburst.io/deconstructing-the-iconic-apple-watch-bubble-ui-aba68a405689",
+      },
+      {
+        label: "GitHub",
+        href: "https://github.com/blakesanie/React-Bubble-UI",
+        icon: "uil:github-alt",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:npm-2",
+        name: "NPM",
+      },
+      {
+        icon: "logos:nodejs-icon",
+        name: "Node.js",
+      },
+      {
+        icon: "logos:react",
+        name: "React.js",
+      },
+    ],
+  },
+  {
+    title: "Across the Aisle",
+    description:
+      "An app that tries to unite a politically divided America. By housing discussion threads for a variety of controversial political topics, Americans from all over the political spectrum can understand each other's perspectives. Awarded as finalist in 2018 Congressional App Challenge.",
+    image: "/src/assets/images/projects/AcrossTheAisle.jpg",
+    links: [
+      {
+        label: "Submission and Demo",
+        href: "https://youtu.be/4EqokCJiqnY",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:nodejs-icon",
+        name: "Node.js",
+      },
+      {
+        icon: "logos:react",
+        name: "React-Native",
+      },
+      {
+        icon: "vscode-icons:file-type-expo",
+        name: "Expo",
+      },
+      {
+        icon: "logos:firebase",
+        name: "Firebase",
+      },
+    ],
+  },
+  {
+    title: "Headlines",
+    description:
+      "A remarkably user-friendly news app. As the name implies, notable titles can be browsed with minimal effort. With numerous categories and more than 32 world-renowned news sources to choose from, articles are filtered to fit your interests. If a headline just isn't enough, an article description, photo, and the full article are one press away.",
+    image: "/src/assets/images/projects/headlines.jpg",
+    links: [
+      {
+        label: "GitHub",
+        href: "https://github.com/blakesanie/Headlines",
+        icon: "uil:github-alt",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:apple-app-store",
+        name: "App Store Connect",
+      },
+      {
+        icon: "logos:swift",
+        name: "Swift",
+      },
+      {
+        icon: "vscode-icons:file-type-xcode",
+        name: "Xcode",
+      },
+    ],
+  },
+  {
+    title: "Twitter Poetry Detection",
+    description: `A NLP-driven bot with an appreciation for poetry. The bot listens to Twitter's tweet stream, continuously searching for updates that contain the subject "life" and maintain a rhyming scheme when reformatted into a quatrain. Selected tweets are automatically retweeted, giving accidental poets a shoutout on the platform.`,
+    image: "/src/assets/images/projects/TwitterPoetryBot.png",
+    links: [
+      {
+        label: "Twitter Account",
+        href: "https://twitter.com/your_life_poems",
+      },
+      {
+        label: "GitHub",
+        href: "https://github.com/blakesanie/Twitter-Poetry-Detection",
+        icon: "uil:github-alt",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:heroku-icon",
+        name: "Heroku",
+      },
+      {
+        icon: "logos:nodejs-icon",
+        name: "Node.js",
+      },
+      {
+        icon: "logos:twitter",
+        name: "Twitter Developers",
+      },
+    ],
+  },
+  {
+    title: "Spotify Mosaic",
+    description:
+      "A digital art project. This web app provides a means of visualization one's music taste. Users can authenticate with their Spotify account and build creative mosaics from album covers on their playlists. Exporting and printing features come built-in!",
+    image: "/src/assets/images/projects/spotifyMosaic.png",
+    links: [
+      {
+        label: "Launch",
+        href: "/spotifyMosaic",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:javascript",
+        name: "JavaScript",
+      },
+      {
+        icon: "logos:css-3",
+        name: "CSS",
+      },
+      {
+        icon: "logos:html-5",
+        name: "HTML",
+      },
+      {
+        icon: "simple-icons:jquery",
+        name: "jQuery",
+      },
+    ],
+  },
+  {
+    title: "Qwerty, Revisited",
+    description:
+      "An experiment in which a new, optimal keyboard for the english language is created and compared directly to QWERTY. The keyboard is generated using Node.js by reading specified text files, developing a markov chain, and using letter-to-letter trends to algorithmically design the key layout. In the end, my keyboard performed with 124% of QWERTY's efficiency.",
+    youtube: "https://www.youtube.com/embed/hBg4gOlOH6w",
+    links: [
+      {
+        label: "GitHub",
+        href: "https://github.com/blakesanie/Qwerty-Revisited",
+        icon: "uil:github-alt",
+      },
+    ],
+
+    tech: [
+      {
+        icon: "logos:nodejs-icon",
+        name: "Node.js",
+      },
+    ],
+  },
+  {
+    title: "Proximity",
+    description:
+      "A map application like no other. It uses iPhone's GPS, gyroscope, and a connection to Google's Places API to locate and identify locations within a certain radius of the user's current position. Then, when you select one of these locations, its relative direction and distance are projected over the device's live camera feed, effectively tracking the location in real time.",
+    image: "/src/assets/images/projects/proximity.jpg",
+    links: [
+      {
+        label: "GitHub",
+        href: "https://github.com/blakesanie/Proximity",
+        icon: "uil:github-alt",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:apple-app-store",
+        name: "App Store Connect",
+      },
+      {
+        icon: "logos:swift",
+        name: "Swift",
+      },
+      {
+        icon: "vscode-icons:file-type-xcode",
+        name: "Xcode",
+      },
+      {
+        icon: "logos:google-cloud",
+        name: "Google Cloud Platform",
+      },
+    ],
+  },
+  {
+    title: "Bounce",
+    description:
+      "A simple arcade game app for casual players of all ages. The game's objective is to protect the black square from the red balls at all times. Strategically orient the square in order to ricochet the blue ball into the red, pushing it away from the square. If the red ball ever touches the square, one of the three lives is lost. How long will you last?",
+    image: "/src/assets/images/projects/bounce.jpg",
+    links: [
+      {
+        label: "GitHub",
+        href: "https://github.com/blakesanie/Bounce",
+        icon: "uil:github-alt",
+      },
+    ],
+    tech: [
+      {
+        icon: "logos:apple-app-store",
+        name: "App Store Connect",
+      },
+      {
+        icon: "logos:swift",
+        name: "Swift",
+      },
+      {
+        icon: "vscode-icons:file-type-xcode",
+        name: "Xcode",
+      },
+      {
+        icon: "ph:game-controller-fill",
+        name: "Apple Game Center",
+      },
+    ],
+  },
+];
+---
+
+<HeaderAndFooter
+  allowMainStyles
+  title="Projects"
+  description="My collective showcase of personal and academic projects, focused on Full-Stack, Data, and Machine Learning applications."
+>
+  <h1>Projects</h1>
+  <p>
+    My software engineering journey is grounded on and continues to build upon
+    hands-on projects. Explore my growing portfolio of applications, products,
+    and services focused on Full-Stack, Data, and Machine Learning domains. From
+    "Hello World!" at age 14 to the completion of my Master's Degree in Computer
+    Science, these projects mark key milestones as my proficencies, curiosities,
+    and impact continue to evolve.
+  </p>
+  <div id="projects">
+    {
+      projects.map(({ title, description, tech, ...project }) => {
+        const defaultLink =
+          project.links && project.links[0] && project.links[0].href;
+        return (
+          <div class="project">
+            <div class="info">
+              <h2 class="title">{title}</h2>
+              <p class="desc">{description}</p>
+              {tech && (
+                <div class="tech">
+                  {tech.map(({ icon, name }) => {
+                    return <Icon name={icon} tech={name} />;
+                  })}
+                  <div class="selectedTech" />
+                </div>
+              )}
+
+              {project.links && (
+                <div class="links">
+                  {project.links.map(({ label, href, ...link }) => {
+                    return (
+                      <a href={href} target="_blank" class="link">
+                        <Button icon={link.icon}>{label}</Button>
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            <a class="demo" href={defaultLink} target="_blank">
+              {project.image ? (
+                <Img
+                  src={project.image}
+                  alt=""
+                  loading="lazy"
+                  placeholder="blurred"
+                  format="webp"
+                  breakpoints={[900]}
+                  format="webp"
+                  quality={50}
+                  attributes={{}}
+                />
+              ) : project.youtube ? (
+                <iframe
+                  src={project.youtube}
+                  allow="autoplay; encrypted-media"
+                  allowfullscreen="allowfullscreen"
+                  class="youtube"
+                />
+              ) : null}
+            </a>
+          </div>
+        );
+      })
+    }
+  </div>
+</HeaderAndFooter>
+
+<script>
+  const techIcons = document.querySelectorAll(".tech svg");
+
+  for (let i = 0; i < techIcons.length; i++) {
+    function showTech(e) {
+      const target = e.target;
+      if (target) {
+        const attr = target.getAttribute("tech");
+        const selected = target.parentNode?.querySelector(".selectedTech");
+        if (attr && selected) {
+          selected.innerHTML = attr;
+        }
+      }
+    }
+    techIcons[i].addEventListener("mouseenter", showTech);
+    techIcons[i].addEventListener("click", showTech);
+  }
+
+  const containers = document.querySelectorAll(".tech");
+  for (let i = 0; i < containers.length; i++) {
+    const container = containers[i];
+    container.addEventListener("mouseleave", (e) => {
+      const target = e.target;
+      if (target) {
+        const selected = target.querySelector(".selectedTech");
+        if (selected) {
+          selected.innerHTML = "";
+        }
+      }
+    });
+  }
+</script>
+
+<style>
+  .project {
+    padding: 1em 1.25em;
+    box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.06);
+    border-radius: 1em;
+    margin: 2em 0;
+    display: flex;
+    position: relative;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+  .project:nth-of-type(2n) {
+    flex-direction: row-reverse;
+  }
+  .info {
+    display: flex;
+    flex: 1;
+    min-width: min(100%, 400px);
+    /* padding-right: 1.5em; */
+  }
+  .project:nth-of-type(2n) .info {
+    /* padding-right: 0;
+    padding-left: 1.5em; */
+  }
+  .demo {
+    flex: 1;
+    /* padding: 1em 0; */
+    /* border: 1px solid red; */
+    min-width: min(100%, 300px);
+    max-width: min(100%, 450px);
+    /* overflow: visible; */
+  }
+  .demo :global(img),
+  .demo iframe.youtube {
+    /* object-fit: contain; */
+    background-repeat: no-repeat;
+    border-radius: 12px;
+  }
+  .demo iframe.youtube {
+    aspect-ratio: calc(16 / 9);
+    width: 100%;
+    border: none;
+  }
+  .project > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 0.75em;
+    padding: 1em 0;
+  }
+  .title {
+    font-size: 1.4em;
+    /* margin-bottom: 0.6em; */
+  }
+  .desc {
+    font-size: 1em;
+    /* opacity: 0.7; */
+  }
+  .tech {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* margin-top: 0.8em; */
+  }
+  [astro-icon] {
+    /* width: 40px; */
+    height: 1.8em;
+    border-radius: 0.2em;
+    margin: 0.4em;
+    transition: all 0.1s ease;
+    cursor: pointer;
+  }
+
+  [astro-icon]:hover {
+    transform: scale(1.2);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1em;
+  }
+
+  .selectedTech {
+    width: 100%;
+    font-size: 1em;
+    line-height: 1em;
+    height: 1em;
+    margin-top: 0.3em;
+    /* background-color: green; */
+    text-align: center;
+    z-index: 10;
+    /* opacity: 0; */
+    /* transition: all 0.3s ease; */
+  }
+
+  /* .tech:hover .selectedTech {
+    opacity: 1;
+  } */
+
+  .link {
+    margin: 0.5em;
+  }
+</style>

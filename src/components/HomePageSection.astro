@@ -1,0 +1,102 @@
+---
+import FullScreenImage from "./Image/FullScreenImage.astro";
+// @ts-ignore
+import { Img } from "astro-imagetools/components";
+interface LinkInterface {
+  target: string;
+  href: string;
+  label: string;
+  class?: string;
+}
+const links: LinkInterface[] = Astro.props.links;
+const { text, imageUrl, style, class: className, ...props } = Astro.props;
+const maxImageOpacity = 0.5;
+---
+
+<div style={style} class:list={["section", className]} {...props}>
+  {
+    imageUrl && (
+      <Img
+        src={imageUrl}
+        alt=""
+        loading="lazy"
+        placeholder="blurred"
+        format="webp"
+        breakpoints={[400, 800, 1200, 1600, 2000]}
+        quality={50}
+        attributes={{
+          img: {
+            class: "bg",
+          },
+        }}
+      />
+    )
+  }
+  <!-- {(text || links) && <} -->
+  {text && <h2>{text}</h2>}
+  {
+    links && (
+      <div class="links">
+        {links.map(({ target, href, label, ...props }) => {
+          return (
+            <a href={href} target={target} class:list={[props.class, "link"]}>
+              {label}
+            </a>
+          );
+        })}
+      </div>
+    )
+  }
+  <slot />
+</div>
+
+<style>
+  .section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  :global(.bg) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    /* z-index: -1; */
+    opacity: 0.6;
+    /* transition: transform 0.1s ease-out; */
+    /* opacity: 0.5; */
+    /* filter: brightness(0.5); */
+  }
+  h2 {
+    font-size: 2.7em;
+    text-align: center;
+    padding: 0 2em;
+    z-index: 1;
+  }
+  .links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0.5em;
+    margin-top: 1em;
+  }
+  .link {
+    font-size: 1.3em;
+    margin: 0.5em;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.5em 1em;
+    backdrop-filter: blur(5px);
+    border-radius: 8px;
+    /* border: 2px solid rgba(255, 255, 255, 0.2); */
+  }
+</style>

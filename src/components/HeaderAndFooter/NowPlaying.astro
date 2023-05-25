@@ -1,0 +1,196 @@
+---
+// import { Img } from "astro-imagetools/components";
+import Icon from "astro-icon";
+const { shadowColor, textColor } = Astro.props;
+---
+
+<a id="nowPlaying" target="_blank">
+  <img class="loading" id="albumCover" />
+  <div class="right">
+    <div id="songTitle" class="loading">sont tile</div>
+    <div id="songArtist" class="loading">song artist</div>
+    <div id="songAlbum" class="loading">song album</div>
+  </div>
+  <div id="windowCover"></div>
+</a>
+
+<style
+  define:vars={{
+    textColor: textColor,
+    shadowColor: shadowColor,
+  }}
+>
+  #windowCover {
+    position: fixed;
+    height: 100%;
+    width: 100vw;
+    background: var(--shadowColor);
+    top: 0;
+    left: 0;
+    opacity: 0;
+    z-index: 2;
+    pointer-events: none;
+    transition: opacity 0.16s ease;
+  }
+  #nowPlaying {
+    display: flex;
+    padding: 0.5em var(--navPadding);
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    cursor: ;
+  }
+  @keyframes placeHolderShimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+  .loading {
+    animation-duration: 30s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    /* background-color: rgba(0, 0, 0, 0); */
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.2) 10%,
+      rgba(255, 255, 255, 0.4) 30%,
+      rgba(255, 255, 255, 0.2) 50%
+    );
+    color: transparent;
+    border-radius: 8px;
+    opacity: 1 !important;
+    border: none;
+  }
+  #nowPlaying:hover #windowCover {
+    opacity: 0.9;
+  }
+  img {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    /* width: 150px; */
+    width: 100%;
+    margin: 0 0.2em;
+    border: 2px solid white;
+    z-index: 3;
+  }
+  img.loading {
+    clip-path: inset(1px);
+  }
+  .right {
+    padding: 0.4em 0;
+    margin: 0 0.2em;
+    width: 100%;
+    min-width: 150px;
+    z-index: 3;
+  }
+  .right > div {
+    margin: 0.2em 0;
+  }
+  .right > div.loading {
+    width: 150px;
+  }
+  #songTitle {
+    font-size: 1em;
+    font-style: italic;
+    margin-bottom: 0.4em;
+  }
+  #songArtist {
+    font-size: 0.8em;
+  }
+  #songAlbum {
+    font-size: 0.8em;
+    opacity: 0.5;
+  }
+
+  @media screen and (max-width: 800px) {
+    img {
+      max-width: 100px;
+      max-height: 100px;
+    }
+    .right {
+      max-width: 300px;
+      min-width: 0;
+      width: auto;
+    }
+  }
+</style>
+
+<script>
+  //   setTimeout(() => {
+  //     // const nowPlaying = document.getElementById("nowPlaying");
+  //     const loading = document.querySelectorAll(".loading");
+  //     loading.forEach((el) => el.classList.remove("loading"));
+  //     // nowPlaying.style.display = "flex";
+  //   }, 2000);
+
+  const maxInterval = 60 * 1000;
+
+  let updateInterval;
+
+  async function getNowPlaying(skipCache = false) {
+    let json;
+    if (!skipCache) {
+      const cached = window.localStorage.getItem("nowPlaying");
+      if (cached) {
+        json = JSON.parse(cached);
+        const timestamp = new Date(json.timestamp);
+        const now = new Date();
+        const age = now - timestamp;
+        console.log("Found chached track", json, "that is", age, "ms old");
+        if (age < maxInterval) {
+          console.log("Starting new interval in", maxInterval - age, "ms");
+          clearInterval(updateInterval);
+          setTimeout(function () {
+            startInterval(true);
+          }, maxInterval - age);
+          return json;
+        }
+      }
+    }
+    console.log("Fetching new track");
+    const res = await fetch("/api/nowPlaying");
+    json = await res.json();
+    json.timestamp = new Date();
+    window.localStorage.setItem("nowPlaying", JSON.stringify(json));
+    return json;
+  }
+
+  async function setNowPlaying(skipCache = false) {
+    const { name, live, link, album, artists, image } = await getNowPlaying(
+      skipCache
+    );
+    document.getElementById("songTitle").innerText = name;
+    document.getElementById("songArtist").innerText = artists.join(", ");
+    document.getElementById("songAlbum").innerText = album;
+    document.getElementById("albumCover").src = image;
+    document.getElementById("nowPlaying").href = link;
+
+    const titleElement = document.querySelector("#nowPlayingSection > p");
+    if (live) {
+      titleElement.childNodes[0].nodeValue = "Now Playing";
+      titleElement.childNodes[1].style.display = "flex";
+      titleElement.childNodes[1].style.opacity = 1;
+    } else {
+      titleElement.childNodes[0].nodeValue = "Recently Played";
+      titleElement.childNodes[1].style.display = "none";
+      titleElement.childNodes[1].style.opacity = 0;
+    }
+
+    const loading = document.querySelectorAll("#nowPlaying .loading");
+    loading.forEach((el) => el.classList.remove("loading"));
+  }
+
+  function startInterval(skipCache = false) {
+    updateInterval = setInterval(() => {
+      setNowPlaying(true);
+    }, maxInterval);
+    setNowPlaying(skipCache);
+  }
+
+  startInterval();
+</script>

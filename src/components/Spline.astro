@@ -1,0 +1,94 @@
+---
+const { ...props } = Astro.props;
+import { Img } from "astro-imagetools/components";
+---
+
+<!-- <script
+  type="module"
+  src="https://unpkg.com/@splinetool/viewer@0.9.336/build/spline-viewer.js"
+></script>
+<spline-viewer
+  url="https://prod.spline.design/KDmGPoqNmLmqK9H2/scene.splinecode"
+></spline-viewer> -->
+<div id="splineHolder">
+  <canvas {...props} id="spline"></canvas>
+  <Img
+    src="/src/assets/images/hero.png"
+    alt="Blake in WWDC style"
+    breakpoints={[200]}
+    quality={90}
+    layout="fill"
+    placeholder="blur"
+  />
+</div>
+
+<script>
+  import { Application } from "@splinetool/runtime";
+  import { defaultTSConfig } from "astro/dist/core/config/tsconfig";
+
+  const canvas = document.getElementById("spline");
+  const app = new Application(canvas);
+  app.load("/hero/hero4/scene.splinecode").then(() => {
+    document.querySelector("#splineHolder img").style.opacity = 0;
+  });
+  const splineHolder = document.getElementById("splineHolder");
+  let currentZoom = 1;
+  window.addEventListener("resize", () => {
+    // const width = splineHolder.clientWidth;
+    // const height = splineHolder.clientHeight;
+    // const s = Math.min(height, height) * 0.1;
+    // app.setSize(s, s);
+    // canvas.width = s;
+    // canvas.height = s;
+    // const desiredZoom = 0.5;
+    // const zoom = desiredZoom / currentZoom;
+    // app.setZoom(zoom);
+    // currentZoom = desiredZoom;
+  });
+</script>
+
+<!-- <iframe
+  src="/hero/hero4/index.html"
+  frameborder="0"
+  width="100%"
+  height="100%"
+  id="spineHolder"></iframe> -->
+
+<style>
+  #splineHolder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    /* min-height: 80vw; */
+    aspect-ratio: 1;
+  }
+  #spline {
+    /* position: absolute; */
+    /* top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border: none; */
+    /* border: 2px solid yellow; */
+    /* z-index: -1; */
+  }
+  #splineHolder :global(img) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    filter: blur(0.3vmax);
+    transition: opacity 2s ease;
+    pointer-events: none;
+  }
+  @media screen and (max-width: 800px) {
+    #spline {
+      /* min-height: calc(80vw - 200px); */
+    }
+  }
+</style>

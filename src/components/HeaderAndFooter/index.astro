@@ -1,0 +1,1127 @@
+---
+import { GoogleFontsOptimizer } from "astro-google-fonts-optimizer";
+import { SEO } from "astro-seo";
+import HoverZone from "./HoverZone.astro";
+import Icon from "astro-icon";
+import NavLink from "./NavLink.astro";
+import NowPlaying from "./NowPlaying.astro";
+import SoundBars from "./SoundBars.astro";
+import sizeOf from "image-size";
+const mobileMaxWidth = 800; // still manually declared in media query declaration
+const headerWidth = 200;
+const mobileHeaderHeight = 80;
+const headerHeightTransitionDuration = 0.1;
+const headerPositionTransitionDuration = 0.3;
+let headerColor = Astro.props.color || "#007ED4bb";
+let themeColor = Astro.props.themeColor || "rgb(72, 161, 223)";
+const textColor = Astro.props.darkText ? "black" : "white";
+const navPadding = 0.5; // was 0.6 em
+const isHome = Astro.url.pathname === "/";
+const { allowMainStyles, noContentPadding, hideSpotify } = Astro.props;
+const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
+
+const title = Astro.props.title
+  ? Astro.props.title + " | Blake Sanie"
+  : "Blake Sanie";
+const description =
+  Astro.props.description ||
+  "Software Engineer. Photographer. Writer & Instructor. Lifelong Student.";
+const { noindex } = Astro.props;
+const image = Astro.props.image || "/og/thumb.jpg";
+const { width, height } = await sizeOf("public" + image);
+---
+
+<html lang="en" class:list={[{ isHome: isHome }]}>
+  <head>
+    <!-- <meta charset="utf-8" /> -->
+    <!-- <meta viewport="width=device-width, initial-scale=1" /> -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <SEO
+      title={title}
+      description={description}
+      noindex={noindex ? true : false}
+      charset="utf-8"
+      openGraph={{
+        basic: {
+          title: title,
+          type: "website",
+          image: image,
+        },
+        optional: {
+          description: description,
+        },
+        image: {
+          type: "image/png",
+          width: width,
+          height: height,
+          alt: "Open Graph Thumbnail Image for blakesanie.com",
+        },
+      }}
+      twitter={{
+        creator: "@blakesanie",
+        card: "summary_large_image",
+        site: "@blakesanie",
+        title: title,
+        image: image,
+        imageAlt: "Open Graph Thumbnail Image for page. " + description,
+        description: description,
+      }}
+      extend={{}}
+    />
+    <meta
+      name="google-site-verification"
+      content="ePB1GvvA8L5Hza96sGcmDLw_jIzjhQ2JhXbIAg_8hlA"
+    />
+    <meta name="theme-color" content={themeColor} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="57x57"
+      href="/favicons/apple-touch-icon-57x57.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="114x114"
+      href="/favicons/apple-touch-icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="72x72"
+      href="/favicons/apple-touch-icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="144x144"
+      href="/favicons/apple-touch-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="60x60"
+      href="/favicons/apple-touch-icon-60x60.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="120x120"
+      href="/favicons/apple-touch-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="76x76"
+      href="/favicons/apple-touch-icon-76x76.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="152x152"
+      href="/favicons/apple-touch-icon-152x152.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicons/favicon-196x196.png"
+      sizes="196x196"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicons/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicons/favicon-32x32.png"
+      sizes="32x32"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicons/favicon-16x16.png"
+      sizes="16x16"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicons/favicon-128.png"
+      sizes="128x128"
+    />
+    <meta name="application-name" content=" " />
+    <meta name="msapplication-TileColor" content="#FFFFFF" />
+    <meta
+      name="msapplication-TileImage"
+      content="/favicons/mstile-144x144.png"
+    />
+    <meta
+      name="msapplication-square70x70logo"
+      content="/favicons/mstile-70x70.png"
+    />
+    <meta
+      name="msapplication-square150x150logo"
+      content="/favicons/mstile-150x150.png"
+    />
+    <meta
+      name="msapplication-wide310x150logo"
+      content="/favicons/mstile-310x150.png"
+    />
+    <meta
+      name="msapplication-square310x310logo"
+      content="/favicons/mstile-310x310.png"
+    />
+
+    <Fragment
+      set:html={`<script type="application/ld+json">{
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Blake Sanie",
+      "url": "https://blakesanie.com",
+      "sameAs": [
+        "https://linkedin.com/in/blakesanie/","https://blakesanie.medium.com/","https://instagram.com/blake_sanie/","https://github.com/blakesanie","https://twitter.com/blakesanie"
+       ]
+    }</script>`}
+    />
+
+    <slot name="head" />
+  </head>
+  <body>
+    <GoogleFontsOptimizer
+      url="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&display=swap"
+    />
+    <header class:list={[{ darkText: textColor == "black" }]}>
+      <svg
+        id="hamburger"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100 100"
+      >
+        <line x1="10" y1="20" x2="90" y2="20"></line>
+        <line x1="10" y1="50" x2="90" y2="50"></line>
+        <line x1="10" y1="80" x2="90" y2="80"></line>
+      </svg>
+      <a id="logo" href="/">Blake Sanie</a>
+      <div id="bio">
+        <span>Software Engineer.</span>
+        <span>Photographer.</span>
+        <span>Writer & Instructor.</span>
+        <span>Lifelong Student.</span>
+      </div>
+      <nav>
+        {isHome && <HoverZone style="height:0;opacity:0;" />}
+        <ul>
+          <div class="navSection">
+            <p>Engineering</p>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="majesticons:applications-add-line"
+              href="/projects"
+              textColor={textColor}
+            >
+              Projects
+            </NavLink>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="majesticons:paper-clip-line"
+              href="/resume"
+              chip="M.S."
+              chipIcon="majesticons:academic-cap-line"
+            >
+              Résumé
+            </NavLink>
+            <!-- <NavLink hoverZoneBehind={hoverZoneBehind}} icon="majesticons:users-line" href="/consultation">
+              Consultations
+            </NavLink> -->
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="uil:github-alt"
+              href="/github"
+              chip="150"
+              chipIcon="majesticons:star-line"
+            >
+              GitHub
+            </NavLink>
+          </div>
+          <div class="navSection">
+            <p>Photography</p>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="majesticons:dashboard-line"
+              href="/photo"
+              id="photoNavLink"
+            >
+              Gallery
+            </NavLink>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="tabler:map-2"
+              href="/photo/map"
+              id="mapNavLink"
+            >
+              Capture Map
+            </NavLink>
+            <!-- <NavLink hoverZoneBehind={hoverZoneBehind}}
+              icon="ion:calendar-outline"
+              href="/photo/book"
+              chip="ATL"
+              chipIcon="uil:map-pin"
+            >
+              Booking
+            </NavLink> -->
+          </div>
+          <!-- <div class="navSection">
+            <p>Content</p>
+            <NavLink hoverZoneBehind={hoverZoneBehind}} icon="ic:round-candlestick-chart" href="/quant">
+              Quant Research
+            </NavLink>
+            <NavLink hoverZoneBehind={hoverZoneBehind}}
+              icon="majesticons:newspaper-line"
+              href="/blog"
+              chip="11K"
+              chipIcon="majesticons:eye-line"
+            >
+              Blog
+            </NavLink>
+            <NavLink hoverZoneBehind={hoverZoneBehind}} icon="ion:baseball-outline" href="/mlbVis">
+              r/mlbVis
+            </NavLink>
+          </div> -->
+          <div class="navSection">
+            <p>Connect</p>
+            <NavLink
+              class="email"
+              hoverZoneBehind={hoverZoneBehind}
+              icon="majesticons:mail-line"
+              href="/email"
+            >
+              Email
+            </NavLink>
+            <NavLink
+              class="contactCard"
+              hoverZoneBehind={hoverZoneBehind}
+              icon="ic:outline-person-pin"
+              href="/contact.vcf"
+            >
+              Contact Card
+            </NavLink>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="majesticons:newspaper-line"
+              href="/blog"
+              chip="43K"
+              chipIcon="majesticons:eye-line"
+            >
+              Blog
+            </NavLink>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="lucide:linkedin"
+              href="/linkedin"
+            >
+              LinkedIn
+            </NavLink>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="lucide:twitter"
+              href="/twitter"
+            >
+              Twitter
+            </NavLink>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="lucide:instagram"
+              href="/instagram"
+            >
+              Instagram
+            </NavLink>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="la:strava"
+              href="/strava"
+            >
+              Strava
+            </NavLink>
+          </div>
+          {
+            !hideSpotify && (
+              <div class="navSection" id="nowPlayingSection">
+                <p>
+                  Now Playing
+                  <SoundBars n={4} color={textColor} />
+                </p>
+                <NowPlaying
+                  shadowColor={textColor == "white" ? "black" : "white"}
+                  textColor={textColor}
+                />
+              </div>
+            )
+          }
+        </ul>
+      </nav>
+      <p id="made">
+        Crafted by Blake Sanie with <a
+          href="https://docs.astro.build/en/getting-started/"
+          target="_blank"><Icon pack="simple-icons" name="astro" /></a
+        > and <Icon pack="ri" name="heart-2-line" />
+      </p>
+    </header>
+
+    <main
+      class:list={[
+        {
+          pageContent: allowMainStyles,
+          noPageContentPadding: noContentPadding,
+        },
+        Astro.props.mainClass,
+      ]}
+    >
+      <slot />
+    </main>
+    <footer></footer>
+    <slot name="topLevel" />
+    <script
+      define:vars={{
+        mobileHeaderHeight: mobileHeaderHeight,
+        headerHeightTransitionDuration,
+        headerPositionTransitionDuration,
+        mobileMaxWidth,
+        navPadding,
+        isHome,
+        hoverZoneBehind,
+      }}
+    >
+      //  __    __                             __    __
+      // /  \  /  |                           /  |  /  |
+      // $$  \ $$ |  ______   __     __       $$ |  $$ |  ______   __     __  ______    ______
+      // $$$  \$$ | /      \ /  \   /  |      $$ |__$$ | /      \ /  \   /  |/      \  /      \
+      // $$$$  $$ | $$$$$$  |$$  \ /$$/       $$    $$ |/$$$$$$  |$$  \ /$$//$$$$$$  |/$$$$$$  |
+      // $$ $$ $$ | /    $$ | $$  /$$/        $$$$$$$$ |$$ |  $$ | $$  /$$/ $$    $$ |$$ |  $$/
+      // $$ |$$$$ |/$$$$$$$ |  $$ $$/         $$ |  $$ |$$ \__$$ |  $$ $$/  $$$$$$$$/ $$ |
+      // $$ | $$$ |$$    $$ |   $$$/          $$ |  $$ |$$    $$/    $$$/   $$       |$$ |
+      // $$/   $$/  $$$$$$$/     $/           $$/   $$/  $$$$$$/      $/     $$$$$$$/ $$/
+      const nav = document.querySelector("nav");
+      const anchors = document.querySelectorAll(
+        "nav .navSection:not(#nowPlayingSection) a"
+      );
+      const mouseOffSections = document.querySelectorAll(
+        //".navSection, .navSection p"
+        "nav"
+      );
+      const mouseNoFocusSections =
+        document.querySelectorAll("#nowPlayingSection");
+
+      let activeNavHoverZone = document.querySelector(".active .navHoverZone");
+      let activeAnchor = activeNavHoverZone?.parentElement;
+      let hoverZone;
+      let baseHeight;
+      let baseWidth;
+      let baseY;
+      let baseX;
+
+      function isTouchScreen() {
+        return (
+          "ontouchstart" in window ||
+          navigator.maxTouchPoints > 0 ||
+          navigator.msMaxTouchPoints > 0
+        );
+      }
+
+      const isTouch = isTouchScreen();
+      document.body.classList.add(isTouch ? "touch" : "no-touch");
+
+      let menuExpanded = false;
+
+      for (let i = 0; i < anchors.length; i++) {
+        if (!isTouch) {
+          anchors[i].addEventListener("mouseenter", (e) => {
+            moveHoverToAnchor(anchors[i]);
+          });
+        }
+        anchors[i].addEventListener("click", (e) => {
+          console.log("clicked anchor", anchors[i]);
+          // activeAnchor.classList.remove("active"); // line not necessary since activeAnchor variable changed anyways
+          activeAnchor = anchors[i];
+          if (menuExpanded) {
+            // header.style.setProperty(
+            //   "--headerHeight",
+            //   mobileHeaderHeight + "px"
+            // );
+          }
+          // activeAnchor.classList.add("active");
+          // anchors[i].parentElement.classList.add("active"); // line not necessary since activeAnchor variable changed anyways
+          moveHoverToAnchor(anchors[i]);
+          // e.preventDefault();
+          // e.stopPropagation();
+        });
+      }
+      if (!isTouch) {
+        for (let i = 0; i < mouseOffSections.length; i++) {
+          mouseOffSections[i].addEventListener("mouseleave", (e) => {
+            moveHoverToAnchor();
+          });
+        }
+        for (let i = 0; i < mouseNoFocusSections.length; i++) {
+          mouseNoFocusSections[i].addEventListener("mouseenter", (e) => {
+            moveHoverToAnchor();
+          });
+        }
+      }
+
+      let currentHoverAnchor;
+
+      function moveHoverToAnchor(anchor) {
+        if (!hoverZone) {
+          if (isHome) {
+            // debugger;
+            // if active page not in nav, hover zone is already a direct child of nav
+            // without transition, move directly to the hovered anchor
+            hoverZone = document.querySelector(".navHoverZone");
+            // hoverZone.classList.remove("hoverZoneTransition");
+            // hoverZone.style.transition = "none";
+            hoverZone.style.height = anchor.offsetHeight + "px";
+            // hoverZone.style.width = `calc(${anchor.offsetWidth}px - ${navPadding}em)`;
+          } else {
+            // active page in nav
+            // move hover zone to direct child of nav, and relocate to original space
+            baseHeight = activeNavHoverZone.offsetHeight;
+            baseWidth = activeNavHoverZone.offsetWidth;
+            baseY = activeNavHoverZone.parentElement.offsetTop;
+            baseX = activeNavHoverZone.parentElement.offsetLeft;
+            hoverZone = hoverZoneBehind
+              ? nav.insertBefore(activeNavHoverZone, nav.firstChild)
+              : nav.appendChild(activeNavHoverZone);
+
+            hoverZone.style.transform = `translate(${baseX}px,${baseY}px)`;
+            hoverZone.style.height = baseHeight + "px";
+            hoverZone.style.width = baseWidth + "px";
+            hoverZone.classList.add("hoverZoneTransition");
+          }
+        }
+        if (!anchor) {
+          // no paramter means hover interaction is done
+          if (isHome) {
+            // just fade out
+            hoverZone.style.opacity = 0;
+          } else {
+            if (currentHoverAnchor) {
+              // remove hover class from last hovered anchor
+              currentHoverAnchor.classList.remove("hover");
+            }
+            // move hover zone back to original space
+            // debugger;
+            hoverZone.style.transform = `translate(${activeAnchor.offsetLeft}px, ${activeAnchor.offsetTop}px)`;
+            hoverZone.style.height = activeAnchor.offsetHeight + "px";
+            hoverZone.style.width = activeAnchor.offsetWidth + "px";
+          }
+          // setTimeout(() => {
+          //   hoverZone.classList.add("hoverZoneTransition");
+          // }, 10);
+          // hoverZone.classList.add("hoverZoneTransition");
+          return;
+        }
+        // at this point, move hover zone to hovered anchor
+        const targetY = anchor.offsetTop;
+        const targetX = anchor.offsetLeft;
+        if (currentHoverAnchor) {
+          // old hovered anchor is no longer hovered
+          currentHoverAnchor.classList.remove("hover");
+        }
+        anchor.classList.add("hover");
+        currentHoverAnchor = anchor;
+        // if (isHome && hoverZone.style.opacity != 1) {
+        //   hoverZone.classList.remove("hoverZoneTransition");
+        // }
+        // move to target space
+        hoverZone.style.transform = `translate(${targetX}px, ${targetY}px)`;
+        hoverZone.style.height = anchor.offsetHeight + "px";
+
+        if (window.innerWidth <= 800) {
+          hoverZone.style.width = `calc(${anchor.offsetWidth + "px"})`;
+        } else {
+          if (isHome) {
+            hoverZone.style.width = `calc(${
+              anchor.offsetWidth + "px"
+            } - var(--navPadding) * 2)`;
+          } else {
+            hoverZone.style.width = `calc(${anchor.offsetWidth + "px"})`;
+          }
+        }
+
+        // if (isHome && hoverZone.style.opacity != 1) {
+        //   hoverZone.style.transition = "all 0.2s ease";
+        // }
+        // hoverZone.style.transition = "all 0.2s ease";
+        hoverZone.classList.add("hoverZoneTransition");
+        hoverZone.style.opacity = 1;
+      }
+
+      // fixes transition remaining on resize from mobile to desktop
+      let reinstateTransitionTimeout;
+
+      window.addEventListener("resize", function () {
+        if (hoverZone) {
+          clearInterval(reinstateTransitionTimeout);
+          hoverZone.classList.remove("hoverZoneTransition");
+          reinstateTransitionTimeout = setTimeout(() => {
+            hoverZone.classList.add("hoverZoneTransition");
+          }, 50);
+        }
+      });
+
+      //  __    __                            __                             ______                                 __  __
+      // /  |  /  |                          /  |                           /      \                               /  |/  |
+      // $$ |  $$ |  ______    ______    ____$$ |  ______    ______        /$$$$$$  |  _______   ______    ______  $$ |$$ |
+      // $$ |__$$ | /      \  /      \  /    $$ | /      \  /      \       $$ \__$$/  /       | /      \  /      \ $$ |$$ |
+      // $$    $$ |/$$$$$$  | $$$$$$  |/$$$$$$$ |/$$$$$$  |/$$$$$$  |      $$      \ /$$$$$$$/ /$$$$$$  |/$$$$$$  |$$ |$$ |
+      // $$$$$$$$ |$$    $$ | /    $$ |$$ |  $$ |$$    $$ |$$ |  $$/        $$$$$$  |$$ |      $$ |  $$/ $$ |  $$ |$$ |$$ |
+      // $$ |  $$ |$$$$$$$$/ /$$$$$$$ |$$ \__$$ |$$$$$$$$/ $$ |            /  \__$$ |$$ \_____ $$ |      $$ \__$$ |$$ |$$ |
+      // $$ |  $$ |$$       |$$    $$ |$$    $$ |$$       |$$ |            $$    $$/ $$       |$$ |      $$    $$/ $$ |$$ |
+      // $$/   $$/  $$$$$$$/  $$$$$$$/  $$$$$$$/  $$$$$$$/ $$/              $$$$$$/   $$$$$$$/ $$/        $$$$$$/  $$/ $$/
+      let prevScroll = 0;
+      let prevScrollTimestamp = 0;
+      let menuIsDown = false;
+      var existingInterval;
+      const moveHeaderDown = (isDown, isAnimated) => {
+        header.style.position = "fixed";
+        if (existingInterval) {
+          clearTimeout(existingInterval);
+        }
+        if (isAnimated) {
+          header.classList.add("transitionHeaderPosition");
+        }
+        if (isDown) {
+          header.style.transform = "none";
+        } else if (!menuExpanded) {
+          header.style.transform = `translateY(${-100}%)`;
+        }
+        // header.style.transform = `translateY(${isDown ? 0 : -100}%)`;
+        if (isAnimated) {
+          existingInterval = setTimeout(() => {
+            header.classList.remove("transitionHeaderPosition");
+          }, headerPositionTransitionDuration * 1000);
+        }
+      };
+      window.addEventListener("scroll", () => {
+        if (window.innerWidth > mobileMaxWidth) {
+          return;
+        }
+        const currentScroll = window.scrollY;
+        const timestamp = new Date();
+        const scrollVelocity =
+          (currentScroll - prevScroll) / (timestamp - prevScrollTimestamp);
+        if (currentScroll <= 0) {
+          menuIsDown = false;
+          header.style.position = "fixed";
+        } else if (currentScroll <= mobileHeaderHeight) {
+          if (menuIsDown) {
+          } else if (!menuExpanded) {
+            header.style.position = "absolute";
+            header.style.transform = "none";
+          }
+        } else if (
+          currentScroll > mobileHeaderHeight &&
+          prevScroll <= mobileHeaderHeight
+        ) {
+          if (menuIsDown) {
+          } else {
+            moveHeaderDown(false, false);
+            menuIsDown = false;
+          }
+        } else if (scrollVelocity > 0) {
+          moveHeaderDown(false, true);
+          menuIsDown = false;
+        } else if (scrollVelocity < -0.8) {
+          moveHeaderDown(true, true);
+          menuIsDown = true;
+        }
+        prevScroll = currentScroll;
+        prevScrollTimestamp = timestamp;
+      });
+      //  __       __                                      ________                                                    __
+      // /  \     /  |                                    /        |                                                  /  |
+      // $$  \   /$$ |  ______   _______   __    __       $$$$$$$$/  __    __   ______    ______   _______    _______ $$/   ______   _______
+      // $$$  \ /$$$ | /      \ /       \ /  |  /  |      $$ |__    /  \  /  | /      \  /      \ /       \  /       |/  | /      \ /       \
+      // $$$$  /$$$$ |/$$$$$$  |$$$$$$$  |$$ |  $$ |      $$    |   $$  \/$$/ /$$$$$$  | $$$$$$  |$$$$$$$  |/$$$$$$$/ $$ |/$$$$$$  |$$$$$$$  |
+      // $$ $$ $$/$$ |$$    $$ |$$ |  $$ |$$ |  $$ |      $$$$$/     $$  $$<  $$ |  $$ | /    $$ |$$ |  $$ |$$      \ $$ |$$ |  $$ |$$ |  $$ |
+      // $$ |$$$/ $$ |$$$$$$$$/ $$ |  $$ |$$ \__$$ |      $$ |_____  /$$$$  \ $$ |__$$ |/$$$$$$$ |$$ |  $$ | $$$$$$  |$$ |$$ \__$$ |$$ |  $$ |
+      // $$ | $/  $$ |$$       |$$ |  $$ |$$    $$/       $$       |/$$/ $$  |$$    $$/ $$    $$ |$$ |  $$ |/     $$/ $$ |$$    $$/ $$ |  $$ |
+      // $$/      $$/  $$$$$$$/ $$/   $$/  $$$$$$/        $$$$$$$$/ $$/   $$/ $$$$$$$/   $$$$$$$/ $$/   $$/ $$$$$$$/  $$/  $$$$$$/  $$/   $$/
+      //                                                                      $$ |
+      //                                                                      $$ |
+      //                                                                      $$/
+      // let menuExpanded = false;
+      const header = document.querySelector("header");
+
+      const hamburger = document.getElementById("hamburger");
+
+      window.pendingHamburgerClick = false;
+      window.remoteHamburgerClick = function () {
+        if (!window.pendingHamburgerClick) {
+          return;
+        }
+        window.hamburgerClick();
+        window.pendingHamburgerClick = false;
+      };
+
+      window.hamburgerClick = () => {
+        if (!pendingHamburgerClick) {
+          pendingHamburgerClick;
+        }
+        const innerHeight = header.scrollHeight;
+        if (menuExpanded) {
+          header?.classList.remove("expanded");
+          header.style.setProperty(
+            "--headerHeight",
+            Math.min(innerHeight, window.innerHeight) + "px"
+          );
+          setTimeout(() => {
+            header.style.setProperty(
+              "--headerHeight",
+              mobileHeaderHeight + "px"
+            );
+          }, 0);
+        } else {
+          moveHoverToAnchor();
+
+          header?.classList.add("expanded");
+          header.style.setProperty(
+            "--headerHeight",
+            Math.min(innerHeight, window.innerHeight) + "px"
+          );
+          setTimeout(() => {
+            header.style.setProperty("--headerHeight", "auto");
+          }, headerHeightTransitionDuration * 1000);
+          header.position = "fixed";
+        }
+        menuExpanded = !menuExpanded;
+        console.log("menuExpanded: ", menuExpanded);
+      };
+
+      hamburger?.addEventListener("click", window.hamburgerClick);
+
+      // const navLis = querySelectorAll("nav li");
+      // for (let i = 0; i < navLis.length; i++) {
+      //   navLis[i].addEventListener("click", function () {
+      //     alert("click!");
+      //     if (window.innerWidth <= mobileMaxWidth && menuExpanded) {
+      //       // hamburger.click();
+      //     }
+      //   });
+      // }
+
+      let wasMobile = false;
+      const evaluateTransitionable = () => {
+        const isMobile = window.innerWidth <= mobileMaxWidth;
+        console.log(isMobile);
+        if (isMobile && !wasMobile) {
+          header.classList.add("headerTransitionable");
+          header.scrollTop = 0;
+          // hoverZone.style.transition = "none";
+          hoverZone?.classList.remove("hoverZoneTransition");
+          moveHoverToAnchor();
+        } else if (!isMobile && wasMobile) {
+          header.classList.remove("headerTransitionable");
+          header.style.transform = "none";
+          // hoverZone.style.transition = "none";
+          hoverZone?.classList.remove("hoverZoneTransition");
+          moveHoverToAnchor();
+        }
+        wasMobile = isMobile;
+        if (menuExpanded) {
+          // debugger;
+          hoverZone?.classList.remove("hoverZoneTransition");
+          moveHoverToAnchor();
+        }
+      };
+      evaluateTransitionable();
+      window.addEventListener("resize", evaluateTransitionable);
+    </script>
+    <!-- __                __           
+            /  |              /  |          
+  _______  _$$ |_    __    __ $$ |  ______  
+ /       |/ $$   |  /  |  /  |$$ | /      \ 
+/$$$$$$$/ $$$$$$/   $$ |  $$ |$$ |/$$$$$$  |
+$$      \   $$ | __ $$ |  $$ |$$ |$$    $$ |
+ $$$$$$  |  $$ |/  |$$ \__$$ |$$ |$$$$$$$$/ 
+/     $$/   $$  $$/ $$    $$ |$$ |$$       |
+$$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/ 
+                    /  \__$$ |              
+                    $$    $$/               
+                     $$$$$$/                 -->
+    <style
+      define:vars={{
+        headerWidth: headerWidth + "px",
+        mobileHeaderHeight: mobileHeaderHeight + "px",
+        headerHeight: mobileHeaderHeight + "px",
+        headerHeightTransitionDuration: headerHeightTransitionDuration + "s",
+        headerPositionTransitionDuration:
+          headerPositionTransitionDuration + "s",
+        headerColor,
+        mobileMaxWidth: mobileMaxWidth + "px",
+        navPadding: navPadding + "em",
+        textColor,
+      }}
+    >
+      body {
+        font-size: 16px;
+        font-weight: 500;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      :global(*) {
+        font-family: "Assistant", sans-serif;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      }
+      :global(button) {
+        color: black;
+      }
+      header {
+        background: var(--headerColor);
+        position: fixed;
+        width: var(--headerWidth);
+        height: 100vh;
+        /* overflow: hidden; */
+        overflow-x: hidden;
+        color: var(--textColor);
+        display: flex;
+        flex-direction: column;
+        /* justify-content: center; */
+        align-items: center;
+        padding: 1.4em 0;
+        --side-padding: 0.7em;
+        overflow-y: scroll;
+        isolation: isolate;
+        z-index: 1;
+        /* padding-left: var(--side-padding); */
+      }
+      header :global(a),
+      header :global(a:visited),
+      header :global(a:active) {
+        /* color: white; */
+      }
+      :global(a:visited) {
+        color: initial;
+      }
+      #hamburger {
+        display: none;
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        opacity: 0.4;
+        height: 24px;
+        width: 24px;
+        stroke-width: 12px;
+        stroke-linecap: round;
+        cursor: pointer;
+        transition: all 0.1s ease;
+      }
+      #hamburger:hover {
+        opacity: 1;
+      }
+      .expanded #hamburger {
+        transform: rotate(90deg);
+      }
+      main {
+        flex: 1;
+        /* background-color: white; */
+        margin-left: var(--headerWidth);
+        isolation: isolate;
+        /* z-index: -10; */
+      }
+      #logo {
+        font-size: 1.5em;
+        font-weight: 500;
+        padding: 0.3em 0.9em;
+        background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='white' stroke-width='3' stroke-dasharray='2%2c 8' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square'/%3e%3c/svg%3e");
+      }
+      :global(.darkText) #logo {
+        background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='black' stroke-width='3' stroke-dasharray='2%2c 8' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square'/%3e%3c/svg%3e");
+      }
+      #bio {
+        font-size: 0.9em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 1em;
+        margin-bottom: 2em;
+        opacity: 0.8;
+      }
+      #bio > * {
+        padding: 0.15em 0;
+      }
+      nav {
+        width: 100%;
+        position: relative;
+        --borderRounding: 0.6em;
+        --flangeRadius: 0.6em;
+        /* padding-left: var(--side-padding); */
+        /* border: 1px solid red; */
+      }
+      nav ul {
+        display: flex;
+        flex-direction: column;
+      }
+      /* nav li {
+    list-style: none;
+    padding-right: var(--side-padding);
+  } */
+      /* nav li a {
+    display: flex;
+    align-items: center;
+    padding: 0.6em;
+    font-size: 1em;
+    border-radius: 0.4em;
+    transition: all 0.2s ease;
+  } */
+      /* nav li a:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+  } */
+      .navSection {
+        margin-bottom: 1.4em;
+        display: flex;
+        flex-direction: column;
+        /* border: 1px solid red; */
+      }
+      .navSection p {
+        font-size: 0.8em;
+        opacity: 0.8;
+        font-weight: 600;
+        margin-bottom: 0.5em;
+        padding-left: calc(var(--navPadding) * 2);
+        display: flex;
+        align-items: center;
+        /* align-items: center; */
+        /* font-weight: 600; */
+      }
+
+      :global(.touch .email) {
+        display: none;
+      }
+
+      :global(.no-touch .contactCard) {
+        display: none;
+      }
+
+      #made {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        padding: 0 2em;
+        font-size: 0.8em;
+        /* color: rgba(255, 255, 255, 0.5); */
+        color: var(--textColor);
+        opacity: 0.5;
+        text-align: center;
+      }
+
+      #made [astro-icon] {
+        display: block;
+        height: 1.6em;
+        margin: 0.4em;
+      }
+      #spotifyIcon {
+        width: 1.5em;
+        margin-left: 0.4em;
+        filter: saturate(0) brightness(100);
+      }
+
+      @media screen and (max-width: 800px) {
+        header {
+          width: 100%;
+          padding: 0.7em 0;
+          /* height: auto; */
+          height: var(--headerHeight);
+          /* margin-top: calc(-1 * var(--mobileHeaderHeight)); */
+          top: 0;
+          backdrop-filter: blur(6px);
+          overflow: hidden;
+          /* overflow: visible; */
+        }
+        header.expanded {
+          overflow-y: scroll;
+          max-height: 100dvh;
+          /* position: absolute !important; */
+        }
+        .headerTransitionable {
+          transition: height var(--headerHeightTransitionDuration) ease;
+        }
+        .transitionHeaderPosition {
+          transition: transform var(--headerPositionTransitionDuration) ease;
+        }
+        #hamburger {
+          display: block;
+          stroke: var(--textColor);
+        }
+        main {
+          margin-top: var(--mobileHeaderHeight);
+          margin-left: 0;
+        }
+        #logo {
+          font-size: 1.2em;
+          padding: 0.3em 0.9em;
+        }
+        #bio {
+          flex-direction: row;
+          font-size: 0.8em;
+          margin-top: 0.5em;
+          margin-bottom: 2em;
+          padding: 0 0.6em;
+        }
+        #bio > * {
+          padding: 0 0.3em;
+        }
+        nav {
+          --navPadding: 0.4em;
+          padding: 0 0.5em;
+        }
+        nav ul {
+          flex-direction: row;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+        nav ul > * {
+          /* min-width: 140px; */
+        }
+        .navSection {
+          /* align-items: center; */
+        }
+      }
+
+      @media screen and (max-width: 430px) {
+        header {
+          padding-top: 0;
+        }
+        #logo {
+          padding: 0 1em;
+          line-height: 46px;
+          margin: 17px 0;
+          font-size: 1.4em;
+        }
+        #bio {
+          /* display: none; */
+          flex-wrap: wrap;
+          justify-content: center;
+          margin-top: 0;
+        }
+        nav ul {
+          flex-direction: column;
+          /* padding-left: 1em; */
+          max-width: 300px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .navSection {
+          width: 100%;
+        }
+        #hamburger {
+          top: 28px;
+          left: 16px;
+        }
+      }
+    </style>
+
+    <style>
+      .pageContent {
+        padding: 2em 2em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .pageContent :global(*)::selection {
+        /* background: rgba(255, 170, 0, 0.576); */
+        /* color: white; */
+        /* background: var(--headerColor); */
+        /* background: linear-gradient(
+          rgba(255, 170, 0, 0.576) 0%,
+          rgba(255, 170, 0, 0.576) 100%
+        );
+        color: red; */
+        /* text-shadow: 1px 1px 2px black; */
+        /* color: white;
+        background: rgba(0, 0, 0, 0.131); */
+      }
+
+      .pageContent > :global(*) {
+        max-width: 1100px;
+      }
+
+      .pageContent :global(h1),
+      .pageContent :global(h2),
+      .pageContent :global(h3) {
+        text-align: center;
+      }
+
+      .pageContent :global(h1) {
+        font-size: 2em;
+        padding: 1em 0;
+      }
+
+      .pageContent :global(p) {
+        font-size: 1.2em;
+        line-height: 150%;
+        text-indent: 2em;
+        padding: 1em 0;
+        color: rgba(0, 0, 0, 0.6);
+        /* padding: 0.5em 0; */
+      }
+
+      .noPageContentPadding {
+        padding: 0 !important;
+      }
+    </style>
+
+    <!-- <style is:inline>
+  nav svg {
+    width: 1.2em;
+    height: 1.2em;
+    margin-right: 0.6em;
+  }
+  nav svg * {
+    stroke: white !important;
+  }
+</style> -->
+
+    <!-- <style>
+  :global(header svg) {
+    width: 1.2em;
+    height: 1.2em;
+  }
+  :global(header svg *) {
+    stroke: white !important;
+  }
+  :global(nav a > svg) {
+    margin-right: 0.6em;
+  }
+  :global(#made > *) {
+    margin: 0 0.4em;
+  }
+  :global(#made svg) {
+    width: 1.2em;
+    height: 1.8em !important;
+  }
+  :global(#heartIcon *) {
+    stroke-width: 9% !important;
+  }
+  :global(#astroIcon *) {
+    stroke-width: 7% !important;
+  }
+</style> -->
+
+    <style is:global>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      a,
+      a:visited,
+      a:active {
+        text-decoration: initial;
+        color: inherit !important;
+      }
+      input:disabled {
+        cursor: no-drop;
+      }
+    </style>
+  </body>
+</html>

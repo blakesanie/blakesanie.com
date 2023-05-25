@@ -1,0 +1,128 @@
+---
+import { Icon } from "astro-icon";
+import HoverZone from "./HoverZone.astro";
+import redirects from "../../redirects.json";
+const { icon, chip, chipIcon, chipColor, href, id, hoverZoneBehind } =
+  Astro.props;
+const [iconPack, iconName] = icon.split(":");
+let [chipPack, chipName] = chipIcon ? chipIcon.split(":") : [0, 0];
+let path = Astro.url.pathname.substring(1).split("?")[0];
+if (path.charAt(path.length - 1) == "/") {
+  path = path.substring(0, path.length - 1);
+}
+const route = href
+  .replace("://", "")
+  .split("/")
+  .slice(1)
+  .join("/")
+  .split("?")[0];
+const active = path == route;
+// const firstRouteMatches =
+//   Astro.url.pathname.split("/")[1] == href.split("/")[1];
+const redirect = redirects[href.substring(1)];
+const redirectHref = redirect?.href;
+console.log("redirect is", redirectHref);
+
+const { textColor } = Astro.props;
+---
+
+<li class:list={[{ active: active }, Astro.props.class]}>
+  <a href={redirectHref || href} id={id}>
+    <!-- <Icon icon={icon} class="icon" /> -->
+    {active && hoverZoneBehind && <HoverZone />}
+    <Icon pack={iconPack} name={iconName} />
+    <span class="navLinkText">
+      <slot />
+    </span>
+    {
+      chip && (
+        <div class="navChips">
+          <span class="navChip">
+            {chip}
+            {chipIcon && <Icon pack={chipPack} name={chipName} />}
+          </span>
+        </div>
+      )
+    }
+    {active && !hoverZoneBehind && <HoverZone />}
+  </a>
+
+  <style define:vars={{ chipColor: chipColor, textColor }}>
+    li {
+      list-style: none;
+    }
+
+    a {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 0 calc(var(--navPadding) * 2);
+      font-size: 1em;
+      border-radius: var(--borderRounding);
+      cursor: pointer;
+    }
+
+    .navLinkText {
+      flex: 1;
+      padding: 0.6em 0;
+      z-index: 0;
+    }
+    .navChips {
+      position: relative;
+      margin-left: 1em;
+    }
+    .navChip {
+      border-radius: 100px;
+      padding: 0.3em 0.8em;
+      font-size: 0.8em;
+      display: flex;
+      align-items: center;
+      /* left: 1em; */
+      transition: background-color 0.2s ease;
+      /* z-index: 999999; */
+    }
+    .navChip::after {
+      content: "";
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.01);
+      backdrop-filter: brightness(0.83) contrast(1.3) saturate(130%);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 100px;
+      z-index: 1;
+    }
+
+    [astro-icon] {
+      min-width: 1.2em;
+      max-width: 1.2em;
+      min-height: 1.2em;
+      max-height: 1.2em;
+      margin-right: 0.6em;
+      color: --var(textColor);
+      opacity: 0.5;
+      /* OR */
+      /* fill: blue; */
+    }
+
+    .navChip [astro-icon] {
+      /* color: red; */
+      margin: 0;
+      margin-left: 0.4em;
+    }
+
+    @media screen and (min-width: 801px) {
+      a {
+        border-bottom-right-radius: 0;
+        border-top-right-radius: 0;
+      }
+      li {
+        padding-right: 0;
+      }
+      .navChips {
+        margin-left: 0;
+      }
+    }
+  </style>
+</li>

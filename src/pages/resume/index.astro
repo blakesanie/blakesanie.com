@@ -1,0 +1,26 @@
+---
+import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
+---
+
+<HeaderAndFooter
+  title="Résumé"
+  description="My professional experience, academic achievements, demonstrated skill set, leadership roles, and career objective."
+>
+  <iframe src="/resume.pdf"> </iframe>
+</HeaderAndFooter>
+
+<style>
+  iframe {
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    border: none;
+  }
+
+  @media screen and (max-width: 800px) {
+    iframe {
+      height: calc(100vh - 80px);
+      height: calc(100svh - 80px);
+    }
+  }
+</style>

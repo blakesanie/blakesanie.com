@@ -1,0 +1,72 @@
+---
+const { style } = Astro.props;
+import Icon from "astro-icon";
+---
+
+<div class="navHoverZone" style={style}>
+  <Icon name="invertedCurve" />
+  <Icon name="invertedCurve" id="curveIconFlip" />
+</div>
+
+<style>
+  [astro-icon] {
+    color: white;
+    position: absolute;
+    top: 0;
+    right: var(--navPadding);
+    width: var(--navPadding);
+    height: calc(var(--navPadding) / 5 * 6);
+    transform: translateY(calc(-100% / 6 * 5));
+  }
+  #curveIconFlip {
+    top: auto;
+    bottom: 0;
+    transform: translateY(calc(100% / 6 * 5)) scaleY(-1);
+  }
+</style>
+
+<style is:global>
+  .navHoverZone {
+    width: 100%;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    margin-left: calc(var(--navPadding));
+    border-top-left-radius: var(--borderRounding);
+    border-bottom-left-radius: var(--borderRounding);
+    /* mix-blend-mode: soft-light; */
+    /* background-color: white; */
+    /* backdrop-filter: invert(100%); */
+    backdrop-filter: invert(100%) grayscale(100%) brightness(2.5);
+    left: 0;
+  }
+  .active .navHoverZone {
+    margin-left: calc(var(--navPadding) * 1);
+    height: 100%;
+  }
+  .isHome .navHoverZone {
+    backdrop-filter: none;
+    border-radius: var(--borderRounding) !important;
+    background-color: rgba(255, 255, 255, 0.14);
+    width: calc(100% - var(--navPadding) * 2);
+  }
+  .isHome .navHoverZone > * {
+    display: none;
+  }
+  .hoverZoneTransition {
+    transition: opacity 0.2s ease, transform 0.2s ease, width 0.2s ease,
+      height 0.2s ease;
+  }
+  @media screen and (max-width: 800px) {
+    .navHoverZone > * {
+      display: none;
+    }
+    .navHoverZone {
+      border-radius: var(--borderRounding) !important;
+      margin-left: 0 !important;
+    }
+    .active .navHoverZone {
+      margin-left: calc(var(--navPadding) * -2) !important;
+    }
+  }
+</style>
