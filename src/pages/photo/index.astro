@@ -6,10 +6,10 @@ import exifr from "exifr";
 import { Icon } from "astro-icon";
 import sizeOf from "image-size";
 import exiftoolJson from "./metadata.json";
-import { renderImg } from "astro-imagetools/api";
-import { defaultOG } from "../../components/HeaderAndFooter/index.astro";
+// import { renderImg } from "astro-imagetools/api";
+// import { defaultOG } from "../../components/HeaderAndFooter/index.astro";
 
-const defaultOGInfo = await defaultOG();
+// const defaultOGInfo = await defaultOG();
 
 // console.log("exiftool", exiftoolJson["DSC05014.jpg"]);
 
@@ -76,16 +76,16 @@ await Promise.all(
     // const cleanName = decodeURIComponent(name.replaceAll("--", "%"));
     const { width, height } = await sizeOf("." + path);
 
-    const { link, style, img } = await renderImg({
-      src: path,
-      breakpoints: [ogWidth],
-      format: "webp",
-      alt: "",
-    });
+    // const { link, style, img } = await renderImg({
+    //   src: path,
+    //   breakpoints: [ogWidth],
+    //   format: "webp",
+    //   alt: "",
+    // });
 
     const extracted = {
       path,
-      ogImg: img.split('srcset="')[1].split('"')[0],
+      // ogImg: img.split('srcset="')[1].split('"')[0],
       ...removeEmpty(
         exif
           ? {
@@ -204,7 +204,7 @@ const description =
               src={image.path}
               alt=""
               breakpoints={[600]}
-              quality={70}
+              quality={50}
               format="webp"
               placeholder="dominantColor"
               loading="lazy"
@@ -227,7 +227,7 @@ const description =
               src={image.path}
               alt=""
               breakpoints={[400, 800, 1200, 1600, 2000]}
-              quality={80}
+              quality={60}
               format="webp"
               placeholder="blurred"
               loading="lazy"
