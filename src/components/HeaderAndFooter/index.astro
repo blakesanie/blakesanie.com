@@ -7,6 +7,7 @@ import NavLink from "./NavLink.astro";
 import NowPlaying from "./NowPlaying.astro";
 import SoundBars from "./SoundBars.astro";
 import sizeOf from "image-size";
+import { defaultTSConfig } from "astro/dist/core/config/tsconfig";
 const mobileMaxWidth = 800; // still manually declared in media query declaration
 const headerWidth = 200;
 const mobileHeaderHeight = 80;
@@ -20,15 +21,33 @@ const isHome = Astro.url.pathname === "/";
 const { allowMainStyles, noContentPadding, hideSpotify } = Astro.props;
 const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
 
-const title = Astro.props.title
-  ? Astro.props.title + " | Blake Sanie"
-  : "Blake Sanie";
-const description =
-  Astro.props.description ||
-  "Software Engineer. Photographer. Writer & Instructor. Lifelong Student.";
 const { noindex } = Astro.props;
-const image = Astro.props.image || "/og/thumb.jpg";
-const { width, height } = await sizeOf("public" + image);
+// const image = Astro.props.image || "/og/thumb.jpg";
+// const { width, height } = await sizeOf("public" + image);
+
+export async function defaultOG() {
+  const image = Astro.props?.image || "/og/thumb.jpg";
+  const imageAlt =
+    Astro.props?.imageAlt || "Open Graph Thumbnail Image for blakesanie.com";
+  const { width, height } = await sizeOf("public" + image);
+  const description =
+    Astro.props?.description ||
+    "Software Engineer. Photographer. Writer & Instructor. Lifelong Student.";
+  const title = Astro.props?.title
+    ? Astro.props.title + " | Blake Sanie"
+    : "Blake Sanie";
+  return {
+    image,
+    imageAlt,
+    width,
+    height,
+    title,
+    description,
+  };
+}
+
+const { image, imageAlt, width, height, title, description } =
+  await defaultOG();
 ---
 
 <html lang="en" class:list={[{ isHome: isHome }]}>
@@ -54,10 +73,10 @@ const { width, height } = await sizeOf("public" + image);
           description: description,
         },
         image: {
-          type: "image/png",
+          type: "image/" + image.split(".").pop(),
           width: width,
           height: height,
-          alt: "Open Graph Thumbnail Image for blakesanie.com",
+          alt: imageAlt,
         },
       }}
       twitter={{

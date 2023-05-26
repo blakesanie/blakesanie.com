@@ -53,13 +53,20 @@ def processFilepath(filepath):
     # escapedNew = newPath.replace(' ', '\\  ')
     # os.system(f'exiftool -overwrite_original -TagsFromFile {escapedPath} -all:all>all:all {escapedNew}')
     md = exiftoolFile(filepath)
-    allMeta[newFilename.split('.')[0]] = md
+    # allMeta[newFilename.split('.')[0]] = md
+    # out = {}
+    # out[newFilename.split('.')[0]] = md
+    # out
+    return (newFilename.split('.')[0], md)
     
 
 if __name__ == '__main__':
     
     with Pool(None) as p:
         r = list(tqdm(p.imap(processFilepath, filepaths), total=len(filepaths)))
+        for name, md in r:
+            # name, md = out
+            allMeta[name] = md
 
 # for filepath in tqdm(glob(path + '/*')):
 #     img = Image.open(filepath)

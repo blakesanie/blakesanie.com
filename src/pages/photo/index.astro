@@ -6,6 +6,10 @@ import exifr from "exifr";
 import { Icon } from "astro-icon";
 import sizeOf from "image-size";
 import exiftoolJson from "./metadata.json";
+import { renderImg } from "astro-imagetools/api";
+import { defaultOG } from "../../components/HeaderAndFooter/index.astro";
+
+const defaultOGInfo = await defaultOG();
 
 // console.log("exiftool", exiftoolJson["DSC05014.jpg"]);
 
@@ -34,9 +38,10 @@ const lensRenamings = {
   "FE 28-70mm F3.5-5.6 OSS": "Sony FE 28-70mm",
   "18.0-105.0 mm f/3.5-5.6": "Nikkor 18-105mm DX",
   "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED": "Nikkor 18-105mm DX",
-  "SAMYANG AF 24mm F2.8": "Rokinon 24mm F2.8",
+  "SAMYANG AF 24mm F2.8": "Rokinon 24mm f/2.8",
   "AF-S DX Nikkor 35mm f/1.8G": "Nikkor 35mm f/1.8G DX",
   "----": "Helios 44/2",
+  "E 20-40mm F2.8 A062": "Tamron 20-40mm f/2.8",
 };
 
 function applyRenamings(str, renamings) {
@@ -53,6 +58,8 @@ function applyRenamings(str, renamings) {
   return str;
 }
 
+const ogWidth = 1000;
+
 const glob = await import.meta.glob("/src/assets/images/portfolio/*");
 const images = {};
 await Promise.all(
@@ -66,9 +73,19 @@ await Promise.all(
       jfif: true,
     });
     const name = path.split("/").pop()?.split(".")[0];
+    // const cleanName = decodeURIComponent(name.replaceAll("--", "%"));
     const { width, height } = await sizeOf("." + path);
+
+    const { link, style, img } = await renderImg({
+      src: path,
+      breakpoints: [ogWidth],
+      format: "webp",
+      alt: "",
+    });
+
     const extracted = {
       path,
+      ogImg: img.split('srcset="')[1].split('"')[0],
       ...removeEmpty(
         exif
           ? {
@@ -134,6 +151,9 @@ for (const image of Object.values(images)) {
 // console.log("first buffer", await images[imageNames[0]]());
 // console.log("images", images);
 const gutter = 10;
+const title = "Photography";
+const description =
+  "My highly-interactive portfolio of artistic photographs captured and developed since 2014.";
 ---
 
 <HeaderAndFooter
@@ -143,8 +163,8 @@ const gutter = 10;
   themeColor="#f0f0f0"
   darkText
   hoverZoneBehind
-  title="Photography"
-  description="My highly-interactive portfolio of artistic photographs captured and developed since 2014."
+  title={title}
+  description={description}
 >
   <h1>Photography</h1>
   <p>
@@ -509,6 +529,10 @@ const gutter = 10;
       maxLat: maxLat,
       minLng: minLng,
       maxLng: maxLng,
+      // ogWidth: ogWidth,
+      // defaultOGInfo: defaultOGInfo,
+      // title: title + " | Blake Sanie",
+      // description: description,
     }}
   >
     let fullScreenElement;
@@ -911,6 +935,7 @@ const gutter = 10;
     }
 
     function activateFullScreen(filename) {
+      setOGImage(filename);
       if (!filename || !images[filename]) {
         return;
       }
@@ -965,6 +990,7 @@ const gutter = 10;
       // set meta data
       metaDataElement.innerHTML = "";
       const captured = images[filename];
+      console.log("showcase image", filename, images[filename]);
       if (captured.shutter) {
         if (captured.shutter < 0) {
         }
@@ -1273,9 +1299,118 @@ const gutter = 10;
           continue;
         }
         const target = galleryContainer.children[index];
+        if (!target) {
+          console.log(
+            "want to swap with element",
+            index,
+            name,
+            "but len is",
+            galleryContainer.children.length
+          );
+        }
         swapElements(child, target);
         i--;
       }
     }
+
+    //   ______    ______
+    //  /      \  /      \
+    // /$$$$$$  |/$$$$$$  |
+    // $$ |  $$ |$$ | _$$/
+    // $$ |  $$ |$$ |/    |
+    // $$ |  $$ |$$ |$$$$ |
+    // $$ \__$$ |$$ \__$$ |
+    // $$    $$/ $$    $$/
+    //  $$$$$$/   $$$$$$/
+
+    // console.log("default OG info", defaultOGInfo, title, description);
+
+    // // const originalOGImagePath = document
+    // //   .querySelector('meta[property="og:image"]')
+    // //   .getAttribute("content");
+    // // const originalOGImageType = document
+    // //   .querySelector('meta[property="og:image:type"]')
+    // //   .getAttribute("content");
+    // // const originalOGImageWidth = document
+    // //   .querySelector('meta[property="og:image:width"]')
+    // //   .getAttribute("content");
+    // // const originalOGImageHeight = document
+    // //   .querySelector('meta[property="og:image:height"]')
+    // //   .getAttribute("content");
+    // // const originalOGImageDescription = document
+    // //   .querySelector('meta[property="og:image:alt"]')
+    // //   .getAttribute("content");
+    // // const originalTitle = title;
+
+    // function setMetaTags(thumb, alt, title, description, width, height) {
+    //   alt = alt || "";
+
+    //   document.title = title;
+    //   document
+    //     .querySelector('meta[name="description"]')
+    //     .setAttribute("content", description);
+
+    //   document
+    //     .querySelector('meta[property="og:title"]')
+    //     .setAttribute("content", title);
+    //   document
+    //     .querySelector('meta[property="og:description"]')
+    //     .setAttribute("content", description);
+    //   document
+    //     .querySelector('meta[property="og:image"]')
+    //     .setAttribute("content", thumb);
+    //   document
+    //     .querySelector('meta[property="og:image:url"]')
+    //     .setAttribute("content", thumb);
+    //   document
+    //     .querySelector('meta[property="og:image:alt"]')
+    //     .setAttribute("content", alt);
+    //   document
+    //     .querySelector('meta[property="og:image:type"]')
+    //     .setAttribute("content", thumb.split(".").pop());
+    //   document
+    //     .querySelector('meta[property="og:image:width"]')
+    //     .setAttribute("content", width);
+    //   document
+    //     .querySelector('meta[property="og:image:height"]')
+    //     .setAttribute("content", height);
+
+    //   document
+    //     .querySelector('meta[name="twitter:title"]')
+    //     .setAttribute("content", title);
+    //   document
+    //     .querySelector('meta[name="twitter:description"]')
+    //     .setAttribute("content", description);
+    //   document
+    //     .querySelector('meta[name="twitter:image"]')
+    //     .setAttribute("content", thumb);
+    //   document
+    //     .querySelector('meta[name="twitter:image:alt"]')
+    //     .setAttribute("content", alt);
+    // }
+
+    // function setOGImage(filename) {
+    //   const image = images[filename];
+    //   if (!filename || !image) {
+    //     return setMetaTags(
+    //       defaultOGInfo.image,
+    //       defaultOGInfo.imageAlt,
+    //       title,
+    //       defaultOGInfo.description,
+    //       defaultOGInfo.width,
+    //       defaultOGInfo.height
+    //     );
+    //   }
+    //   const cleanName = decodeURIComponent(filename.replaceAll("--", "%"));
+    //   console.log("image set tags for", image);
+    //   setMetaTags(
+    //     image.ogImg,
+    //     cleanName,
+    //     cleanName + " | " + title,
+    //     cleanName + " | " + description,
+    //     ogWidth,
+    //     Math.round((ogWidth / image.width) * image.height)
+    //   );
+    // }
   </script>
 </HeaderAndFooter>
