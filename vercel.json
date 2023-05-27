@@ -16,7 +16,7 @@
         {
           "type": "query",
           "key": "im",
-          "value": null
+          "value": "undefined"
         }
       ]
     }
