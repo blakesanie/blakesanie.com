@@ -29,7 +29,8 @@ export async function defaultOG() {
   const image = Astro.props?.image || "/og/thumb.jpg";
   const imageAlt =
     Astro.props?.imageAlt || "Open Graph Thumbnail Image for blakesanie.com";
-  const { width, height } = await sizeOf("public" + image);
+  // const { width, height } = await sizeOf("public" + image);
+  const { width, height } = {};
   const description =
     Astro.props?.description ||
     "Software Engineer. Photographer. Writer & Instructor. Lifelong Student.";
@@ -74,8 +75,8 @@ const { image, imageAlt, width, height, title, description } =
         },
         image: {
           type: "image/" + image.split(".").pop(),
-          width: width,
-          height: height,
+          // width: width,
+          // height: height,
           alt: imageAlt,
         },
       }}
