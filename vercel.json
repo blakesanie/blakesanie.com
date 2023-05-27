@@ -11,14 +11,7 @@
   "rewrites": [
     {
       "source": "/photo/:path*",
-      "destination": "/api/photo/:path*",
-      "has": [
-        {
-          "type": "query",
-          "key": "im",
-          "value": "undefined"
-        }
-      ]
+      "destination": "/api/photo/:path*"
     }
   ],
   "redirects": [
