@@ -26,3 +26,4 @@ pnpm-debug.log*
 .vercel
 .vscode
 portfolio_old*  
+api/*/**/.*

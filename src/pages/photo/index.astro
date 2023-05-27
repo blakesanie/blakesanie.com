@@ -6,7 +6,8 @@ import exifr from "exifr";
 import { Icon } from "astro-icon";
 import sizeOf from "image-size";
 import exiftoolJson from "./metadata.json";
-// import { renderImg } from "astro-imagetools/api";
+import { renderImg } from "astro-imagetools/api";
+import { writeFileSync } from "fs";
 // import { defaultOG } from "../../components/HeaderAndFooter/index.astro";
 
 // const defaultOGInfo = await defaultOG();
@@ -60,6 +61,8 @@ function applyRenamings(str, renamings) {
 
 const ogWidth = 1000;
 
+const ogThumbs = {};
+
 const glob = await import.meta.glob("/src/assets/images/portfolio/*");
 const images = {};
 await Promise.all(
@@ -76,12 +79,14 @@ await Promise.all(
     // const cleanName = decodeURIComponent(name.replaceAll("--", "%"));
     const { width, height } = await sizeOf("." + path);
 
-    // const { link, style, img } = await renderImg({
-    //   src: path,
-    //   breakpoints: [ogWidth],
-    //   format: "webp",
-    //   alt: "",
-    // });
+    const { link, style, img } = await renderImg({
+      src: path,
+      breakpoints: [ogWidth],
+      format: "webp",
+      alt: "",
+    });
+
+    ogThumbs[name] = img.split('srcset="')[1].split('"')[0];
 
     const extracted = {
       path,
@@ -126,6 +131,13 @@ await Promise.all(
     // console.log("exif", exif, extracted);
     images[name] = extracted;
   })
+);
+
+// write ogThumbs to json file
+// const fs = require("fs");
+writeFileSync(
+  "api/photo/.thumbs.js",
+  `export default ${JSON.stringify(ogThumbs)}`
 );
 
 let minLat = Infinity;

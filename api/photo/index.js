@@ -1,5 +1,6 @@
 import { readFileSync } from "fs";
 import path from "path";
+import thumbs from "./.thumbs.js";
 
 export default async function handler(req, res) {
   //   let { host, referer } = req.headers;
@@ -12,10 +13,18 @@ export default async function handler(req, res) {
   //   };
   //   res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate");
   //   return res.status(200).json(out);
-
+  // console.log("thumbs", thumbs);
+  // console.log("query", req.query);
   const file = path.join(process.cwd(), "dist", "photo", "index.html");
-  const stringified = readFileSync(file, "utf8");
+  let str = readFileSync(file, "utf8");
+  const { im } = req.query;
+  if (im) {
+    const name = im.replaceAll("_", encodeURI(" ")).replaceAll("%", "--");
+    const thumb = thumbs[name];
+    // console.log("THUMB", thumb);
+    str = str.replaceAll("/og/thumb.jpg", thumb);
+  }
 
   res.setHeader("Content-Type", "text/html");
-  return res.end(stringified);
+  return res.end(str);
 }

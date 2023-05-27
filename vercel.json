@@ -3,6 +3,24 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "outputDirectory": "dist",
+  "functions": {
+    "api/photo/index.js": {
+      "includeFiles": "/photo/**/*.html"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/photo/:path*",
+      "destination": "/api/photo/:path*",
+      "has": [
+        {
+          "type": "query",
+          "key": "im",
+          "value": null
+        }
+      ]
+    }
+  ],
   "redirects": [
     {
       "source": "/linkedin",
