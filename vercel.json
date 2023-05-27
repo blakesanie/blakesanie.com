@@ -4,14 +4,14 @@
   "installCommand": "npm install",
   "outputDirectory": "dist",
   "functions": {
-    "api/photo/index.js": {
+    "api/photo/*.js": {
       "includeFiles": "/photo/**/*.html"
     }
   },
   "rewrites": [
     {
-      "source": "/photo/:path*",
-      "destination": "/api/photo/:path*"
+      "source": "/photo/:slug(.*)?",
+      "destination": "/api/photo/:slug(.*)?"
     }
   ],
   "redirects": [
