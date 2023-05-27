@@ -21,8 +21,10 @@ export default async function handler(req, res) {
   if (im) {
     const name = im.replaceAll("_", encodeURI(" ")).replaceAll("%", "--");
     const thumb = thumbs[name];
+    const cleanName = decodeURIComponent(name.replaceAll("--", "%"));
     // console.log("THUMB", thumb);
     str = str.replaceAll("/og/thumb.jpg", thumb);
+    str = str.replaceAll("Photography |", cleanName + " | Photography |");
   }
 
   res.setHeader("Content-Type", "text/html");
