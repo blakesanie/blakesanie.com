@@ -8,6 +8,16 @@
       "includeFiles": "/photo/**/*.html"
     }
   },
+  "rewrites": [
+    {
+      "source": "/photo/:path",
+      "destination": "/api/photo/:path"
+    },
+    {
+      "source": "/photo/map/:path",
+      "destination": "/api/photo/:path?map=true"
+    }
+  ],
   "redirects": [
     {
       "source": "/linkedin",
