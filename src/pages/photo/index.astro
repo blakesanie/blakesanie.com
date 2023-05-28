@@ -687,7 +687,7 @@ const description =
       if (mode != "gallery") {
         mode = "gallery";
         document.getElementById("photoNavLink").click();
-        history.pushState({}, null, "/photo");
+        history.replaceState({}, null, "/photo");
         activateGallery();
       }
     });
@@ -695,7 +695,7 @@ const description =
       if (mode != "map") {
         mode = "map";
         document.getElementById("mapNavLink").click();
-        history.pushState({}, null, "/photo/map");
+        history.replaceState({}, null, "/photo/map");
         activateMap();
       }
     });
@@ -945,7 +945,7 @@ const description =
       if (filename) {
         newurl += "/" + filename;
       }
-      window.history.pushState({ path: newurl }, "", newurl);
+      window.history.replaceState({}, null, newurl);
     }
 
     function activateFullScreen(filename) {
@@ -985,9 +985,9 @@ const description =
       // set prev and next blocks
       const { prev, next } = imageChanges[filename];
       console.log("prev", prev, "next", next);
-      imageNameElement.innerHTML = decodeURIComponent(
-        filename.replaceAll("--", "%")
-      );
+      const cleanName = decodeURIComponent(filename.replaceAll("--", "%"));
+      imageNameElement.innerHTML = cleanName;
+      document.title = cleanName + " | Photography | Blake Sanie";
       prevElement.style.display = prev ? "block" : "none";
       nextElement.style.display = next ? "block" : "none";
 
