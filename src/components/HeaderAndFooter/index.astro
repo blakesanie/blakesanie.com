@@ -25,7 +25,9 @@ const { noindex } = Astro.props;
 // const image = Astro.props.image || "/og/thumb.jpg";
 // const { width, height } = await sizeOf("public" + image);
 
-const image = Astro.props.image || "/og/thumb.jpg";
+const image = `${import.meta.env.DEV ? "" : "https://blakesanie.com"}${
+  Astro.props.image || "/og/thumb.jpg"
+}`;
 const imageAlt =
   Astro.props?.imageAlt || "Open Graph Thumbnail Image for blakesanie.com";
 // const { width, height } = await sizeOf("public" + image);
