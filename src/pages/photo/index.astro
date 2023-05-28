@@ -687,6 +687,7 @@ const description =
       if (mode != "gallery") {
         mode = "gallery";
         document.getElementById("photoNavLink").click();
+        history.pushState({}, null, "/photo");
         activateGallery();
       }
     });
@@ -694,6 +695,7 @@ const description =
       if (mode != "map") {
         mode = "map";
         document.getElementById("mapNavLink").click();
+        history.pushState({}, null, "/photo/map");
         activateMap();
       }
     });
@@ -706,7 +708,7 @@ const description =
       function showGallery() {
         mapContainer.style.display = "none";
         galleryContainer.style.display = "block";
-        history.pushState({}, null, "/photo");
+        // history.pushState({}, null, "/photo");
       }
       function getImageWidth() {
         const usableWidth = galleryContainer.clientWidth;
@@ -775,7 +777,7 @@ const description =
       function showMap() {
         galleryContainer.style.display = "none";
         mapContainer.style.display = "block";
-        history.pushState({}, null, "/photo/map");
+        // history.pushState({}, null, "/photo/map");
       }
 
       showMap();
@@ -931,13 +933,17 @@ const description =
     }
 
     function setImUrlQuery(filename) {
-      var newurl =
-        window.location.protocol +
-        "//" +
-        window.location.host +
-        window.location.pathname;
+      var newurl = window.location.protocol + "//" + window.location.host;
+      if (
+        location.pathname == "/photo/map" ||
+        location.pathname.startsWith("/photo/map/")
+      ) {
+        newurl += "/photo/map";
+      } else {
+        newurl += "/photo";
+      }
       if (filename) {
-        newurl += "?im=" + filename;
+        newurl += "/" + filename;
       }
       window.history.pushState({ path: newurl }, "", newurl);
     }
@@ -945,6 +951,7 @@ const description =
     function activateFullScreen(filename) {
       // setOGImage(filename);
       if (!filename || !images[filename]) {
+        setImUrlQuery();
         return;
       }
       openFileName = filename;
