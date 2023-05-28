@@ -591,7 +591,10 @@ const description =
 
     const initialUrlQuery = location.search
       ? getUrlQuery().im
-      : location.pathname.replace("/photo/map", "").replace("/photo", "");
+      : location.pathname
+          .replace("/photo/map", "")
+          .replace("/photo", "")
+          .substring(1); // get rid one leading slash
 
     if (initialUrlQuery) {
       let initialQueryInterval;
