@@ -951,7 +951,11 @@ const description =
     function activateFullScreen(filename) {
       // setOGImage(filename);
       if (!filename || !images[filename]) {
+        document.title = "Photography | Blake Sanie";
         setImUrlQuery();
+        fullScreenOpen = false;
+        fullScreenElement.classList.remove("active");
+        document.body.classList.remove("stop-scrolling");
         return;
       }
       openFileName = filename;
@@ -967,12 +971,9 @@ const description =
           prevElement.addEventListener("click", prevImage);
           nextElement = document.getElementById("next");
           nextElement.addEventListener("click", nextImage);
-          document.getElementById("exit").addEventListener("click", () => {
-            fullScreenElement.classList.remove("active");
-            fullScreenOpen = false;
-            setImUrlQuery();
-            document.body.classList.remove("stop-scrolling");
-          });
+          document
+            .getElementById("exit")
+            .addEventListener("click", activateFullScreen);
           imageNameElement = document.getElementById("imageName");
           metaDataElement = document.getElementById("metaData");
         }
