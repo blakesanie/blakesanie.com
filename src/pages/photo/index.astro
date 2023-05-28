@@ -84,6 +84,7 @@ await Promise.all(
       breakpoints: [ogWidth],
       format: "webp",
       alt: "",
+      quality: 50,
     });
 
     ogThumbs[name] = img.split('srcset="')[1].split('"')[0];
