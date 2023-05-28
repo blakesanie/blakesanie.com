@@ -8,12 +8,6 @@
       "includeFiles": "/photo/**/*.html"
     }
   },
-  "rewrites": [
-    {
-      "source": "/photo/:slug(.*)?",
-      "destination": "/api/photo/:slug(.*)?"
-    }
-  ],
   "redirects": [
     {
       "source": "/linkedin",

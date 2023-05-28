@@ -8,18 +8,6 @@ import json
 from urllib.parse import quote
 from multiprocessing import Pool
 
-dest = '../../assets/images/portfolio'
-
-
-if os.path.exists(dest):
-    dir = os.listdir(dest)
-    if len(dir) > 0:
-        print('portfolio folder (not empty) already exists')
-        sys.exit(0)
-else:
-    os.mkdir(dest)
-
-
 
 def exiftoolFile(filepath):
     meta = subprocess.check_output([f'exiftool', filepath]).decode('utf-8')
@@ -32,41 +20,54 @@ def exiftoolFile(filepath):
         md[k] = v
     return md
 
-
+dest = '../../assets/images/portfolio'
 
 path = '/Users/blake/Library/Mobile Documents/com~apple~CloudDocs/Images/portfolio'
 
-allMeta = {}
-
-filepaths = glob(path + '/*')
-
 def processFilepath(filepath):
-    img = Image.open(filepath)
-    info = img.info
-    exif = info['exif']
-    filename = filepath.split('/')[-1]
-    newFilename = quote(filename).replace('%','--')
-    img.thumbnail((2000, 2000),Image.ANTIALIAS)
-    newPath = dest + '/' + newFilename
-    img.save(newPath, 'JPEG', quality=100, exif=exif)
-    # escapedPath = filepath.replace(' ', '\\ ')
-    # escapedNew = newPath.replace(' ', '\\  ')
-    # os.system(f'exiftool -overwrite_original -TagsFromFile {escapedPath} -all:all>all:all {escapedNew}')
-    md = exiftoolFile(filepath)
-    # allMeta[newFilename.split('.')[0]] = md
-    # out = {}
-    # out[newFilename.split('.')[0]] = md
-    # out
-    return (newFilename.split('.')[0], md)
-    
+        img = Image.open(filepath)
+        info = img.info
+        exif = info['exif']
+        filename = filepath.split('/')[-1]
+        newFilename = quote(filename).replace('%','--')
+        img.thumbnail((2000, 2000),Image.ANTIALIAS)
+        newPath = dest + '/' + newFilename
+        img.save(newPath, 'JPEG', quality=100, exif=exif)
+        # escapedPath = filepath.replace(' ', '\\ ')
+        # escapedNew = newPath.replace(' ', '\\  ')
+        # os.system(f'exiftool -overwrite_original -TagsFromFile {escapedPath} -all:all>all:all {escapedNew}')
+        md = exiftoolFile(filepath)
+        # allMeta[newFilename.split('.')[0]] = md
+        # out = {}
+        # out[newFilename.split('.')[0]] = md
+        # out
+        return (newFilename.split('.')[0], md)
 
-if __name__ == '__main__':
-    
+def copy():
+
+    if os.path.exists(dest):
+        dir = os.listdir(dest)
+        if len(dir) > 0:
+            print('portfolio folder (not empty) already exists')
+            sys.exit(0)
+    else:
+        os.mkdir(dest)
+
+    allMeta = {}
+
+    filepaths = glob(path + '/*')
+        
     with Pool(None) as p:
         r = list(tqdm(p.imap(processFilepath, filepaths), total=len(filepaths)))
         for name, md in r:
             # name, md = out
             allMeta[name] = md
+                
+    with open("metadata.json", "w") as outfile:
+        json.dump(allMeta, outfile)
+                
+if __name__ == '__main__':
+    copy()
 
 # for filepath in tqdm(glob(path + '/*')):
 #     img = Image.open(filepath)
@@ -83,7 +84,6 @@ if __name__ == '__main__':
 #     md = exiftoolFile(filepath)
 #     allMeta[newFilename.split('.')[0]] = md
     
-    with open("metadata.json", "w") as outfile:
-        json.dump(allMeta, outfile)
+    
     
     

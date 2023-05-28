@@ -594,9 +594,7 @@ const description =
 
     if (initialUrlQuery.im) {
       let initialQueryInterval;
-      const initialFilename = initialUrlQuery.im
-        .replaceAll("_", encodeURI(" "))
-        .replaceAll("%", "--");
+      const initialFilename = initialUrlQuery.im;
       console.log(
         "initialFilename",
         initialFilename,
@@ -940,8 +938,7 @@ const description =
         window.location.host +
         window.location.pathname;
       if (filename) {
-        newurl +=
-          "?im=" + filename.replaceAll("--", "%").replaceAll("%20", "_");
+        newurl += "?im=" + filename;
       }
       window.history.pushState({ path: newurl }, "", newurl);
     }
@@ -973,7 +970,6 @@ const description =
           imageNameElement = document.getElementById("imageName");
           metaDataElement = document.getElementById("metaData");
         }
-        fullScreenElement.classList.add("active");
         fullScreenOpen = true;
       }
       buildSelectedMap(filename);
@@ -1036,6 +1032,7 @@ const description =
         metaDataElement.innerHTML += `<div>GPS Below</div>`;
       }
       mapFullScreenElement.style.display = captured.latitude ? "block" : "none";
+      fullScreenElement.classList.add("active");
     }
 
     window.addEventListener("resize", () => {
