@@ -4,10 +4,12 @@ import thumbs from "./.thumbs.js";
 
 export default async function handler(req, res) {
   const slug = req.query.slug;
+  console.log("slug is", slug);
   const split = slug.split("?");
   const name = split[0];
   let page = "photo";
   if (split.length > 1) {
+    console.log(slug, "uses map");
     page += "/map";
   }
   const thumb = thumbs[name];
