@@ -589,18 +589,14 @@ const description =
       );
     }
 
-    const initialUrlQuery = getUrlQuery();
-    console.log("initial query", initialUrlQuery);
+    const initialUrlQuery = location.search
+      ? getUrlQuery().im
+      : location.pathname.replace("/photo/map", "").replace("/photo", "");
 
-    if (initialUrlQuery.im) {
+    if (initialUrlQuery) {
       let initialQueryInterval;
-      const initialFilename = initialUrlQuery.im;
-      console.log(
-        "initialFilename",
-        initialFilename,
-        "from",
-        initialUrlQuery.im
-      );
+      const initialFilename = initialUrlQuery;
+      console.log("initialFilename", initialFilename);
       function initialFullScreen() {
         try {
           activateFullScreen(initialFilename);
