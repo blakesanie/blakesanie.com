@@ -1,0 +1,27 @@
+---
+import { Code } from "astro/components";
+let { lang } = Astro.props;
+let contents = await Astro.slots.render("default");
+if (contents) {
+  contents = contents.replace("<p>", "");
+  contents = contents.replace("</p>", "");
+}
+// contents = contents.replace("<p>", "");
+// contents = contents.replace("</p>", "");
+// console.log("CODE SLOT", await Astro.slots.render("default"));
+---
+
+<Code code={contents || "select *"} lang={lang} theme="github-light" />
+
+<style>
+  :global(pre) {
+    padding: 1em;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.5em;
+    margin: 1em 0;
+    background-color: rgba(0, 0, 0, 0.04) !important;
+  }
+  :global(pre *) {
+    font-family: monospace;
+  }
+</style>

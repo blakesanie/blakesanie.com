@@ -95,27 +95,16 @@ const getLastSong = async (recursion = true) => {
 const CACHE_TTL = 10;
 
 export default async function handler(req, res) {
-  let { host, referer } = req.headers;
-  host = host.split(":")[0];
-  console.log(host, referer);
-  //   if (
-  //     !referer ||
-  //     host.split(":")[0].replace("127.0.0.1", "localhost") !=
-  //       referer.split("://")[1].split("/")[0].split(":")[0]
-  //   ) {
-  //     return res.status(403).json();
-  //   }
+  try {
+    let { host, referer } = req.headers;
+    host = host.split(":")[0];
+    console.log(host, referer);
 
-  //   if (!cached || exp < new Date()) {
-  //     console.log("CACHE MISS");
-  //     cached = await getLastSong();
-  //     exp = new Date();
-  //     exp.setSeconds(exp.getSeconds() + CACHE_TTL);
-  //   } else {
-  //     console.log("CACHE HIT");
-  //   }
-
-  const out = await getLastSong();
-  res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate");
-  return res.status(200).json(out);
+    const out = await getLastSong();
+    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate");
+    return res.status(200).json(out);
+  } catch (e) {
+    console.error(e);
+    return res.status(500);
+  }
 }

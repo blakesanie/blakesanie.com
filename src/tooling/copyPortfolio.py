@@ -20,7 +20,7 @@ def exiftoolFile(filepath):
         md[k] = v
     return md
 
-dest = '../../assets/images/portfolio'
+dest = '../assets/images/portfolio'
 
 path = '/Users/blake/Library/Mobile Documents/com~apple~CloudDocs/Images/portfolio'
 
@@ -63,7 +63,7 @@ def copy():
             # name, md = out
             allMeta[name] = md
                 
-    with open("metadata.json", "w") as outfile:
+    with open(dest.replace('portfolio',"metadata.json"), "w") as outfile:
         json.dump(allMeta, outfile)
                 
 if __name__ == '__main__':

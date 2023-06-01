@@ -16,7 +16,8 @@ const route = href
   .slice(1)
   .join("/")
   .split("?")[0];
-const active = path == route;
+const active =
+  path == route || (path.startsWith("blog") && route.startsWith("blog"));
 // const firstRouteMatches =
 //   Astro.url.pathname.split("/")[1] == href.split("/")[1];
 const redirect = redirects[href.substring(1)];

@@ -1,6 +1,7 @@
 ---
 import { GoogleFontsOptimizer } from "astro-google-fonts-optimizer";
 import { SEO } from "astro-seo";
+import { renderImg } from "astro-imagetools/api";
 import HoverZone from "./HoverZone.astro";
 import Icon from "astro-icon";
 import NavLink from "./NavLink.astro";
@@ -25,9 +26,19 @@ const { noindex } = Astro.props;
 // const image = Astro.props.image || "/og/thumb.jpg";
 // const { width, height } = await sizeOf("public" + image);
 
-const image = `${import.meta.env.DEV ? "" : "https://blakesanie.com"}${
-  Astro.props.image || "/og/thumb.jpg"
-}`;
+const { link, style, img } = await renderImg({
+  src: Astro.props.image || "/public/og/thumb.jpg",
+  breakpoints: [1000],
+  format: "webp",
+  alt: "",
+  quality: 40,
+});
+
+const ogThumb = img.split('srcset="')[1].split('"')[0];
+
+const image = `${
+  import.meta.env.DEV ? "" : "https://blakesanie.com"
+}${ogThumb}`;
 const imageAlt =
   Astro.props?.imageAlt || "Open Graph Thumbnail Image for blakesanie.com";
 // const { width, height } = await sizeOf("public" + image);
@@ -935,6 +946,15 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
         filter: saturate(0) brightness(100);
       }
 
+      :global(.shadowHover) {
+        box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.1);
+        transition: all 0.1s ease;
+        cursor: pointer;
+      }
+      :global(.shadowHover:hover) {
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+      }
+
       @media screen and (max-width: 800px) {
         header {
           width: 100%;
@@ -1036,6 +1056,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
         display: flex;
         flex-direction: column;
         align-items: center;
+        position: relative;
       }
 
       .pageContent :global(*)::selection {
@@ -1058,26 +1079,102 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
 
       .pageContent :global(h1),
       .pageContent :global(h2),
-      .pageContent :global(h3) {
+      .pageContent :global(h3),
+      .pageContent :global(h4),
+      .pageContent :global(h5),
+      .pageContent :global(h6) {
         text-align: center;
+        padding-top: 1em;
+        padding-bottom: 0.5em;
       }
+
+      /* .pageContent :global(h4),
+      .pageContent :global(h5),
+      .pageContent :global(h6) {
+        padding: 1.4em 0 0.8em 0;
+      } */
 
       .pageContent :global(h1) {
         font-size: 2em;
-        padding: 1em 0;
+        padding-top: 1em;
+        padding-bottom: 1em;
+      }
+
+      .pageContent :global(h2) {
+        font-size: 1.6em;
+      }
+
+      .pageContent :global(h3) {
+        font-size: 1.3em;
+      }
+
+      .pageContent :global(h4) {
+        font-size: 1.1em;
+      }
+
+      .pageContent :global(h5) {
+        font-size: 1em;
+      }
+
+      .pageContent :global(h6) {
+        font-size: 0.9em;
+      }
+
+      .pageContent :global(p),
+      .pageContent :global(li) {
+        font-size: 1.2em;
+        color: #666;
+        line-height: 150%;
+        /* padding: 0.5em 0; */
       }
 
       .pageContent :global(p) {
-        font-size: 1.2em;
-        line-height: 150%;
         text-indent: 2em;
-        padding: 1em 0;
-        color: rgba(0, 0, 0, 0.6);
-        /* padding: 0.5em 0; */
+        padding: 0.5em 0;
+      }
+
+      .pageContent :global(strong) {
+        color: black;
+      }
+
+      .pageContent :global(ul),
+      .pageContent :global(ol) {
+        padding-left: 2em;
+      }
+
+      .pageContent :global(li) {
+        /* line-height: 150%; */
+        padding: 0.3em 0;
       }
 
       .noPageContentPadding {
         padding: 0 !important;
+      }
+
+      .pageContent :global(table) {
+        border: 2px solid rgba(0, 0, 0, 0.2);
+        border-radius: 6px;
+        border-spacing: 0;
+      }
+
+      .pageContent :global(.x-scroll) {
+        overflow-x: scroll;
+        width: auto;
+        max-width: 100%;
+      }
+
+      .pageContent :global(th),
+      .pageContent :global(td) {
+        padding: 1em;
+      }
+
+      .pageContent :global(thead),
+      .pageContent :global(tr:nth-child(even)) {
+        background: rgba(0, 0, 0, 0.04);
+      }
+
+      .pageContent :global(td:not(:last-child)) {
+        border-right: 2px solid rgba(0, 0, 0, 0.2);
       }
     </style>
 

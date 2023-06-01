@@ -1,0 +1,34 @@
+---
+const { breadcrumbs } = Astro.props;
+const links = [];
+let cummulative = Astro.props.base || "";
+for (const crumb of breadcrumbs) {
+  cummulative += "/" + crumb;
+  links.push(cummulative);
+}
+---
+
+<div class="breadcrumbs">
+  {
+    links.map((link, i) => {
+      return (
+        <>
+          &#8594
+          <a href={link}>{link.split("/").pop().replaceAll("_", " ")}</a>
+        </>
+      );
+    })
+  }
+  &#8594
+</div>
+
+<style>
+  .breadcrumbs {
+    position: absolute;
+    top: 1em;
+    left: 1em;
+  }
+  .breadcrumbs a {
+    margin: 0 0.3em;
+  }
+</style>

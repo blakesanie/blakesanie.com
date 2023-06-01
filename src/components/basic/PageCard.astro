@@ -1,0 +1,85 @@
+---
+import { Img } from "astro-imagetools/components";
+
+const { href, title, description, image, target, date, breadcrumbs } =
+  Astro.props;
+
+export function formatDate(date) {
+  if (!date) return "";
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+---
+
+<a href={href} target={target} class="shadowHover pageCard">
+  <div class="cardText">
+    {title && <div class="pageCardTitle">{title}</div>}
+    {date && <div class="pageCardDate">{formatDate(date)}</div>}
+    {
+      breadcrumbs && breadcrumbs.length > 0 && (
+        <div class="pageCardBreadcrumbs">
+          {breadcrumbs
+            .map((crumb) => {
+              return crumb.replaceAll("_", " ");
+            })
+            .join(" > ")}
+        </div>
+      )
+    }
+    {description && <div class="pageCardDesc">{description}</div>}
+  </div>
+  <!-- {image && <div class="cardThumb" />} -->
+  {image && <Img src={image} format="webp" alt="" breakpoints={[500]} />}
+</a>
+
+<style>
+  .pageCard {
+    margin: 0.5em;
+    border-radius: 10px;
+    padding: 6px;
+    display: flex;
+  }
+  .cardThumb,
+  .pageCard :global(img) {
+    background-color: red;
+    width: 150px;
+    border-radius: 4px;
+  }
+  .cardText {
+    padding: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    flex: 1;
+  }
+  .cardText > * {
+    width: 100%;
+  }
+  .pageCardBreadcrumbs {
+    font-size: 0.9em;
+    background-color: #0099ff63;
+    display: inline-block;
+    padding: 0.3em 0.6em;
+    border-radius: 0.4em;
+  }
+  .pageCardTitle {
+    font-size: 1.4em;
+    margin-bottom: 0.4em;
+  }
+  .pageCardDate {
+    font-style: italic;
+    opacity: 0.5;
+    margin-right: 0.6em;
+  }
+  .pageCardBreadcrumbs,
+  .pageCardDate {
+    width: auto;
+    margin-bottom: 0.4em;
+  }
+  .pageCardDesc {
+    opacity: 0.5;
+  }
+</style>

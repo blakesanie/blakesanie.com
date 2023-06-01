@@ -12,7 +12,7 @@ def clip():
     processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
 
-    path = '../../assets/images/portfolio'
+    path = '../assets/images/portfolio'
 
     filepaths = glob(path + '/*')
         
@@ -32,7 +32,7 @@ def clip():
         name = filepath.split('/')[-1].split('.')[0]
         out[name] = [ float("{:0.4f}".format(x)) for x in embedding]
 
-    with open("../../../public/assets/imageEmbeddings.json", "w") as outfile:
+    with open("../../public/assets/imageEmbeddings.json", "w") as outfile:
         json.dump(out, outfile)
         
 if __name__ == '__main__':

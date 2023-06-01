@@ -1,9 +1,12 @@
 ---
 const props = Astro.props;
+console.log("button props", props);
 import { Icon } from "astro-icon";
 ---
 
-<button {...props}>{props.icon && <Icon name={props.icon} />}<slot /></button>
+<button class:list={[props.class, "shadowHover"]}
+  >{props.icon && <Icon name={props.icon} />}<slot /></button
+>
 
 <style>
   button {
@@ -13,9 +16,6 @@ import { Icon } from "astro-icon";
     font-family: inherit;
     /* color: black; */
     padding: 0.7em 1.2em;
-    box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.1);
-    transition: all 0.1s ease;
-    cursor: pointer;
     border-radius: 0.4em;
     font-weight: 600;
     display: flex;
