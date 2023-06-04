@@ -10,12 +10,12 @@
   },
   "rewrites": [
     {
-      "source": "/photo/:path",
-      "destination": "/api/photo/:path"
-    },
-    {
       "source": "/photo/map/:path",
       "destination": "/api/photo/:path?map=true"
+    },
+    {
+      "source": "/photo/:path",
+      "destination": "/api/photo/:path"
     }
   ],
   "redirects": [
