@@ -14,6 +14,7 @@ export default async function handler(req, res) {
   }
   const thumb = thumbs[name];
   if (!thumb) {
+    console.log("thumb", thumb, "not found from", Object.keys(thumbs));
     return res.redirect("/" + page);
   }
   const file = path.join(process.cwd(), "dist", page, "index.html");
