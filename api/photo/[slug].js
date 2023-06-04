@@ -33,6 +33,7 @@ export default async function handler(req, res) {
     console.log("thumb", thumb, "not found from", Object.keys(thumbs));
     return res.redirect("/" + page);
   }
+  console.log("corresponding page is", page);
   const cleanName = decodeURIComponent(name.replaceAll("--", "%"));
   let str = files[page].replaceAll(initialOgFilename, thumb);
   str = str.replaceAll("Photography |", cleanName + " | Photography |");
