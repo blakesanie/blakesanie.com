@@ -2,6 +2,11 @@ import { readFileSync } from "fs";
 import path from "path";
 import thumbs from "./.thumbs.js";
 
+const file = path.join(process.cwd(), "dist", page, "index.html");
+const fileStr = readFileSync(file, "utf8");
+const initialOgUrl = str.split(" property=og:image")[0].split("content=").pop();
+const initialOgFilename = initialOgUrl.split("/").pop();
+
 export default async function handler(req, res) {
   const slug = req.query.slug;
   console.log("slug is", slug);
@@ -17,15 +22,8 @@ export default async function handler(req, res) {
     console.log("thumb", thumb, "not found from", Object.keys(thumbs));
     return res.redirect("/" + page);
   }
-  const file = path.join(process.cwd(), "dist", page, "index.html");
-  let str = readFileSync(file, "utf8");
-  const initialOgUrl = str
-    .split(" property=og:image")[0]
-    .split("content=")
-    .pop();
-  const initialOgFilename = initialOgUrl.split("/").pop();
   const cleanName = decodeURIComponent(name.replaceAll("--", "%"));
-  str = str.replaceAll(initialOgFilename, thumb);
+  let str = fileStr.replaceAll(initialOgFilename, thumb);
   str = str.replaceAll("Photography |", cleanName + " | Photography |");
 
   res.setHeader("Content-Type", "text/html");
