@@ -87,7 +87,10 @@ await Promise.all(
       quality: 50,
     });
 
-    ogThumbs[name] = img.split('srcset="')[1].split('"')[0];
+    ogThumbs[name] = img
+      .split('srcset="')[1]
+      .split('"')[0]
+      .replace("/_astro/", "");
 
     const extracted = {
       path,

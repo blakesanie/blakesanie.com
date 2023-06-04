@@ -19,7 +19,10 @@ export default async function handler(req, res) {
   }
   const file = path.join(process.cwd(), "dist", page, "index.html");
   let str = readFileSync(file, "utf8");
-  const initialOgUrl = str.split(" property=og:image")[0].split("content=")[1];
+  const initialOgUrl = str
+    .split(" property=og:image")[0]
+    .split("content=")
+    .pop();
   const initialOgFilename = initialOgUrl.split("/").pop();
   const cleanName = decodeURIComponent(name.replaceAll("--", "%"));
   str = str.replaceAll(initialOgFilename, thumb);
