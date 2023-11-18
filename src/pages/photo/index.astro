@@ -5,7 +5,7 @@ import { Img } from "astro-imagetools/components";
 import exifr from "exifr";
 import { Icon } from "astro-icon";
 import sizeOf from "image-size";
-import exiftoolJson from "../../assets/images/metadata.json";
+import exiftoolJson from "../../../photo-portfolio/metadata.json";
 import { renderImg } from "astro-imagetools/api";
 import { writeFileSync } from "fs";
 // import { defaultOG } from "../../components/HeaderAndFooter/index.astro";
@@ -63,7 +63,7 @@ const ogWidth = 1000;
 
 const ogThumbs = {};
 
-const glob = await import.meta.glob("/src/assets/images/portfolio/*");
+const glob = await import.meta.glob("/photo-portfolio/portfolio2k/*");
 const images = {};
 await Promise.all(
   Object.keys(glob).map(async (path) => {
@@ -1032,7 +1032,7 @@ const description =
       }
       if (captured.camera) {
         let cam = captured.camera;
-        cam = cam.replace("SONY ILCE-7", "Sony A7");
+        // cam = cam.replace("SONY ILCE-7", "Sony A7");
 
         metaDataElement.innerHTML += `<div>${cam}</div>`;
       }
