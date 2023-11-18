@@ -1,7 +1,7 @@
 {
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "installCommand": "npm config set registry http://registry.npmjs.org && npm install",
   "outputDirectory": "dist",
   "functions": {
     "api/photo/*.js": {
