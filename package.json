@@ -13,6 +13,7 @@
     "@astrojs/mdx": "^0.19.4",
     "@splinetool/runtime": "^0.9.328",
     "astro": "^2.4.4",
+    "astro-compress": "^2.2.3",
     "astro-google-fonts-optimizer": "^0.2.2",
     "astro-icon": "^0.8.0",
     "astro-imagetools": "^0.8.1",
@@ -32,5 +33,4 @@
     "vercel": "^29.3.0",
     "yarn": "^1.22.19"
   }
-  
 }
