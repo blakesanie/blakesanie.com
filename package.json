@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev --host --port $PORT",
     "start": "astro dev",
-    "build": "rm -rf photo-portfolio && git clone https://${PORTFOLIO_PAT}:@github.com/blakesanie/photo-portfolio.git && mv photo-portfolio/imageEmbeddings.json public/assets/imageEmbeddings.json && python src/tooling/randomize_embeddings_file.py && astro build",
+    "build": "rm -rf photo-portfolio && git clone --depth=1 https://${PORTFOLIO_PAT}:@github.com/blakesanie/photo-portfolio.git && mv photo-portfolio/imageEmbeddings.json public/assets/imageEmbeddings.json && python src/tooling/randomize_embeddings_file.py && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
