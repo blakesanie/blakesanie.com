@@ -31,8 +31,6 @@
     "typed.js": "^2.0.16",
     "vercel": "^29.3.0",
     "yarn": "^1.22.19"
-  },
-  "devDependencies": {
-    "astro-compress": "1.1.42"
   }
+  
 }
