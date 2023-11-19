@@ -17,14 +17,14 @@ const markupData = [
     text: [
       "I am a graduate student studying Computer Science at the Georgia Institute of Technology, concentrating in Machine Learning.",
     ],
-    imageUrl: "/images/bg/crosland.jpg",
+    imageUrl: "/src/assets/images/bg/crosland.jpg",
     links: [],
   },
   {
     text: [
       "Ultimately, I am an exuberant software engineer at heart, and a problem-solver at my core,",
     ],
-    imageUrl: "/images/bg/macCode.jpg",
+    imageUrl: "/src/assets/images/bg/macCode.jpg",
     links: [
       {
         href: "/projects",
@@ -40,7 +40,7 @@ const markupData = [
   },
   {
     text: ["With a sense of photographic expression put on full display."],
-    imageUrl: "/images/portfolio/Manhattan--20Bridge.jpg",
+    imageUrl: "/photo-portfolio/portfolio2k/Manhattan--20Bridge.jpg",
     links: [
       {
         href: "/photo",
@@ -59,7 +59,7 @@ const markupData = [
   },
   {
     text: ["I encourage you to learn about my various ventures, old and new,"],
-    imageUrl: "/images/bg/mandel.png",
+    imageUrl: "/src/assets/images/bg/mandel.png",
     links: [
       { href: "/blog", label: "Blog", target: "_blank", nofollow: true },
       {
@@ -74,7 +74,7 @@ const markupData = [
     text: [
       "Reach out with professional inquiries surrounding new opportunities,",
     ],
-    imageUrl: "/images/bg/startup.jpg",
+    imageUrl: "/src/assets/images/bg/startup.jpg",
     links: [
       {
         href: "/linkedin",
@@ -92,7 +92,7 @@ const markupData = [
   },
   {
     text: ["Or connect with me further through my online presence."],
-    imageUrl: "/images/bg/connect.jpg",
+    imageUrl: "/src/assets/images/bg/connect.jpg",
     links: [
       {
         href: "mailto:blake@sanie.com",
@@ -161,7 +161,7 @@ const markupData = [
   {
     markupData.map((data, i) => (
       <HomePageSection
-        imageUrl={"/src/assets" + data.imageUrl}
+        imageUrl={data.imageUrl}
         text={data.text}
         links={data.links}
         class="homePageSection sectionTransitionParent"
