@@ -335,7 +335,12 @@ const description =
       margin-bottom: 1em;
       cursor: pointer;
       transition: opacity 0.2s ease;
+      display: none;
     }
+
+    /* :global(.modeMap) #advancedLabel, :global(.modeMap) #AISearch {
+      display: none;
+    } */
 
     #advancedLabel:hover {
       opacity: 1;
@@ -348,6 +353,7 @@ const description =
       transition: all 0.15s ease;
       padding-bottom: 1em;
       box-sizing: content-box;
+      display: none;
     }
 
     #AISearch.minimized {
@@ -709,9 +715,13 @@ const description =
     let resizedSinceSwitchedToMap = false;
 
     function activateGallery(reset = false) {
+      document.querySelector('body').classList.add('modeGallery')
+      document.querySelector('body').classList.remove('modeMap')
       function showGallery() {
         mapContainer.style.display = "none";
         galleryContainer.style.display = "block";
+        document.getElementById('advancedLabel').style.display = 'block'
+        document.getElementById('AISearch').style.display = 'block'
         // history.pushState({}, null, "/photo");
       }
       function getImageWidth() {
@@ -778,9 +788,13 @@ const description =
 
     function activateMap() {
       resizedSinceSwitchedToMap = false;
+      document.querySelector('body').classList.remove('modeGallery')
+      document.querySelector('body').classList.add('modeMap')
       function showMap() {
         galleryContainer.style.display = "none";
         mapContainer.style.display = "block";
+        document.getElementById('advancedLabel').style.display = 'none'
+        document.getElementById('AISearch').style.display = 'none'
         // history.pushState({}, null, "/photo/map");
       }
 
@@ -1218,6 +1232,7 @@ const description =
           executionProviders: ["wasm"],
         }),
         import("https://deno.land/x/clip_bpe@v0.0.6/mod.js"),
+        // restore below line to fetch("/assets/imageEmbeddings.json"),
         fetch("/assets/imageEmbeddings.json"),
       ]);
       modelSession = session;
@@ -1252,6 +1267,9 @@ const description =
       console.log("text embedding", textEmbedding);
       const similarities = {};
       for (const [name, embedding] of Object.entries(imageEmbeddings)) {
+        if (!images[name]) {
+          continue;
+        }
         const similarity = embedding.reduce((acc, curr, i) => {
           return acc + curr * textEmbedding[i];
         }, 0);
