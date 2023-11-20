@@ -36,7 +36,15 @@ export default async function handler(req, res) {
   console.log("corresponding page is", page);
   const cleanName = decodeURIComponent(name.replaceAll("--", "%"));
   let str = files[page].replaceAll(initialOgFilename, thumb);
-  str = str.replaceAll("Photography |", cleanName + " | Photography |");
+  str = str
+    .replaceAll(
+      "<title>Photography |",
+      "<title>" + cleanName + " | Photography |"
+    )
+    .replaceAll(
+      `content="Photography |`,
+      `content="` + cleanName + " | Photography |"
+    );
 
   res.setHeader("Content-Type", "text/html");
   return res.end(str);
