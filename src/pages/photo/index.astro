@@ -33,6 +33,7 @@ function removeEmpty(obj) {
 const cameraRenamings = {
   "SONY ILCE-7": "Sony a7",
   "NIKON CORPORATION NIKON D3200": "Nikon D3200",
+  "DJI FC3682": "DJI Mini 3",
 };
 
 const lensRenamings = {
@@ -222,6 +223,7 @@ const description =
               breakpoints={[600]}
               quality={50}
               format="webp"
+              saturation={1.1}
               placeholder="dominantColor"
               loading="lazy"
             />
@@ -247,6 +249,7 @@ const description =
               format="webp"
               placeholder="blurred"
               loading="lazy"
+              saturation={1.1}
             />
           </div>
         ))
@@ -262,6 +265,7 @@ const description =
               breakpoints={[300]}
               quality={50}
               format="webp"
+              saturation={1.1}
               placeholder="blurred"
               loading="lazy"
             />
@@ -715,13 +719,13 @@ const description =
     let resizedSinceSwitchedToMap = false;
 
     function activateGallery(reset = false) {
-      document.querySelector('body').classList.add('modeGallery')
-      document.querySelector('body').classList.remove('modeMap')
+      document.querySelector("body").classList.add("modeGallery");
+      document.querySelector("body").classList.remove("modeMap");
       function showGallery() {
         mapContainer.style.display = "none";
         galleryContainer.style.display = "block";
-        document.getElementById('advancedLabel').style.display = 'block'
-        document.getElementById('AISearch').style.display = 'block'
+        document.getElementById("advancedLabel").style.display = "block";
+        document.getElementById("AISearch").style.display = "block";
         // history.pushState({}, null, "/photo");
       }
       function getImageWidth() {
@@ -788,13 +792,13 @@ const description =
 
     function activateMap() {
       resizedSinceSwitchedToMap = false;
-      document.querySelector('body').classList.remove('modeGallery')
-      document.querySelector('body').classList.add('modeMap')
+      document.querySelector("body").classList.remove("modeGallery");
+      document.querySelector("body").classList.add("modeMap");
       function showMap() {
         galleryContainer.style.display = "none";
         mapContainer.style.display = "block";
-        document.getElementById('advancedLabel').style.display = 'none'
-        document.getElementById('AISearch').style.display = 'none'
+        document.getElementById("advancedLabel").style.display = "none";
+        document.getElementById("AISearch").style.display = "none";
         // history.pushState({}, null, "/photo/map");
       }
 
@@ -1050,7 +1054,7 @@ const description =
 
         metaDataElement.innerHTML += `<div>${cam}</div>`;
       }
-      if (captured.lens) {
+      if (captured.lens && !captured.lens.endsWith("mm")) {
         metaDataElement.innerHTML += `<div>${captured.lens}</div>`;
       }
       if (captured.latitude) {
@@ -1232,7 +1236,7 @@ const description =
           executionProviders: ["wasm"],
         }),
         import("https://deno.land/x/clip_bpe@v0.0.6/mod.js"),
-        // restore below line to fetch("/assets/imageEmbeddings.json"),
+        // restore below line to fetch("/assets/imageEmbeddings_10623043.json"),
         fetch("/assets/imageEmbeddings.json"),
       ]);
       modelSession = session;
