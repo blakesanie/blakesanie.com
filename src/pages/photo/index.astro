@@ -894,12 +894,14 @@ const description =
     function prevImage() {
       if (!openFileName) return;
       const newFilename = imageChanges[openFileName]["prev"];
+      if (!newFilename) return;
       activateFullScreen(newFilename);
     }
 
     function nextImage() {
       if (!openFileName) return;
       const newFilename = imageChanges[openFileName]["next"];
+      if (!newFilename) return;
       activateFullScreen(newFilename);
     }
 
@@ -1046,7 +1048,9 @@ const description =
         metaDataElement.innerHTML += `<div>ISO ${captured.iso}</div>`;
       }
       if (captured.focalLength) {
-        metaDataElement.innerHTML += `<div>${captured.focalLength}mm</div>`;
+        metaDataElement.innerHTML += `<div>${Math.round(
+          captured.focalLength
+        )}mm</div>`;
       }
       if (captured.camera) {
         let cam = captured.camera;
