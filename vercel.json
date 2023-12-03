@@ -61,6 +61,10 @@
     {
       "source": "/strava",
       "destination": "https://www.strava.com/athletes/44274878"
+    },
+    {
+      "source": "/chicago",
+      "destination": "https://drive.google.com/drive/folders/1VpI752Wer_g9cegu2Yoc20l4RxPWvRa_?usp=sharing"
     }
   ]
 }
