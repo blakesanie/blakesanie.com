@@ -1,0 +1,33 @@
+---
+import { renderImg } from "astro-imagetools/api";
+
+const url =
+  "https://drive.google.com/drive/folders/1VpI752Wer_g9cegu2Yoc20l4RxPWvRa_?usp=sharing";
+
+const { link, style, img } = await renderImg({
+  src: "/src/assets/images/40e9.webp",
+  breakpoints: [800],
+  format: "webp",
+  alt: "",
+  quality: 50,
+});
+
+const thumbUrl = img.split('srcset="')[1].split('"')[0];
+console.log("thumbUrl", thumbUrl);
+---
+
+<html>
+  <head>
+    <title>40 E 9th St - Master Bedroom</title>
+    <meta property="og:image" content={thumbUrl} />
+    <meta http-equiv="Refresh" content={`0; url='${url}'`} />
+    <script
+      define:vars={{
+        url: url,
+      }}
+    >
+      document.location.href = url;
+    </script>
+  </head>
+  <body> </body>
+</html>
