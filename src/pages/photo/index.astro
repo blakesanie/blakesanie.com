@@ -1480,8 +1480,8 @@ const description =
           executionProviders: ["wasm"],
         }),
         import("https://deno.land/x/clip_bpe@v0.0.6/mod.js"),
-        // restore below line to fetch("/assets/imageEmbeddings_10623043.json"),
-        fetch("/assets/imageEmbeddings_37400550.json"),
+        // restore below line to fetch("/assets/imageEmbeddings.json"),
+        fetch("/assets/imageEmbeddings.json"),
       ]);
       modelSession = session;
       tokenizer = new Tokenizer.default();
