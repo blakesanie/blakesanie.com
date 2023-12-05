@@ -45,7 +45,7 @@ const imageAlt =
 const { width, height } = {};
 const description =
   Astro.props.description ||
-  "Software Engineer. Photographer. Writer & Instructor. Lifelong Student.";
+  "Software Engineer. Photographer. Marathoner. Lifelong Student.";
 const title = Astro.props.title
   ? Astro.props.title + " | Blake Sanie"
   : "Blake Sanie";
@@ -224,7 +224,7 @@ const title = Astro.props.title
       <div id="bio">
         <span>Software Engineer.</span>
         <span>Photographer.</span>
-        <span>Writer & Instructor.</span>
+        <span>Marathoner.</span>
         <span>Lifelong Student.</span>
       </div>
       <nav>
@@ -239,6 +239,13 @@ const title = Astro.props.title
               textColor={textColor}
             >
               Projects
+            </NavLink>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="majesticons:newspaper-line"
+              href="/press"
+            >
+              Press
             </NavLink>
             <NavLink
               hoverZoneBehind={hoverZoneBehind}
@@ -324,15 +331,7 @@ const title = Astro.props.title
             >
               Contact Card
             </NavLink>
-            <NavLink
-              hoverZoneBehind={hoverZoneBehind}
-              icon="majesticons:newspaper-line"
-              href="/blog"
-              chip="43K"
-              chipIcon="majesticons:eye-line"
-            >
-              Blog
-            </NavLink>
+
             <NavLink
               hoverZoneBehind={hoverZoneBehind}
               icon="lucide:linkedin"

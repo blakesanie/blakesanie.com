@@ -1,0 +1,163 @@
+---
+import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
+
+const links = [
+  { link: "https://machronicle.com/elementor-81035/" },
+  {
+    link: "https://www.capitalone.com/tech/culture/tech-internships-tackle-aws/",
+  },
+  {
+    link: "https://www.cc.gatech.edu/news/professor-deploying-anti-plagiarism-detection-tool-900-student-course",
+  },
+  {
+    link: "https://www.linkedin.com/feed/update/urn:li:activity:6833004016574840832/",
+    image:
+      "https://media.licdn.com/dms/image/C5622AQFdt13uDiD63w/feedshare-shrink_800/0/1629115107404?e=1704931200&v=beta&t=3GdUn81KQqgiYc90KxZYSizxM9jKthCjQbzFUfpYLeE",
+  },
+];
+
+async function processLink({ link, image }) {
+  const res = await fetch(link);
+  const text = await res.text();
+  //   console.log(text);
+  let title = text.split("<title>")[1].split("</title>")[0];
+  title = title.replace(" on LinkedIn", "");
+  let site = link.split("://")[1].split("/")[0];
+  site = site.replace("www.", "");
+  //   article:published_time
+  function getContentProperty(text, query) {
+    const split = text.split(query);
+    if (split.length == 1) return;
+    const afterContentIndex = split[1].indexOf('content="');
+    let out;
+    if (afterContentIndex > -1 && split[1].indexOf(">") > afterContentIndex) {
+      out = split[1].split('content="')[1].split('"')[0];
+    } else {
+      let s = split[1].split('content="');
+      out = s[s.length - 1].split('"')[0];
+    }
+    return out;
+  }
+  if (!image) {
+    image = getContentProperty(text, 'property="og:image"');
+  }
+  let date = getContentProperty(text, 'property="article:published_time"');
+  if (date) {
+    const d = new Date(date);
+    date = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+  }
+  //   const imageSplit = text.split('property="og:image"');
+  //   const afterContentIndex = imageSplit[1].indexOf('content="');
+  //   let image;
+  //   if (
+  //     afterContentIndex > -1 &&
+  //     imageSplit[1].indexOf(">") > afterContentIndex
+  //   ) {
+  //     image = imageSplit[1].split('content="')[1].split('"')[0];
+  //   } else {
+  //     let s = imageSplit[1].split('content="');
+  //     image = s[s.length - 1].split('"')[0];
+  //   }
+  return {
+    title,
+    site,
+    image,
+    date,
+    link,
+  };
+}
+const press = await Promise.all(links.map((link) => processLink(link)));
+console.log(press);
+// const f1 = await fetch(links[0]);
+// console.log("f1", await f1.text());
+---
+
+<HeaderAndFooter allowMainStyles title="Press" description="">
+  <h1>Press</h1>
+  <div id="articles">
+    {
+      press.map(({ title, site, image, date, link }) => {
+        return (
+          <a class="article" href={link} target="_blank">
+            <p class="title">{title}</p>
+            <p class="site">{site}</p>
+            <p class="date">{date}</p>
+            <img src={image} />
+          </a>
+        );
+      })
+    }
+  </div>
+</HeaderAndFooter>
+
+<style>
+  #articles {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .article {
+    position: relative;
+    width: 100%;
+    margin: 14px;
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.1);
+    padding: 1em;
+    padding-left: 0;
+    min-height: 160px;
+    max-width: 800px;
+    border-radius: 0.6em;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.1s ease;
+  }
+  .article:hover {
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  }
+  .article > p {
+    width: calc(100% - 160px);
+    margin-left: 160px;
+    padding: 0 1.4rem;
+    text-indent: 0;
+    color: black;
+  }
+  .article img {
+    position: absolute;
+    top: 0;
+    width: 160px;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article .title {
+    font-size: 1.4rem;
+  }
+  .article .site,
+  .article .date {
+    font-size: 1rem;
+    opacity: 0.5;
+  }
+
+  .article .site {
+    font-style: italic;
+  }
+
+  @media screen and (max-width: 500px) {
+    .article {
+      padding: 1em 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .article > p {
+      width: 100%;
+      margin-left: 0;
+    }
+    .article img {
+      position: static;
+      width: calc(100%+2em);
+      margin-left: -1em;
+      margin-bottom: -1em;
+      height: 200px;
+      margin-top: 0.7em;
+    }
+  }
+</style>
