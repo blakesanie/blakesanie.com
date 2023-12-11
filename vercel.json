@@ -28,6 +28,10 @@
       "source": "/instagram",
       "destination": "https://www.instagram.com/blake_sanie/"
     },
+    {
+      "source": "/gourmet",
+      "destination": "https://www.instagram.com/blake_gourmet/"
+    },
     { "source": "/github", "destination": "https://github.com/blakesanie" },
     {
       "source": "/balance",

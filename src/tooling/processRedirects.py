@@ -2,7 +2,7 @@
 import json
 
  
-with open('./redirects.json') as json_file:
+with open('../redirects.json') as json_file:
     data = json.load(json_file)
     out = []
     for route, attributes in data.items():
