@@ -71,5 +71,9 @@
   "contact": {
     "href": "/contact.vcf",
     "title": "Blake's Contact Card"
+  },
+  "menu": {
+    "href": "/menu.pdf",
+    "title": "Gourmet Menu"
   }
 }
