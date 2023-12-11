@@ -1,0 +1,142 @@
+---
+import glob from "glob-promise";
+import fs from "fs";
+import RecursiveAnchor from "../../components/RecursiveAnchor.astro";
+
+const files = await glob("public/**/*");
+console.log(files);
+
+const tree = {};
+
+for (let file of files) {
+  const stats = fs.lstatSync(file);
+  if (stats.isDirectory()) {
+    continue;
+  }
+
+  file = file.replace("public/", "");
+  const parts = file.split("/");
+  let subtree = tree;
+  for (const part of parts.slice(0, -1)) {
+    if (!subtree[part]) {
+      subtree[part] = {};
+    }
+    subtree = subtree[part];
+  }
+  subtree[parts[parts.length - 1]] = "/" + file;
+}
+console.log("tree", tree);
+---
+
+<html>
+  <head>
+    <title>Public - blakesanie.com</title>
+  </head>
+  <body>
+    <button id="toggle">Show All</button>
+    <!-- <input type="text" id="search" placeholder="search" /> -->
+    <RecursiveAnchor tree={tree} />
+  </body>
+</html>
+
+<style is:global>
+  * {
+    display: block;
+  }
+  div {
+    cursor: default;
+  }
+  div > * {
+    padding-left: 1em;
+    display: none;
+  }
+  .show div > * {
+    display: block;
+  }
+  div:hover > * {
+    display: block;
+  }
+  .searching a,
+  .searching div {
+    display: none;
+  }
+  .searched {
+    display: block !important;
+  }
+</style>
+
+<script>
+  let show = false;
+  const toggleButton = document.getElementById("toggle");
+  toggleButton?.addEventListener("click", () => {
+    show = !show;
+    toggleButton.innerText = toggleButton.innerText
+      .replace("Show", "x")
+      .replace("Hide", "Show")
+      .replace("x", "Hide");
+    if (show) {
+      document.body.classList.add("show");
+    } else {
+      document.body.classList.remove("show");
+    }
+  });
+
+  //   const searchedMap = {};
+
+  //   const searchBar = document.getElementById("search");
+  //   searchBar?.addEventListener("input", (e) => {
+  //     const query = e.target.value.toLowerCase();
+  //     if (!query.length) {
+  //       document.querySelectorAll(".searched").forEach((element) => {
+  //         element.classList.remove("searched");
+  //         //   element.classList.remove("leaf");
+  //       });
+  //       document.body.classList.remove("searching");
+  //     } else {
+  //       document.body.classList.add("searching");
+  //       const anchors = document.querySelectorAll("a");
+  //       for (const anchor of anchors) {
+  //         console.log(
+  //           "anchor inner text",
+  //           anchor.innerText.toLowerCase(),
+  //           query,
+  //           anchor.innerText.toLowerCase().includes(query)
+  //         );
+  //         if (anchor.innerText.toLowerCase().includes(query)) {
+  //           if (anchor.classList.contains("searched")) {
+  //             continue;
+  //           }
+  //           anchor.classList.add("searched");
+  //           //   anchor.classList.add("leaf");
+  //           let parent = anchor.parentElement;
+  //           while (parent?.tagName != "BODY") {
+  //             parent?.classList.add("searched");
+  //             if (!searchedMap[parent.innerText]) {
+  //               searchedMap[parent.innerText] = 0;
+  //             }
+  //             searchedMap[parent.innerText]++;
+  //             console.log("increment", parent?.innerText);
+  //             parent = parent?.parentElement;
+  //           }
+  //         } else if (anchor.classList.contains("searched")) {
+  //           anchor.classList.remove("searched");
+  //           //   anchor.classList.remove("leaf");
+  //           let parent = anchor.parentElement;
+  //           while (parent?.tagName != "BODY") {
+  //             parent?.classList.remove("searched");
+  //             searchedMap[parent.innerText]--;
+  //             console.log("decrement", parent?.innerText);
+
+  //             parent = parent?.parentElement;
+  //           }
+  //         }
+  //       }
+  //       const searchedParents = document.querySelectorAll("div.searched");
+  //       for (const searchedParent of searchedParents) {
+  //         if (searchedMap[searchedParent.innerText] === 0) {
+  //           searchedParent.classList.remove("searched");
+  //         }
+  //       }
+  //     }
+  //   });
+</script>

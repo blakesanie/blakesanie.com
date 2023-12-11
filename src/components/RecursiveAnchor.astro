@@ -1,0 +1,45 @@
+---
+const links = [];
+const dirs = [];
+for (const pair of Object.entries(Astro.props.tree)) {
+  const [key, value] = pair;
+  if (typeof value == "string") {
+    links.push({
+      name: key,
+      href: value,
+    });
+  } else {
+    dirs.push({
+      name: key,
+      tree: value,
+    });
+  }
+}
+console.log(links, dirs);
+links.sort((a, b) => {
+  return a.name - b.name;
+});
+dirs.sort((a, b) => {
+  return a.name - b.name;
+});
+---
+
+{
+  links.map(({ name, href }) => {
+    return (
+      <a href={href} target="_blank">
+        {name}
+      </a>
+    );
+  })
+}
+{
+  dirs.map(({ name, tree }) => {
+    return (
+      <div>
+        {name}
+        <Astro.self tree={tree} />
+      </div>
+    );
+  })
+}
