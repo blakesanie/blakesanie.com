@@ -161,12 +161,21 @@ let maxLat = -Infinity;
 let minLng = Infinity;
 let maxLng = -Infinity;
 
-for (const image of Object.values(images)) {
+for (const [name, image] of Object.entries(images)) {
   if (image.latitude) {
     minLat = Math.min(minLat, image.latitude);
     maxLat = Math.max(maxLat, image.latitude);
     minLng = Math.min(minLng, image.longitude);
     maxLng = Math.max(maxLng, image.longitude);
+    image.neighbor = Infinity;
+    for (const [name2, image2] of Object.entries(images)) {
+      if (image2.latitude && name != name2) {
+        const dx = image2.longitude - image.longitude;
+        const dy = image2.latitude - image.latitude;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        image.neighbor = Math.min(image.neighbor, dist);
+      }
+    }
   }
 }
 
@@ -1088,7 +1097,6 @@ const description =
 
           marker.addListener("mouseover", function (e) {
             marker.setOptions({ zIndex: 99999 });
-            console.log("marker", marker);
             showPreview();
           });
           marker.addListener("mouseout", function () {
@@ -1096,6 +1104,21 @@ const description =
             infoWindow.close();
           });
           marker.addListener("click", (e) => {
+            if (image.neighbor) {
+              const zoom = map.zoom;
+              const idealZoom = Math.round(
+                -Math.log10(image.neighbor) / 0.3 + 7
+              );
+              console.log("zooms", zoom, idealZoom);
+              if (zoom < idealZoom) {
+                map.setCenter({
+                  lat: lat,
+                  lng: lng,
+                });
+                map.setZoom(Math.max(1 + zoom, zoom * 0.25 + 0.75 * idealZoom));
+                return;
+              }
+            }
             blurInterval = setInterval(() => {
               document.activeElement.blur();
             }, 100);
