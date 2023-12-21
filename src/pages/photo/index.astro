@@ -869,119 +869,6 @@ const description =
 
     let drawReady = false;
 
-    class Popup extends google.maps.OverlayView {
-      position;
-      name;
-      image;
-      containerDiv;
-      map;
-      width;
-      height;
-      covering;
-      constructor(name, image, map) {
-        super();
-        this.position = new google.maps.LatLng(image.latitude, image.longitude);
-        this.name = name;
-        this.image = image;
-        // This zero-height div is positioned at the bottom of the bubble.
-        const img = document.createElement("img");
-        img.src = icons[name];
-        img.classList.add("mapImg");
-        // This zero-height div is positioned at the bottom of the tip.
-        this.containerDiv = document.createElement("div");
-        this.containerDiv.classList.add("mapThumb");
-        const area = 3000;
-        const fullArea = image.width * image.height;
-        const scalar = 1 / Math.sqrt(fullArea / area);
-        this.width = image.width * scalar;
-        this.height = image.height * scalar;
-        this.containerDiv.style.width = this.width + "px";
-        this.containerDiv.style.height = this.height + "px";
-
-        const label = document.createElement("p");
-
-        const svg = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "svg"
-        );
-        svg.setAttribute("viewbox", "0 0 20 20");
-        svg.setAttribute("width", "20px");
-        svg.setAttribute("height", "20px");
-        const path = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "path"
-        );
-        path.setAttribute("d", "M 10,18 2,5 18,5 z");
-        svg.appendChild(path);
-
-        this.containerDiv.appendChild(svg);
-        this.containerDiv.appendChild(img);
-        this.containerDiv.appendChild(label);
-        // Optionally stop clicks, etc., from bubbling up to the map.
-        Popup.preventMapHitsAndGesturesFrom(this.containerDiv);
-        this.map = map;
-        this.setMap(map);
-        this.count = 1;
-      }
-      /** Called when the popup is added to the map. */
-      onAdd() {
-        this.getPanes().floatPane.appendChild(this.containerDiv);
-      }
-      /** Called when the popup is removed from the map. */
-      onRemove() {
-        if (this.containerDiv.parentElement) {
-          this.containerDiv.parentElement.removeChild(this.containerDiv);
-        }
-      }
-
-      getBox() {
-        const divPosition = this.getProjection().fromLatLngToDivPixel(
-          this.position
-        );
-        return [
-          divPosition.x - this.width / 2,
-          divPosition.y - this.height,
-          divPosition.x + this.width / 2,
-          divPosition.y,
-        ];
-      }
-      setVisibility(visible) {
-        if (visible) {
-          this.containerDiv.classList.add("visible");
-        } else {
-          this.containerDiv.classList.remove("visible");
-        }
-      }
-      /** Called each frame when the popup needs to draw itself. */
-      draw() {
-        const divPosition = this.getProjection().fromLatLngToDivPixel(
-          this.position
-        );
-        // if (!drawReady) {
-        //   drawReady = true;
-        //   if (this.visibilityFunc) {
-        //     console.log("DRAW READY");
-        //     this.visibilityFunc();
-        //   }
-        // }
-        // Hide the popup when it is far out of view.
-        // const display =
-        //   Math.abs(divPosition.x) < window.innerWidth / 2 + 100 &&
-        //   Math.abs(divPosition.y) < window.innerHeight / 2 + 100
-        //     ? "block"
-        //     : "none";
-
-        // if (display === "block") {
-        this.containerDiv.style.left = divPosition.x + "px";
-        this.containerDiv.style.top = divPosition.y + "px";
-        // }
-
-        // if (this.containerDiv.style.display !== display) {
-        //   this.containerDiv.style.display = display;
-        // }
-      }
-    }
-
     function activateMap() {
       resizedSinceSwitchedToMap = false;
       document.querySelector("body").classList.remove("modeGallery");
@@ -995,6 +882,123 @@ const description =
       }
 
       showMap();
+
+      class Popup extends google.maps.OverlayView {
+        position;
+        name;
+        image;
+        containerDiv;
+        map;
+        width;
+        height;
+        covering;
+        constructor(name, image, map) {
+          super();
+          this.position = new google.maps.LatLng(
+            image.latitude,
+            image.longitude
+          );
+          this.name = name;
+          this.image = image;
+          // This zero-height div is positioned at the bottom of the bubble.
+          const img = document.createElement("img");
+          img.src = icons[name];
+          img.classList.add("mapImg");
+          // This zero-height div is positioned at the bottom of the tip.
+          this.containerDiv = document.createElement("div");
+          this.containerDiv.classList.add("mapThumb");
+          const area = 3000;
+          const fullArea = image.width * image.height;
+          const scalar = 1 / Math.sqrt(fullArea / area);
+          this.width = image.width * scalar;
+          this.height = image.height * scalar;
+          this.containerDiv.style.width = this.width + "px";
+          this.containerDiv.style.height = this.height + "px";
+
+          const label = document.createElement("p");
+
+          const svg = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+          );
+          svg.setAttribute("viewbox", "0 0 20 20");
+          svg.setAttribute("width", "20px");
+          svg.setAttribute("height", "20px");
+          const path = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path"
+          );
+          path.setAttribute("d", "M 10,18 2,5 18,5 z");
+          svg.appendChild(path);
+
+          this.containerDiv.appendChild(svg);
+          this.containerDiv.appendChild(img);
+          this.containerDiv.appendChild(label);
+          // Optionally stop clicks, etc., from bubbling up to the map.
+          Popup.preventMapHitsAndGesturesFrom(this.containerDiv);
+          this.map = map;
+          this.setMap(map);
+          this.count = 1;
+        }
+        /** Called when the popup is added to the map. */
+        onAdd() {
+          this.getPanes().floatPane.appendChild(this.containerDiv);
+        }
+        /** Called when the popup is removed from the map. */
+        onRemove() {
+          if (this.containerDiv.parentElement) {
+            this.containerDiv.parentElement.removeChild(this.containerDiv);
+          }
+        }
+
+        getBox() {
+          const divPosition = this.getProjection().fromLatLngToDivPixel(
+            this.position
+          );
+          return [
+            divPosition.x - this.width / 2,
+            divPosition.y - this.height,
+            divPosition.x + this.width / 2,
+            divPosition.y,
+          ];
+        }
+        setVisibility(visible) {
+          if (visible) {
+            this.containerDiv.classList.add("visible");
+          } else {
+            this.containerDiv.classList.remove("visible");
+          }
+        }
+        /** Called each frame when the popup needs to draw itself. */
+        draw() {
+          const divPosition = this.getProjection().fromLatLngToDivPixel(
+            this.position
+          );
+          // if (!drawReady) {
+          //   drawReady = true;
+          //   if (this.visibilityFunc) {
+          //     console.log("DRAW READY");
+          //     this.visibilityFunc();
+          //   }
+          // }
+          // Hide the popup when it is far out of view.
+          // const display =
+          //   Math.abs(divPosition.x) < window.innerWidth / 2 + 100 &&
+          //   Math.abs(divPosition.y) < window.innerHeight / 2 + 100
+          //     ? "block"
+          //     : "none";
+
+          // if (display === "block") {
+          this.containerDiv.style.left = divPosition.x + "px";
+          this.containerDiv.style.top = divPosition.y + "px";
+          // }
+
+          // if (this.containerDiv.style.display !== display) {
+          //   this.containerDiv.style.display = display;
+          // }
+        }
+      }
+
       const width = mapContainer.clientWidth;
       const zoom = Math.floor(1.73 * Math.log(width) - 9.26);
 
