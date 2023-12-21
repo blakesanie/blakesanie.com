@@ -287,11 +287,8 @@ const markupData = [
         window.innerHeight -
         section.offsetHeight / 2 -
         distUnder;
-      const diff =
-        Math.min(
-          sectionCenter - Math.max(bestScreenCenter, screenCenter),
-          1000000000
-        ) / sectionHeight;
+      const dist = sectionCenter - Math.max(bestScreenCenter, screenCenter);
+      const diff = dist / sectionHeight;
       const bg = section.querySelector(".bg");
       if (!(bg instanceof HTMLElement)) {
         return;
@@ -299,6 +296,7 @@ const markupData = [
       // bg.style.transform = `translateY(${-diff * 100}px)`;
       // bg.style.opacity = `${0.2 + 0.6 * Math.max(0, 1 - Math.abs(diff) * 1)}`;
       const children = section.childNodes;
+      bg.style.opacity = 0.05 + 0.55 * (1 - Math.abs(dist) / sectionHeight);
       for (let i = 0; i < children.length; i++) {
         const child = children[i];
         if (!(child instanceof HTMLElement)) {
@@ -315,7 +313,8 @@ const markupData = [
     for (let i = 0; i < firstSection.children.length; i++) {
       const child = firstSection.children[i];
       if (child.id == "blobField") {
-        continue;
+        child.querySelector("svg").style.opacity =
+          1 - window.scrollY / sectionHeight;
       }
       if (child.id == "wwdc") {
         child.style.transform = `translateY(${
