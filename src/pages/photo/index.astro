@@ -568,6 +568,41 @@ const description =
         width: calc(100vw - var(--gutter) * 2);
       }
     }
+
+    :global(.mapThumb) {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    :global(.mapThumb p) {
+      position: absolute;
+      background-color: rgb(255, 255, 255);
+      text-indent: 0;
+      padding: 0em 0.3em;
+      /* transform: translate(-6px, -6px); */
+      border-bottom-right-radius: 0.4em;
+      border-top-left-radius: 3px;
+      color: black;
+      font-size: 0.8rem;
+      font-weight: 1000;
+    }
+
+    :global(.mapThumb.visible) {
+      opacity: 1 !important;
+      pointer-events: all !important;
+    }
+
+    :global(.mapThumb img) {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 4px solid white;
+      border-radius: 3px;
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    }
   </style>
 
   <script
@@ -814,6 +849,106 @@ const description =
 
     let map;
     let blurInterval;
+
+    let drawReady = false;
+
+    class Popup extends google.maps.OverlayView {
+      position;
+      name;
+      image;
+      containerDiv;
+      map;
+      width;
+      height;
+      covering;
+      constructor(name, image, map) {
+        super();
+        this.position = new google.maps.LatLng(image.latitude, image.longitude);
+        this.name = name;
+        this.image = image;
+        // This zero-height div is positioned at the bottom of the bubble.
+        const img = document.createElement("img");
+        img.src = icons[name];
+        img.classList.add("mapImg");
+        // This zero-height div is positioned at the bottom of the tip.
+        this.containerDiv = document.createElement("div");
+        this.containerDiv.classList.add("mapThumb");
+        const area = 3000;
+        const fullArea = image.width * image.height;
+        const scalar = 1 / Math.sqrt(fullArea / area);
+        this.width = image.width * scalar;
+        this.height = image.height * scalar;
+        this.containerDiv.style.width = this.width + "px";
+        this.containerDiv.style.height = this.height + "px";
+
+        const label = document.createElement("p");
+
+        this.containerDiv.appendChild(img);
+        this.containerDiv.appendChild(label);
+        // Optionally stop clicks, etc., from bubbling up to the map.
+        Popup.preventMapHitsAndGesturesFrom(this.containerDiv);
+        this.map = map;
+        this.setMap(map);
+        this.count = 1;
+      }
+      /** Called when the popup is added to the map. */
+      onAdd() {
+        this.getPanes().floatPane.appendChild(this.containerDiv);
+      }
+      /** Called when the popup is removed from the map. */
+      onRemove() {
+        if (this.containerDiv.parentElement) {
+          this.containerDiv.parentElement.removeChild(this.containerDiv);
+        }
+      }
+
+      getBox() {
+        const divPosition = this.getProjection().fromLatLngToDivPixel(
+          this.position
+        );
+        return [
+          divPosition.x - this.width / 2,
+          divPosition.y - this.height,
+          divPosition.x + this.width / 2,
+          divPosition.y,
+        ];
+      }
+      setVisibility(visible) {
+        if (visible) {
+          this.containerDiv.classList.add("visible");
+        } else {
+          this.containerDiv.classList.remove("visible");
+        }
+      }
+      /** Called each frame when the popup needs to draw itself. */
+      draw() {
+        const divPosition = this.getProjection().fromLatLngToDivPixel(
+          this.position
+        );
+        // if (!drawReady) {
+        //   drawReady = true;
+        //   if (this.visibilityFunc) {
+        //     console.log("DRAW READY");
+        //     this.visibilityFunc();
+        //   }
+        // }
+        // Hide the popup when it is far out of view.
+        // const display =
+        //   Math.abs(divPosition.x) < window.innerWidth / 2 + 100 &&
+        //   Math.abs(divPosition.y) < window.innerHeight / 2 + 100
+        //     ? "block"
+        //     : "none";
+
+        // if (display === "block") {
+        this.containerDiv.style.left = divPosition.x + "px";
+        this.containerDiv.style.top = divPosition.y + "px";
+        // }
+
+        // if (this.containerDiv.style.display !== display) {
+        //   this.containerDiv.style.display = display;
+        // }
+      }
+    }
 
     function activateMap() {
       resizedSinceSwitchedToMap = false;
@@ -1064,73 +1199,242 @@ const description =
         });
         const infoWindow = new google.maps.InfoWindow();
 
+        // let i = 1;
+        const markers = [];
         for (const [name, image] of Object.entries(images)) {
-          const lat = image.latitude;
-          const lng = image.longitude;
-
-          const area = 3000;
-          const fullArea = image.width * image.height;
-          const scalar = 1 / Math.sqrt(fullArea / area);
-
-          const marker = new google.maps.Marker({
-            position: { lat: lat, lng: lng },
-            map: map,
-            zIndex: 1,
-            icon: {
-              url: icons[name],
-              // size: new google.maps.Size(40, 40),
-              scaledSize: new google.maps.Size(
-                image.width * scalar,
-                image.height * scalar
-              ),
-            },
-          });
-
-          function showPreview() {
-            const element = document
-              .getElementById("thumbnail-" + name)
-              .cloneNode(true);
-            console.log("cloned thumb", element);
-            infoWindow.setContent(element);
-            infoWindow.open(marker.getMap(), marker);
+          if (!image.latitude) {
+            continue;
           }
+          // const area = 3000;
+          // const fullArea = image.width * image.height;
+          // const scalar = 1 / Math.sqrt(fullArea / area);
 
-          marker.addListener("mouseover", function (e) {
-            marker.setOptions({ zIndex: 99999 });
-            showPreview();
-          });
-          marker.addListener("mouseout", function () {
-            marker.setOptions({ zIndex: 1 });
-            infoWindow.close();
-          });
-          marker.addListener("click", (e) => {
-            if (image.neighbor) {
-              const zoom = map.zoom;
-              const idealZoom = Math.round(
-                -Math.log10(image.neighbor) / 0.3 + 7
-              );
-              console.log("zooms", zoom, idealZoom);
-              if (zoom < idealZoom) {
-                map.setCenter({
-                  lat: lat,
-                  lng: lng,
-                });
-                map.setZoom(Math.max(1 + zoom, zoom * 0.25 + 0.75 * idealZoom));
+          // const marker = new google.maps.Marker({
+          //   position: { lat: lat, lng: lng },
+          //   map: map,
+          //   zIndex: 1,
+          //   icon: {
+          //     url: icons[name],
+          //     // size: new google.maps.Size(40, 40),
+          //     scaledSize: new google.maps.Size(
+          //       image.width * scalar,
+          //       image.height * scalar
+          //     ),
+          //   },
+          // });
+          const marker = new Popup(name, image, map);
+          markers.push(marker);
+
+          // const borderWidth = 2;
+
+          // const bgWidth = image.width * scalar + borderWidth * 2;
+          // const bgHeight = image.height * scalar + borderWidth * 2;
+
+          // const markerBg = new google.maps.Marker({
+          //   position: { lat: lat, lng: lng },
+          //   map: map,
+          //   zIndex: i,
+          //   icon: {
+          //     url:
+          //       "data:image/svg+xml," +
+          //       encodeURIComponent(
+          //         `<svg xmlns="http://www.w3.org/2000/svg" width="${bgWidth}" height="${bgHeight}" viewBox="0 0 ${bgWidth} ${bgHeight}">` +
+          //           `<rect x="0" y="0" width="${bgWidth}" height="${bgHeight}" fill="white" stroke="white" stroke-width="2"/>` +
+          //           "</svg>"
+          //       ),
+          //     // size: new google.maps.Size(40, 40),
+          //     scaledSize: new google.maps.Size(bgWidth, bgHeight),
+          //   },
+          // });
+
+          // function showPreview() {
+          //   const element = document
+          //     .getElementById("thumbnail-" + name)
+          //     .cloneNode(true);
+          //   console.log("cloned thumb", element);
+          //   infoWindow.setContent(element);
+          //   infoWindow.open(marker.getMap(), marker);
+          // }
+
+          // marker.addListener("mouseover", function (e) {
+          //   marker.setOptions({ zIndex: 99999 });
+          //   showPreview();
+          // });
+          // marker.addListener("mouseout", function () {
+          //   marker.setOptions({ zIndex: 1 });
+          //   infoWindow.close();
+          // });
+          // marker.addListener("click", (e) => {
+          //   if (image.neighbor) {
+          //     const zoom = map.zoom;
+          //     const idealZoom = Math.round(
+          //       -Math.log10(image.neighbor) / 0.3 + 7
+          //     );
+          //     console.log("zooms", zoom, idealZoom);
+          //     if (zoom < idealZoom) {
+          //       map.setCenter({
+          //         lat: lat,
+          //         lng: lng,
+          //       });
+          //       map.setZoom(Math.max(1 + zoom, zoom * 0.25 + 0.75 * idealZoom));
+          //       return;
+          //     }
+          //   }
+          //   blurInterval = setInterval(() => {
+          //     document.activeElement.blur();
+          //   }, 100);
+          //   activateFullScreen(name);
+          //   e.domEvent.stopPropagation();
+          //   e.domEvent.preventDefault();
+          //   console.log("active before", document.activeElement);
+          //   document.activeElement.blur();
+          //   console.log("active after", document.activeElement);
+          //   // console.log("click event", e.domEvent);
+          // });
+          // i += 2;
+        }
+        // const projection = map.getProjection();
+        // console.log("projection", projection);
+        google.maps.event.addListener(map, "idle", function () {
+          updateVisibilities();
+        });
+        google.maps.event.addListener(map, "zoom_changed", function () {
+          updateVisibilities();
+        });
+
+        const zoomVisibilities = {};
+
+        function applyVisibilities(covers) {
+          console.log("covers", covers);
+          for (let i = 0; i < markers.length; i++) {
+            const covered = covers[i];
+            markers[i].setVisibility(covered);
+            if (covered && covered.length > 0) {
+              markers[i].containerDiv.querySelector("p").textContent =
+                covered.length + 1;
+            } else {
+              markers[i].containerDiv.querySelector("p").textContent = "";
+            }
+          }
+        }
+
+        function boxToZoom(latRange, lngRange) {
+          function toZoom(range) {
+            return Math.round(-Math.log10(range) / 0.35 + 8.4);
+          }
+          return Math.min(19, Math.min(toZoom(latRange), toZoom(lngRange)));
+        }
+
+        let i = 0;
+        for (const marker of markers) {
+          const index = i;
+          marker.containerDiv.id = "mapThumb-" + i;
+          marker.containerDiv.addEventListener("click", function () {
+            // Handle click event here
+            const covered = zoomVisibilities[map.zoom][index];
+            if (covered) {
+              if (covered.length == 0) {
+                activateFullScreen(marker.name);
                 return;
               }
+              let minLat = marker.position.lat();
+              let maxLat = minLat;
+              let minLng = marker.position.lng();
+              let maxLng = minLng;
+              for (const j of covered) {
+                const pos = markers[j].position;
+                const lat = pos.lat();
+                const lng = pos.lng();
+                minLat = Math.min(minLat, lat);
+                maxLat = Math.max(maxLat, lat);
+                minLng = Math.min(minLng, lng);
+                maxLng = Math.max(maxLng, lng);
+              }
+              map.setCenter({
+                lat: (maxLat + minLat) / 2,
+                lng: (maxLng + minLng) / 2,
+              });
+              map.setZoom(boxToZoom(maxLat - minLat, maxLng - minLng));
+              updateVisibilities();
             }
-            blurInterval = setInterval(() => {
-              document.activeElement.blur();
-            }, 100);
-            activateFullScreen(name);
-            e.domEvent.stopPropagation();
-            e.domEvent.preventDefault();
-            console.log("active before", document.activeElement);
-            document.activeElement.blur();
-            console.log("active after", document.activeElement);
-            // console.log("click event", e.domEvent);
+
+            // covering;
           });
+          i++;
         }
+
+        let prevZoom = map.zoom;
+
+        function updateVisibilities() {
+          // debugger;
+          // let covers = zoomVisibilities[map.zoom];
+          // if (covers) {
+          //   applyVisibilities(covers);
+          //   return;
+          // }
+          setTimeout(() => {
+            // debugger;
+            let visibleIndices = [];
+            // for (let i = map.zoom - 1; i >= 0; i--) {
+            //   if (zoomVisibilities[i]) {
+            //     visibleIndices = Object.keys(zoomVisibilities[i]);
+            //     break;
+            //   }
+            // }
+
+            const coveredBoxes = [];
+            const indexOfCovering = [];
+            covers = {};
+            for (const index of visibleIndices) {
+              const marker = markers[index];
+              const rect = marker.containerDiv.getBoundingClientRect();
+              const left = rect.x;
+              const top = rect.y;
+              const right = left + rect.width;
+              const bottom = top + rect.height;
+              coveredBoxes.push([left, top, right, bottom]);
+              indexOfCovering.push(index);
+              covers[index] = [];
+            }
+            let i = -1;
+            for (const marker of markers) {
+              i++;
+              if (covers[i]) continue;
+              const rect = marker.containerDiv.getBoundingClientRect();
+              const left = rect.x;
+              const top = rect.y;
+              const right = left + rect.width;
+              const bottom = top + rect.height;
+              let j = 0;
+              let covered = false;
+              for (const [l2, t2, r2, b2] of coveredBoxes) {
+                if (left > r2 || right < l2 || top > b2 || bottom < t2) {
+                  // not touching
+                } else {
+                  covered = true;
+                  covers[indexOfCovering[j]].push(i);
+                  break;
+                }
+                j++;
+              }
+              if (!covered) {
+                coveredBoxes.push([left, top, right, bottom]);
+                indexOfCovering.push(i);
+                covers[i] = [];
+              }
+            }
+            zoomVisibilities[map.zoom] = covers;
+            applyVisibilities(covers);
+          }, 200 + 100 * (map.zoom - prevZoom));
+          prevZoom = map.zoom;
+        }
+
+        const visibilityInterval = setInterval(() => {
+          if (markers[0].containerDiv.getBoundingClientRect().width > 0) {
+            clearInterval(visibilityInterval);
+            updateVisibilities();
+          }
+        }, 10);
       }
     }
 
