@@ -15,20 +15,25 @@ const markupData = [
   // },
   {
     text: [
-      "I am a graduate student studying Computer Science at the Georgia Institute of Technology, concentrating in Machine Learning.",
+      "I am an inventive Software Engineer passionate for revolutionizing Financial Services, based in Chicago.",
     ],
-    imageUrl: "/src/assets/images/bg/crosland.jpg",
-    links: [],
-  },
-  {
-    text: [
-      "Ultimately, I am an exuberant software engineer at heart, and a problem-solver at my core,",
-    ],
-    imageUrl: "/src/assets/images/bg/macCode.jpg",
+    imageUrl: "/src/assets/images/bg/chi.jpg",
     links: [
+      {
+        href: "/resume",
+        label: "Résumé",
+        target: "_blank",
+        nofollow: true,
+      },
       {
         href: "/projects",
         label: "Projects",
+      },
+      {
+        href: "/linkedin",
+        label: "LinkedIn",
+        target: "_blank",
+        nofollow: true,
       },
       {
         href: "/github",
@@ -39,7 +44,31 @@ const markupData = [
     ],
   },
   {
-    text: ["With a sense of photographic expression put on full display."],
+    text: [
+      "Recently, I accepted my Master's from Georgia Tech with highest distinction, where I devised groundbreaking Artificial Intelligence methods.",
+    ],
+    imageUrl: "/src/assets/images/bg/crosland.jpg",
+    links: [],
+  },
+  {
+    text: ["I am an ambitious marathoner and triathlete,"],
+    imageUrl: "/src/assets/images/bg/bike.jpg",
+    links: [
+      {
+        href: "/strava",
+        label: "Strava",
+      },
+      // {
+      //   href: "/photo/gear",
+      //   label: "Gear",
+      // },
+    ],
+    style: {
+      maxHeight: "min(500px,130vw)",
+    },
+  },
+  {
+    text: ["Artistic, perspective-chasing photographer,"],
     imageUrl: "/photo-portfolio/portfolio2k/Manhattan--20Bridge.jpg",
     links: [
       {
@@ -47,7 +76,7 @@ const markupData = [
         label: "Gallery",
       },
       {
-        href: "/photo?map=true",
+        href: "/photo/map",
         label: "Capture Map",
         nofollow: true,
       },
@@ -56,42 +85,37 @@ const markupData = [
       //   label: "Gear",
       // },
     ],
+    style: {
+      maxHeight: "min(500px,130vw)",
+    },
   },
   {
-    text: ["I encourage you to learn about my various ventures, old and new,"],
-    imageUrl: "/src/assets/images/bg/mandel.png",
-    links: [
-      { href: "/blog", label: "Blog", target: "_blank", nofollow: true },
-      {
-        href: "/twitter",
-        label: "Twitter",
-        target: "_blank",
-        nofollow: true,
-      },
-    ],
-  },
-  {
-    text: [
-      "Reach out with professional inquiries surrounding new opportunities,",
-    ],
-    imageUrl: "/src/assets/images/bg/startup.jpg",
+    text: ["home chef, and culinary explorer."],
+    imageUrl: "/src/assets/images/bg/food.jpg",
     links: [
       {
-        href: "/linkedin",
-        label: "LinkedIn",
-        target: "_blank",
-        nofollow: true,
+        href: "/gourmet",
+        label: "Blake Gourmet",
       },
       {
-        href: "/resume",
-        label: "Résumé",
-        target: "_blank",
-        nofollow: true,
+        href: "/menu",
+        label:
+          ["Winter", "Spring", "Summer", "Fall"][
+            Math.floor(new Date().getMonth() / 3)
+          ] + " Menu",
       },
+      // {
+      //   href: "/photo/gear",
+      //   label: "Gear",
+      // },
     ],
+    style: {
+      maxHeight: "min(500px,130vw)",
+    },
   },
+
   {
-    text: ["Or connect with me further through my online presence."],
+    text: ["Let's connect."],
     imageUrl: "/src/assets/images/bg/connect.jpg",
     links: [
       {
@@ -111,13 +135,10 @@ const markupData = [
         target: "_blank",
         nofollow: true,
       },
-      {
-        href: "/strava",
-        label: "Strava",
-        target: "_blank",
-        nofollow: true,
-      },
     ],
+    style: {
+      maxHeight: "min(500px,130vw)",
+    },
   },
 ];
 ---
@@ -165,6 +186,7 @@ const markupData = [
         text={data.text}
         links={data.links}
         class="homePageSection sectionTransitionParent"
+        style={data.style}
       />
     ))
   }
@@ -252,14 +274,24 @@ const markupData = [
     const rate = window.innerHeight * 0.13;
 
     const screenCenter = window.scrollY + window.innerHeight / 2;
-    let sectionHeight;
+    let sectionHeight = sections[0].offsetHeight;
     sections.forEach((section) => {
       if (!(section instanceof HTMLElement)) {
         return;
       }
-      sectionHeight = section.offsetHeight;
       const sectionCenter = section.offsetTop + sectionHeight / 2;
-      const diff = (sectionCenter - screenCenter) / sectionHeight;
+      const distUnder =
+        document.body.scrollHeight - section.offsetTop - section.offsetHeight;
+      const bestScreenCenter =
+        window.scrollY +
+        window.innerHeight -
+        section.offsetHeight / 2 -
+        distUnder;
+      const diff =
+        Math.min(
+          sectionCenter - Math.max(bestScreenCenter, screenCenter),
+          1000000000
+        ) / sectionHeight;
       const bg = section.querySelector(".bg");
       if (!(bg instanceof HTMLElement)) {
         return;

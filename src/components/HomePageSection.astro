@@ -9,11 +9,11 @@ interface LinkInterface {
   class?: string;
 }
 const links: LinkInterface[] = Astro.props.links;
-const { text, imageUrl, style, class: className, ...props } = Astro.props;
+let { text, imageUrl, style, class: className, ...props } = Astro.props;
 const maxImageOpacity = 0.5;
 ---
 
-<div style={style} class:list={["section", className]} {...props}>
+<div style={{ ...style }} class:list={["section", className]} {...props}>
   {
     imageUrl && (
       <Img
@@ -93,10 +93,14 @@ const maxImageOpacity = 0.5;
   .link {
     font-size: 1.3em;
     margin: 0.5em;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.2);
     padding: 0.5em 1em;
     backdrop-filter: blur(5px);
     border-radius: 8px;
+    transition: background-color 0.1s ease;
     /* border: 2px solid rgba(255, 255, 255, 0.2); */
+  }
+  .link:hover {
+    background-color: rgba(0, 0, 0, 0.2);
   }
 </style>
