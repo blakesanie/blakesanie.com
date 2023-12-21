@@ -96,7 +96,7 @@ await Promise.all(
 
     let im2 = await renderImg({
       src: path,
-      breakpoints: [150],
+      breakpoints: [250],
       format: "webp",
       alt: "",
       quality: 50,
@@ -275,7 +275,7 @@ const description =
         ))
       }
     </div>
-    <div class="thumbnailReserves">
+    <!-- <div class="thumbnailReserves">
       {
         Object.entries(images).map(([name, image]) => (
           <div id={`thumbnail-${name}`} class="thumb">
@@ -292,7 +292,7 @@ const description =
           </div>
         ))
       }
-    </div>
+    </div> -->
   </div>
 
   <div id="fullScreen" slot="topLevel">
@@ -907,7 +907,7 @@ const description =
           // This zero-height div is positioned at the bottom of the tip.
           this.containerDiv = document.createElement("div");
           this.containerDiv.classList.add("mapThumb");
-          const area = 3000;
+          const area = 7000;
           const fullArea = image.width * image.height;
           const scalar = 1 / Math.sqrt(fullArea / area);
           this.width = image.width * scalar;
@@ -1356,9 +1356,12 @@ const description =
 
         function boxToZoom(latRange, lngRange) {
           function toZoom(range) {
-            return Math.round(-Math.log10(range) / 0.35 + 8.4);
+            return Math.round(-Math.log10(range) / 0.35 + 8.9);
           }
-          return Math.min(19, Math.min(toZoom(latRange), toZoom(lngRange)));
+          return Math.max(
+            map.zoom + 1,
+            Math.min(toZoom(latRange), toZoom(lngRange))
+          );
         }
 
         let i = 0;
