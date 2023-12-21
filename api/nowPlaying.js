@@ -54,14 +54,14 @@ const getLastSong = async (recursion = true) => {
     }
   );
   if (response.status == 204) {
-    console.log("USE PREVIOUS TRACK");
+    // console.log("USE PREVIOUS TRACK");
     return await getPreviousTrack();
   } else if (response.status == 401) {
     if (!recursion) {
       throw Error("Reached max recursion depth");
     }
     // new token needed
-    console.log("NEW TOKEN NEEDED");
+    // console.log("NEW TOKEN NEEDED");
     const params = new URLSearchParams();
     params.append("refresh_token", REFRESH_TOKEN);
     params.append("grant_type", "refresh_token");
@@ -79,12 +79,12 @@ const getLastSong = async (recursion = true) => {
     return await getLastSong(false);
   } else if (response.status == 200) {
     const json = await response.json();
-    console.log("res json", json);
+    // console.log("res json", json);
     if (json.currently_playing_type == "ad" || !json.item) {
-      console.log("ADVERTIZEMENT CURRENTLY");
+      // console.log("ADVERTIZEMENT CURRENTLY");
       return await getPreviousTrack();
     }
-    console.log("CURRENTLY PLAYING TRACK");
+    // console.log("CURRENTLY PLAYING TRACK");
     return processTrack(json.item, true);
   } else {
     console.error(response);

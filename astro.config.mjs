@@ -16,7 +16,9 @@ import rehypeKatex from "rehype-katex";
 
 import redirects from "/src/redirects.json";
 const redirectRoutes = new Set(Object.keys(redirects));
+// so not in sitemap
 redirectRoutes.add("chicago");
+redirectRoutes.add("public");
 
 export default defineConfig({
   // output: "static",

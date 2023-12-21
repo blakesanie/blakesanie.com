@@ -50,7 +50,7 @@ function applyRenamings(str, renamings) {
   if (!str) {
     return str;
   }
-  console.log("str is", str);
+  // console.log("str is", str);
   for (const [key, value] of Object.entries(renamings)) {
     if (!value) {
       return undefined;
@@ -692,7 +692,7 @@ const description =
     if (initialUrlQuery) {
       let initialQueryInterval;
       const initialFilename = initialUrlQuery;
-      console.log("initialFilename", initialFilename);
+      // console.log("initialFilename", initialFilename);
       function initialFullScreen() {
         try {
           activateFullScreen(initialFilename);
@@ -757,7 +757,7 @@ const description =
 
     shuffleImgElements();
 
-    console.log("image changes", imageChanges);
+    // console.log("image changes", imageChanges);
 
     //                                __
     //                               /  |
@@ -816,11 +816,11 @@ const description =
       function setGalleryImageWidths() {
         if (mode == "map") {
           resizedSinceSwitchedToMap = true;
-          console.log("resized since switch to map", resizedSinceSwitchedToMap);
+          // console.log("resized since switch to map", resizedSinceSwitchedToMap);
           return;
         }
         const width = getImageWidth();
-        console.log("new image width", width);
+        // console.log("new image width", width);
         const images = document.getElementsByClassName("galleryImage");
         for (let i = 0; i < images.length; i++) {
           images[i].style.width = width + "px";
@@ -847,10 +847,10 @@ const description =
         if (!reset) {
           msnry.on("layoutComplete", function () {
             galleryContainer.style.opacity = 1;
-            console.log("layout complete");
+            // console.log("layout complete");
           });
         }
-        console.log("masonry", msnry);
+        // console.log("masonry", msnry);
       } else {
         if (resizedSinceSwitchedToMap) {
           galleryContainer.style.opacity = 0;
@@ -858,7 +858,7 @@ const description =
 
         showGallery();
         if (resizedSinceSwitchedToMap) {
-          console.log("RESIZE AFTER SWITCH");
+          // console.log("RESIZE AFTER SWITCH");
           setGalleryImageWidths();
           msnry.layout();
           resizedSinceSwitchedToMap = false;
@@ -1337,13 +1337,13 @@ const description =
           updateVisibilities();
         });
         google.maps.event.addListener(map, "zoom_changed", function () {
+          // console.log("zoom", map.zoom);
           updateVisibilities();
         });
 
         const zoomVisibilities = {};
 
         function applyVisibilities(covers) {
-          console.log("covers", covers);
           for (let i = 0; i < markers.length; i++) {
             const covered = covers[i];
             markers[i].setVisibility(covered);
@@ -1357,12 +1357,22 @@ const description =
         }
 
         function boxToZoom(latRange, lngRange) {
-          function toZoom(range) {
-            return Math.round(-Math.log10(range) / 0.35 + 8.9);
+          function toZoom(range, size) {
+            // console.log("lng range", range);
+            // debugger;
+            // 400 -1 adjustment
+            // 700 perfect
+            const base = -Math.log10(range) / 0.35 + 8.9;
+            const adjustment = Math.min(0, (-1 / 300) * (700 - size));
+            return base + adjustment;
           }
+          // return toZoom(lngRange, mapContainer.clientWidth);
           return Math.max(
             map.zoom + 1,
-            Math.min(toZoom(latRange), toZoom(lngRange))
+            Math.min(
+              toZoom(latRange, mapContainer.clientHeight),
+              toZoom(lngRange, mapContainer.clientWidth)
+            )
           );
         }
 
@@ -1413,60 +1423,58 @@ const description =
           //   applyVisibilities(covers);
           //   return;
           // }
-          setTimeout(() => {
-            // debugger;
-            let visibleIndices = [];
-            // for (let i = map.zoom - 1; i >= 0; i--) {
-            //   if (zoomVisibilities[i]) {
-            //     visibleIndices = Object.keys(zoomVisibilities[i]);
-            //     break;
-            //   }
-            // }
+          // debugger;
+          let visibleIndices = [];
+          // for (let i = map.zoom - 1; i >= 0; i--) {
+          //   if (zoomVisibilities[i]) {
+          //     visibleIndices = Object.keys(zoomVisibilities[i]);
+          //     break;
+          //   }
+          // }
 
-            const coveredBoxes = [];
-            const indexOfCovering = [];
-            covers = {};
-            for (const index of visibleIndices) {
-              const marker = markers[index];
-              const rect = marker.containerDiv.getBoundingClientRect();
-              const left = rect.x;
-              const top = rect.y;
-              const right = left + rect.width;
-              const bottom = top + rect.height;
+          const coveredBoxes = [];
+          const indexOfCovering = [];
+          covers = {};
+          for (const index of visibleIndices) {
+            const marker = markers[index];
+            const rect = marker.containerDiv.getBoundingClientRect();
+            const left = rect.x;
+            const top = rect.y;
+            const right = left + rect.width;
+            const bottom = top + rect.height;
+            coveredBoxes.push([left, top, right, bottom]);
+            indexOfCovering.push(index);
+            covers[index] = [];
+          }
+          let i = -1;
+          for (const marker of markers) {
+            i++;
+            if (covers[i]) continue;
+            const rect = marker.containerDiv.getBoundingClientRect();
+            const left = rect.x;
+            const top = rect.y;
+            const right = left + rect.width;
+            const bottom = top + rect.height;
+            let j = 0;
+            let covered = false;
+            for (const [l2, t2, r2, b2] of coveredBoxes) {
+              if (left > r2 || right < l2 || top > b2 || bottom < t2) {
+                // not touching
+              } else {
+                covered = true;
+                covers[indexOfCovering[j]].push(i);
+                break;
+              }
+              j++;
+            }
+            if (!covered) {
               coveredBoxes.push([left, top, right, bottom]);
-              indexOfCovering.push(index);
-              covers[index] = [];
+              indexOfCovering.push(i);
+              covers[i] = [];
             }
-            let i = -1;
-            for (const marker of markers) {
-              i++;
-              if (covers[i]) continue;
-              const rect = marker.containerDiv.getBoundingClientRect();
-              const left = rect.x;
-              const top = rect.y;
-              const right = left + rect.width;
-              const bottom = top + rect.height;
-              let j = 0;
-              let covered = false;
-              for (const [l2, t2, r2, b2] of coveredBoxes) {
-                if (left > r2 || right < l2 || top > b2 || bottom < t2) {
-                  // not touching
-                } else {
-                  covered = true;
-                  covers[indexOfCovering[j]].push(i);
-                  break;
-                }
-                j++;
-              }
-              if (!covered) {
-                coveredBoxes.push([left, top, right, bottom]);
-                indexOfCovering.push(i);
-                covers[i] = [];
-              }
-            }
-            zoomVisibilities[map.zoom] = covers;
-            applyVisibilities(covers);
-          }, 200 + 100 * (map.zoom - prevZoom));
+          }
+          zoomVisibilities[map.zoom] = covers;
+          applyVisibilities(covers);
           prevZoom = map.zoom;
         }
 
@@ -1617,7 +1625,7 @@ const description =
 
       // set prev and next blocks
       const { prev, next } = imageChanges[filename];
-      console.log("prev", prev, "next", next);
+      // console.log("prev", prev, "next", next);
       const cleanName = decodeURIComponent(filename.replaceAll("--", "%"));
       imageNameElement.innerHTML = cleanName;
       document.title = cleanName + " | Photography | Blake Sanie";
@@ -1637,7 +1645,7 @@ const description =
       // set meta data
       metaDataElement.innerHTML = "";
       const captured = images[filename];
-      console.log("showcase image", filename, images[filename]);
+      // console.log("showcase image", filename, images[filename]);
       if (captured.shutter) {
         if (captured.shutter < 0) {
         }
@@ -1854,7 +1862,7 @@ const description =
       modelSession = session;
       tokenizer = new Tokenizer.default();
       imageEmbeddings = await imageEmb.json();
-      console.log("CLIP Model Loaded", modelSession, tokenizer);
+      // console.log("CLIP Model Loaded", modelSession, tokenizer);
       AITextField.removeAttribute("disabled");
       AITextField.setAttribute(
         "placeholder",
@@ -1880,7 +1888,7 @@ const description =
       for (let i = 0; i < textEmbedding.length; i++) {
         textEmbedding[i] /= norm;
       }
-      console.log("text embedding", textEmbedding);
+      // console.log("text embedding", textEmbedding);
       const similarities = {};
       for (const [name, embedding] of Object.entries(imageEmbeddings)) {
         if (!images[name]) {
@@ -1902,11 +1910,11 @@ const description =
         const name = ranking[i][0];
         indices[name] = i;
       }
-      console.log(
-        "ranking",
-        ranking.map((x) => x[0]),
-        ranking
-      );
+      // console.log(
+      //   "ranking",
+      //   ranking.map((x) => x[0]),
+      //   ranking
+      // );
       orderImageElementsByRanking(indices);
       setImageOrder();
       // shuffleImgElements();
@@ -1941,7 +1949,7 @@ const description =
     }
 
     function orderImageElementsByRanking(indices) {
-      console.log("indices", indices);
+      // console.log("indices", indices);
       for (var i = 0; i < galleryContainer.children.length; i++) {
         const child = galleryContainer.children[i];
         const name = child.getAttribute("name");
@@ -1954,13 +1962,13 @@ const description =
         }
         const target = galleryContainer.children[index];
         if (!target) {
-          console.log(
-            "want to swap with element",
-            index,
-            name,
-            "but len is",
-            galleryContainer.children.length
-          );
+          // console.log(
+          //   "want to swap with element",
+          //   index,
+          //   name,
+          //   "but len is",
+          //   galleryContainer.children.length
+          // );
         }
         swapElements(child, target);
         i--;

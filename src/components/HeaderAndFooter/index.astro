@@ -457,7 +457,7 @@ const title = Astro.props.title
           });
         }
         anchors[i].addEventListener("click", (e) => {
-          console.log("clicked anchor", anchors[i]);
+          // console.log("clicked anchor", anchors[i]);
           // activeAnchor.classList.remove("active"); // line not necessary since activeAnchor variable changed anyways
           activeAnchor = anchors[i];
           if (menuExpanded) {
@@ -713,7 +713,7 @@ const title = Astro.props.title
           header.position = "fixed";
         }
         menuExpanded = !menuExpanded;
-        console.log("menuExpanded: ", menuExpanded);
+        // console.log("menuExpanded: ", menuExpanded);
       };
 
       hamburger?.addEventListener("click", window.hamburgerClick);
@@ -731,7 +731,7 @@ const title = Astro.props.title
       let wasMobile = false;
       const evaluateTransitionable = () => {
         const isMobile = window.innerWidth <= mobileMaxWidth;
-        console.log(isMobile);
+        // console.log(isMobile);
         if (isMobile && !wasMobile) {
           header.classList.add("headerTransitionable");
           header.scrollTop = 0;
