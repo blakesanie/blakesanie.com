@@ -243,7 +243,7 @@ const description =
               breakpoints={[600]}
               quality={50}
               format="webp"
-              saturation={1.1}
+              saturation={1.2}
               placeholder="dominantColor"
               loading="lazy"
             />
@@ -433,6 +433,7 @@ const description =
       /* width: calc(50% - var(--gutter) / 2); */
       margin-bottom: var(--gutter);
       cursor: pointer;
+      filter: contrast(1.05);
     }
 
     .galleryImage > svg {
@@ -547,6 +548,7 @@ const description =
     }
 
     #photoFullScreen .full {
+      filter: contrast(1.05);
     }
 
     #selectedMap {

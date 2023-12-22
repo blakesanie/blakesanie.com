@@ -31,3 +31,4 @@ api/*/**/.*
 posts
 blog
 photo-portfolio
+public/assets/imageEmbeddings*.json
