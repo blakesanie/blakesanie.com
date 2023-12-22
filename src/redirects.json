@@ -81,5 +81,9 @@
   "menu": {
     "href": "/menu.pdf",
     "title": "Gourmet Menu"
+  },
+  "deploy": {
+    "href": "/deploy",
+    "title": "Deployments on Vercel"
   }
 }

@@ -69,6 +69,10 @@
     {
       "source": "/menu",
       "destination": "/menu.pdf"
+    },
+    {
+      "source": "/deploy",
+      "destination": "https://vercel.com/blakesanie/blakesanie-com/deployments"
     }
   ]
 }
