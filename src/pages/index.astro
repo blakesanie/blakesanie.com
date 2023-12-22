@@ -279,7 +279,12 @@ const markupData = [
       if (!(section instanceof HTMLElement)) {
         return;
       }
-      const sectionCenter = section.offsetTop + sectionHeight / 2;
+      const sectionCenter = section.offsetTop + section.offsetHeight / 2;
+      let effectiveScreenCenter = screenCenter;
+      if (sectionCenter < window.innerHeight / 2) {
+        // handles proper interpolation when top sections do not span window height, so the peak opacity is before the window center
+        effectiveScreenCenter = sectionCenter;
+      }
       const distUnder =
         document.body.scrollHeight - section.offsetTop - section.offsetHeight;
       const bestScreenCenter =
@@ -287,7 +292,8 @@ const markupData = [
         window.innerHeight -
         section.offsetHeight / 2 -
         distUnder;
-      const dist = sectionCenter - Math.max(bestScreenCenter, screenCenter);
+      const dist =
+        sectionCenter - Math.max(bestScreenCenter, effectiveScreenCenter);
       const diff = dist / sectionHeight;
       const bg = section.querySelector(".bg");
       if (!(bg instanceof HTMLElement)) {
@@ -312,18 +318,19 @@ const markupData = [
 
     for (let i = 0; i < firstSection.children.length; i++) {
       const child = firstSection.children[i];
-      if (child.id == "blobField") {
-        child.querySelector("svg").style.opacity =
-          1 - window.scrollY / sectionHeight;
-      }
-      if (child.id == "wwdc") {
-        child.style.transform = `translateY(${
-          (window.scrollY / sectionHeight) * rate * 2.8
-        }px) scale(${1 - (window.scrollY / sectionHeight) * 0.4})`;
-      } else {
-        child.style.transform = `translateY(${
-          (window.scrollY / sectionHeight) * rate * 2.5
-        }px)`;
+      if (window.scrollY < window.innerHeight) {
+        console.log("in view");
+        if (child.id == "blobField") {
+          child.querySelector("svg").style.opacity =
+            1 - window.scrollY / sectionHeight;
+        } else {
+          child.style.filter = `blur(${
+            (window.scrollY / sectionHeight) * 14
+          }px)`;
+          child.style.transform = `translateY(${
+            (window.scrollY / sectionHeight) * rate * 2.5
+          }px)`;
+        }
       }
     }
   });
