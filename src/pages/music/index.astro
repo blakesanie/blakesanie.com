@@ -8,7 +8,6 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
   <a href="https://www.icloud.com/shortcuts/984764445c88499288d6469ba4b23480"
     >Download shortcut here!</a
   >
-  <p id="extra"></p>
 </HeaderAndFooter>
 
 <style>
@@ -86,8 +85,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
   //   removeHash();
 
   async function processClipboard(paste) {
-    document.querySelector("#extra").textContent =
-      "rolling with clipboard: " + paste;
+    paste = "https" + paste.split(["https"])[1];
     localStorage.setItem("paste", paste);
     removeHash();
     let spotifyToken = params.access_token;
