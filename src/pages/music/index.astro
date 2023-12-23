@@ -85,7 +85,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
       );
     }
     // debugger;
-    if (paste.includes("spotify.com")) {
+    if (paste.includes("open.spotify.com/track/")) {
       // https://open.spotify.com/track/2w4OTUEZdpNoTFK64fEEIg?si=f7pyOBhuRUCWBAzPmbRYRQ
       const storedExp = localStorage.getItem("spotifyTokenExp");
       //   debugger;
@@ -134,7 +134,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
       )}`;
       converted = "Apple Music";
       copyToClipboard();
-    } else if (paste.includes("apple.com")) {
+    } else if (paste.includes("music.apple.com/us/album/")) {
       const title = paste
         .split("/album/")[1]
         .split("/")[0]
@@ -151,7 +151,8 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
   }
 
   async function main() {
-    let paste = decodeURIComponent(params.paste);
+    // debugger;
+    let paste = params.paste ? decodeURIComponent(params.paste) : undefined;
     // debugger;
     try {
       paste = paste || (await navigator.clipboard.readText());
