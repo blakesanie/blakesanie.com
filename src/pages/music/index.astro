@@ -42,6 +42,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
   const params = getHashParams();
 
   async function processClipboard(paste) {
+    localStorage.setItem("paste", paste);
     let spotifyToken = params.access_token;
     if (spotifyToken) {
       localStorage.setItem("spotifyToken", spotifyToken);
@@ -121,8 +122,9 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
     let paste;
     // debugger;
     try {
-      paste = (await navigator.clipboard.readText()) || "";
+      paste = await navigator.clipboard.readText();
     } catch (e) {}
+    paste = paste || (params.access_token && localStorage.getItem("paste"));
     if (paste) {
       processClipboard(paste);
     } else {
