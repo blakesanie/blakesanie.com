@@ -71,10 +71,11 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
   let artist;
 
   const params = getHashParams();
-  removeHash();
+  //   removeHash();
 
   async function processClipboard(paste) {
     localStorage.setItem("paste", paste);
+    removeHash();
     let spotifyToken = params.access_token;
     if (spotifyToken) {
       localStorage.setItem("spotifyToken", spotifyToken);
@@ -150,10 +151,10 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
   }
 
   async function main() {
-    let paste;
+    let paste = decodeURIComponent(params.paste);
     // debugger;
     try {
-      paste = await navigator.clipboard.readText();
+      paste = paste || (await navigator.clipboard.readText());
     } catch (e) {}
     paste = paste || (params.access_token && localStorage.getItem("paste"));
     if (paste) {
@@ -168,7 +169,6 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
   if (h2) {
     h2.addEventListener("click", async () => {
       if (converted) {
-        const link = toCopy.split("");
         navigator.clipboard.writeText(toCopy);
         setMessage("Copied link to " + converted);
       } else {
@@ -185,3 +185,5 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 </script>
 <!-- https://music.apple.com/us/search?term=San%20Ferry%20Anne%20-%202014%20Remaster%20by%20Wings
 San Ferry Anne - 2014 Remaster by Wings -->
+
+<!-- https%3A%2F%2Fopen.spotify.com%2Ftrack%2F2w4OTUEZdpNoTFK64fEEIg%3Fsi%3Df7pyOBhuRUCWBAzPmbRYRQ -->
