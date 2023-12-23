@@ -32,27 +32,13 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
     }
   }
 
+  let converted = false;
+
   function copyToClipboard(text) {
+    converted = true;
     if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+      setMessage("Click to Copy");
       // handle iOS devices
-
-      var input = document.createElement("input");
-      input.type = "text";
-      input.value = text;
-
-      input.contenteditable = true;
-      input.readonly = false;
-
-      var range = document.createRange();
-      range.selectNodeContents(input);
-
-      var selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
-      input.setSelectionRange(0, 999999);
-      document.execCommand("copy");
-
-      input.remove();
     } else {
       // other devices are easy
       navigator.clipboard.writeText(text);
@@ -159,7 +145,27 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 
   if (h1) {
     h1.addEventListener("click", async () => {
-      main();
+      if (converted) {
+        var input = document.createElement("input");
+        input.type = "text";
+        input.value = text;
+
+        input.contenteditable = true;
+        input.readonly = false;
+
+        var range = document.createRange();
+        range.selectNodeContents(input);
+
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        input.setSelectionRange(0, 999999);
+        document.execCommand("copy");
+
+        input.remove();
+      } else {
+        main();
+      }
     });
   }
 
