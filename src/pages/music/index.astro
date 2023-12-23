@@ -81,6 +81,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
       const trackId = paste.split("/").slice(-1)[0].split("?")[0];
       console.log("spotify token", spotifyToken);
 
+      setMessage("Processing");
       const res = await fetch("https://api.spotify.com/v1/tracks/" + trackId, {
         method: "GET",
         headers: {
@@ -94,10 +95,10 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
           return artist.name;
         })
         .join(", ");
+      const desc = song + " by " + artist;
       copyToClipboard(
-        `https://music.apple.com/us/search?term=${encodeURIComponent(
-          song + " by " + artist
-        )}`
+        `https://music.apple.com/us/search?term=${encodeURIComponent(desc)}
+        ${desc}`
       );
       setMessage("Converted to Apple Music");
     } else if (paste.includes("apple.com")) {
@@ -107,7 +108,8 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
         .replaceAll("-", " ");
       song = toTitleCase(title);
       copyToClipboard(
-        `https://open.spotify.com/search/${encodeURIComponent(song)}`
+        `https://open.spotify.com/search/${encodeURIComponent(song)}
+        ${song}`
       );
       setMessage("Converted to Spotify");
     } else {
