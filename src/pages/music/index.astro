@@ -129,10 +129,9 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
         })
         .join(", ");
       const desc = song + " by " + artist;
-      toCopy = `https://music.apple.com/us/search?term=${encodeURIComponent(
+      toCopy = `${desc} https://music.apple.com/us/search?term=${encodeURIComponent(
         desc
-      )} 
-${desc}`;
+      )}`;
       converted = "Apple Music";
       copyToClipboard();
     } else if (paste.includes("apple.com")) {
@@ -141,8 +140,9 @@ ${desc}`;
         .split("/")[0]
         .replaceAll("-", " ");
       song = toTitleCase(title);
-      toCopy = `https://open.spotify.com/search/${encodeURIComponent(song)} 
-${song}`;
+      toCopy = `${song} https://open.spotify.com/search/${encodeURIComponent(
+        song
+      )}`;
       converted = "Spotify";
       copyToClipboard();
     } else {
