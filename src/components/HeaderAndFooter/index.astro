@@ -228,7 +228,18 @@ const title = Astro.props.title
         <span>Lifelong Student.</span>
       </div>
       <nav>
-        {isHome && <HoverZone style="height:0;opacity:0;" />}
+        {
+          (isHome || Astro.props.pageNotInNav) && (
+            <HoverZone
+              style={{
+                height: 0,
+                opacity: 0,
+                zIndex: Astro.props.pageNotInNav ? 1 : 0,
+              }}
+              class="active"
+            />
+          )
+        }
         <ul>
           <div class="navSection">
             <p>Engineering</p>
@@ -483,7 +494,7 @@ const title = Astro.props.title
 
       function moveHoverToAnchor(anchor) {
         if (!hoverZone) {
-          if (isHome) {
+          if (isHome || !activeNavHoverZone) {
             // debugger;
             // if active page not in nav, hover zone is already a direct child of nav
             // without transition, move directly to the hovered anchor
@@ -511,7 +522,7 @@ const title = Astro.props.title
         }
         if (!anchor) {
           // no paramter means hover interaction is done
-          if (isHome) {
+          if (isHome || !activeNavHoverZone) {
             // just fade out
             hoverZone.style.opacity = 0;
           } else {

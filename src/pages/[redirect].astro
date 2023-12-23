@@ -22,6 +22,7 @@ const { title, href } = redirects[redirect];
   description={`Redirect to ${title}, found at ${href}`}
   noindex
   hideSpotify
+  pageNotInNav
 >
   <meta http-equiv="refresh" content={`0; url=${href}`} slot="head" />
   <h1>Redirecting to {title}</h1>
