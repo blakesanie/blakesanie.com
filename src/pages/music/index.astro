@@ -44,8 +44,20 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
   let converted;
   let toCopy;
 
+  function isIOS() {
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+      return true;
+    } else {
+      return (
+        navigator.maxTouchPoints &&
+        navigator.maxTouchPoints > 2 &&
+        /MacIntel/.test(navigator.platform)
+      );
+    }
+  }
+
   function copyToClipboard() {
-    if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+    if (isIOS()) {
       setMessage(`Click to copy ${converted} link`);
       // handle iOS devices
     } else {
@@ -119,7 +131,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
       const desc = song + " by " + artist;
       toCopy = `https://music.apple.com/us/search?term=${encodeURIComponent(
         desc
-      )}
+      )} 
 ${desc}`;
       converted = "Apple Music";
       copyToClipboard();
@@ -129,7 +141,7 @@ ${desc}`;
         .split("/")[0]
         .replaceAll("-", " ");
       song = toTitleCase(title);
-      toCopy = `https://open.spotify.com/search/${encodeURIComponent(song)}
+      toCopy = `https://open.spotify.com/search/${encodeURIComponent(song)} 
 ${song}`;
       converted = "Spotify";
       copyToClipboard();
@@ -172,3 +184,5 @@ ${song}`;
   // https://music.apple.com/us/album/such-a-simple-thing/1616740351?i=1616740705
   // https://music.apple.com/us/album/get-on/1355757318?i=1355757324
 </script>
+<!-- https://music.apple.com/us/search?term=San%20Ferry%20Anne%20-%202014%20Remaster%20by%20Wings
+San Ferry Anne - 2014 Remaster by Wings -->
