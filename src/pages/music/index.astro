@@ -33,15 +33,17 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
   }
 
   let converted = false;
+  let toCopy;
 
-  function copyToClipboard(text) {
+  function copyToClipboard(platform) {
     converted = true;
     if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
       setMessage("Click to Copy");
       // handle iOS devices
     } else {
       // other devices are easy
-      navigator.clipboard.writeText(text);
+      navigator.clipboard.writeText(toCopy);
+      setMessage("Converted to " + platform);
     }
   }
 
@@ -106,22 +108,20 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
         })
         .join(", ");
       const desc = song + " by " + artist;
-      copyToClipboard(
-        `https://music.apple.com/us/search?term=${encodeURIComponent(
-          desc
-        )}\n${desc}`
-      );
-      setMessage("Converted to Apple Music");
+      toCopy = `https://music.apple.com/us/search?term=${encodeURIComponent(
+        desc
+      )}\n${desc}`;
+      copyToClipboard("Apple Music");
     } else if (paste.includes("apple.com")) {
       const title = paste
         .split("/album/")[1]
         .split("/")[0]
         .replaceAll("-", " ");
       song = toTitleCase(title);
-      copyToClipboard(
-        `https://open.spotify.com/search/${encodeURIComponent(song)}\n${song}`
-      );
-      setMessage("Converted to Spotify");
+      toCopy = `https://open.spotify.com/search/${encodeURIComponent(
+        song
+      )}\n${song}`;
+      copyToClipboard("Spotify");
     } else {
       setMessage("Paste Link Here");
     }
@@ -146,9 +146,10 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
   if (h1) {
     h1.addEventListener("click", async () => {
       if (converted) {
+        alert("secondary copy");
         var input = document.createElement("input");
         input.type = "text";
-        input.value = text;
+        input.value = toCopy;
 
         input.contenteditable = true;
         input.readonly = false;
@@ -163,6 +164,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
         document.execCommand("copy");
 
         input.remove();
+        navigator.clipboard.writeText(toCopy);
       } else {
         main();
       }
