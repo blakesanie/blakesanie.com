@@ -158,7 +158,7 @@ ${song}`;
     h2.addEventListener("click", async () => {
       if (converted) {
         const link = toCopy.split("");
-        navigator.clipboard.writeText(toCopy.split);
+        navigator.clipboard.writeText(toCopy);
         setMessage("Copied link to " + converted);
       } else {
         main();
