@@ -15,10 +15,11 @@ import rehypeKatex from "rehype-katex";
 // };
 
 import redirects from "/src/redirects.json";
-const redirectRoutes = new Set(Object.keys(redirects));
+const noSitemap = new Set(Object.keys(redirects));
 // so not in sitemap
-redirectRoutes.add("chicago");
-redirectRoutes.add("public");
+noSitemap.add("chicago");
+noSitemap.add("public");
+noSitemap.add("music");
 
 export default defineConfig({
   // output: "static",
@@ -51,7 +52,7 @@ export default defineConfig({
     sitemap({
       filter(page) {
         const routeFirst = page.split("/")[0];
-        if (redirectRoutes.has(routeFirst)) return false;
+        if (noSitemap.has(routeFirst)) return false;
         return true;
       },
     }),
