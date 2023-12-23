@@ -3,7 +3,8 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 ---
 
 <HeaderAndFooter allowMainStyles title="Music Converter">
-  <h1>Converting...</h1>
+  <h1></h1>
+  <button>test button</button>
 </HeaderAndFooter>
 
 <script>
@@ -24,20 +25,51 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
     });
   }
 
+  const h1 = document.querySelector("h1");
+  const button = document.querySelector("button");
+  if (button) {
+    button.addEventListener("click", async () => {
+      alert("test");
+      let text;
+      try {
+        text = await navigator.clipboard.readText();
+      } catch (e) {
+        alert(e);
+      }
+      console.log(text);
+      alert(text);
+    });
+  }
+  if (h1) {
+    h1.addEventListener("click", async () => {
+      alert("test");
+      let text;
+      try {
+        text = await navigator.clipboard.readText();
+      } catch (e) {
+        alert(e);
+      }
+      console.log(text);
+      alert(text);
+    });
+  }
+
+  function setMessage(message) {
+    if (h1) {
+      h1.textContent = message;
+    }
+  }
+
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text);
-    const h1 = document.querySelector("h1");
-    if (h1) {
-      h1.textContent = "Done Converting!";
-    }
   }
 
   let song;
   let artist;
 
-  async function main() {
-    const paste = (await navigator.clipboard.readText()) || "";
-    const params = getHashParams();
+  const params = getHashParams();
+
+  async function processClipboard(paste) {
     let spotifyToken = params.access_token;
     if (spotifyToken) {
       localStorage.setItem("spotifyToken", spotifyToken);
@@ -95,6 +127,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
           song + " by " + artist
         )}`
       );
+      setMessage("Converted to Apple Music");
     } else if (paste.includes("apple.com")) {
       const title = paste
         .split("/album/")[1]
@@ -104,14 +137,32 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
       copyToClipboard(
         `https://open.spotify.com/search/${encodeURIComponent(song)}`
       );
+      setMessage("Converted to Spotify");
     } else {
-      const h1 = document.querySelector("h1");
-      if (h1) {
-        h1.textContent = "Clipboard not Recognized";
-      }
+      setMessage("Paste Link Here");
     }
   }
+
+  async function main() {
+    let paste;
+    // debugger;
+    try {
+      paste = (await navigator.clipboard.readText()) || "";
+    } catch (e) {}
+    if (paste) {
+      processClipboard(paste);
+    } else {
+      setMessage("Paste Link Here");
+    }
+  }
+  //   debugger;
   main();
+
+  if (h1) {
+    h1.addEventListener("click", (e) => {
+      main();
+    });
+  }
 
   // https://open.spotify.com/track/2w4OTUEZdpNoTFK64fEEIg?si=f7pyOBhuRUCWBAzPmbRYRQ
   // https://music.apple.com/us/album/shot-in-the-dark/1568819304?i=1568819313
