@@ -3,7 +3,8 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 ---
 
 <HeaderAndFooter allowMainStyles title="Music Converter">
-  <h1></h1>
+  <h1>Apple Music ⬌ Spotify</h1>
+  <h2></h2>
 </HeaderAndFooter>
 
 <script>
@@ -18,32 +19,40 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
     return hashParams;
   }
 
+  function removeHash() {
+    history.pushState(
+      "",
+      document.title,
+      window.location.pathname + window.location.search
+    );
+  }
+
   function toTitleCase(str) {
     return str.replace(/\w\S*/g, function (txt) {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
   }
 
-  const h1 = document.querySelector("h1");
+  const h2 = document.querySelector("h2");
 
   function setMessage(message) {
-    if (h1) {
-      h1.textContent = message;
+    if (h2) {
+      h2.textContent = message;
     }
   }
 
-  let converted = false;
+  let converted;
   let toCopy;
 
-  function copyToClipboard(platform) {
+  function copyToClipboard() {
     converted = true;
     if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
-      setMessage("Click to Copy");
+      setMessage(`Click to copy ${converted} link`);
       // handle iOS devices
     } else {
       // other devices are easy
       navigator.clipboard.writeText(toCopy);
-      setMessage("Converted to " + platform);
+      setMessage("Copied link to " + converted);
     }
   }
 
@@ -61,6 +70,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
         "spotifyTokenExp",
         `${new Date().getTime() + parseInt(params.expires_in) * 1000}`
       );
+      removeHash();
     }
     // debugger;
     if (paste.includes("spotify.com")) {
@@ -111,7 +121,8 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
       toCopy = `https://music.apple.com/us/search?term=${encodeURIComponent(
         desc
       )}\n${desc}`;
-      copyToClipboard("Apple Music");
+      converted = "Apple Music";
+      copyToClipboard();
     } else if (paste.includes("apple.com")) {
       const title = paste
         .split("/album/")[1]
@@ -121,9 +132,10 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
       toCopy = `https://open.spotify.com/search/${encodeURIComponent(
         song
       )}\n${song}`;
-      copyToClipboard("Spotify");
+      converted = "Spotify";
+      copyToClipboard();
     } else {
-      setMessage("Paste Link Here");
+      setMessage("Could not recognize clipboard");
     }
   }
 
@@ -137,14 +149,14 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
     if (paste) {
       processClipboard(paste);
     } else {
-      setMessage("Paste Link Here");
+      setMessage("Paste link here");
     }
   }
   //   debugger;
   main();
 
-  if (h1) {
-    h1.addEventListener("click", async () => {
+  if (h2) {
+    h2.addEventListener("click", async () => {
       if (converted) {
         // alert("secondary copy");
         // var input = document.createElement("input");
@@ -165,6 +177,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 
         // input.remove();
         navigator.clipboard.writeText(toCopy);
+        setMessage("Copied link to " + converted);
       } else {
         main();
       }
