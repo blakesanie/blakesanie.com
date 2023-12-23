@@ -146,24 +146,24 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
   if (h1) {
     h1.addEventListener("click", async () => {
       if (converted) {
-        alert("secondary copy");
-        var input = document.createElement("input");
-        input.type = "text";
-        input.value = toCopy;
+        // alert("secondary copy");
+        // var input = document.createElement("input");
+        // input.type = "text";
+        // input.value = toCopy;
 
-        input.contenteditable = true;
-        input.readonly = false;
+        // input.contenteditable = true;
+        // input.readonly = false;
 
-        var range = document.createRange();
-        range.selectNodeContents(input);
+        // var range = document.createRange();
+        // range.selectNodeContents(input);
 
-        var selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-        input.setSelectionRange(0, 999999);
-        document.execCommand("copy");
+        // var selection = window.getSelection();
+        // selection.removeAllRanges();
+        // selection.addRange(range);
+        // input.setSelectionRange(0, 999999);
+        // document.execCommand("copy");
 
-        input.remove();
+        // input.remove();
         navigator.clipboard.writeText(toCopy);
       } else {
         main();
