@@ -33,7 +33,35 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
   }
 
   function copyToClipboard(text) {
-    navigator.clipboard.writeText(text);
+    try {
+      navigator.clipboard.writeText(text);
+    } catch (e) {
+      function copyText() {
+        var input = document.createElement("input");
+        input.type = "text";
+        input.value = text;
+
+        if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+          // handle iOS devices
+          input.contenteditable = true;
+          input.readonly = false;
+
+          var range = document.createRange();
+          range.selectNodeContents(input);
+
+          var selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          input.setSelectionRange(0, 999999);
+        } else {
+          // other devices are easy
+          input.select();
+        }
+        document.execCommand("copy");
+      }
+
+      InputDeviceInfo.remove();
+    }
   }
 
   let song;
@@ -98,8 +126,9 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
         .join(", ");
       const desc = song + " by " + artist;
       copyToClipboard(
-        `https://music.apple.com/us/search?term=${encodeURIComponent(desc)}
-        ${desc}`
+        `https://music.apple.com/us/search?term=${encodeURIComponent(
+          desc
+        )}\n${desc}`
       );
       setMessage("Converted to Apple Music");
     } else if (paste.includes("apple.com")) {
@@ -109,8 +138,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
         .replaceAll("-", " ");
       song = toTitleCase(title);
       copyToClipboard(
-        `https://open.spotify.com/search/${encodeURIComponent(song)}
-        ${song}`
+        `https://open.spotify.com/search/${encodeURIComponent(song)}\n${song}`
       );
       setMessage("Converted to Spotify");
     } else {
