@@ -142,7 +142,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
         .join(", ");
       const desc = song + " by " + artist;
       toCopy = `${desc} https://music.apple.com/us/search?term=${encodeURIComponent(
-        desc
+        desc.replace(/[^\w\s]/gi, "")
       )}`;
       converted = "Apple Music";
       copyToClipboard();
@@ -153,11 +153,10 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
         .replaceAll("-", " ");
       song = toTitleCase(title);
       toCopy = `${song} https://open.spotify.com/search/${encodeURIComponent(
-        song
+        song.replace(/[^\w\s]/gi, "")
       )}`;
       converted = "Spotify";
       copyToClipboard();
-    } else {
       setMessage("Could not recognize clipboard");
     }
   }
@@ -176,7 +175,6 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
       setMessage("Paste link here");
     }
   }
-  //   debugger;
   main();
 
   if (h2) {
