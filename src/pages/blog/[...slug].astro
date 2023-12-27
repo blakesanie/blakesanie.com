@@ -22,7 +22,7 @@ export async function getStaticPaths() {
   const pages = {};
   let out = posts
     .filter((p) => {
-      console.log("p is", p.file);
+      console.log("p is", p.file, p.file.split("/src/posts/"));
       return p.frontmatter.publish;
     })
     .map((p) => {
@@ -42,6 +42,7 @@ export async function getStaticPaths() {
   out = out.map((entry) => {
     const slug = entry.params.slug;
     const page = pages[slug];
+    console.log("slug", slug);
     page.breadcrumbs = slug.split("/").slice(0, -1);
     const { frontmatter } = page;
     const { prev, next } = frontmatter;
