@@ -23,7 +23,6 @@
       "source": "/linkedin",
       "destination": "https://www.linkedin.com/in/blakesanie/"
     },
-    { "source": "/blog", "destination": "https://blakesanie.medium.com/" },
     {
       "source": "/instagram",
       "destination": "https://www.instagram.com/blake_sanie/"
