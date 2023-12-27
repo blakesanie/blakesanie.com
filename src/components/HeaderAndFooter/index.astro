@@ -253,13 +253,6 @@ const title = Astro.props.title
             </NavLink>
             <NavLink
               hoverZoneBehind={hoverZoneBehind}
-              icon="majesticons:newspaper-line"
-              href="/press"
-            >
-              Press
-            </NavLink>
-            <NavLink
-              hoverZoneBehind={hoverZoneBehind}
               icon="majesticons:paper-clip-line"
               href="/resume"
               chip="M.S."
@@ -307,6 +300,30 @@ const title = Astro.props.title
               Booking
             </NavLink> -->
           </div>
+          <div class="navSection">
+            <p>Life</p>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="majesticons:dashboard-line"
+              href="/blog"
+            >
+              Blog
+            </NavLink>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="lucide:instagram"
+              href="/instagram"
+            >
+              Instagram
+            </NavLink>
+            <NavLink
+              hoverZoneBehind={hoverZoneBehind}
+              icon="la:strava"
+              href="/strava"
+            >
+              Strava
+            </NavLink>
+          </div>
           <!-- <div class="navSection">
             <p>Content</p>
             <NavLink hoverZoneBehind={hoverZoneBehind}} icon="ic:round-candlestick-chart" href="/quant">
@@ -349,20 +366,6 @@ const title = Astro.props.title
               href="/linkedin"
             >
               LinkedIn
-            </NavLink>
-            <NavLink
-              hoverZoneBehind={hoverZoneBehind}
-              icon="lucide:instagram"
-              href="/instagram"
-            >
-              Instagram
-            </NavLink>
-            <NavLink
-              hoverZoneBehind={hoverZoneBehind}
-              icon="la:strava"
-              href="/strava"
-            >
-              Strava
             </NavLink>
           </div>
           {

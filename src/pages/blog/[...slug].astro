@@ -1,0 +1,187 @@
+---
+import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
+
+import Button from "../../components/basic/Button.astro";
+import { formatDate } from "../../components/basic/PageCard.astro";
+import BreadCrumbs from "../../components/basic/BreadCrumbs.astro";
+
+export async function getStaticPaths() {
+  const posts = await Astro.glob("../../posts/**/*.mdx");
+  const pages = {};
+  let out = posts
+    .filter((p) => {
+      console.log(p);
+      return p.frontmatter.publish;
+    })
+    .map((p) => {
+      const page = { ...p };
+      const slug = p.file
+        .split("blakesanie.com/src/posts/")
+        .pop()
+        .split(".")[0];
+      page.slug = slug;
+      pages[slug] = page;
+      return {
+        params: {
+          slug,
+        },
+        props: { post: page },
+      };
+    });
+  out = out.map((entry) => {
+    const slug = entry.params.slug;
+    const page = pages[slug];
+    page.breadcrumbs = slug.split("/").slice(0, -1);
+    const { frontmatter } = page;
+    const { prev, next } = frontmatter;
+    page.frontmatter.date = new Date(page.frontmatter.date);
+    console.log("frontmatter for", slug, frontmatter);
+    const updated = {
+      ...entry,
+      props: {
+        post: {
+          ...entry.props.post,
+          ...(prev
+            ? { prev: pages[slug.replace(slug.split("/").pop(), prev)] }
+            : {}),
+          ...(next
+            ? { next: pages[slug.replace(slug.split("/").pop(), next)] }
+            : {}),
+        },
+      },
+    };
+    if (
+      ("prev" in updated.props && !updated.props.prev) ||
+      ("next" in updated.props && !updated.props.next)
+    ) {
+      throw Exception("prev or next is not correct for slug " + slug);
+    }
+    return updated;
+  });
+  console.log("final out", out);
+  return out;
+}
+
+const authorLinks = {
+  "Blake Sanie": "/",
+};
+
+const { Content, frontmatter, prev, next, breadcrumbs } = Astro.props.post;
+const { title, description, date, image, author } = frontmatter;
+---
+
+<HeaderAndFooter
+  allowMainStyles
+  title={title + " | Blog"}
+  description={description}
+  image={image}
+>
+  <link
+    slot="head"
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"
+  />
+  {
+    breadcrumbs.length > 0 && (
+      <BreadCrumbs breadcrumbs={breadcrumbs} base="/blog" />
+    )
+  }
+  <h1>{title}</h1>
+  <span class="byline">
+    <a class="author" href={authorLinks[author]} target="_blank">{author}</a>{
+      " | " + formatDate(date)
+    }</span
+  >
+  <Content />
+  {
+    prev && (
+      <a href={"/blog/" + prev.slug}>
+        <Button>
+          {"Rewind"}
+          <br />
+          {prev.frontmatter.title}
+        </Button>
+      </a>
+    )
+  }
+  {
+    next && (
+      <a href={"/blog/" + next.slug}>
+        <Button>
+          {"Up Next"}
+          <br />
+          {next.frontmatter.title}
+        </Button>
+      </a>
+    )
+  }
+</HeaderAndFooter>
+
+<style>
+  :global(.inlineImg) {
+    /* max-width: 800px; */
+  }
+  :global(.pageContent) {
+    padding-bottom: 100px;
+  }
+  :global(.pageContent > *) {
+    width: min(100%, 800px);
+  }
+  :global(.math) {
+    color: black;
+  }
+  :global(.math:not(.allInline .math)) {
+    display: block;
+    text-indent: 0;
+    text-align: center;
+    font-size: 1.5em;
+    letter-spacing: 0.05em;
+    padding: 0.6em 0;
+  }
+  /* :global(.math *) {
+    font-size: 1.5em;
+  } */
+  :global(.pageContent a:not(.pageContent > *)) {
+    border-bottom: 2px solid var(--headerColor);
+    color: black !important;
+    font-weight: 1000;
+    transition: color 0.1s ease;
+  }
+  :global(.pageContent a:not(.pageContent > *):hover) {
+    color: var(--headerColor) !important;
+  }
+  /* :global(.pageContent a::after) {
+    content: "↗";
+    font-size: 50%;
+    top: -0.6em;
+    position: relative;
+    font-weight: 1000;
+  } */
+  .byline {
+    text-align: center;
+    color: #777;
+    font-size: 1em;
+    margin-top: -1.5em;
+    margin-bottom: 1.5em;
+  }
+  :global(.pageContent p > code) {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: black;
+    padding: 0.1em 0.3em;
+    border-radius: 0.4em;
+  }
+</style>
+
+<!-- <script>
+  const headings = document
+    .querySelector(".pageContent")
+    .querySelectorAll("h1, h2, h3, h4, h5, h6");
+  headings.forEach((heading) => {
+    const id = heading.id;
+    if (id) {
+      heading.addEventListener("click", function () {
+        alert("click");
+      });
+    }
+  });
+</script> -->

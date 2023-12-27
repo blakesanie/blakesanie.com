@@ -1,0 +1,158 @@
+---
+author: Blake Sanie
+date: Nove 28 2020
+title: "Visualizing the Mandelbrot Set With Python (< 50 Lines)"
+description: "Complex mathematics plus programming equals infinite graphical beauty."
+image: /src/assets/images/posts/mandel/mandel1.png
+publish: true
+---
+
+import InlineImg from "../components/basic/InlineImg.astro";
+
+The [Mandelbrot Set](https://en.wikipedia.org/wiki/Mandelbrot_set) is known to be one of the most beautiful fractals in mathematics. Though first discovered at the beginning of the 20th century, we can use computers to create detailed renderings of the infinitely self-similar image. Equally as beautiful is the fact that we can render the Mandelbrot set with less than 50 lines of Python.
+
+<InlineImg src="/src/assets/images/posts/mandel/mandel1.png" alt="My first attempt at rendering the Mandelbrot Set. Not bad, eh?"/>
+
+## What Even is the Mandelbrot Set?
+
+The formal definition of the Mandelbrot Set is the *“set of values of c in the complex plane for which the orbit of 0 under iteration of the quadratic map*
+
+$$z_{n+1} = z_n^2+c$$
+
+*remains bounded...”*
+
+ ### What does this mean?
+<div class="allInline">
+Basically, take a complex number $a + bi$, square it, then add itself. Now take the solution, square it, then add the original number. As you repeat this process, the solution may approach infinity (diverge). On the other hand, the solution after continual iteration may stay bounded to finite numbers.
+</div>
+The black regions of the Mandelbrot Set are the complex numbers that when iterated over by the function, stay bounded. Where the Mandelbrot set gets really interesting is understanding the behavior near these points by *visualizing at what rate the function diverges.*
+
+## Math Breakdown
+
+### Can computers even understand complex numbers?
+
+<div class="allInline">
+Not exactly, but we can represent complex numbers through their real and imaginary components considired in a cartesian plane ($a + bi$ becomes $a$, $b$ as $x$, $y$). Computations with each component are done separately, meaning we can omit i if we think ahead.
+</div>
+
+### How do I square complex numbers?
+
+Take an arbitrary complex number, $a + bi$
+
+$(a + bi)^2$
+
+$a^2 + 2ab - b^2$
+
+$(a^2 - b^2) + (2ab)i$
+
+<div class="allInline">
+Really, the square of $a + bi$ is another imaginary number, where the new a is $a^2 — b^2$ and the new $b$ is $2ab$. **This concept is crucial to this project's calculations.**
+</div>
+
+### How do I know when the function diverges?
+
+<div class="allInline">
+It is known that if the function's complex solution is ever greater than two, the function must diverge. In cartesian terms, this means that the function diverges when the distance from the origin is greater than two. Using the **[Pythagorian theorem](https://en.wikipedia.org/wiki/Pythagorean_theorem)**, we can define this case as: $x^2 + y^2 > 4$.
+</div>
+
+## Setting Up the Program
+
+Let's take this step by step.
+
+First, we import our dependencies and modules. **[Pillow](https://pillow.readthedocs.io/)** is Python's well known image processing library. Colorsys and math are modules we'll use in our calculations. Finally, we can access os to open the image file once written.
+```python
+from PIL import Image
+import colorsys
+import math
+import os
+```
+
+Next, we define the frame for our image. Variable meanings are self explanatory. precision is the threshold (max number of iterations) we will use in determining if a point diverges under iteration. Increasing this value will create more accurate calculations and images, while increase processing time.
+```python
+width = 1000 #pixels
+x = -0.65
+y = 0
+xRange = 3.4
+aspectRatio = 4/3
+precision = 500
+```
+
+Based on the previous parameters, we can compute basic information we'll need later on.
+
+```python
+height = round(width / aspectRatio)
+yRange = xRange / aspectRatio
+minX = x - xRange / 2
+maxX = x + xRange / 2
+minY = y - yRange / 2
+maxY = y + yRange / 2
+```
+
+Time to create our Image object. Using PIL's Image class, we can create a new image with desired dimensions and a black background. Then, we extract the pixels into an array we can directly manipulate with color changes.
+
+```python
+img = Image.new('RGB', (width, height), color = 'black')
+pixels = img.load()
+```
+
+## Mandelbrot Rendering Algorithm
+<div class="allInline">
+This algorithm is often called the “escape time algorithm,” since we find how many iterations are needed for a point to definitively diverge. Then, we color the image based on this value.
+
+We loop through the image's pixels, and map each pixel to a cartesian point $(x, y)$. The original $x$ and $y$ values are stored for later use.
+```python
+for row in range(height):
+    for col in range(width):
+        x = minX + col * xRange / width
+        y = maxY - row * yRange / height
+        oldX = x
+        oldY = y
+```
+
+Then, we can iterate through the Mandelbrot Set's core function, waiting for when the distance from the origin is greater than 2. If the number of iterations, $i$, is equal to precision, then we can assume that the function remains bounded at the point. If $i$ is less than precision, the function diverges.
+
+```python
+for i in range(precision + 1):
+    a = x*x - y*y   # real component of z^2
+    b = 2 * x * y   # imaginary component of z^2
+    x = a + oldX   # real component of new z
+    y = b + oldY   # imaginary component of new z
+    if x*x + y*y > 4:
+        break
+```
+
+If a point does diverges under iteration, the corresponding pixel's color will be a dependent on how far iteration was conducted. We can compute the number of successful iterations as a proportion of our threshold, and feed this value to a color generator. Finally, we set that rgb color to the value of the pixel in the pixels array.
+
+```python
+if i < precision:
+    distance = (i + 1) / (precision + 1)
+    rgb = powerColor(distance, 0.2, 0.27, 1.0)
+    pixels[col,row] = rgb
+```
+
+I created two coloring algorithms, though there are endless directions in which coloring can be taken. I made one coloring method that uses a log function, and one that uses a power function. Both functions take multiple parameters for ultimate customizability.
+
+```python
+def logColor(distance, base, const, scale):
+    color = -1 * math.log(distance, base)
+    rgb = colorsys.hsv_to_rgb(const + scale * color,0.8,0.9)
+    return tuple(round(i * 255) for i in rgb)
+
+def powerColor(distance, exp, const, scale):
+    color = distance**exp
+    rgb = colorsys.hsv_to_rgb(const + scale * color,1 - 0.6 * color,0.9)
+    return tuple(round(i * 255) for i in rgb)
+```
+        </div>
+
+All that's left to do is to write the file, and then open it through the operating system.
+```python
+img.save('output.png')
+os.system('open output.png')
+```
+## Put it All Together
+
+Run the program, and gaze.
+
+<InlineImg src="/src/assets/images/posts/mandel/mandel2.png" />
+

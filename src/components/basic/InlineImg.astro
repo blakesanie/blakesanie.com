@@ -1,24 +1,40 @@
 ---
 import { Img } from "astro-imagetools/components";
-const { src, alt } = Astro.props;
+const { src, alt, maxWidth } = Astro.props;
 ---
 
 <div class="inlineImg">
-  <Img
-    src={src}
-    alt={alt || ""}
-    loading="lazy"
-    placeholder="blurred"
-    format="webp"
-    breakpoints={[400, 600, 800, 1200, 1600]}
-    quality={30}
-  />
+  {
+    src.endsWith(".gif") ? (
+      <img
+        src={src}
+        alt={alt}
+        style={{
+          maxWidth: maxWidth ? maxWidth + "px" : "none",
+        }}
+      />
+    ) : (
+      <Img
+        src={src}
+        alt={alt || ""}
+        loading="lazy"
+        placeholder="blurred"
+        format="webp"
+        breakpoints={[400, 600, 800, 1200, 1600]}
+        quality={30}
+      />
+    )
+  }
+
   {alt && <figcaption>{alt}</figcaption>}
 </div>
 
 <style>
   div {
     padding: 1em 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   figcaption {
     font-size: 1em;

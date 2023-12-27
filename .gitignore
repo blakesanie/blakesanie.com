@@ -28,7 +28,7 @@ pnpm-debug.log*
 portfolio_old*  
 api/*/**/.*
 .pyc
-posts
-blog
+# posts
+# blog
 photo-portfolio
 public/assets/imageEmbeddings*.json
