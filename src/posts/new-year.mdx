@@ -1,0 +1,183 @@
+---
+author: Blake Sanie
+date: Jan 1 2022
+title: "New Year's Math Magic: Inscribing Circles Inside the Standard Parabola"
+description: 'A "timeless" geometric discovery'
+image: /public/assets/posts/newyear/diagram.png
+publish: true
+---
+
+import InlineImg from "../components/basic/InlineImg.astro";
+
+## Motivation
+
+On New Year's Eve, I came across a puzzling twitter post:
+
+{" "}
+
+<div class="embed">
+<Fragment
+  set:html={`<blockquote class="twitter-tweet">
+  <p lang="en" dir="ltr">
+    Traditionally, my last puzzle of the year. 🥂 🧩 ♥️{" "}
+    <a href="https://twitter.com/hashtag/mathiratti?src=hash&amp;ref_src=twsrc%5Etfw">
+      #mathiratti
+    </a>{" "}
+    <a href="https://t.co/SVXpreN7IV">pic.twitter.com/SVXpreN7IV</a>
+  </p>
+  &mdash; Diego Rattaggi 🇨🇭 (@diegorattaggi) <a href="https://twitter.com/diegorattaggi/status/1476935765351452676?ref_src=twsrc%5Etfw">December 31, 2021</a>
+</blockquote> <script
+  async
+  src="https://platform.twitter.com/widgets.js"
+  charset="utf-8"
+></script>`}
+/>
+</div>
+
+I thought, surely, the answer must be a nasty decimal - I was far from wrong, and my curiosity led me down a road to a mind-blowing realization.
+
+## Pen Meets Paper
+
+With a bit of calculus, the answer was in close reach. To my delight, my work came out to a clean `2022`. Ah, yes - only now had I realized I stumbled upon a New Years Eve joke!
+Still, my curiosity persisted - is this merely a coincidence, or a generalizable rule?
+
+## A Beautify Discovery
+
+<div class="allInline">
+
+I hypothesized that **for all $r>0$, if a circle with radius $r$ is inscribed in the standard parabola, then the subsequent inscribed circle must have radius $r+1$**.
+
+</div>
+
+More formally, I want to determine if:
+
+<div class="allInline center">
+center$_i + r_i = $ center $_{i+1} - r_{i+1}$
+</div>
+
+<div class="allInline">
+
+**for all $i>0$**, _not restricted to whole numbers_.
+
+</div>
+
+<InlineImg src="/public/assets/posts/newyear/diagram.png" alt="Illustration of hypothesis"/>
+
+## The Radius Segment
+
+<div class="allInline">
+First, we must model the radius of each circle as the segment connecting (for simplicity) the $+x$ half of the standard parabola to the $y$-axis that is simultaneously normal to such parabola.
+
+Given this interpretation, we can find the slope of the radius by finding the negative reciprocal of the parabola's slope.
+</div>
+
+$$ f(x)=x^2 $$
+$$ f\prime (x)=2x $$
+$$ \downarrow $$
+
+<div class="allInline center">
+slope of radius $=\frac{-1}{f\prime (x)}=\frac{-1}{2x}$
+</div>
+
+<div class="allInline">
+With this slope, we can express the radius as the sum of horizontal and vertical components. The horizontal component is, well, the definition of $x$. The vertical component, fascinatingly, is always $1/2$, since moving backwards $x$ units along the $x$-axis yields a $y$-change of $(\frac{-1}{2x}) * -x = -\frac{1}{2}$.
+</div>
+
+<InlineImg src="/public/assets/posts/newyear/circle.png" alt="Component breakdown of radius"/>
+
+<div class="allInline">
+Hence, the length of the radius is the magnitude of the resulting hypotenuse. We can calculate the $y$-value of the center accordingly.
+</div>
+
+
+$r_i=\sqrt{x_i^2+\frac{1}{2}^2}$
+
+
+$$ \downarrow $$
+
+$ x_i = \sqrt{r_i^2-\frac{1}{4}} $
+
+<div class="allInline center">
+center$_i=f(x_i)+\frac{1}{2}=r_i^2+\frac{1}{4}$
+</div>
+
+
+## Proof by Induction
+
+### Base Case
+
+<div class="allInline">
+Fundamentally, there exists a circle of radius of radius $r > 0$, and its center can be found by $r^2 + \frac{1}{4}$. The circle with $r = 0$ is excluded from the domain since it constructs a point. By the way, notice anything special about the constant $\frac{1}{4}$? It's the focus of the standard parabola!
+</div>
+
+### Inductive Step
+
+<div class="allInline">
+Having supported the base case, if we prove that our hypothesis holds true when transitioning from $i$ to $i + 1$, then our hypothesis must hold true for all $i > 0$.
+</div>
+
+Let's begin by stating our hypothesis, and manipulating the relationship until a conclusion is reached.
+
+<div class="allInline center">
+center$_i + r_i = $ center $_{i+1} - r_{i+1}$
+</div>
+
+$r_i^2+\frac{1}{4}+r_i=r_{i+1}^2+\frac{1}{4}-r_{i+1}$
+
+$r_{i+1}^2-r_{i+1}-(r_i^2+r_i)=0$
+
+<div class="center">
+Now factor using the Quadratic Formula, where
+</div>
+
+$a=1$
+$b=-1$
+$c=r_i^2+r_i$
+
+$r_{i+1}=\frac{-b \pm \sqrt{b^2-4ac}}{2a}$
+
+$=\frac{1\pm\sqrt{1-4(r_i^2+r_i)}}{2}$
+
+$=\frac{1\pm(2r_i+1)}{2}$
+
+$=\cancel{r_i}, r_i+1$
+
+$\therefore r_{i+1} = r_i+1$
+
+In conclusion, we accept the hypotheses - the radius of every circle inscribed in the standard parabola is one greater than that of the circle underneath.
+
+😂 Ah, and that's why the tweet was made "traditionally".
+
+
+## What about non-standard Parabolas?
+
+So far, we have seen that inscribing circles by the horizontal bounds of the standard parabola and circle beneath is possible for incrementing radii, starting at any non-zero radius.
+
+<div class="allInline">
+Keep imagining the standard parabola with its inscribed circles. When the function becomes $f(x) = ax^2$, where $a = 1$ does not hold, a vertical (and in a way, horizontal) stretch transformation is applied. Hence, this same transformation will be applied to the inscribed circles, yielding ellipses - the unique property of inscribed circles with incrementing radii does not hold here.
+</div>
+
+## Visualization
+
+To verify my work so far, I wrote a one-line python program to generate the equations for first 20 inscribed circles of whole-number radii.
+
+```python
+[print(f'x^2 +(y - {r}^2 - 1/4)^2 <= {r}^2') for r in range(1, 101)]
+```
+
+Yielding the output:
+
+```
+x^2 +(y - 1^2 - 1/4)^2 <= 1^2
+x^2 +(y - 2^2 - 1/4)^2 <= 2^2
+x^2 +(y - 3^2 - 1/4)^2 <= 3^2
+...
+x^2 +(y - 99^2 - 1/4)^2 <= 99^2
+x^2 +(y - 100^2 - 1/4)^2 <= 100^2
+```
+
+Pasting into [Desmos](https://medium.com/r/?url=https%3A%2F%2Fwww.desmos.com%2Fcalculator%2F9rtrnrpzlh) renders the beautiful phenomenon I stumbled upon to start 2022.
+ 
+<InlineImg src="/public/assets/posts/newyear/desmos.png" alt="Final visualization of inscribed circles in standard parabola"/>
+
+Thanks for reading!

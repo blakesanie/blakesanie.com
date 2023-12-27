@@ -6,17 +6,6 @@ import { formatDate } from "../../components/basic/PageCard.astro";
 import BreadCrumbs from "../../components/basic/BreadCrumbs.astro";
 import fs from "fs";
 
-const fetchMDXContent = async (mdxFilePath) => {
-  try {
-    const response = await fetch(mdxFilePath);
-    const content = await response.text();
-    return content;
-  } catch (error) {
-    console.error("Error fetching MDX content:", error);
-    return null;
-  }
-};
-
 export async function getStaticPaths() {
   const posts = await Astro.glob("../../posts/**/*.mdx");
   const pages = {};
@@ -156,19 +145,31 @@ const { title, description, date, image, author } = frontmatter;
   :global(.pageContent) {
     padding-bottom: 100px;
   }
+  :global(.pageContent .embed) {
+    max-width: 300px;
+  }
   :global(.pageContent > *) {
     width: min(100%, 800px);
   }
-  :global(.math) {
+  :global(.pageContent > .center *) {
+    text-align: center;
+    text-indent: 0;
     color: black;
   }
-  :global(.math:not(.allInline .math)) {
-    display: block;
-    text-indent: 0;
-    text-align: center;
-    font-size: 1.5em;
+  :global(.math) {
+    color: black;
+    font-size: 1.1em;
     letter-spacing: 0.05em;
     padding: 0.6em 0;
+    text-indent: 0;
+    text-align: center;
+    display: block;
+  }
+  :global(.allInline .math) {
+    display: inline;
+  }
+  :global(.allInline:not(.center) .math) {
+    font-size: 0.85em;
   }
   /* :global(.math *) {
     font-size: 1.5em;
@@ -196,11 +197,13 @@ const { title, description, date, image, author } = frontmatter;
     margin-top: -1.5em;
     margin-bottom: 1.5em;
   }
-  :global(.pageContent p > code) {
+  :global(.pageContent p code, .pageContent .allInline:not(.center) .math) {
     background-color: rgba(0, 0, 0, 0.1);
     color: black;
-    padding: 0 0.4em;
+    padding: 0.2em 0.4em;
+    margin: 0 0.2em;
     border-radius: 0.3em;
+    font-weight: 600;
   }
 </style>
 
