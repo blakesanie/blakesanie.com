@@ -1,13 +1,17 @@
 ---
 import { Img } from "astro-imagetools/components";
-const { src, alt, maxWidth } = Astro.props;
+let { src, alt, maxWidth, imgProps } = Astro.props;
+
+// if (import.meta.env.DEV && src.startsWith("/public/")) {
+// src = src.replace("/public/", "/");
+// }
 ---
 
 <div class="inlineImg">
   {
     src.endsWith(".gif") ? (
       <img
-        src={src}
+        src={src.replace("/public/", "/")}
         alt={alt}
         style={{
           maxWidth: maxWidth ? maxWidth + "px" : "none",
@@ -21,7 +25,7 @@ const { src, alt, maxWidth } = Astro.props;
         placeholder="blurred"
         format="webp"
         breakpoints={[400, 600, 800, 1200, 1600]}
-        quality={30}
+        quality={Astro.props.quality || 30}
       />
     )
   }

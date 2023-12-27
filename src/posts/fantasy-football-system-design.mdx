@@ -3,7 +3,7 @@ author: Blake Sanie
 date: May 1 2023
 title: Fantasy Football System Design
 description: Fantasy sports platform design decisions, system design principles, technology, and tooling.
-image: /src/assets/images/posts/fantasy/complete.png
+image: /public/assets/posts/fantasy/complete.png
 publish: true
 ---
 import InlineImg from "../components/basic/InlineImg.astro";
@@ -17,7 +17,7 @@ Several sports media companies offer app-driven Fantasy Football experiences, th
 
 This piece aims to explore crucial design decisions, system design principles, and technology and tooling considerations that fulfill the business needs of Fantasy Football platforms from the perspective of a sports media company.
 
-<InlineImg src="/src/assets/images/posts/fantasy/complete.png" alt="Fantasy Football Backend System Design Overview"/>
+<InlineImg src="/public/assets/posts/fantasy/complete.png" alt="Fantasy Football Backend System Design Overview"/>
 
 ## Requirement Analysis
 
@@ -38,7 +38,7 @@ This piece aims to explore crucial design decisions, system design principles, a
 
 Football, and sports more generally, are complex to model in full. For simplicity's sake, let us only track snaps, passes, runs, tackles, and touchdowns. Outside of direct gameplay, challenges and penalties will be considered. Assume all contextual game and player data is already populated.
 
-<InlineImg src="/src/assets/images/posts/fantasy/ingestion.png" alt="Game Event Data Ingestion Overview"/>
+<InlineImg src="/public/assets/posts/fantasy/ingestion.png" alt="Game Event Data Ingestion Overview"/>
 
 ## Stream Management and Usage
 
@@ -63,7 +63,7 @@ Events must be consumed in the order of transmission to accurately depict game s
 
 Kafka partitions allow for messages to be split between multiple consumers. Thus to prepare for maximum consumer scalability, the more partitions, the marrier. However, since there are only ever 10 simulatanous games each emmitting events every 3 seconds, there is no signmificant need for further partition orchestration.
 
-<InlineImg src="/src/assets/images/posts/fantasy/queue.png" alt="Kafka Topic Partitioning"/>
+<InlineImg src="/public/assets/posts/fantasy/queue.png" alt="Kafka Topic Partitioning"/>
 
 ### Ingestion Service
 
@@ -76,7 +76,7 @@ Alternatively, we may deploy a horizontally scalable cluster of general event in
 
 Because each consumer must commit consumption acknoledgements to the Kafka partition it reads from, the number of performing concurrent workers is limited by the number of partitions. Any more than this breaks the data consumption guarantee by greedily reading ahead before knowing if the current read succeeds. Therefore, as hinted at before, the more partitions, the better. Excess workers are idle, though a few extra instances are beneficial for immediate failover.
 
-<InlineImg src="/src/assets/images/posts/fantasy/consumers.png" alt="Ingestion Service Worker Cluster"/>
+<InlineImg src="/public/assets/posts/fantasy/consumers.png" alt="Ingestion Service Worker Cluster"/>
 
 
 ### Container Orchestration and Scalability

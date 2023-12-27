@@ -3,12 +3,12 @@ author: Blake Sanie
 date: Nov 28 2020
 title: "Generating Optimal Keyboard Layouts (with Code)"
 description: "Battling QWERTY with modern computing methods."
-image: /src/assets/images/posts/qwerty/qwerty.jpg
+image: /public/assets/posts/qwerty/qwerty.jpg
 publish: true
 ---
 import InlineImg from "../components/basic/InlineImg.astro";
 
-<InlineImg src="/src/assets/images/posts/qwerty/qwerty.jpg"/>
+<InlineImg src="/public/assets/posts/qwerty/qwerty.jpg"/>
 
 Today, the ubiquitous [QWERTY](https://en.wikipedia.org/wiki/QWERTY) keyboard is assumed to be the optimal layout for typing in the English language. Because QWERTY was developed in the 1870's, I challenged myself to use modern computer science to generate a more optimal keyboard.
 
@@ -67,7 +67,7 @@ Our keyboard models need to understand how characters relate to each other in va
 
 The letters on modern keyboards make up three rows: the home (middle), top, and bottom rows. Let's start by grouping all 26 characters into these rows.
 
-<InlineImg src="/src/assets/images/posts/qwerty/row.gif" alt="The home row"/>
+<InlineImg src="/public/assets/posts/qwerty/row.gif" alt="The home row"/>
 
 The most frequently read characters are to be placed in the middle row for fast access, followed by the top row, then the bottom.
 
