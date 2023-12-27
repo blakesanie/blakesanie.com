@@ -11,6 +11,7 @@ posts = posts
   })
   .map((p) => {
     const page = { ...p };
+    console.log("p.file", p.file, "p");
     const slug = p.file.split("blakesanie.com/src/posts/")[1].split(".")[0];
     const breadcrumbs = slug.split("/");
     breadcrumbs.pop();
