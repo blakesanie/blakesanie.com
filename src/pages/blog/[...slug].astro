@@ -4,22 +4,33 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import Button from "../../components/basic/Button.astro";
 import { formatDate } from "../../components/basic/PageCard.astro";
 import BreadCrumbs from "../../components/basic/BreadCrumbs.astro";
+import fs from "fs";
+
+const fetchMDXContent = async (mdxFilePath) => {
+  try {
+    const response = await fetch(mdxFilePath);
+    const content = await response.text();
+    return content;
+  } catch (error) {
+    console.error("Error fetching MDX content:", error);
+    return null;
+  }
+};
 
 export async function getStaticPaths() {
   const posts = await Astro.glob("../../posts/**/*.mdx");
   const pages = {};
   let out = posts
     .filter((p) => {
-      console.log(p);
+      console.log("p is", p.file);
       return p.frontmatter.publish;
     })
     .map((p) => {
       const page = { ...p };
-      const slug = p.file
-        .split("blakesanie.com/src/posts/")
-        .pop()
-        .split(".")[0];
+      const slug = p.file.split("/src/posts/").pop().split(".")[0];
       page.slug = slug;
+      page.content = fs.readFileSync(p.file, "utf8");
+      // page.content = await fetchMDXContent(p.file);
       pages[slug] = page;
       return {
         params: {
@@ -66,7 +77,8 @@ const authorLinks = {
   "Blake Sanie": "/",
 };
 
-const { Content, frontmatter, prev, next, breadcrumbs } = Astro.props.post;
+const { Content, frontmatter, prev, next, breadcrumbs, content } =
+  Astro.props.post;
 const { title, description, date, image, author } = frontmatter;
 ---
 
@@ -76,6 +88,25 @@ const { title, description, date, image, author } = frontmatter;
   description={description}
   image={image}
 >
+  <!-- https://jsonld.com/blog-post/ -->
+  <Fragment
+    set:html={`<script type="application/ld+json">
+        { "@context": "https://schema.org", 
+         "@type": "BlogPosting",
+         "headline": "${title}",
+         "editor": "Blake Sanie", 
+         "url": "http://www.example.com",
+         "description": "${description}",
+         "wordcount": "${content.split(" ").length}",
+         "articleBody": "${description}",
+           "author": {
+            "@type": "Person",
+            "name": "Blake Sanie"
+          }
+         }
+        </script>`}
+  />
+
   <link
     slot="head"
     rel="stylesheet"
