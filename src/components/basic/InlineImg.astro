@@ -14,6 +14,7 @@ let { src, alt, maxWidth, imgProps } = Astro.props;
         src={src.replace("/public/", "/")}
         alt={alt}
         style={{
+          width: "100%",
           maxWidth: maxWidth ? maxWidth + "px" : "none",
         }}
       />
