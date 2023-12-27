@@ -31,7 +31,6 @@ export function formatDate(date) {
     }
     {description && <div class="pageCardDesc">{description}</div>}
   </div>
-  <!-- {image && <div class="cardThumb" />} -->
   {image && <Img src={image} format="webp" alt="" breakpoints={[500]} />}
 </a>
 
@@ -42,11 +41,11 @@ export function formatDate(date) {
     padding: 6px;
     display: flex;
   }
-  .cardThumb,
   .pageCard :global(img) {
-    background-color: red;
+    position: relative;
     width: 150px;
     border-radius: 4px;
+    /* object-fit: contain; */
   }
   .cardText {
     padding: 1em;
@@ -81,5 +80,15 @@ export function formatDate(date) {
   }
   .pageCardDesc {
     opacity: 0.5;
+  }
+
+  @media screen and (max-width: 500px) {
+    .pageCard {
+      flex-direction: column;
+    }
+    .pageCard :global(img) {
+      width: 100%;
+      max-height: 200px;
+    }
   }
 </style>
