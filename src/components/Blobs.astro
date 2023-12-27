@@ -188,7 +188,8 @@ tsParticles
   //   import { tsParticles } from "tsparticles-engine";
   //   import { tsParticles } from "tsparticles-engine";
   const script = document.createElement("script");
-  script.src = "https://cdn.jsdelivr.net/npm/tsparticles";
+  script.src =
+    "https://cdn.jsdelivr.net/npm/tsparticles@1.18.3/dist/tsparticles.min.js";
   script.addEventListener("load", async () => {
     await loadParticles();
     document.getElementById("blobField").classList.remove("hidden2");
@@ -200,6 +201,11 @@ tsParticles
       ...particlesConfig,
       fullScreen: false,
     });
+
+    // "particles-js", {
+    //   ...particlesConfig,
+    //   fullScreen: false,
+    // });
   }
   //   window.addEventListener("load", () => {
   //     loadParticles();
