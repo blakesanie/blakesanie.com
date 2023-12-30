@@ -1,6 +1,6 @@
 ---
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
-
+import { SEO } from "astro-seo";
 import Button from "../../components/basic/Button.astro";
 import { formatDate } from "../../components/basic/PageCard.astro";
 import BreadCrumbs from "../../components/basic/BreadCrumbs.astro";
@@ -67,7 +67,7 @@ const authorLinks = {
   "Blake Sanie": "/",
 };
 
-const { Content, frontmatter, prev, next, breadcrumbs, content } =
+const { Content, frontmatter, prev, next, breadcrumbs, content, slug } =
   Astro.props.post;
 const { title, description, date, image, author } = frontmatter;
 ---
@@ -78,15 +78,46 @@ const { title, description, date, image, author } = frontmatter;
   description={description}
   image={image}
 >
+  <SEO
+    slot="head"
+    title={title + " | Blog"}
+    description={description}
+    openGraph={{
+      basic: {
+        title: title + " | Blog",
+        type: "article",
+        image: image,
+      },
+      optional: {
+        description: description,
+      },
+      article: {
+        publishedTime: date.toISOString(),
+        modifiedTime: date.toISOString(),
+        author: author.split(","),
+      },
+      image: {
+        type: "image/" + image.split(".").pop(),
+        // width: width,
+        // height: height,
+        alt: "",
+      },
+    }}
+    extend={{}}
+  />
   <!-- https://jsonld.com/blog-post/ -->
   <Fragment
+    slot="head"
     set:html={`<script type="application/ld+json">
         { "@context": "https://schema.org", 
          "@type": "BlogPosting",
          "headline": "${title}",
          "editor": "Blake Sanie", 
-         "url": "http://www.example.com",
+         "url": "https://blakesanie.com/blog/${slug}",
          "description": "${description}",
+         "datePublished": "${date.toISOString().split("T")[0]}",
+         "dateCreated": "${date.toISOString().split("T")[0]}",
+         "dateModified": "${date.toISOString().split("T")[0]}",
          "wordcount": "${content.split(" ").length}",
          "articleBody": "${description}",
            "author": {
@@ -108,6 +139,9 @@ const { title, description, date, image, author } = frontmatter;
     )
   }
   <h1>{title}</h1>
+  <!-- <div id="date">
+    {date.toISOString()}
+  </div> -->
   <span class="byline">
     <a class="author" href={authorLinks[author]} target="_blank">{author}</a>{
       " | " + formatDate(date)

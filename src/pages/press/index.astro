@@ -1,20 +1,27 @@
 ---
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
+import { Img } from "astro-imagetools/components";
 
 const links = [
-  { link: "https://machronicle.com/elementor-81035/" },
+  {
+    link: "https://machronicle.com/elementor-81035/",
+    image: "bsgrad.jpg",
+    date: "August 28, 2023",
+  },
   {
     link: "https://www.capitalone.com/tech/culture/tech-internships-tackle-aws/",
     date: "October 18, 2023",
+    image: "c1_aws.jpg",
   },
   {
     link: "https://www.cc.gatech.edu/news/professor-deploying-anti-plagiarism-detection-tool-900-student-course",
     date: "January 26, 2023",
+    image: "3600.jpg",
   },
   {
     link: "https://www.linkedin.com/feed/update/urn:li:activity:6833004016574840832/",
-    image:
-      "https://media.licdn.com/dms/image/C5622AQFdt13uDiD63w/feedshare-shrink_800/0/1629115107404?e=1704931200&v=beta&t=3GdUn81KQqgiYc90KxZYSizxM9jKthCjQbzFUfpYLeE",
+    date: "August 13 2021",
+    image: "schon.jpg",
   },
 ];
 
@@ -86,7 +93,15 @@ console.log(press);
             <p class="title">{title}</p>
             <p class="site">{site}</p>
             <p class="date">{date}</p>
-            <img src={image} />
+            <Img
+              src={"/src/assets/images/press/" + image}
+              alt={""}
+              loading="lazy"
+              placeholder="blurred"
+              format="webp"
+              breakpoints={[800]}
+              quality={70}
+            />
           </a>
         );
       })
@@ -125,12 +140,12 @@ console.log(press);
     text-indent: 0 !important;
     color: black !important;
   }
-  .article img {
-    position: absolute;
-    top: 0;
-    width: 150px;
-    height: 100%;
-    object-fit: cover;
+  .article :global(img) {
+    position: absolute !important;
+    top: 0 !important;
+    width: 150px !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
   .article .title {
     font-size: 1.4rem;
@@ -155,12 +170,12 @@ console.log(press);
       width: 100%;
       margin-left: 0;
     }
-    .article img {
-      position: static;
-      width: calc(100%+2em);
-      margin-left: -1em;
+    .article :global(img) {
+      position: static !important;
+      width: calc(100%+2em) !important;
+      /* margin-left: -1em; */
       margin-bottom: -1em;
-      height: 200px;
+      height: 200px !important;
       margin-top: 0.7em;
     }
   }
