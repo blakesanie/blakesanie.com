@@ -265,6 +265,8 @@ const markupData = [
   //   observer.observe(section);
   // }
 
+  const particlesElement = document.getElementById("particles-js");
+
   window.addEventListener("scroll", (e) => {
     // console.log(
     //   "onscreen",
@@ -316,6 +318,10 @@ const markupData = [
         }
       }
     });
+
+    particlesElement.style.filter = `blur(${
+      (window.scrollY / sectionHeight) * 14
+    }px)`;
 
     for (let i = 0; i < firstSection.children.length; i++) {
       const child = firstSection.children[i];
