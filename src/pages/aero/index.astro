@@ -1,8 +1,103 @@
 ---
 ---
 
+<head>
+  <!-- <script src="./ml.js" type="module"></script> -->
+</head>
 <body>
+  <video autoplay playsinline webkit-playsinline muted hidden id="videoelement"
+  ></video>
   <canvas id="physicsCanvas"></canvas>
+  <canvas id="videoCanvas"></canvas>
+  <div>
+    <input id="resetFluidButton" type="button" value="Reset fluid" />
+    <input id="stepButton" type="button" onclick="simulate()" value="Step" />
+    <input id="startButton" type="button" value="Start" />
+  </div>
+  <div>
+    Flow speed = <span id="speedValue">0.100</span>
+    <input
+      id="speedSlider"
+      type="range"
+      min="0"
+      max="0.12"
+      step="0.005"
+      value="0.1"
+    />
+    &nbsp;&nbsp;Viscosity = <span id="viscValue">0.020</span>
+    <input
+      id="viscSlider"
+      type="range"
+      min="0.005"
+      max="0.2"
+      step="0.005"
+      value="0.02"
+    />
+  </div>
+
+  <div>
+    Animation speed:
+    <input
+      id="stepsSlider"
+      type="range"
+      min="1"
+      max="40"
+      step="1"
+      value="20"
+      onchange="resetTimer()"
+    />
+    &nbsp;&nbsp;Steps per second:
+    <span id="speedReadout">0</span> &nbsp;&nbsp;<input
+      id="rafCheck"
+      type="checkbox"
+      checked
+      onchange="resetTimer()"
+    />Faster?
+  </div>
+  <div style="margin-top: 4px">
+    <!--<input id="pixelCheck" type="checkbox" checked onchange="resetTimer()">Use pixel graphics-->
+    Show:
+    <input id="tracerCheck" type="checkbox" onchange="initTracers()" />Tracers
+    <input
+      id="flowlineCheck"
+      type="checkbox"
+      onchange="paintCanvas()"
+    />Flowlines
+    <input id="forceCheck" type="checkbox" onchange="paintCanvas()" />Force on
+    barriers
+    <input id="sensorCheck" type="checkbox" onchange="paintCanvas()" />Sensor
+    <input id="dataCheck" type="checkbox" onchange="showData()" />Data
+  </div>
+  <div id="dataSection" style="display: none">
+    <textarea id="dataArea" rows="8" cols="50" disabled readonly></textarea>
+    <div>
+      <input
+        id="dataButton"
+        type="button"
+        value="Start data collection"
+        onclick="startOrStopData()"
+      />
+      <input
+        id="periodButton"
+        type="button"
+        value="Show F_y period"
+        onclick="showPeriod()"
+      />
+      <input
+        id="barrierDataButton"
+        type="button"
+        value="Show barrier locations"
+        onclick="showBarrierLocations()"
+      />
+      <input
+        id="debugButton"
+        type="button"
+        value="Debug"
+        onclick="debug()"
+        style="display: none"
+      />
+    </div>
+  </div>
 </body>
 
 <style>
@@ -10,293 +105,19 @@
     padding: 0;
     margin: 0;
   }
+  video {
+    display: none;
+  }
   canvas {
     /* background: red; */
     width: 100%;
     aspect-ratio: calc(16 / 9);
+    background-color: pink;
   }
 </style>
 
 <script>
-  const gridHeight = 72;
-  const gridWidth = 128;
-
-  const weights = [
-    4 / 9,
-    1 / 36,
-    1 / 9,
-    1 / 36,
-    1 / 9,
-    1 / 36,
-    1 / 9,
-    1 / 36,
-    1 / 9,
-  ];
-  const e = [
-    [0, 0],
-    [1, -1],
-    [1, 0],
-    [1, 1],
-    [0, 1],
-    [-1, 1],
-    [-1, 0],
-    [-1, -1],
-    [0, -1],
-  ];
-
-  const speed = 0.5;
-
-  let n = buildGrid();
-  let rho = buildGrid();
-  let boundary = buildGrid();
-  let ux = buildGrid();
-  let uy = buildGrid();
-  let curl = buildGrid();
-
-  function buildGrid() {
-    const out = new Array(gridHeight);
-    for (let y = 0; y < gridHeight; y++) {
-      const row = new Array(gridWidth);
-      out[y] = row;
-    }
-    return out;
-  }
-
-  function buildN() {
-    const out = new Array(gridHeight);
-    for (let y = 0; y < gridHeight; y++) {
-      const row = new Array(gridWidth);
-      for (let x = 0; x < gridWidth; x++) {
-        const distribution = new Array(9);
-        for (let i = 0; i < 9; i++) {
-          distribution[i] = 0;
-        }
-        row[x] = distribution;
-      }
-      out[y] = row;
-    }
-    return out;
-  }
-
-  for (let y = 0; y < gridHeight; y++) {
-    for (let x = 0; x < gridWidth; x++) {
-      rho[y][x] = 1;
-      boundary[y][x] = Math.pow(x - 40, 2) + Math.pow(y - 35, 2) < 160;
-      ux[y][x] = speed;
-      uy[y][x] = 0;
-      curl[y][x] = 0;
-      n[y][x] = nEq(speed, 0, 1);
-    }
-  }
-  //   debugger;
-  console.log(n);
-
-  //   for (let y = 20; y < 50; y++) {
-  //     boundary[y][20] = true;
-  //     n[y][20] = nEq(0, 0, 0);
-  //   }
-
-  function dot(arr1, arr2) {
-    let sum = 0;
-    for (let i = 0; i < arr1.length; i++) {
-      sum += arr1[i] * arr2[i];
-    }
-    return sum;
-  }
-
-  function setBoundaries() {
-    for (let y = 0; y < gridHeight; y++) {
-      n[y][0] = nEq(speed, 0, 1);
-      n[y][gridWidth - 1] = nEq(speed, 0, 1);
-    }
-    for (let x = 0; x < gridWidth; x++) {
-      n[0][x] = nEq(speed, 0, 1);
-      n[gridHeight - 1][x] = nEq(speed, 0, 1);
-    }
-  }
-
-  function nEq(ux, uy, rho) {
-    const distribution = new Array(9);
-    const u = [ux, uy];
-    const magU2 = ux * ux + uy * uy;
-    for (let i = 0; i < 9; i++) {
-      const eIDotU = dot(e[i], u);
-      distribution[i] =
-        rho *
-        weights[i] *
-        (1 + 3 * eIDotU + (9 / 2) * eIDotU * eIDotU - (3 / 2) * magU2);
-    }
-    return distribution;
-  }
-
-  function sumArray(arr) {
-    let sum = 0;
-    for (let i = 0; i < arr.length; i++) {
-      sum += arr[i];
-    }
-    return sum;
-  }
-
-  function collide() {
-    let w = 0.2;
-    for (let y = 1; y < gridHeight - 1; y++) {
-      for (let x = 1; x < gridWidth - 1; x++) {
-        if (boundary[y][x]) {
-          continue;
-        }
-        // debugger;
-        const densities = n[y][x];
-        const p = sumArray(densities);
-        // debugger;
-        ux[y][x] =
-          (densities[1] +
-            densities[2] +
-            densities[3] -
-            densities[5] -
-            densities[6] -
-            densities[7]) /
-          p;
-        if (isNaN(ux[y][x])) {
-          //   debugger;
-        }
-        uy[y][x] =
-          -(
-            densities[1] +
-            densities[7] +
-            densities[8] -
-            densities[3] -
-            densities[4] -
-            densities[5]
-          ) / p;
-        rho[y][x] = p;
-        const eq = nEq(ux[y][x], uy[y][x], p);
-        if (isNaN(eq[0])) {
-          debugger;
-        }
-        for (let i = 0; i < 9; i++) {
-          n[y][x][i] += w * (eq[i] - n[y][x][i]);
-          if (isNaN(n[y][x][i])) {
-            debugger;
-          }
-        }
-      }
-      //   for (const i of [5, 6, 7]) {
-      //     n[y][gridWidth - 1][i] = n[y][gridWidth - 2][i];
-      //   }
-    }
-  }
-
-  function stream() {
-    const newN = buildN();
-
-    for (let y = 0; y < gridHeight; y++) {
-      for (let x = 0; x < gridWidth; x++) {
-        if (boundary[y][x]) {
-          continue;
-        }
-        // debugger;
-        for (let i = 0; i < 9; i++) {
-          const eI = e[i];
-          let newY = (y + eI[1] + gridHeight) % gridHeight;
-          let newX = (x + eI[0] + gridWidth) % gridWidth;
-          //   if (newY >= 0 && newY < gridHeight && newX >= 0 && newX < gridWidth) {
-          if (boundary[newY][newX]) {
-            newN[y][x][((i + 3) % 8) + 1] += n[y][x][i];
-          } else {
-            newN[newY][newX][i] += n[y][x][i];
-          }
-          // 1 to 5
-          // 2 to 6
-          // 3 to 7
-          // 4 to 8
-          // 5 to 1
-          // 6 to 2
-          // 7 to 3
-          // 8 to 4
-          // (i-1+4)%8+1
-          //   }
-        }
-      }
-    }
-    n = newN;
-  }
-
-  function computeCurl() {
-    for (var y = 1; y < gridHeight - 1; y++) {
-      for (var x = 1; x < gridWidth - 1; x++) {
-        curl[y][x] = ux[y][x + 1] - ux[y][x - 1] - uy[y + 1][x] + uy[y - 1][x];
-      }
-    }
-  }
-
-  const canvas = document.getElementById("physicsCanvas");
-  const ctx = canvas.getContext("2d");
-  ctx.canvas.width = gridWidth;
-  ctx.canvas.height = gridHeight;
-  const imageData = ctx.createImageData(gridWidth, gridHeight);
-
-  function drawFrame() {
-    computeCurl();
-    // console.log("curl", curl);
-    for (let y = 0; y < gridHeight; y++) {
-      for (let x = 0; x < gridWidth; x++) {
-        const i = 4 * (y * gridWidth + x);
-        if (boundary[y][x]) {
-          imageData.data[i] = 0;
-          imageData.data[i + 1] = 0;
-          imageData.data[i + 2] = 0;
-          imageData.data[i + 3] = 255;
-        } else {
-          //   const color = Math.max(0, 50 + sumArray(n[y][x]) * 100);
-          const color = Math.max(0, 40 + 2000 * curl[y][x]);
-          //   const color = ux[y][x] * 200;
-          imageData.data[i] = color;
-          imageData.data[i + 1] = color;
-          imageData.data[i + 2] = color;
-          imageData.data[i + 3] = 255;
-        }
-      }
-    }
-    ctx.putImageData(imageData, 0, 0);
-  }
-
-  function totalDensity() {
-    let sum = 0;
-    for (const row of n) {
-      for (const cell of row) {
-        for (const val of cell) {
-          sum += val;
-        }
-      }
-    }
-    return sum;
-  }
-
-  const stepsPerFrame = 1;
-
-  function main() {
-    console.log("main");
-    if (totalDensity() < 1) {
-      return;
-    }
-    // setBoundaries();
-    for (let i = 0; i < stepsPerFrame; i++) {
-      //   debugger;
-      console.log("total density before collide", totalDensity());
-      //   debugger;
-      collide();
-      //   debugger;
-      console.log("total density after collide", totalDensity());
-      stream();
-      setBoundaries();
-      //   debugger;
-    }
-    drawFrame();
-    setTimeout(main, 10);
-  }
-  main();
-
-  drawFrame();
-
-  // setEquil(x, y, u0, 0, 1);
+  import "./video";
+  import "./ml";
+  import "./physics";
 </script>
