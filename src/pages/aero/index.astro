@@ -5,7 +5,7 @@
   <!-- <script src="./ml.js" type="module"></script> -->
 </head>
 <body>
-  <video autoplay playsinline webkit-playsinline muted hidden id="videoelement"
+  <video autoplay playsinline webkit-playsinline muted id="videoelement"
   ></video>
   <canvas id="physicsCanvas"></canvas>
   <canvas id="videoCanvas"></canvas>
@@ -106,9 +106,10 @@
     margin: 0;
   }
   video {
-    display: none;
+    /* display: none; */
   }
-  canvas {
+  canvas,
+  video {
     /* background: red; */
     width: 100%;
     aspect-ratio: calc(16 / 9);

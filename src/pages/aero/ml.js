@@ -20,15 +20,21 @@ async function mlMain() {
   const quantizationBytes = 2; // either 1, 2 or 4
   const model = await deeplab.load({ base: modelName, quantizationBytes });
 
-  const input = tf.zeros([1080, 1920, 3]);
-  // debugger;
-  // ...
-  const start = new Date();
-  model
-    .segment(input)
-    .then((out) =>
-      console.log(`predicted in ${new Date().getTime() - start.getTime()}`, out)
-    );
+  //   const input = tf.zeros([1080, 1920, 3]);
+  //   // debugger;
+  //   // ...
+  //   const start = new Date();
+  //   model
+  //     .segment(input)
+  //     .then((out) =>
+  //       console.log(`predicted in ${new Date().getTime() - start.getTime()}`, out)
+  //     );
+
+  const cam = await tf.data.webcam(document.getElementById("videoelement"));
+  console.log("cam", cam);
+  const frame = await cam.capture();
+  frame.print();
+  console.log("frame", frame);
 }
 
 mlMain();

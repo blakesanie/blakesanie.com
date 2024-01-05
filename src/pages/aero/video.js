@@ -1,7 +1,4 @@
-const video = (window.video = document.createElement("video"));
-video.setAttribute("autoplay", true);
-video.setAttribute("playsinline", true);
-document.body.appendChild(video);
+const video = document.getElementById("videoelement");
 
 const canvas = document.getElementById("videoCanvas");
 
