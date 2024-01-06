@@ -10,6 +10,15 @@ let dx = sceneWidth / gridWidth; // meters per cell
 
 var pxPerSquare = 10; //Number(sizeSelect.options[sizeSelect.selectedIndex].value);
 
+const barrierCanvas = document.getElementById("barrierCanvas");
+const barrierContext = barrierCanvas.getContext("2d");
+barrierContext.canvas.width = 513;
+barrierContext.canvas.height = 289;
+var barrierImage = barrierContext.createImageData(
+  barrierCanvas.width,
+  barrierCanvas.height
+);
+
 var mobile = navigator.userAgent.match(
   /iPhone|iPad|iPod|Android|BlackBerry|Opera Mini|IEMobile/i
 );
@@ -170,6 +179,22 @@ window.requestAnimFrame = (function (callback) {
   );
 })();
 
+let needToRenderNewBarrier = false;
+
+async function checkForNewBoundary() {
+  // const addIndices = [];
+  // const removeIndices = [];
+  // debugger;
+  if (window.newBoundaries) {
+    needToRenderNewBarrier = true;
+    for (let i = 0; i < window.newBoundaries.length; i++) {
+      barrierImage.data[i * 4 + 3] = window.newBoundaries[i] > 0 ? 0 : 128;
+    }
+  }
+  // debugger;
+  window.newBoundaries = undefined;
+}
+
 // Simulate function executes a bunch of steps and then schedules another call to itself:
 function simulate() {
   const start = new Date();
@@ -182,6 +207,7 @@ function simulate() {
   // steps = deltaX / dx
   var stepsPerFrame = Math.round(deltaX / dx);
   setBoundaries();
+  checkForNewBoundary();
   // Execute a bunch of time steps:
   for (var step = 0; step < stepsPerFrame; step++) {
     collide();
@@ -444,6 +470,22 @@ function paintCanvas() {
   var cIndex = 0;
   var contrast = Math.pow(1.2, 0 /*Number(contrastSlider.value)*/);
   var plotType = 4;
+  // for (const index of addIndices) {
+  //   const i = index * 4;
+  //   barrierImage.data[i] = 0;
+  //   barrierImage.data[i + 1] = 0;
+  //   barrierImage.data[i + 2] = 0;
+  //   barrierImage.data[i + 3] = 0.5;
+  // }
+  // for (const index of removeIndices) {
+  //   const i = index * 4;
+  //   barrierImage.data[i] = 0;
+  //   barrierImage.data[i + 1] = 0;
+  //   barrierImage.data[i + 2] = 0;
+  //   barrierImage.data[i + 3] = 0;
+  // }
+  barrierContext.putImageData(barrierImage, 0, 0);
+  // debugger;
   //var pixelGraphics = pixelCheck.checked;
   if (plotType == 4) computeCurl();
   for (var y = 0; y < ydim; y++) {

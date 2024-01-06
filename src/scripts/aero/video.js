@@ -10,9 +10,9 @@ const constraints = {
 function handleSuccess(stream) {
   window.stream = stream; // make stream available to browser console
   video.srcObject = stream;
-  setInterval(() => {
-    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
-  }, 10);
+  // setInterval(() => {
+  //   canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+  // }, 10);
 }
 
 function handleError(error) {

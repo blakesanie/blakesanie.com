@@ -32,9 +32,72 @@ async function mlMain() {
 
   const cam = await tf.data.webcam(document.getElementById("videoelement"));
   console.log("cam", cam);
-  const frame = await cam.capture();
-  frame.print();
-  console.log("frame", frame);
+  async function captureIteration() {
+    const frame = await cam.capture();
+    const [height, width, depth] = frame.shape;
+    const newHeight = (width / 16) * 9;
+    const y1 = (height - newHeight) / 2 / height;
+
+    const expanded = frame.expandDims(0);
+    tf.dispose(frame);
+    const cropped = tf.image.cropAndResize(
+      expanded,
+      [[y1, 1, 1 - y1, 0]],
+      [0],
+      [720, 1280]
+    );
+    tf.dispose(expanded);
+    // frame.dispose();
+    // debugger;
+    // await tf.browser.toPixels(
+    //   cropped.squeeze().mul(1 / 255),
+    //   document.getElementById("physicsCanvas")
+    // );
+    // return;
+    // console.log("cropped", cropped);
+
+    // const output = await model.segment(cropped.squeeze(), {
+    //   canvas: document.getElementById("physicsCanvas"),
+    // });
+    const squeezed = cropped.squeeze();
+    tf.dispose(cropped);
+    const output = await model.predict(squeezed);
+    tf.dispose(squeezed);
+    const passing = output.equal(15);
+    tf.dispose(output);
+    const subjects = passing.squeeze();
+    tf.dispose(passing);
+    // const output = await model.predict(cropped.squeeze());
+    // const subjects = output.equal(15);
+    // console.log("out", output, output.print(), subjects);
+
+    // await tf.browser.toPixels(
+    //   tf.cast(subjects, "float32"),
+    //   document.getElementById("barrierCanvas")
+    // );
+
+    // debugger;
+    window.newBoundaries = await subjects.data();
+    tf.dispose(subjects);
+    // output.dispose();
+    // subjects.dispose();
+    // tf.disposeVariables();
+    // setTimeout(captureIteration, 0);
+  }
+  while (true) {
+    await captureIteration();
+    // tf.disposeVariables();
+  }
+
+  // const downsized = tf.image
+  //   .cropAndResize(
+  //     output.expandDims(2).expandDims(0),
+  //     [[0, 0, 1, 1]],
+  //     [0],
+  //     [54, 96]
+  //   )
+  //   .squeeze()
+  //   .squeeze();
 }
 
 mlMain();

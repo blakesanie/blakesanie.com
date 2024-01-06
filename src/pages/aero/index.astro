@@ -5,8 +5,11 @@
   <!-- <script src="./ml.js" type="module"></script> -->
 </head>
 <body>
-  <video autoplay playsinline webkit-playsinline muted id="videoelement"
-  ></video>
+  <div id="sixteenByNine">
+    <video autoplay playsinline webkit-playsinline muted id="videoelement"
+    ></video>
+    <canvas id="barrierCanvas"></canvas>
+  </div>
   <canvas id="physicsCanvas"></canvas>
   <canvas id="videoCanvas"></canvas>
   <div>
@@ -105,15 +108,28 @@
     padding: 0;
     margin: 0;
   }
+  #sixteenByNine {
+    position: relative;
+    width: 100%;
+    aspect-ratio: calc(16 / 9);
+    overflow: hidden;
+  }
+  #sixteenByNine > * {
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+  }
   video {
     /* display: none; */
+    transform: translateY(-50%) scaleX(-1) !important;
   }
-  canvas,
-  video {
+  canvas {
     /* background: red; */
     width: 100%;
     aspect-ratio: calc(16 / 9);
-    background-color: pink;
+    /* background-color: pink; */
   }
 </style>
 
