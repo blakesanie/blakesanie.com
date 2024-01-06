@@ -20,6 +20,37 @@ async function mlMain() {
   const quantizationBytes = 2; // either 1, 2 or 4
   const model = await deeplab.load({ base: modelName, quantizationBytes });
 
+  function get1dGaussianKernel(sigma, size) {
+    // Generate a 1d gaussian distribution across a range
+    var x = tf.range(Math.floor(-size / 2) + 1, Math.floor(size / 2) + 1);
+    x = tf.pow(x, 2);
+    x = tf.exp(x.div(-2.0 * (sigma * sigma)));
+    x = x.div(tf.sum(x));
+    return x;
+  }
+
+  function get2dGaussianKernel(size, sigma) {
+    sigma = sigma || 0.3 * ((size - 1) * 0.5 - 1) + 0.8;
+    return tf.tidy(() => {
+      // This default is to mimic opencv2.
+
+      var kerne1d = get1dGaussianKernel(sigma, size);
+      return tf.outerProduct(kerne1d, kerne1d).expandDims(2).expandDims(2);
+    });
+  }
+
+  function blurImage(image, kernel) {
+    const asFloat = tf.cast(image, "float32");
+    tf.dispose(image);
+    const conved = tf.depthwiseConv2d(asFloat, kernel, 1, "same");
+    tf.dispose(asFloat);
+    const greater = conved.greater(0.5);
+    tf.dispose(conved);
+    return greater;
+  }
+
+  const kernel = get2dGaussianKernel(20, 10);
+
   //   const input = tf.zeros([1080, 1920, 3]);
   //   // debugger;
   //   // ...
@@ -63,22 +94,36 @@ async function mlMain() {
     tf.dispose(cropped);
     const output = await model.predict(squeezed);
     tf.dispose(squeezed);
-    const passing = output.equal(15);
+    const unsqueezed1 = output.expandDims(2);
     tf.dispose(output);
-    const subjects = passing.squeeze();
-    tf.dispose(passing);
-    // const output = await model.predict(cropped.squeeze());
-    // const subjects = output.equal(15);
-    // console.log("out", output, output.print(), subjects);
+    const unsqueezed2 = unsqueezed1.expandDims(0);
+    tf.dispose(unsqueezed1);
+    const passing = unsqueezed2.equal(15);
+    tf.dispose(unsqueezed2);
 
-    // await tf.browser.toPixels(
-    //   tf.cast(subjects, "float32"),
-    //   document.getElementById("barrierCanvas")
-    // );
+    const subjects = blurImage(passing, kernel);
 
-    // debugger;
-    window.newBoundaries = await subjects.data();
+    const squeeze1 = subjects.squeeze();
+
+    const higherResSqueezed = squeeze1.squeeze();
+    tf.dispose(squeeze1);
+    const higherRes = await higherResSqueezed.data();
+    tf.dispose(higherResSqueezed);
+    const croppedSubjects = tf.image.cropAndResize(
+      subjects,
+      [[1, 0, 0, 1]],
+      [0],
+      [54, 96]
+    );
     tf.dispose(subjects);
+    const croppedSqueezed1 = croppedSubjects.squeeze();
+    tf.dispose(croppedSubjects);
+    const croppedSubjects2d = croppedSqueezed1.squeeze();
+    tf.dispose(croppedSqueezed1);
+    const out = [higherRes, 0];
+    out[1] = await croppedSubjects2d.data();
+    window.newBoundaries = out;
+    tf.dispose(croppedSubjects2d);
     // output.dispose();
     // subjects.dispose();
     // tf.disposeVariables();
@@ -86,6 +131,7 @@ async function mlMain() {
   }
   while (true) {
     await captureIteration();
+    console.log(tf.memory().numTensors);
     // tf.disposeVariables();
   }
 

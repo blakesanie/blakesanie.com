@@ -186,10 +186,12 @@ async function checkForNewBoundary() {
   // const removeIndices = [];
   // debugger;
   if (window.newBoundaries) {
+    const [highRes, simRes] = window.newBoundaries;
     needToRenderNewBarrier = true;
-    for (let i = 0; i < window.newBoundaries.length; i++) {
-      barrierImage.data[i * 4 + 3] = window.newBoundaries[i] > 0 ? 0 : 180;
+    for (let i = 0; i < highRes.length; i++) {
+      barrierImage.data[i * 4 + 3] = highRes[i] > 0 ? 0 : 180;
     }
+    barrier = simRes;
   }
   // debugger;
   window.newBoundaries = undefined;
