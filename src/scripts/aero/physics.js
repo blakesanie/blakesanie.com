@@ -188,7 +188,7 @@ async function checkForNewBoundary() {
   if (window.newBoundaries) {
     needToRenderNewBarrier = true;
     for (let i = 0; i < window.newBoundaries.length; i++) {
-      barrierImage.data[i * 4 + 3] = window.newBoundaries[i] > 0 ? 0 : 128;
+      barrierImage.data[i * 4 + 3] = window.newBoundaries[i] > 0 ? 0 : 180;
     }
   }
   // debugger;

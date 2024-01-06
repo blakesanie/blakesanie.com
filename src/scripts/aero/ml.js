@@ -14,7 +14,7 @@ function loadPackage(url) {
 }
 
 async function mlMain() {
-  await Promise.all(packages.map((pack) => loadPackage(pack)));
+  // await Promise.all(packages.map((pack) => loadPackage(pack)));
   console.log("all loaded!");
   const modelName = "pascal"; // set to your preferred model, either `pascal`, `cityscapes` or `ade20k`
   const quantizationBytes = 2; // either 1, 2 or 4
