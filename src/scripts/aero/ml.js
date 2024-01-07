@@ -2,6 +2,7 @@ const packages = [
   "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js",
   "https://cdn.jsdelivr.net/npm/@tensorflow-models/deeplab@0.2.2/dist/deeplab.min.js",
 ];
+// this.webcamVideoElement.play
 
 function loadPackage(url) {
   return new Promise((resolve, reject) => {
@@ -135,7 +136,12 @@ async function mlMain() {
   const modelName = "pascal"; // set to your preferred model, either `pascal`, `cityscapes` or `ade20k`
   const quantizationBytes = 2; // either 1, 2 or 4
   model = await deeplab.load({ base: modelName, quantizationBytes });
-  cam = await tf.data.webcam(document.getElementById("videoelement"));
+  // debugger;
+  cam = await tf.data.webcam(undefined, {
+    resizeWidth: 600,
+    resizeHeight: 450,
+  });
+  // return;
 
   window.resumeML();
 
