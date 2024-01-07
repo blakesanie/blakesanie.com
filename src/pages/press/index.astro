@@ -7,51 +7,67 @@ const links = [
     link: "https://machronicle.com/elementor-81035/",
     image: "bsgrad.jpg",
     date: "August 28, 2023",
+    title:
+      "Tech Prodigy and Software Engineer Blake Sanie '19 Shares His Key to Success - M-A Chronicle",
   },
   {
     link: "https://www.capitalone.com/tech/culture/tech-internships-tackle-aws/",
     date: "October 18, 2023",
     image: "c1_aws.jpg",
+    title: "Interns' Take on AWS Summit 2023 | Capital One",
   },
   {
     link: "https://www.cc.gatech.edu/news/professor-deploying-anti-plagiarism-detection-tool-900-student-course",
     date: "January 26, 2023",
     image: "3600.jpg",
+    title:
+      "Professor Deploying Anti-plagiarism Detection Tool on 900-student Course | College of Computing",
   },
   {
     link: "https://www.linkedin.com/feed/update/urn:li:activity:6833004016574840832/",
     date: "August 13 2021",
     image: "schon.jpg",
+    title:
+      "Schonfeld: Last week, we were fortunate enough to welcome our Schonfeld summer…",
   },
 ];
 
-async function processLink({ link, image, date }) {
-  const res = await fetch(link);
-  const text = await res.text();
-  //   console.log(text);
-  let title = text.split("<title>")[1].split("</title>")[0];
-  title = title.replace(" on LinkedIn", "");
+async function processLink({ link, image, date, title }) {
   let site = link.split("://")[1].split("/")[0];
-  site = site.replace("www.", "");
-  //   article:published_time
-  function getContentProperty(text, query) {
-    const split = text.split(query);
-    if (split.length == 1) return;
-    const afterContentIndex = split[1].indexOf('content="');
-    let out;
-    if (afterContentIndex > -1 && split[1].indexOf(">") > afterContentIndex) {
-      out = split[1].split('content="')[1].split('"')[0];
-    } else {
-      let s = split[1].split('content="');
-      out = s[s.length - 1].split('"')[0];
+  let couldFetch = true;
+  let res;
+  try {
+    res = await fetch(link);
+  } catch (e) {
+    console.log("failed to process link", link);
+    couldFetch = false;
+  }
+  if (couldFetch) {
+    const text = await res.text();
+    //   console.log(text);
+    title = text.split("<title>")[1].split("</title>")[0];
+    title = title.replace(" on LinkedIn", "");
+    site = site.replace("www.", "");
+    //   article:published_time
+    function getContentProperty(text, query) {
+      const split = text.split(query);
+      if (split.length == 1) return;
+      const afterContentIndex = split[1].indexOf('content="');
+      let out;
+      if (afterContentIndex > -1 && split[1].indexOf(">") > afterContentIndex) {
+        out = split[1].split('content="')[1].split('"')[0];
+      } else {
+        let s = split[1].split('content="');
+        out = s[s.length - 1].split('"')[0];
+      }
+      return out;
     }
-    return out;
-  }
-  if (!image) {
-    image = getContentProperty(text, 'property="og:image"');
-  }
-  if (!date) {
-    date = getContentProperty(text, 'property="article:published_time"');
+    if (!image) {
+      image = getContentProperty(text, 'property="og:image"');
+    }
+    if (!date) {
+      date = getContentProperty(text, 'property="article:published_time"');
+    }
   }
   if (date) {
     const d = new Date(date);

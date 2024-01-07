@@ -7,7 +7,7 @@ const now = new Date();
 let posts = await Astro.glob("../../posts/**/*.mdx");
 posts = posts
   .filter((p) => {
-    return p.frontmatter.publish;
+    return import.meta.env.DEV || p.frontmatter.publish;
   })
   .map((p) => {
     const page = { ...p };

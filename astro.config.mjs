@@ -49,6 +49,7 @@ export default defineConfig({
     astroImageTools,
     compress({
       img: false,
+      Image: false,
     }),
     sitemap({
       filter(page) {

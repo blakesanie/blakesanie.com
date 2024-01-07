@@ -12,7 +12,7 @@ export async function getStaticPaths() {
   let out = posts
     .filter((p) => {
       console.log("p is", p.file, p.file.split("/src/posts/"));
-      return p.frontmatter.publish;
+      return import.meta.env.DEV || p.frontmatter.publish;
     })
     .map((p) => {
       const page = { ...p };
