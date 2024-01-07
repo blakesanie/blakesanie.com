@@ -105,7 +105,7 @@ async function calibrate() {
   const waitingMs = 10000;
   let stopTime = new Date(new Date().getTime() + waitingMs);
   while (new Date() < stopTime) {
-    if (naturalForces.length > forceWindow) {
+    if (forceAvg !== undefined) {
       maxFavg = Math.max(maxFavg, forceAvg);
       minFavg = Math.min(minFavg, forceAvg);
     }
@@ -132,11 +132,6 @@ const u0 = 0.1;
 const viscosity = 0.02;
 
 const fps = (window.fps = 24);
-
-const naturalForces = [];
-const forceWindow = fps;
-let forceSum = 0;
-let forceAvg;
 
 let sceneWidth = 2.5; // meters
 let dx = sceneWidth / gridWidth; // meters per cell
@@ -189,8 +184,6 @@ for (var y = 0; y < ydim; y++) {
     barrier[x + y * xdim] = false;
   }
 }
-
-initFluid(); // initialize to steady rightward flow
 
 let needToRenderNewBarrier = false;
 
@@ -468,25 +461,34 @@ function computeNaturalForce() {
   return [Fx, Fy];
 }
 
-window.forceSavings = [];
-window.powerSavings = [];
-
 let chartFrames = 0;
 let chartMaxSeconds = 10;
+let chartUpdatesPerSecond = (window.chartUpdatesPerSecond = 4);
+
+window.forceSavings = new Array(chartMaxSeconds * fps + 1);
+window.powerSavings = new Array(chartMaxSeconds * fps + 1);
+const MAWindow = fps;
+window.powerMA = [];
+// let powerWindowSum = 0;
+// window.forceMA = new Array(chartMaxSeconds * fps + 1);
+// let forceWindowSum = 0;
+
+let forceSum = 0;
+let forceAvg;
+let naturalForces = [];
+let numNaturalForces = 0;
 
 function paintCanvas() {
   barrierContext.putImageData(barrierImage, 0, 0);
   computeCurl();
   const [Fx, Fy] = computeNaturalForce();
-  naturalForces.push(Fx);
   forceSum += Fx;
-  if (naturalForces.length > forceWindow) {
-    forceSum -= naturalForces[naturalForces.length - forceWindow];
-    if (naturalForces.length > fps * 20) {
-      naturalForces.shift();
-    }
+  naturalForces.push(Fx);
+  if (naturalForces.length > MAWindow) {
+    forceSum -= naturalForces[naturalForces.length - MAWindow - 1];
+    naturalForces.shift();
+    forceAvg = forceSum / MAWindow;
   }
-  forceAvg = forceSum / Math.min(naturalForces.length, forceWindow);
   if (c) {
     const forceSaved = c * (topForce - Fx);
     window.forceSavings.push(forceSaved);
@@ -494,11 +496,41 @@ function paintCanvas() {
     const powerSaved = forceSaved * speedInMPS;
     window.powerSavings.push(powerSaved);
     powerSavedElement.innerHTML = Math.round(powerSaved);
-    if (window.forceSavings.length > chartMaxSeconds * fps) {
-      window.forceSavings.shift();
-      window.powerSavings.shift();
-    }
-    if (chartFrames % (fps / 2) == 0) {
+    window.forceSavings.shift();
+    window.powerSavings.shift();
+    // const oldestPowerInWindow =
+    //   window.powerSavings[window.powerSavings.length - MAWindow - 1];
+    // if (oldestPowerInWindow) {
+    //   powerWindowSum -= oldestPowerInWindow;
+    //   window.powerMA.push(powerWindowSum / MAWindow);
+    //   window.powerMA.shift();
+    // }
+    // if (chartFrames > 0 && chartFrames % MAWindow == 0) {
+    //   // debugger;
+    //   let powerMAVal = 0;
+    //   for (let i = 0; i < MAWindow; i++) {
+    //     powerMAVal += window.powerSavings[window.powerSavings.length - i - 1];
+    //   }
+    //   powerMAVal /= MAWindow;
+    //   window.powerMA.shift();
+    //   window.powerMA.push(powerMAVal);
+    // }
+
+    if (chartFrames % (fps / chartUpdatesPerSecond) == 0) {
+      if (window.powerSavings[window.powerSavings.length - MAWindow]) {
+        let powerMAVal = 0;
+        for (let i = 0; i < MAWindow; i++) {
+          powerMAVal += window.powerSavings[window.powerSavings.length - i - 1];
+        }
+        powerMAVal /= MAWindow;
+        if (
+          window.powerMA.length ==
+          chartMaxSeconds * chartUpdatesPerSecond + 1
+        ) {
+          window.powerMA.shift();
+        }
+        window.powerMA.push(powerMAVal);
+      }
       window.updateCharts();
     }
     chartFrames++;
@@ -568,3 +600,5 @@ function initFluid() {
   }
   paintCanvas();
 }
+
+initFluid(); // initialize to steady rightward flow

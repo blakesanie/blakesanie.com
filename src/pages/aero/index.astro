@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <link
     rel="stylesheet"
-    href="https://fonts.googleapis.com/css?family=Plus%20Jakarta%20Sans"
+    href="https://fonts.googleapis.com/css?family=Comfortaa"
   /></head
 >
 
@@ -34,48 +34,32 @@
 <body>
   <div id="cover">
     <div class="modules" id="inputs">
-      <div class="module" id="speed">
-        <div class="hbox center">
-          <p class="moduleValue val">25</p>
-          <div class="vbox">
-            <p class="moduleName">Speed</p>
-            <select class="moduleValue unit">
-              <option value="mph">mph</option>
-              <option value="kmph">km/h</option>
-            </select>
-          </div>
-          <div class="vbox" id="direction">
-            <p class="moduleName">Flow</p>
-            <select class="moduleValue unit">
-              <option value="right">Right</option>
-              <option value="left">Left</option>
-            </select>
+      <div class="module hbox center" id="speed">
+        <p class="moduleValue val">25</p>
+        <div class="vbox">
+          <input type="range" min="1" max="40" value="25" step="1" />
+          <div class="hbox center">
+            <div class="vbox">
+              <select class="moduleValue unit">
+                <option value="mph">mph</option>
+                <option value="kmph">km/h</option>
+              </select>
+            </div>
+            <div class="vbox" id="direction">
+              <select class="moduleValue unit">
+                <option value="right">Right</option>
+                <option value="left">Left</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <input type="range" min="1" max="40" value="25" step="1" />
-
-        <!-- <p class="moduleName">Speed</p>
-        <p class="moduleValue">
-          <span class="val">25</span><span class="unit"
-            ><select class="moduleValue">
-              <option value="mph">mph</option>
-              <option value="kmph">km/h</option>
-            </select></span
-          >
-        </p> -->
-      </div>
-      <!-- <div class="module" id="direction">
-        <p class="moduleName">Direction</p>
-        <select class="moduleValue unit">
-          <option value="right">Right</option>
-          <option value="left">Left</option>
-        </select>
-      </div> -->
-      <div class="module">
         <button id="calibrate" class="disabled">Calibrate</button>
         <button id="pausePlay">Start</button>
       </div>
+      <!-- <div class="module"></div>
+      <div class="module">
+      </div> -->
     </div>
     <div id="frameView">
       <div id="sixteenByNine">
@@ -87,16 +71,16 @@
     </div>
     <div class="modules" id="outputs">
       <div class="module" id="powerSaving">
-        <p class="moduleName">Power Saved</p>
         <p class="moduleValue">
           <span class="val">-</span><span class="unit">W</span>
         </p>
+        <p class="moduleName">Power Saved</p>
       </div>
       <div class="module" id="forceSaving">
-        <p class="moduleName">Force Saved</p>
         <p class="moduleValue">
           <span class="val">-</span><span class="unit">N</span>
         </p>
+        <p class="moduleName">Force Saved</p>
       </div>
     </div>
   </div>
@@ -108,26 +92,33 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    font-family: "Plus Jakarta Sans", sans-serif;
+    font-family: "Comfortaa", sans-serif;
+  }
+  body {
+    background-color: #353535;
   }
   .modules {
+    position: absolute;
     display: inline-flex;
     flex-direction: center;
     justify-content: center;
     flex-wrap: wrap;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(15px);
     color: white;
     z-index: 2;
     padding: 0.2em 0.5em;
+    border-radius: 0.4em;
+    box-shadow: 0 0 4em 0 rgba(255, 255, 255, 0.2);
+  }
+  .modules p {
+    padding-top: 0.15em;
   }
   #inputs {
-    border-bottom-left-radius: 0.5em;
-    border-bottom-right-radius: 0.5em;
+    top: 0.5em;
   }
   #outputs {
-    border-top-left-radius: 0.5em;
-    border-top-right-radius: 0.5em;
+    bottom: 0.5em;
   }
   .module {
     /* display: flex;
@@ -154,6 +145,7 @@
   }
   .hbox {
     display: flex;
+    flex-direction: row;
     gap: 0.6rem;
   }
   .moduleName {
@@ -174,20 +166,19 @@
 
   select,
   button {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.3);
+    /* border: 1px solid rgba(255, 255, 255, 0.5); */
     border: none;
+    box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.1);
     color: white;
-    padding: 0.2rem 0.3rem;
+    padding: 0.35em 0.3em 0.2em 0.3em;
     border-radius: 0.4rem;
+    cursor: pointer;
   }
 
   .disabled {
     pointer-events: none;
     opacity: 0.3;
-  }
-
-  select {
-    padding-top: 0.1rem;
   }
 
   #speed input {
@@ -208,10 +199,12 @@
   }
 
   .module button {
-    width: 100%;
-    font-size: 0.8em;
-    padding: 0 1em;
-    flex: 1;
+    /* width: 100%; */
+    height: 100%;
+    max-height: 2.5em;
+    font-size: 0.9em;
+    padding-left: 1em;
+    padding-right: 1em;
   }
 
   #cover {
@@ -219,7 +212,6 @@
     width: 100%;
     max-height: 100vh;
     max-height: 100svh;
-    background-color: #353535;
     overflow: hidden;
   }
   #cover {
@@ -255,11 +247,17 @@
     /* display: none; */
     transform: translateY(-50%) scaleX(-1) !important;
   }
-  canvas {
+  #sixteenByNine canvas {
     /* background: red; */
     width: 100%;
     aspect-ratio: calc(16 / 9);
     /* background-color: pink; */
+  }
+
+  #powerChart {
+    width: 100%;
+    /* height: 200px; */
+    margin: 12px;
   }
 </style>
 

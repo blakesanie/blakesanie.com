@@ -9,45 +9,95 @@ const powerCanvas = document.getElementById("powerChart");
 //   { year: 2015, count: 30 },
 //   { year: 2016, count: 28 },
 // ];
-Chart.defaults.font.family = "Plus Jakarta Sans";
+Chart.defaults.font.family = "Comfortaa";
+
+const powerColor = "#4EB7FF";
+const forceColor = "#FF6E28";
+const gridColor = "#ffffff30";
+const tickColor = "#ffffff50";
+const labelColor = "#ffffff80";
 
 const powerChart = new Chart(powerCanvas, {
   type: "line",
   options: {
+    responsive: false,
+    maintainAspectRatio: false,
+    animations: {
+      x: {
+        duration: 0,
+        easing: "linear",
+      },
+      y: {
+        duration: 0,
+      },
+    },
     scales: {
       x: {
         ticks: {
           callback: function (value, index, ticks) {
             const out = (ticks.length - (index + 1)) / fps;
+            if (out == 0) {
+              return "Now";
+            }
             if (out % 1 < 0.0000001) {
               return Math.round(-out) + "s";
             }
           },
+          color: tickColor,
+        },
+        grid: {
+          color: gridColor,
         },
         title: {
           text: "History (s)",
           display: true,
+          color: labelColor,
+          font: {
+            size: 14,
+          },
         },
       },
       y: {
         type: "linear",
         display: true,
-        position: "left",
+        position: "right",
+        grid: {
+          color: gridColor,
+          tickColor: gridColor,
+        },
         title: {
           text: "Power Saved (W)",
           display: true,
+          color: labelColor,
+          font: {
+            size: 14,
+          },
+        },
+        ticks: {
+          color: tickColor,
         },
       },
       y1: {
         type: "linear",
+        border: {
+          color: gridColor,
+        },
         display: true,
-        position: "right",
+        position: "left",
         grid: {
           drawOnChartArea: false,
+          color: gridColor,
         },
         title: {
           text: "Force Saved (N)",
           display: true,
+          color: labelColor,
+          font: {
+            size: 14,
+          },
+        },
+        ticks: {
+          color: tickColor,
         },
       },
     },
@@ -59,38 +109,75 @@ const powerChart = new Chart(powerCanvas, {
     },
   },
   data: {
-    labels: [0, 0],
+    labels: [...window.powerSavings.keys()],
     datasets: [
       {
         label: "Power Savings",
-        data: [0, 0],
+        data: window.powerSavings,
         pointStyle: false,
         yAxisID: "y",
         xAxisID: "x",
         cubicInterpolationMode: "monotone",
-        tension: 0.4,
+        borderColor: powerColor + "90",
+        borderWidth: 1,
+        order: 2,
       },
       {
         label: "Force Savings",
-        data: [0, 0],
+        data: window.forceSavings,
         pointStyle: false,
         yAxisID: "y1",
         xAxisID: "x",
         cubicInterpolationMode: "monotone",
-        tension: 0.4,
+        borderColor: "transparent",
+        borderWidth: 0,
+        order: 3,
+      },
+      {
+        label: "Power Savings (Avg.)",
+        data: [],
+        pointStyle: false,
+        yAxisID: "y",
+        xAxisID: "x",
+        cubicInterpolationMode: "monotone",
+        borderColor: powerColor,
+        borderWidth: 3,
+        order: 1,
       },
     ],
   },
 });
 
+function sizeChart() {
+  const padding = 0 * 12 * 2;
+  const heightAvailableOnScreen =
+    window.innerHeight - document.getElementById("cover").clientHeight;
+  const chartHeight = Math.max(heightAvailableOnScreen, 180);
+  const chartWidth = window.innerWidth; //Math.min(window.innerWidth, 1000);
+  powerChart.resize(chartWidth - padding, chartHeight - padding);
+}
+
+sizeChart();
+
+window.addEventListener("resize", sizeChart);
+
 window.updateCharts = function () {
-  console.log("chart update", window.powerSavings);
-  const newPower = [...window.powerSavings];
-  const newForce = [...window.forceSavings];
-  powerChart.data.labels = newPower;
-  powerChart.data.datasets[0].data = newPower;
-  powerChart.data.datasets[1].data = newForce;
+  //   console.log("chart update", window.powerSavings);
+  //   const newPower = [...window.powerSavings];
+  //   const newForce = [...window.forceSavings];
+  //   powerChart.data.labels = window.powerSavings; //newPower;
+  //   powerChart.data.datasets[0].data = window.powerSavings; //newPower;
+  //   powerChart.data.datasets[1].data = window.forceSavings; //newForce;
   //   data.power = makePowerData();
+  const scalar = window.fps / window.chartUpdatesPerSecond;
+  const offset =
+    powerChart.data.labels.length + scalar * (1 - window.powerMA.length) - 1;
+  powerChart.data.datasets[2].data = window.powerMA.map((power, i) => {
+    return {
+      x: offset + i * scalar,
+      y: power,
+    };
+  });
   powerChart.update();
 };
 
