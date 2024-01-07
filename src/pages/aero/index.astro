@@ -10,6 +10,8 @@
   /></head
 >
 
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"
+></script>
 <script
   type="text/javascript"
   src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"
@@ -19,18 +21,19 @@
   src="https://cdn.jsdelivr.net/npm/@tensorflow-models/deeplab@0.2.2/dist/deeplab.min.js"
 ></script>
 
+<!-- import "../../scripts/aero/video";
+  import "../../scripts/aero/ml";
+  import "../../scripts/aero/physics";
+  import "../../scripts/aero/charts"; -->
+
+<!-- <script src="../../scripts/aero/video"></script>
+<script src="../../scripts/aero/ml"></script>
+<script src="../../scripts/aero/physics"></script>
+<script src="../../scripts/aero/charts"></script> -->
+
 <body>
   <div id="cover">
     <div class="modules" id="inputs">
-      <!-- {
-        inputs.map((input) => {
-          return <div class="module" id={input.name}>
-            <p class="moduleName">{input.name}</p>
-            <p class="moduleValue">{input.value}</p>
-            <input type={input.type} {...input.props}></input>
-            </div>;
-        })
-      } -->
       <div class="module" id="speed">
         <div class="hbox center">
           <p class="moduleValue val">25</p>
@@ -70,8 +73,8 @@
         </select>
       </div> -->
       <div class="module">
-        <button id="calibrate">Calibrate</button>
-        <button id="pausePlay">Pause</button>
+        <button id="calibrate" class="disabled">Calibrate</button>
+        <button id="pausePlay">Start</button>
       </div>
     </div>
     <div id="frameView">
@@ -83,107 +86,22 @@
       </div>
     </div>
     <div class="modules" id="outputs">
-      <div class="module" id="powerLoss">
-        <p class="moduleName">Power Loss</p>
+      <div class="module" id="powerSaving">
+        <p class="moduleName">Power Saved</p>
         <p class="moduleValue">
-          <span class="val">25</span><span class="unit">W</span>
+          <span class="val">-</span><span class="unit">W</span>
         </p>
       </div>
-      <div class="module" id="powerLoss">
-        <p class="moduleName">Drag Force</p>
+      <div class="module" id="forceSaving">
+        <p class="moduleName">Force Saved</p>
         <p class="moduleValue">
-          <span class="val">50</span><span class="unit">N</span>
+          <span class="val">-</span><span class="unit">N</span>
         </p>
       </div>
     </div>
   </div>
+  <canvas id="powerChart"></canvas>
 </body>
-<canvas id="videoCanvas"></canvas>
-<div>
-  <input id="resetFluidButton" type="button" value="Reset fluid" />
-  <input id="stepButton" type="button" onclick="simulate()" value="Step" />
-  <input id="startButton" type="button" value="Start" />
-</div>
-<div>
-  Flow speed = <span id="speedValue">0.100</span>
-  <input
-    id="speedSlider"
-    type="range"
-    min="0"
-    max="0.12"
-    step="0.005"
-    value="0.1"
-  />
-  &nbsp;&nbsp;Viscosity = <span id="viscValue">0.020</span>
-  <input
-    id="viscSlider"
-    type="range"
-    min="0.005"
-    max="0.2"
-    step="0.005"
-    value="0.02"
-  />
-</div>
-
-<div>
-  Animation speed:
-  <input
-    id="stepsSlider"
-    type="range"
-    min="1"
-    max="40"
-    step="1"
-    value="20"
-    onchange="resetTimer()"
-  />
-  &nbsp;&nbsp;Steps per second:
-  <span id="speedReadout">0</span> &nbsp;&nbsp;<input
-    id="rafCheck"
-    type="checkbox"
-    checked
-    onchange="resetTimer()"
-  />Faster?
-</div>
-<div style="margin-top: 4px">
-  <!--<input id="pixelCheck" type="checkbox" checked onchange="resetTimer()">Use pixel graphics-->
-  Show:
-  <input id="tracerCheck" type="checkbox" onchange="initTracers()" />Tracers
-  <input id="flowlineCheck" type="checkbox" onchange="paintCanvas()" />Flowlines
-  <input id="forceCheck" type="checkbox" onchange="paintCanvas()" />Force on
-  barriers
-  <input id="sensorCheck" type="checkbox" onchange="paintCanvas()" />Sensor
-  <input id="dataCheck" type="checkbox" onchange="showData()" />Data
-</div>
-<div id="dataSection" style="display: none">
-  <textarea id="dataArea" rows="8" cols="50" disabled readonly></textarea>
-  <div>
-    <input
-      id="dataButton"
-      type="button"
-      value="Start data collection"
-      onclick="startOrStopData()"
-    />
-    <input
-      id="periodButton"
-      type="button"
-      value="Show F_y period"
-      onclick="showPeriod()"
-    />
-    <input
-      id="barrierDataButton"
-      type="button"
-      value="Show barrier locations"
-      onclick="showBarrierLocations()"
-    />
-    <input
-      id="debugButton"
-      type="button"
-      value="Debug"
-      onclick="debug()"
-      style="display: none"
-    />
-  </div>
-</div>
 
 <style>
   * {
@@ -261,6 +179,11 @@
     color: white;
     padding: 0.2rem 0.3rem;
     border-radius: 0.4rem;
+  }
+
+  .disabled {
+    pointer-events: none;
+    opacity: 0.3;
   }
 
   select {
@@ -344,4 +267,5 @@
   import "../../scripts/aero/video";
   import "../../scripts/aero/ml";
   import "../../scripts/aero/physics";
+  import "../../scripts/aero/charts";
 </script>
