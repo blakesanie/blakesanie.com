@@ -1,8 +1,75 @@
+// inputs
+
+const speedToMPS = {
+  mph: 0.44704,
+  kmph: 0.277778,
+};
+
+const maxSpeeds = {
+  mph: 40,
+  kmph: 64,
+};
+
+const speedUnitSelect = document.querySelector("#speed select");
+const roadSpeedSlider = document.querySelector("#speed input");
+let speedUnit = speedUnitSelect.value;
+speedUnitSelect.addEventListener("change", (e) => {
+  speedUnit = e.target.value;
+  roadSpeedSlider.setAttribute("max", maxSpeeds[speedUnit]);
+  const speed = Math.round(speedInMPS / speedToMPS[speedUnit]);
+  roadSpeedSlider.value = speed;
+  setSpeedInMPS(speed);
+});
+
+const speedOutput = document.querySelector("#speed .val");
+let speedInMPS = roadSpeedSlider.value * speedToMPS[speedUnit];
+
+function setSpeedInMPS(speed) {
+  speedInMPS = speed * speedToMPS[speedUnit];
+  speedOutput.innerHTML = Math.round(speed);
+}
+roadSpeedSlider.addEventListener("input", (e) => {
+  setSpeedInMPS(e.target.value);
+});
+
+window.running = true; // will be true when running
+
+const pauseButton = document.querySelector("#pausePlay");
+pauseButton.addEventListener("click", (e) => {
+  if (running) {
+    window.running = false;
+    e.target.innerHTML = "Resume";
+  } else {
+    window.running = true;
+    e.target.innerHTML = "Pause";
+    simulate();
+    window.resumeML();
+  }
+});
+
+const directionSelect = document.querySelector("#direction select");
+window.directionRight = directionSelect.value;
+directionSelect.addEventListener("change", (e) => {
+  window.directionRight = e.target.value == "right";
+  if (window.directionRight) {
+    document.body.classList.remove("flowLeft");
+  } else {
+    document.body.classList.add("flowLeft");
+  }
+});
+
+// physics
+
 const dxdt = 1;
 const dxdt2 = dxdt * dxdt;
 
 const gridHeight = 54;
 const gridWidth = 96;
+
+const u0 = 0.1;
+const viscosity = 0.02;
+
+const naturalForces = [];
 
 const fps = 24;
 let sceneWidth = 2.5; // meters
@@ -39,7 +106,7 @@ var resetFluidButton = document.getElementById("resetFluidButton");
 resetFluidButton?.addEventListener("click", initFluid);
 var stepsSlider = document.getElementById("stepsSlider");
 var startButton = document.getElementById("startButton");
-startButton?.addEventListener("click", startStop);
+// startButton?.addEventListener("click", startStop);
 var speedSlider = document.getElementById("speedSlider");
 speedSlider?.addEventListener("change", adjustSpeed);
 var speedValue = document.getElementById("speedValue");
@@ -66,7 +133,6 @@ var forceCheck = document.getElementById("forceCheck");
 var sensorCheck = document.getElementById("sensorCheck");
 var rafCheck = document.getElementById("rafCheck");
 var speedReadout = document.getElementById("speedReadout");
-var running = false; // will be true when running
 var stepCount = 0;
 var startTime = 0;
 var four9ths = 4.0 / 9.0; // abbreviations
@@ -191,6 +257,11 @@ async function checkForNewBoundary() {
     for (let i = 0; i < highRes.length; i++) {
       barrierImage.data[i * 4 + 3] = highRes[i] > 0 ? 0 : 180;
     }
+    for (var y = 1; y < ydim - 1; y++) {
+      for (var x = 1; x < xdim - 1; x++) {
+        var i = x + y * xdim; // array index for this lattice site
+      }
+    }
     barrier = simRes;
   }
   // debugger;
@@ -200,16 +271,17 @@ async function checkForNewBoundary() {
 // Simulate function executes a bunch of steps and then schedules another call to itself:
 function simulate() {
   const start = new Date();
-  const speed = 14; // m/s
-  const deltaX = speed / fps;
+  const deltaX = speedInMPS / fps;
   let dx = sceneWidth / gridWidth; // meters per cell
   // speed = deltaX/dt
   // dt = 1 / fps
   // deltaX = speed/fps
   // steps = deltaX / dx
-  var stepsPerFrame = Math.round(deltaX / dx);
-  setBoundaries();
+  var stepsPerFrame = Math.round((deltaX / dx) * 4);
+  // dx/dt = 1
+  // dxForC = 1/fps
   checkForNewBoundary();
+  setBoundaries();
   // Execute a bunch of time steps:
   for (var step = 0; step < stepsPerFrame; step++) {
     collide();
@@ -236,10 +308,10 @@ function simulate() {
     if (rho[index] <= 0) stable = false;
   }
   if (!stable) {
-    window.alert(
-      "The simulation has become unstable due to excessive fluid speeds."
-    );
-    startStop();
+    // window.alert(
+    //   "The simulation has become unstable due to excessive fluid speeds."
+    // );
+    // startStop();
     initFluid();
   }
   const duration = new Date().getTime() - start.getTime();
@@ -250,7 +322,7 @@ function simulate() {
 
 // Set the fluid variables at the boundaries, according to the current slider value:
 function setBoundaries() {
-  var u0 = Number(speedSlider.value);
+  // var u0 = Number(speedSlider.value);
   for (var x = 0; x < xdim; x++) {
     setEquil(x, 0, u0, 0, 1);
     setEquil(x, ydim - 1, u0, 0, 1);
@@ -263,7 +335,7 @@ function setBoundaries() {
 
 // Collide particles within each cell (here's the physics!):
 function collide() {
-  var viscosity = Number(viscSlider.value); // kinematic viscosity coefficient in natural units
+  // var viscosity = Number(viscSlider.value); // kinematic viscosity coefficient in natural units
   var omega = 1 / (3 * viscosity + 0.5); // reciprocal of relaxation time
   for (var y = 1; y < ydim - 1; y++) {
     for (var x = 1; x < xdim - 1; x++) {
@@ -354,11 +426,6 @@ function collide() {
 
 // Move particles along their directions of motion:
 function stream() {
-  barrierCount = 0;
-  barrierxSum = 0;
-  barrierySum = 0;
-  barrierFx = 0.0;
-  barrierFy = 0.0;
   for (var y = ydim - 2; y > 0; y--) {
     // first start in NW corner...
     for (var x = 1; x < xdim - 1; x++) {
@@ -401,23 +468,6 @@ function stream() {
         nSE[x + 1 + (y - 1) * xdim] = nNW[index];
         nSW[x - 1 + (y - 1) * xdim] = nNE[index];
         // Keep track of stuff needed to plot force vector:
-        barrierCount++;
-        barrierxSum += x;
-        barrierySum += y;
-        barrierFx +=
-          nE[index] +
-          nNE[index] +
-          nSE[index] -
-          nW[index] -
-          nNW[index] -
-          nSW[index];
-        barrierFy +=
-          nN[index] +
-          nNE[index] +
-          nNW[index] -
-          nS[index] -
-          nSE[index] -
-          nSW[index];
       }
     }
   }
@@ -467,6 +517,34 @@ function setEquil(x, y, newux, newuy, newrho) {
   uy[i] = newuy;
 }
 
+function computeNaturalForce() {
+  let Fx = 0;
+  let Fy = 0;
+  for (var y = 1; y < ydim - 1; y++) {
+    // Now handle bounce-back from barriers
+    for (var x = 1; x < xdim - 1; x++) {
+      if (barrier[x + y * xdim]) {
+        var index = x + y * xdim;
+        Fx +=
+          nE[index] +
+          nNE[index] +
+          nSE[index] -
+          nW[index] -
+          nNW[index] -
+          nSW[index];
+        Fy +=
+          nN[index] +
+          nNE[index] +
+          nNW[index] -
+          nS[index] -
+          nSE[index] -
+          nSW[index];
+      }
+    }
+  }
+  return [Fx, Fy];
+}
+
 // Paint the canvas:
 function paintCanvas() {
   var cIndex = 0;
@@ -490,18 +568,48 @@ function paintCanvas() {
   // debugger;
   //var pixelGraphics = pixelCheck.checked;
   if (plotType == 4) computeCurl();
+  const [Fx, Fy] = computeNaturalForce();
+  console.log("force", Fx);
+  naturalForces.push(Fx);
+  if (naturalForces.length > fps * 20) {
+    naturalForces.shift();
+  }
+  const averageWindow = fps / 2;
+  let sum = 0;
+  for (let i = 0; i < averageWindow; i++) {
+    sum += naturalForces[naturalForces.length - 1 - i];
+  }
+  sum /= averageWindow;
+
+  // let maxCurl = 0;
+  // for (const x of curl) {
+  //   maxCurl = Math.max(maxCurl, x);
+  // }
+  // console.log("max curl", maxCurl);
   for (var y = 0; y < ydim; y++) {
     for (var x = 0; x < xdim; x++) {
       if (barrier[x + y * xdim]) {
-        colorSquare(x, y, 0, 0, 0, 255);
+        colorSquare(x, y, 0, 0, 0, 0);
         //   cIndex = nColors + 1; // kludge for barrier color which isn't really part of color map
       } else {
-        const myColor = Math.min(
-          255,
-          Math.max(0, 256 / 2 + curl[x + y * xdim] * 500)
-        );
-        const a = Math.pow(Math.abs(myColor - 256 / 2) / (256 / 2), 0.7) * 255;
-        colorSquare(x, y, myColor, myColor, myColor, a);
+        const curlValue = curl[x + y * xdim];
+        // const myColor = Math.min(
+        //   255,
+        //   Math.max(0, 256 / 2 + curl[x + y * xdim] * 500)
+        // );
+        let r, g, b;
+        if (curlValue < 0) {
+          r = 255;
+          g = 140;
+          b = 120;
+        } else {
+          r = 120;
+          g = 140;
+          b = 255;
+        }
+        const relative = Math.max(0, Math.min(1, Math.abs(curlValue) * 5));
+        const a = (0.02 + 0.98 * Math.pow(relative, 0.8)) * 255;
+        colorSquare(x, y, r, g, b, a);
         //   if (plotType == 0) {
         //     cIndex = Math.round(
         //       nColors * ((rho[x + y * xdim] - 1) * 6 * contrast + 0.5)
@@ -614,7 +722,7 @@ function drawForceArrow(x, y, Fx, Fy) {
 // Function to initialize or re-initialize the fluid, based on speed slider setting:
 function initFluid() {
   // Amazingly, if I nest the y loop inside the x loop, Firefox slows down by a factor of 20
-  var u0 = Number(speedSlider.value);
+  // var u0 = Number(speedSlider.value);
   for (var y = 0; y < ydim; y++) {
     for (var x = 0; x < xdim; x++) {
       setEquil(x, y, u0, 0, 1);
@@ -625,16 +733,19 @@ function initFluid() {
 }
 
 // Function to start or pause the simulation:
-function startStop() {
-  running = !running;
-  if (running) {
-    startButton.value = "Pause";
-    resetTimer();
-    simulate();
-  } else {
-    startButton.value = " Run ";
-  }
-}
+// function startStop() {
+//   window.running = !running;
+//   if (running) {
+//     startButton.value = "Pause";
+//     resetTimer();
+//     simulate();
+//   } else {
+//     startButton.value = " Run ";
+//   }
+// }
+resetTimer();
+simulate();
+// simulate()
 
 // Reset the timer that handles performance evaluation:
 function resetTimer() {

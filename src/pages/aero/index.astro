@@ -3,123 +3,322 @@
 
 <head>
   <!-- <script src="./ml.js" type="module"></script> -->
-  <script
-    type="text/javascript"
-    src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"
-  ></script>
-  <script
-    type="text/javascript"
-    src="https://cdn.jsdelivr.net/npm/@tensorflow-models/deeplab@0.2.2/dist/deeplab.min.js"
-  ></script>
-</head>
-<body>
-  <div id="sixteenByNine">
-    <video autoplay playsinline webkit-playsinline muted id="videoelement"
-    ></video>
-    <canvas id="barrierCanvas"></canvas>
-  </div>
-  <canvas id="physicsCanvas"></canvas>
-  <canvas id="videoCanvas"></canvas>
-  <div>
-    <input id="resetFluidButton" type="button" value="Reset fluid" />
-    <input id="stepButton" type="button" onclick="simulate()" value="Step" />
-    <input id="startButton" type="button" value="Start" />
-  </div>
-  <div>
-    Flow speed = <span id="speedValue">0.100</span>
-    <input
-      id="speedSlider"
-      type="range"
-      min="0"
-      max="0.12"
-      step="0.005"
-      value="0.1"
-    />
-    &nbsp;&nbsp;Viscosity = <span id="viscValue">0.020</span>
-    <input
-      id="viscSlider"
-      type="range"
-      min="0.005"
-      max="0.2"
-      step="0.005"
-      value="0.02"
-    />
-  </div>
+  <meta charset="utf-8" />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Plus%20Jakarta%20Sans"
+  /></head
+>
 
-  <div>
-    Animation speed:
-    <input
-      id="stepsSlider"
-      type="range"
-      min="1"
-      max="40"
-      step="1"
-      value="20"
-      onchange="resetTimer()"
-    />
-    &nbsp;&nbsp;Steps per second:
-    <span id="speedReadout">0</span> &nbsp;&nbsp;<input
-      id="rafCheck"
-      type="checkbox"
-      checked
-      onchange="resetTimer()"
-    />Faster?
-  </div>
-  <div style="margin-top: 4px">
-    <!--<input id="pixelCheck" type="checkbox" checked onchange="resetTimer()">Use pixel graphics-->
-    Show:
-    <input id="tracerCheck" type="checkbox" onchange="initTracers()" />Tracers
-    <input
-      id="flowlineCheck"
-      type="checkbox"
-      onchange="paintCanvas()"
-    />Flowlines
-    <input id="forceCheck" type="checkbox" onchange="paintCanvas()" />Force on
-    barriers
-    <input id="sensorCheck" type="checkbox" onchange="paintCanvas()" />Sensor
-    <input id="dataCheck" type="checkbox" onchange="showData()" />Data
-  </div>
-  <div id="dataSection" style="display: none">
-    <textarea id="dataArea" rows="8" cols="50" disabled readonly></textarea>
-    <div>
-      <input
-        id="dataButton"
-        type="button"
-        value="Start data collection"
-        onclick="startOrStopData()"
-      />
-      <input
-        id="periodButton"
-        type="button"
-        value="Show F_y period"
-        onclick="showPeriod()"
-      />
-      <input
-        id="barrierDataButton"
-        type="button"
-        value="Show barrier locations"
-        onclick="showBarrierLocations()"
-      />
-      <input
-        id="debugButton"
-        type="button"
-        value="Debug"
-        onclick="debug()"
-        style="display: none"
-      />
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/@tensorflow-models/deeplab@0.2.2/dist/deeplab.min.js"
+></script>
+
+<body>
+  <div id="cover">
+    <div class="modules" id="inputs">
+      <!-- {
+        inputs.map((input) => {
+          return <div class="module" id={input.name}>
+            <p class="moduleName">{input.name}</p>
+            <p class="moduleValue">{input.value}</p>
+            <input type={input.type} {...input.props}></input>
+            </div>;
+        })
+      } -->
+      <div class="module" id="speed">
+        <div class="hbox center">
+          <p class="moduleValue val">25</p>
+          <div class="vbox">
+            <p class="moduleName">Speed</p>
+            <select class="moduleValue unit">
+              <option value="mph">mph</option>
+              <option value="kmph">km/h</option>
+            </select>
+          </div>
+          <div class="vbox" id="direction">
+            <p class="moduleName">Flow</p>
+            <select class="moduleValue unit">
+              <option value="right">Right</option>
+              <option value="left">Left</option>
+            </select>
+          </div>
+        </div>
+
+        <input type="range" min="1" max="40" value="25" step="1" />
+
+        <!-- <p class="moduleName">Speed</p>
+        <p class="moduleValue">
+          <span class="val">25</span><span class="unit"
+            ><select class="moduleValue">
+              <option value="mph">mph</option>
+              <option value="kmph">km/h</option>
+            </select></span
+          >
+        </p> -->
+      </div>
+      <!-- <div class="module" id="direction">
+        <p class="moduleName">Direction</p>
+        <select class="moduleValue unit">
+          <option value="right">Right</option>
+          <option value="left">Left</option>
+        </select>
+      </div> -->
+      <div class="module">
+        <button id="calibrate">Calibrate</button>
+        <button id="pausePlay">Pause</button>
+      </div>
+    </div>
+    <div id="frameView">
+      <div id="sixteenByNine">
+        <video autoplay playsinline webkit-playsinline muted id="videoelement"
+        ></video>
+        <canvas id="barrierCanvas"></canvas>
+        <canvas id="physicsCanvas"></canvas>
+      </div>
+    </div>
+    <div class="modules" id="outputs">
+      <div class="module" id="powerLoss">
+        <p class="moduleName">Power Loss</p>
+        <p class="moduleValue">
+          <span class="val">25</span><span class="unit">W</span>
+        </p>
+      </div>
+      <div class="module" id="powerLoss">
+        <p class="moduleName">Drag Force</p>
+        <p class="moduleValue">
+          <span class="val">50</span><span class="unit">N</span>
+        </p>
+      </div>
     </div>
   </div>
 </body>
+<canvas id="videoCanvas"></canvas>
+<div>
+  <input id="resetFluidButton" type="button" value="Reset fluid" />
+  <input id="stepButton" type="button" onclick="simulate()" value="Step" />
+  <input id="startButton" type="button" value="Start" />
+</div>
+<div>
+  Flow speed = <span id="speedValue">0.100</span>
+  <input
+    id="speedSlider"
+    type="range"
+    min="0"
+    max="0.12"
+    step="0.005"
+    value="0.1"
+  />
+  &nbsp;&nbsp;Viscosity = <span id="viscValue">0.020</span>
+  <input
+    id="viscSlider"
+    type="range"
+    min="0.005"
+    max="0.2"
+    step="0.005"
+    value="0.02"
+  />
+</div>
+
+<div>
+  Animation speed:
+  <input
+    id="stepsSlider"
+    type="range"
+    min="1"
+    max="40"
+    step="1"
+    value="20"
+    onchange="resetTimer()"
+  />
+  &nbsp;&nbsp;Steps per second:
+  <span id="speedReadout">0</span> &nbsp;&nbsp;<input
+    id="rafCheck"
+    type="checkbox"
+    checked
+    onchange="resetTimer()"
+  />Faster?
+</div>
+<div style="margin-top: 4px">
+  <!--<input id="pixelCheck" type="checkbox" checked onchange="resetTimer()">Use pixel graphics-->
+  Show:
+  <input id="tracerCheck" type="checkbox" onchange="initTracers()" />Tracers
+  <input id="flowlineCheck" type="checkbox" onchange="paintCanvas()" />Flowlines
+  <input id="forceCheck" type="checkbox" onchange="paintCanvas()" />Force on
+  barriers
+  <input id="sensorCheck" type="checkbox" onchange="paintCanvas()" />Sensor
+  <input id="dataCheck" type="checkbox" onchange="showData()" />Data
+</div>
+<div id="dataSection" style="display: none">
+  <textarea id="dataArea" rows="8" cols="50" disabled readonly></textarea>
+  <div>
+    <input
+      id="dataButton"
+      type="button"
+      value="Start data collection"
+      onclick="startOrStopData()"
+    />
+    <input
+      id="periodButton"
+      type="button"
+      value="Show F_y period"
+      onclick="showPeriod()"
+    />
+    <input
+      id="barrierDataButton"
+      type="button"
+      value="Show barrier locations"
+      onclick="showBarrierLocations()"
+    />
+    <input
+      id="debugButton"
+      type="button"
+      value="Debug"
+      onclick="debug()"
+      style="display: none"
+    />
+  </div>
+</div>
 
 <style>
   * {
     padding: 0;
     margin: 0;
+    box-sizing: border-box;
+    font-family: "Plus Jakarta Sans", sans-serif;
   }
-  #sixteenByNine {
+  .modules {
+    display: inline-flex;
+    flex-direction: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    color: white;
+    z-index: 2;
+    padding: 0.2em 0.5em;
+  }
+  #inputs {
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+  }
+  #outputs {
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+  }
+  .module {
+    /* display: flex;
+    flex-direction: column; */
+    align-items: center;
+    /* flex-wrap: wrap; */
+    padding: 0.2em 0.4em;
+    justify-content: space-between;
+    /* height: 4em; */
+  }
+  .center {
+    justify-content: center;
+    align-items: center;
+  }
+  .vbox,
+  .module {
+    display: flex;
+    flex-direction: column;
+  }
+  .vbox,
+  .hbox,
+  .module {
+    gap: 0.2rem;
+  }
+  .hbox {
+    display: flex;
+    gap: 0.6rem;
+  }
+  .moduleName {
+    font-size: 0.8em;
+    padding: 0 0rem;
+  }
+  /* .moduleValue {
+    text-wrap: nowrap;
+  } */
+  .val {
+    font-size: 2.4em;
+    padding-right: 0.1em;
+  }
+
+  .unit {
+    font-size: 0.8em;
+  }
+
+  select,
+  button {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 0.2rem 0.3rem;
+    border-radius: 0.4rem;
+  }
+
+  select {
+    padding-top: 0.1rem;
+  }
+
+  #speed input {
+    width: 100%;
+  }
+
+  #speed .val {
+    padding-right: 0;
+  }
+
+  #speed .moduleName {
+    text-align: right;
+    /* padding-left: 0.6rem; */
+  }
+
+  #direction .moduleName {
+    text-align: left;
+  }
+
+  .module button {
+    width: 100%;
+    font-size: 0.8em;
+    padding: 0 1em;
+    flex: 1;
+  }
+
+  #cover {
     position: relative;
     width: 100%;
-    aspect-ratio: calc(16 / 9);
+    max-height: 100vh;
+    max-height: 100svh;
+    background-color: #353535;
+    overflow: hidden;
+  }
+  #cover {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #frameView {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+  }
+  .flowLeft #frameView {
+    transform: scaleX(-1);
+  }
+  #sixteenByNine {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    /* aspect-ratio: calc(16 / 9); */
+    padding-bottom: 56.25%;
     overflow: hidden;
   }
   #sixteenByNine > * {
@@ -129,7 +328,7 @@
     left: 0;
     transform: translateY(-50%);
   }
-  video {
+  body:not(.flowLeft) video {
     /* display: none; */
     transform: translateY(-50%) scaleX(-1) !important;
   }
