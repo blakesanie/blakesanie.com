@@ -193,11 +193,14 @@ async function checkForNewBoundary() {
     // for (let i = 0; i < highRes.length; i++) {
     //   barrierImage.data[i * 4 + 3] = highRes[i] > 0 ? 0 : 180;
     // }
-    // for (var y = 1; y < ydim - 1; y++) {
-    //   for (var x = 1; x < xdim - 1; x++) {
-    //     var i = x + y * xdim; // array index for this lattice site
-    //   }
-    // }
+    for (var y = 1; y < ydim - 1; y++) {
+      for (var x = 1; x < xdim - 1; x++) {
+        var i = x + y * xdim;
+        if (barrier[i] || simRes[i]) {
+          setEquil(x, y, u0, 0, 1);
+        }
+      }
+    }
     barrier = simRes;
   }
   window.newBoundaries = undefined;
@@ -369,10 +372,20 @@ function stream() {
       nSW[x + y * xdim] = nSW[x + 1 + (y + 1) * xdim]; // and the southwest-moving particles
     }
   }
-  for (var y = 1; y < ydim - 1; y++) {
+  for (var y = 1; y < ydim; y++) {
     // Now handle bounce-back from barriers
     for (var x = 1; x < xdim - 1; x++) {
-      if (barrier[x + y * xdim]) {
+      if (false && y == ydim - 1) {
+        var index = x + y * xdim;
+        // nE[x + 1 + y * xdim] = nW[index];
+        // nW[x - 1 + y * xdim] = nE[index];
+        nN[x + (y + 1) * xdim] = nS[index] + nN[index];
+        // nS[x + (y - 1) * xdim] = nN[index];
+        nNE[x + 1 + (y + 1) * xdim] = nSW[index] + nNE[index];
+        nNW[x - 1 + (y + 1) * xdim] = nSE[index] + nNW[index];
+        // nSE[x + 1 + (y - 1) * xdim] = nNW[index];
+        // nSW[x - 1 + (y - 1) * xdim] = nNE[index];
+      } else if (ydim == ydim - 1 || barrier[x + y * xdim]) {
         var index = x + y * xdim;
         nE[x + 1 + y * xdim] = nW[index];
         nW[x - 1 + y * xdim] = nE[index];

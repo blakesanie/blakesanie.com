@@ -33,34 +33,52 @@
 
 <body>
   <div id="cover">
-    <div class="modules" id="inputs">
-      <div class="module hbox center" id="speed">
-        <p class="moduleValue val">25</p>
-        <div class="vbox">
-          <input type="range" min="1" max="40" value="25" step="1" />
-          <div class="hbox center">
-            <div class="vbox">
-              <select class="moduleValue unit">
-                <option value="mph">mph</option>
-                <option value="kmph">km/h</option>
-              </select>
-            </div>
-            <div class="vbox" id="direction">
-              <select class="moduleValue unit">
-                <option value="right">Right</option>
-                <option value="left">Left</option>
-              </select>
-            </div>
+    <div class="bar" id="topBar">
+      <a class="flex1" href="/" target="_blank"
+        ><h1>Aero<br /><span id="byline">by Blake</span></h1></a
+      >
+      <div class="controlBox hbox wrap center" id="inputs">
+        <p class="val" id="speed">25</p>
+        <div class="vbox center">
+          <input
+            type="range"
+            id="speedSlider"
+            min="1"
+            max="40"
+            value="25"
+            step="1"
+          />
+          <div class="hbox">
+            <select id="unitSelect">
+              <option value="mph">mph</option>
+              <option value="kmph">km/h</option>
+            </select>
+
+            <select id="direction">
+              <option value="right">Right</option>
+              <option value="left">Left</option>
+            </select>
           </div>
         </div>
-
-        <button id="calibrate" class="disabled">Calibrate</button>
-        <button id="pausePlay">Start</button>
+        <div class="hbox">
+          <button id="pausePlay" class="majorButton">Start</button>
+          <div class="vbox">
+            <button id="calibrate" class="disabled">Calibrate</button><button
+              id="clear">Reset Log</button
+            >
+          </div>
+          <button id="cameraToggle" class="majorButton"
+            >Toggle<br />Camera</button
+          >
+          <button id="advancedButton" class="majorButton">Advanced</button>
+        </div>
       </div>
-      <!-- <div class="module"></div>
+      <div class="flex1"></div>
+    </div>
+
+    <!-- <div class="module"></div>
       <div class="module">
       </div> -->
-    </div>
     <div id="frameView">
       <div id="sixteenByNine">
         <video autoplay playsinline webkit-playsinline muted id="videoelement"
@@ -69,201 +87,240 @@
         <canvas id="physicsCanvas"></canvas>
       </div>
     </div>
-    <div class="modules" id="outputs">
-      <div class="module" id="powerSaving">
-        <p class="moduleValue">
-          <span class="val">-</span><span class="unit">W</span>
-        </p>
-        <p class="moduleName">Power Saved</p>
-      </div>
-      <div class="module" id="forceSaving">
-        <p class="moduleValue">
-          <span class="val">-</span><span class="unit">N</span>
-        </p>
-        <p class="moduleName">Force Saved</p>
+    <div class="bar" id="bottomBar">
+      <div class="controlBox hbox center" id="outputs">
+        <div class="vbox center" id="powerSaving">
+          <p class="moduleValue">
+            <span class="val">-</span><span class="unit">W</span>
+          </p>
+          <p class="label">Power Saved</p>
+        </div>
+        <div class="vbox center" id="forceSaving">
+          <p class="moduleValue">
+            <span class="val">-</span><span class="unit">N</span>
+          </p>
+          <p class="label">Force Saved</p>
+        </div>
       </div>
     </div>
   </div>
   <canvas id="powerChart"></canvas>
+
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      font-family: "Comfortaa", sans-serif;
+      line-height: 140%;
+    }
+    a {
+      color: white !important;
+      text-decoration: none;
+    }
+    body {
+      background-color: #353535;
+      color: white;
+    }
+    /* layouts for controls */
+
+    .controlBox {
+      gap: 0.6rem !important;
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 0.4em 1em;
+      border-radius: 1em;
+      backdrop-filter: blur(7px);
+      justify-content: space-around !important;
+    }
+
+    .controlBox * {
+      text-wrap: nowrap;
+    }
+
+    .hbox {
+      display: flex;
+      flex-direction: row;
+      gap: 0.2rem;
+    }
+
+    .vbox {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .center {
+      align-items: center;
+      justify-content: center;
+    }
+
+    .controlBox select,
+    .controlBox button {
+      background-color: rgba(0, 0, 0, 0.4);
+      color: white;
+      border: none;
+      border-radius: 0.6em;
+      cursor: pointer;
+    }
+
+    .disabled {
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    #speedSlider {
+      cursor: pointer;
+      min-width: 0;
+      width: 9.25em;
+      -webkit-appearance: none;
+      height: 0.2em;
+      background: rgba(255, 255, 255, 0.2);
+      outline: none;
+      border-radius: 100px;
+      margin: 0.6em 0;
+    }
+
+    /* #speedSlider > * {
+      background: #04aa6d !important;
+    }
+
+    #speedSlider::-webkit-slider-thumb,
+    #speedSlider::-moz-range-thumb {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      width: 1em !important;
+      height: 1em !important;
+      background: #04aa6d !important;
+      cursor: pointer !important;
+    } */
+
+    .controlBox select {
+      padding: 0.3em 0.2em 0.2em 0.2em;
+      font-size: 0.8em;
+    }
+
+    .controlBox button {
+      font-size: 0.8em;
+      padding: 0.2em 0.5em 0.07em 0.5em;
+    }
+
+    .controlBox .majorButton {
+      height: 3.6em;
+    }
+
+    #pausePlay {
+      width: 5em;
+    }
+
+    .val {
+      line-height: 120%;
+      padding-top: 0.15em;
+      font-size: 2.6em;
+    }
+
+    .unit {
+      font-size: 0.8em;
+      padding-left: 0.5em;
+    }
+
+    .controlBox .label {
+      font-size: 0.8em;
+      margin-top: -0.8em;
+    }
+
+    /* end layouts for controls */
+    h1 {
+      font-size: 2em;
+      line-height: 60%;
+      padding: 0.3em 0.5em 0 0.5em;
+      font-style: italic;
+    }
+    #byline {
+      font-size: 0.4em;
+      font-style: normal;
+    }
+    .bar {
+      position: absolute;
+      z-index: 2;
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+    }
+    .flex1 {
+      flex: 1;
+    }
+    #topBar {
+      top: 0.5em;
+    }
+    #bottomBar {
+      bottom: 0.5em;
+    }
+    #inputs {
+    }
+    #outputs {
+      width: 15em;
+    }
+
+    #cover {
+      position: relative;
+      width: 100%;
+      max-height: 100vh;
+      max-height: 100svh;
+      overflow: hidden;
+    }
+    #cover {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #frameView {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+    }
+    .flowLeft #frameView {
+      transform: scaleX(-1);
+    }
+    #sixteenByNine {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      /* aspect-ratio: calc(16 / 9); */
+      padding-bottom: 56.25%;
+      overflow: hidden;
+    }
+    #sixteenByNine > * {
+      width: 100%;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+    body:not(.flowLeft) video {
+      /* display: none; */
+      transform: translateY(-50%) scaleX(-1) !important;
+    }
+    #sixteenByNine canvas {
+      /* background: red; */
+      background-color: rgba(0, 0, 0, 0.4);
+      width: 100%;
+      aspect-ratio: calc(16 / 9);
+      /* background-color: pink; */
+    }
+
+    #powerChart {
+      width: 100%;
+      /* height: 200px; */
+      margin: 12px;
+    }
+  </style>
+
+  <script>
+    // import "../../scripts/aero/video";
+    // import "../../scripts/aero/ml";
+    import "../../scripts/aero/physics";
+    // import "../../scripts/aero/charts";
+  </script>
 </body>
-
-<style>
-  * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    font-family: "Comfortaa", sans-serif;
-  }
-  body {
-    background-color: #353535;
-  }
-  .modules {
-    position: absolute;
-    display: inline-flex;
-    flex-direction: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(15px);
-    color: white;
-    z-index: 2;
-    padding: 0.2em 0.5em;
-    border-radius: 0.4em;
-    box-shadow: 0 0 4em 0 rgba(255, 255, 255, 0.2);
-  }
-  .modules p {
-    padding-top: 0.15em;
-  }
-  #inputs {
-    top: 0.5em;
-  }
-  #outputs {
-    bottom: 0.5em;
-  }
-  .module {
-    /* display: flex;
-    flex-direction: column; */
-    align-items: center;
-    /* flex-wrap: wrap; */
-    padding: 0.2em 0.4em;
-    justify-content: space-between;
-    /* height: 4em; */
-  }
-  .center {
-    justify-content: center;
-    align-items: center;
-  }
-  .vbox,
-  .module {
-    display: flex;
-    flex-direction: column;
-  }
-  .vbox,
-  .hbox,
-  .module {
-    gap: 0.2rem;
-  }
-  .hbox {
-    display: flex;
-    flex-direction: row;
-    gap: 0.6rem;
-  }
-  .moduleName {
-    font-size: 0.8em;
-    padding: 0 0rem;
-  }
-  /* .moduleValue {
-    text-wrap: nowrap;
-  } */
-  .val {
-    font-size: 2.4em;
-    padding-right: 0.1em;
-  }
-
-  .unit {
-    font-size: 0.8em;
-  }
-
-  select,
-  button {
-    background-color: rgba(0, 0, 0, 0.3);
-    /* border: 1px solid rgba(255, 255, 255, 0.5); */
-    border: none;
-    box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.1);
-    color: white;
-    padding: 0.35em 0.3em 0.2em 0.3em;
-    border-radius: 0.4rem;
-    cursor: pointer;
-  }
-
-  .disabled {
-    pointer-events: none;
-    opacity: 0.3;
-  }
-
-  #speed input {
-    width: 100%;
-  }
-
-  #speed .val {
-    padding-right: 0;
-  }
-
-  #speed .moduleName {
-    text-align: right;
-    /* padding-left: 0.6rem; */
-  }
-
-  #direction .moduleName {
-    text-align: left;
-  }
-
-  .module button {
-    /* width: 100%; */
-    height: 100%;
-    max-height: 2.5em;
-    font-size: 0.9em;
-    padding-left: 1em;
-    padding-right: 1em;
-  }
-
-  #cover {
-    position: relative;
-    width: 100%;
-    max-height: 100vh;
-    max-height: 100svh;
-    overflow: hidden;
-  }
-  #cover {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  #frameView {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16/9;
-  }
-  .flowLeft #frameView {
-    transform: scaleX(-1);
-  }
-  #sixteenByNine {
-    position: absolute;
-    width: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    /* aspect-ratio: calc(16 / 9); */
-    padding-bottom: 56.25%;
-    overflow: hidden;
-  }
-  #sixteenByNine > * {
-    width: 100%;
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-  }
-  body:not(.flowLeft) video {
-    /* display: none; */
-    transform: translateY(-50%) scaleX(-1) !important;
-  }
-  #sixteenByNine canvas {
-    /* background: red; */
-    width: 100%;
-    aspect-ratio: calc(16 / 9);
-    /* background-color: pink; */
-  }
-
-  #powerChart {
-    width: 100%;
-    /* height: 200px; */
-    margin: 12px;
-  }
-</style>
-
-<script>
-  import "../../scripts/aero/video";
-  import "../../scripts/aero/ml";
-  import "../../scripts/aero/physics";
-  import "../../scripts/aero/charts";
-</script>
