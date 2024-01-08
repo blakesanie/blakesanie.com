@@ -10,8 +10,8 @@ const maxSpeeds = {
   kmph: 64,
 };
 
-const speedUnitSelect = document.querySelector("#speed select");
-const roadSpeedSlider = document.querySelector("#speed input");
+const speedUnitSelect = document.querySelector("#unitSelect");
+const roadSpeedSlider = document.querySelector("#speedSlider");
 let speedUnit = speedUnitSelect.value;
 function handleNewSpeedUnit(unit) {
   speedUnit = unit;
@@ -21,11 +21,10 @@ function handleNewSpeedUnit(unit) {
   setSpeedInMPS(speed);
 }
 speedUnitSelect.addEventListener("change", (e) => {
-  debugger;
   handleNewSpeedUnit(e.target.value);
 });
 
-const speedOutput = document.querySelector("#speed .val");
+const speedOutput = document.querySelector("#speed.val");
 let nominalSpeed = roadSpeedSlider.value;
 let speedInMPS = nominalSpeed * speedToMPS[speedUnit];
 
@@ -56,7 +55,7 @@ function toggleRunning(e) {
 }
 pauseButton.addEventListener("click", toggleRunning);
 
-const directionSelect = document.querySelector("#direction select");
+const directionSelect = document.querySelector("#direction");
 window.directionRight = directionSelect.value;
 directionSelect.addEventListener("change", (e) => {
   window.directionRight = e.target.value == "right";
@@ -138,14 +137,14 @@ let dx = sceneWidth / gridWidth; // meters per cell
 
 var pxPerSquare = 10; //Number(sizeSelect.options[sizeSelect.selectedIndex].value);
 
-const barrierCanvas = document.getElementById("barrierCanvas");
-const barrierContext = barrierCanvas.getContext("2d");
-barrierContext.canvas.width = 513;
-barrierContext.canvas.height = 289;
-var barrierImage = barrierContext.createImageData(
-  barrierCanvas.width,
-  barrierCanvas.height
-);
+// const barrierCanvas = document.getElementById("barrierCanvas");
+// const barrierContext = barrierCanvas.getContext("2d");
+// barrierContext.canvas.width = 513;
+// barrierContext.canvas.height = 289;
+// var barrierImage = barrierContext.createImageData(
+//   barrierCanvas.width,
+//   barrierCanvas.height
+// );
 
 var canvas = document.getElementById("physicsCanvas");
 var context = canvas.getContext("2d");
@@ -190,15 +189,15 @@ let needToRenderNewBarrier = false;
 async function checkForNewBoundary() {
   if (window.newBoundaries) {
     const [highRes, simRes] = window.newBoundaries;
-    needToRenderNewBarrier = true;
-    for (let i = 0; i < highRes.length; i++) {
-      barrierImage.data[i * 4 + 3] = highRes[i] > 0 ? 0 : 180;
-    }
-    for (var y = 1; y < ydim - 1; y++) {
-      for (var x = 1; x < xdim - 1; x++) {
-        var i = x + y * xdim; // array index for this lattice site
-      }
-    }
+    // needToRenderNewBarrier = true;
+    // for (let i = 0; i < highRes.length; i++) {
+    //   barrierImage.data[i * 4 + 3] = highRes[i] > 0 ? 0 : 180;
+    // }
+    // for (var y = 1; y < ydim - 1; y++) {
+    //   for (var x = 1; x < xdim - 1; x++) {
+    //     var i = x + y * xdim; // array index for this lattice site
+    //   }
+    // }
     barrier = simRes;
   }
   window.newBoundaries = undefined;
@@ -479,7 +478,7 @@ let naturalForces = [];
 let numNaturalForces = 0;
 
 function paintCanvas() {
-  barrierContext.putImageData(barrierImage, 0, 0);
+  // barrierContext.putImageData(barrierImage, 0, 0);
   computeCurl();
   const [Fx, Fy] = computeNaturalForce();
   forceSum += Fx;
@@ -498,24 +497,6 @@ function paintCanvas() {
     powerSavedElement.innerHTML = Math.round(powerSaved);
     window.forceSavings.shift();
     window.powerSavings.shift();
-    // const oldestPowerInWindow =
-    //   window.powerSavings[window.powerSavings.length - MAWindow - 1];
-    // if (oldestPowerInWindow) {
-    //   powerWindowSum -= oldestPowerInWindow;
-    //   window.powerMA.push(powerWindowSum / MAWindow);
-    //   window.powerMA.shift();
-    // }
-    // if (chartFrames > 0 && chartFrames % MAWindow == 0) {
-    //   // debugger;
-    //   let powerMAVal = 0;
-    //   for (let i = 0; i < MAWindow; i++) {
-    //     powerMAVal += window.powerSavings[window.powerSavings.length - i - 1];
-    //   }
-    //   powerMAVal /= MAWindow;
-    //   window.powerMA.shift();
-    //   window.powerMA.push(powerMAVal);
-    // }
-
     if (chartFrames % (fps / chartUpdatesPerSecond) == 0) {
       if (window.powerSavings[window.powerSavings.length - MAWindow]) {
         let powerMAVal = 0;
@@ -539,22 +520,26 @@ function paintCanvas() {
   for (var y = 0; y < ydim; y++) {
     for (var x = 0; x < xdim; x++) {
       if (barrier[x + y * xdim]) {
-        colorSquare(x, y, 0, 0, 0, 0);
+        colorSquare(x, y, 0, 0, 0, 130);
       } else {
-        const curlValue = curl[x + y * xdim];
-        let r, g, b;
-        if (curlValue < 0) {
-          r = 255;
-          g = 140;
-          b = 120;
+        const val = curl[x + y * xdim] * 6;
+        const abs = Math.min(1, Math.abs(val));
+        const val2 = Math.pow(abs, 0.5);
+        let hue;
+        let opacity;
+        if (val > 0) {
+          hue = 0;
+          opacity = 0;
+          // intensity = Math.min(val2 * 10, 1);
+          // hue = 160 + 60 * intensity;
         } else {
-          r = 120;
-          g = 140;
-          b = 255;
+          opacity = Math.max(0, (Math.pow(abs, 0.9) - 0.01) / 0.99);
+          // hue = (1 - intensity) * 57;
+          hue = 125 + 100 * val2;
         }
-        const relative = Math.max(0, Math.min(1, Math.abs(curlValue) * 5));
-        const a = (0.02 + 0.98 * Math.pow(relative, 0.8)) * 255;
-        colorSquare(x, y, r, g, b, a);
+        // debugger;
+        const [r, g, b] = hslToRgb(hue / 360, 1, 0.6);
+        colorSquare(x, y, r, g, b, opacity * 255);
       }
     }
   }
@@ -598,7 +583,38 @@ function initFluid() {
       curl[x + y * xdim] = 0.0;
     }
   }
-  paintCanvas();
+  // paintCanvas();
 }
 
 initFluid(); // initialize to steady rightward flow
+
+function hslToRgb(h, s, l) {
+  // 0 to 360, 0-1, 0-1
+  // Convert HSL to RGB
+  let r, g, b;
+
+  if (s === 0) {
+    r = g = b = l; // Achromatic when saturation is 0
+  } else {
+    const hueToRgb = (p, q, t) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hueToRgb(p, q, h + 1 / 3);
+    g = hueToRgb(p, q, h);
+    b = hueToRgb(p, q, h - 1 / 3);
+  }
+  r = Math.round(r * 255);
+  g = Math.round(g * 255);
+  b = Math.round(b * 255);
+
+  // Scale to 0-255 and round to integers
+  return [r, g, b];
+}
