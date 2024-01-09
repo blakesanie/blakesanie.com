@@ -127,7 +127,7 @@ const dxdt2 = dxdt * dxdt;
 const gridHeight = 54;
 const gridWidth = 96;
 
-const u0 = 0.1;
+const u0 = 0.0;
 const viscosity = 0.02;
 
 const fps = (window.fps = 24);
@@ -177,8 +177,8 @@ let rhoBank = 0;
 //   }
 // }
 
-for (let y = 20; y < 40; y++) {
-  barrier[50 + y * xdim] = true;
+for (let y = 20; y < 32; y++) {
+  barrier[40 + y * xdim] = true;
   barrierCount++;
 }
 
@@ -205,7 +205,11 @@ for (let y = 20; y < 40; y++) {
 // }
 
 // Simulate function executes a bunch of steps and then schedules another call to itself:
+let framesDrawn = 0;
+let steps = 0;
 function simulate() {
+  // debugger;
+  // if (framesDrawn > 10) return;
   const start = new Date();
   const deltaX = speedInMPS / fps;
   let dx = sceneWidth / gridWidth; // meters per cell
@@ -220,19 +224,31 @@ function simulate() {
   // setBoundaries();
   // Execute a bunch of time steps:
   for (var step = 0; step < stepsPerFrame; step++) {
-    collide();
+    // debugger;
+    // paintCanvas();
+    computeCurl();
+    if (step == 33 || Math.abs(curl[(ydim - 9) * xdim + 1]) != 0) {
+      paintCanvas();
+      debugger;
+    }
     stream();
+    // paintCanvas();
+    // debugger;
+    collide();
+    // paintCanvas();
+    // debugger;
+    steps++;
   }
   paintCanvas();
-  var stable = true;
-  for (var x = 0; x < xdim; x++) {
-    var index = x + (ydim / 2) * xdim; // look at middle row only
-    if (rho[index] <= 0) {
-      initFluid();
-      break;
-    }
-  }
+  // for (var x = 0; x < xdim; x++) {
+  //   var index = x + (ydim / 2) * xdim; // look at middle row only
+  //   if (rho[index] <= 0) {
+  //     initFluid();
+  //     break;
+  //   }
+  // }
   const duration = new Date().getTime() - start.getTime();
+  framesDrawn++;
   if (running) {
     window.setTimeout(simulate, 1000 / fps - duration);
   }
@@ -252,15 +268,15 @@ function simulate() {
 
 // Collide particles within each cell (here's the physics!):
 function collide() {
-  const perSquareAdjustment = rhoBank / (xdim * ydim - barrierCount);
+  const perSquareAdjustment = 0; //rhoBank / (xdim * ydim - barrierCount);
   rhoBank = 0;
-  var omega = 1; //1 / (3 * viscosity + 0.5); // reciprocal of relaxation time
+  var omega = 1 / (3 * viscosity + 0.5); // reciprocal of relaxation time
   for (var y = 0; y < ydim; y++) {
     for (var x = 0; x < xdim; x++) {
+      var i = x + y * xdim; // array index for this lattice site
       if (barrier[i]) {
         continue;
       }
-      var i = x + y * xdim; // array index for this lattice site
       var thisrho =
         n0[i] +
         nN[i] +
@@ -287,6 +303,9 @@ function collide() {
       var uxuy2 = 2 * thisux * thisuy;
       var u2 = ux2 + uy2;
       var u215 = 1.5 * u2;
+      if (barrier[i + 1]) {
+        // debugger;
+      }
       n0[i] += omega * (four9ths * thisrho * (1 - u215) - n0[i]);
       nE[i] += omega * (one9thrho * (1 + ux3 + 4.5 * ux2 - u215) - nE[i]);
       nW[i] += omega * (one9thrho * (1 - ux3 + 4.5 * ux2 - u215) - nW[i]);
@@ -310,27 +329,32 @@ function collide() {
 
 // Move particles along their directions of motion:
 function stream() {
-  //borders
-  const firstILastRow = (ydim - 1) * xdim;
+  //borders outwards
+
+  let firstILastRow = (ydim - 1) * xdim;
   for (let x = 0; x < xdim; x++) {
     const bottomI = firstILastRow + x;
     rhoBank +=
-      nN[x] + nNW[x] + nNE[x] + nS[bottomI] + nSE[bottomI] + nSE[bottomI];
+      nN[x] + nNW[x] + nNE[x] + nS[bottomI] + nSW[bottomI] + nSE[bottomI];
   }
   for (let y = 0; y < ydim; y++) {
     const firstI = y * xdim;
     const lastI = firstI + xdim - 1;
     rhoBank += nW[firstI] + nE[lastI];
   }
-  // N,NW, W
+  // internal
+  if (steps == 33) {
+    debugger;
+  }
   for (let x = 1; x < xdim; x++) {
     for (let y = 1; y < ydim; y++) {
       const yRev = ydim - y - 1;
       const xRev = xdim - x - 1;
       const fromTopLeft = x + y * xdim;
-      const fromTopRight = xRev + y * ydim;
-      const fromBottomRight = xRev + yRev * ydim;
-      const fromBottomLeft = x + yRev * ydim;
+      const fromTopRight = xRev + y * xdim;
+      const fromBottomRight = xRev + yRev * xdim;
+      const fromBottomLeft = x + yRev * xdim;
+
       // towards south east
       nN[fromTopLeft - xdim] = nN[fromTopLeft];
       nW[fromTopLeft - 1] = nW[fromTopLeft];
@@ -345,26 +369,84 @@ function stream() {
       nNE[fromTopRight - xdim + 1] = nNE[fromTopRight];
     }
   }
+  //borders inwards
+
+  for (let x = 1; x < xdim - 1; x++) {
+    const bottomI = firstILastRow + x;
+    // top row
+    nSW[xdim + x - 1] = nSW[x];
+    nS[xdim + x] = nS[x];
+    nSE[xdim + x + 1] = nSE[x];
+    // bottom row
+    nNW[bottomI - xdim - 1] = nNW[bottomI];
+    nN[bottomI - xdim] = nN[bottomI];
+    nNE[bottomI - xdim + 1] = nNE[bottomI];
+    // side to side
+    nW[x - 1] = nW[x];
+    nE[xdim - x] = nE[xdim - x - 1];
+    nW[bottomI - 1] = nW[bottomI];
+    nE[firstILastRow + xdim - x] = nE[firstILastRow + xdim - x - 1];
+  }
+  for (let y = 1; y < ydim - 1; y++) {
+    const firstI = y * xdim;
+    const lastI = firstI + xdim - 1;
+    // left col
+    nNE[firstI - xdim + 1] = nNE[firstI];
+    nE[firstI + 1] = nE[firstI];
+    nSE[firstI + xdim + 1] = nSE[firstI];
+    // right col
+    nNW[lastI - xdim - 1] = nNW[lastI];
+    nW[lastI - 1] = nW[lastI];
+    nSW[lastI + xdim - 1] = nSW[lastI];
+    // side to side
+    nN[firstI - xdim] = nN[firstI];
+    nN[lastI - xdim] = nN[lastI];
+    const flipYLeft = (ydim - 1 - y) * xdim;
+    const flipYRight = flipYLeft + xdim - 1;
+    nS[flipYLeft + xdim] = nS[flipYLeft];
+    nS[flipYRight + xdim] = nS[flipYRight];
+  }
+  nSE[xdim + 1] = nSE[0];
+  nSW[2 * xdim - 2] = nSW[xdim - 1];
+  nNE[(ydim - 2) * xdim + 1] = nNE[(ydim - 1) * xdim];
+  nNW[(ydim - 1) * xdim - 2] = nNW[ydim * xdim - 1];
   // forces {
-  let Fx = 0;
-  let Fy = 0;
-  let rootHalf = Math.sqrt(0.5);
+  // let Fx = 0;
+  // let Fy = 0;
+  // let rootHalf = Math.sqrt(0.5);
   for (let i = 0; i < barrier.length; i++) {
     if (barrier[i]) {
-      Fx += nE[i] - nW[i] + rootHalf * (nNE[i] + nSE[i] - nNW[i] - nSW[i]);
-      Fy += nS[i] - nN[i] + rootHalf * (nSE[i] + nSW[i] - nNW[i] - nNE[i]);
-      nN[i - xdim] += nS[i];
-      nS[i + xdim] += nN[i];
-      nW[i - 1] += nE[i];
-      nE[i + 1] += nW[i];
+      // Fx += nE[i] - nW[i] + rootHalf * (nNE[i] + nSE[i] - nNW[i] - nSW[i]);
+      // Fy += nS[i] - nN[i] + rootHalf * (nSE[i] + nSW[i] - nNW[i] - nNE[i]);
+      // nN[i - xdim] += nS[i];
+      // nS[i + xdim] += nN[i];
+      // nW[i - 1] += nE[i];
+      // nE[i + 1] += nW[i];
+      if (nS[i]) {
+        nN[i - xdim] = nS[i];
+        nS[i] = 0;
+      }
+      if (nN[i]) {
+        nS[i + xdim] = nN[i];
+        nN[i] = 0;
+      }
+      if (nE[i]) {
+        nW[i - 1] = nE[i];
+        nE[i] = 0;
+      }
+      if (nW[i]) {
+        nE[i + 1] = nW[i];
+        nW[i] = 0;
+      }
+
       // ricochet
+
       if (nSE[i]) {
         const above = barrier[i - xdim];
         const left = barrier[i - 1];
-        if (above && left) {
-          const amount = nSE[i] / 2;
-          nNE[i - xdim] += amount;
-          nSW[i - 1] += amount;
+        if (above == left) {
+          //XNOR
+          nNW[i - xdim - 1] += nSE[i];
         } else if (above) {
           nSW[i - 1] += nSE[i];
         } else {
@@ -375,10 +457,8 @@ function stream() {
       if (nSW[i]) {
         const above = barrier[i - xdim];
         const right = barrier[i + 1];
-        if (above && right) {
-          const amount = nSW[i] / 2;
-          nNW[i - xdim] += amount;
-          nSE[i + 1] += amount;
+        if (above == right) {
+          nNE[i - xdim + 1] += nSW[i];
         } else if (above) {
           nNW[i - xdim] += nSW[i];
         } else {
@@ -389,14 +469,50 @@ function stream() {
       if (nNE[i]) {
         const below = barrier[i + xdim];
         const left = barrier[i - 1];
-        if (below && left) {
-          const amount = nNE[i] / 2;
-          nNW[i - 1] += amount;
-          nSE[i + xdim] += amount;
+        if (below == left) {
+          nSW[i + xdim - 1] += nNE[i];
         } else if (below) {
+          nNW[i - 1] += nNE[i];
+        } else {
+          nSW[i + xdim] += nNE[i];
         }
+        nNE[i] = 0;
       }
-      if (true) {
+      if (nNW[i]) {
+        const below = barrier[i + xdim];
+        const right = barrier[i + 1];
+        if (below == right) {
+          nSE[i + xdim + 1] += nNW[i];
+        } else if (below) {
+          nNE[i + 1] += nNW[i];
+        } else {
+          nSW[i + xdim] += nNW[i];
+        }
+        nNW[i] = 0;
+      }
+      if (
+        nN[i] ||
+        nS[i] ||
+        nE[i] ||
+        nW[i] ||
+        nNE[i] ||
+        nNW[i] ||
+        nSW[i] ||
+        nSE[i] ||
+        n0[i]
+      ) {
+        console.log(
+          nN[i],
+          nS[i],
+          nE[i],
+          nW[i],
+          nNE[i],
+          nNW[i],
+          nSW[i],
+          nSE[i],
+          n0[i]
+        );
+        debugger;
       }
     }
   }
@@ -532,6 +648,7 @@ let naturalForces = [];
 let numNaturalForces = 0;
 
 function paintCanvas() {
+  // debugger;
   // barrierContext.putImageData(barrierImage, 0, 0);
   computeCurl();
   // const [Fx, Fy] = computeNaturalForce();
@@ -573,27 +690,24 @@ function paintCanvas() {
 
   for (var y = 0; y < ydim; y++) {
     for (var x = 0; x < xdim; x++) {
+      const i = x + y * xdim;
       if (barrier[x + y * xdim]) {
-        colorSquare(x, y, 0, 0, 0, 130);
+        colorSquare(x, y, 0, 0, 0, 255);
       } else {
-        const val = curl[x + y * xdim] * 6;
-        const abs = Math.min(1, Math.abs(val));
-        const val2 = Math.pow(abs, 0.5);
-        let hue;
-        let opacity;
-        if (val > 0) {
-          hue = 0;
-          opacity = 0;
-          // intensity = Math.min(val2 * 10, 1);
-          // hue = 160 + 60 * intensity;
-        } else {
-          opacity = Math.max(0, (Math.pow(abs, 0.9) - 0.01) / 0.99);
-          // hue = (1 - intensity) * 57;
-          hue = 125 + 100 * val2;
+        // const east = nE[i];
+        // const right = nE[i] + nNE[i] + nSE[i] - nW[i] - nNW[i] - nSW[i];
+        // const down = nSW[i] + nSW[i] + nS[i] - nNE[i] - nNW[i] - nN[i];
+        // console.log("right", right);
+        // let m = (0.5 + right * 5) * 255;
+        const [r, g, b] = hslToRgb(
+          (curl[i] * 0.5 + 100000) % 1,
+          1,
+          0.6 //0.6 + down * 3
+        );
+        if (r == g) {
+          debugger;
         }
-        // debugger;
-        const [r, g, b] = hslToRgb(hue / 360, 1, 0.6);
-        colorSquare(x, y, r, g, b, opacity * 255);
+        colorSquare(x, y, r, g, b, 255);
       }
     }
   }
@@ -630,6 +744,8 @@ function initFluid() {
     for (var x = 0; x < xdim; x++) {
       if (!barrier[x + y * xdim]) {
         setEquil(x, y, u0, 0, 1);
+      } else {
+        setEquil(x, y, 0, 0, 0);
       }
       curl[x + y * xdim] = 0.0;
     }
