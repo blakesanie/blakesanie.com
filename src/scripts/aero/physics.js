@@ -121,13 +121,10 @@ async function calibrate() {
 
 // physics
 
-const dxdt = 1;
-const dxdt2 = dxdt * dxdt;
+const gridHeight = 54 + 2;
+const gridWidth = 96 + 2;
 
-const gridHeight = 54;
-const gridWidth = 96;
-
-const u0 = 0.1;
+const u0 = 0.05; //0.1;
 const viscosity = 0.02;
 
 const fps = (window.fps = 24);
@@ -177,13 +174,6 @@ var uy = new Array(xdim * ydim);
 var curl = new Array(xdim * ydim);
 var barrier = new Array(xdim * ydim); // boolean array of barrier locations
 
-// Initialize to a steady rightward flow with no barriers:
-for (var y = 0; y < ydim; y++) {
-  for (var x = 0; x < xdim; x++) {
-    barrier[x + y * xdim] = false;
-  }
-}
-
 let needToRenderNewBarrier = false;
 
 async function checkForNewBoundary() {
@@ -193,22 +183,36 @@ async function checkForNewBoundary() {
     // for (let i = 0; i < highRes.length; i++) {
     //   barrierImage.data[i * 4 + 3] = highRes[i] > 0 ? 0 : 180;
     // }
-    for (var y = 1; y < ydim - 1; y++) {
-      for (var x = 1; x < xdim - 1; x++) {
-        var i = x + y * xdim;
-        if (barrier[i] || simRes[i]) {
+    // for (var y = 1; y < ydim - 1; y++) {
+    //   for (var x = 1; x < xdim - 1; x++) {
+    //     var i = x + y * xdim; // array index for this lattice site
+    //   }
+    // }
+    for (let x = 1; x < xdim - 1; x++) {
+      for (let y = 1; y < ydim - 1; y++) {
+        const y2 = y - 1;
+        const x2 = x - 1;
+        const i2 = x2 + y2 * (xdim - 2);
+        const i = x + y * xdim;
+        if (barrier[i] && !simRes[i2]) {
+          // was barrier, now isnt
           setEquil(x, y, u0, 0, 1);
+        } else if (!barrier[i] && simRes[i2]) {
+          setEquil(x, y, u0, 0, 0);
         }
+        barrier[i] = simRes[i2];
       }
     }
-    barrier = simRes;
+    // barrier = simRes;
   }
   window.newBoundaries = undefined;
 }
 
+let scheduledStart;
+
 // Simulate function executes a bunch of steps and then schedules another call to itself:
 function simulate() {
-  const start = new Date();
+  const start = new Date().getTime();
   const deltaX = speedInMPS / fps;
   let dx = sceneWidth / gridWidth; // meters per cell
   // speed = deltaX/dt
@@ -218,37 +222,84 @@ function simulate() {
   var stepsPerFrame = Math.round((deltaX / dx) * 4);
   // dx/dt = 1
   // dxForC = 1/fps
+  // debugger;
   checkForNewBoundary();
   setBoundaries();
   // Execute a bunch of time steps:
+  // debugger;
   for (var step = 0; step < stepsPerFrame; step++) {
-    collide();
     stream();
+    collide();
   }
   paintCanvas();
   var stable = true;
   for (var x = 0; x < xdim; x++) {
     var index = x + (ydim / 2) * xdim; // look at middle row only
-    if (rho[index] <= 0) stable = false;
+    if (rho[index] < 0) stable = false;
+    alert("unstable");
   }
   if (!stable) {
     initFluid();
   }
-  const duration = new Date().getTime() - start.getTime();
   if (running) {
+    const now = new Date().getTime();
+    const duration = scheduledStart ? now - scheduledStart : now - start;
+    scheduledStart = 1000 / 24 + start;
     window.setTimeout(simulate, 1000 / fps - duration);
   }
 }
 
 // Set the fluid variables at the boundaries, according to the current slider value:
 function setBoundaries() {
-  for (var x = 0; x < xdim; x++) {
-    setEquil(x, 0, u0, 0, 1);
-    setEquil(x, ydim - 1, u0, 0, 1);
+  const eqStartPerRow = [];
+  let firstBarrierX;
+  let firstBarrierY;
+  let lastBarrierX;
+  let lastBarrierY;
+  // let minBarrierX = Infinity;
+  for (let y = 0; y < ydim; y++) {
+    let barrierFound = false;
+    for (let x = 0; x < xdim; x++) {
+      const i = x + y * xdim;
+      if (barrier[i]) {
+        if (firstBarrierX === undefined) {
+          firstBarrierX = x;
+          firstBarrierY = y;
+        }
+        // minBarrierX = Math.min(minBarrierX, x);
+        lastBarrierX = x;
+        lastBarrierY = y;
+        eqStartPerRow.push(x);
+        barrierFound = true;
+        break;
+      }
+    }
+    if (!barrierFound) {
+      eqStartPerRow.push(undefined);
+    }
   }
-  for (var y = 1; y < ydim - 1; y++) {
-    setEquil(0, y, u0, 0, 1);
-    setEquil(xdim - 1, y, u0, 0, 1);
+  for (let y = 0; y < firstBarrierY; y++) {
+    eqStartPerRow[y] = firstBarrierX;
+  }
+  for (let y = firstBarrierY + 1; y <= lastBarrierY; y++) {
+    eqStartPerRow[y] = Math.min(
+      eqStartPerRow[y] || Infinity,
+      eqStartPerRow[y - 1]
+    );
+  }
+
+  const eqOffset = 5;
+
+  for (var y = 0; y < ydim; y++) {
+    for (x = 0; x < eqStartPerRow[y] - eqOffset; x++) {
+      setEquil(x, y, u0, 0, 1);
+    }
+  }
+  for (var x = eqStartPerRow[0] - eqOffset; x < xdim; x++) {
+    setEquil(x, 0, u0, 0, 1);
+  }
+  for (var x = eqStartPerRow[ydim - 1] - eqOffset; x < xdim; x++) {
+    setEquil(x, ydim - 1, u0, 0, 1);
   }
 }
 
@@ -258,6 +309,9 @@ function collide() {
   for (var y = 1; y < ydim - 1; y++) {
     for (var x = 1; x < xdim - 1; x++) {
       var i = x + y * xdim; // array index for this lattice site
+      if (barrier[i]) {
+        continue;
+      }
       var thisrho =
         n0[i] +
         nN[i] +
@@ -268,7 +322,13 @@ function collide() {
         nNE[i] +
         nSW[i] +
         nSE[i];
+      // if (!thisrho) {
+      //   continue;
+      // }
       rho[i] = thisrho;
+      // if (isNaN(rho[i])) {
+      //   debugger;
+      // }
       var thisux =
         (nE[i] + nNE[i] + nSE[i] - nW[i] - nNW[i] - nSW[i]) / thisrho;
       ux[i] = thisux;
@@ -284,55 +344,24 @@ function collide() {
       var uxuy2 = 2 * thisux * thisuy;
       var u2 = ux2 + uy2;
       var u215 = 1.5 * u2;
-      n0[i] += omega * (four9ths * thisrho * (1 - u215 / dxdt2) - n0[i]);
-      nE[i] +=
-        omega *
-        (one9thrho * (1 + ux3 / dxdt + (4.5 * ux2) / dxdt2 - u215 / dxdt2) -
-          nE[i]);
-      nW[i] +=
-        omega *
-        (one9thrho * (1 - ux3 / dxdt + (4.5 * ux2) / dxdt2 - u215 / dxdt2) -
-          nW[i]);
-      nN[i] +=
-        omega *
-        (one9thrho * (1 + uy3 / dxdt + (4.5 * uy2) / dxdt2 - u215 / dxdt2) -
-          nN[i]);
-      nS[i] +=
-        omega *
-        (one9thrho * (1 - uy3 / dxdt + (4.5 * uy2) / dxdt2 - u215 / dxdt2) -
-          nS[i]);
+
+      n0[i] += omega * (four9ths * thisrho * (1 - u215) - n0[i]);
+      nE[i] += omega * (one9thrho * (1 + ux3 + 4.5 * ux2 - u215) - nE[i]);
+      nW[i] += omega * (one9thrho * (1 - ux3 + 4.5 * ux2 - u215) - nW[i]);
+      nN[i] += omega * (one9thrho * (1 + uy3 + 4.5 * uy2 - u215) - nN[i]);
+      nS[i] += omega * (one9thrho * (1 - uy3 + 4.5 * uy2 - u215) - nS[i]);
       nNE[i] +=
         omega *
-        (one36thrho *
-          (1 +
-            (ux3 + uy3) / dxdt +
-            (4.5 * (u2 + uxuy2)) / dxdt2 -
-            u215 / dxdt2) -
-          nNE[i]);
+        (one36thrho * (1 + (ux3 + uy3) + 4.5 * (u2 + uxuy2) - u215) - nNE[i]);
       nSE[i] +=
         omega *
-        (one36thrho *
-          (1 +
-            (ux3 - uy3) / dxdt +
-            (4.5 * (u2 - uxuy2)) / dxdt2 -
-            u215 / dxdt2) -
-          nSE[i]);
+        (one36thrho * (1 + (ux3 - uy3) + 4.5 * (u2 - uxuy2) - u215) - nSE[i]);
       nNW[i] +=
         omega *
-        (one36thrho *
-          (1 -
-            (ux3 - uy3) / dxdt +
-            (4.5 * (u2 - uxuy2)) / dxdt2 -
-            u215 / dxdt2) -
-          nNW[i]);
+        (one36thrho * (1 - (ux3 - uy3) + 4.5 * (u2 - uxuy2) - u215) - nNW[i]);
       nSW[i] +=
         omega *
-        (one36thrho *
-          (1 -
-            (ux3 + uy3) / dxdt +
-            (4.5 * (u2 + uxuy2)) / dxdt2 -
-            u215 / dxdt2) -
-          nSW[i]);
+        (one36thrho * (1 - (ux3 + uy3) + 4.5 * (u2 + uxuy2) - u215) - nSW[i]);
     }
   }
   for (var y = 1; y < ydim - 2; y++) {
@@ -344,11 +373,13 @@ function collide() {
 
 // Move particles along their directions of motion:
 function stream() {
+  const scalar = 1; //0.15;
   for (var y = ydim - 2; y > 0; y--) {
     // first start in NW corner...
     for (var x = 1; x < xdim - 1; x++) {
       nN[x + y * xdim] = nN[x + (y - 1) * xdim]; // move the north-moving particles
-      nNW[x + y * xdim] = nNW[x + 1 + (y - 1) * xdim]; // and the northwest-moving particles
+      nNW[x + y * xdim] =
+        scalar * nNW[x + 1 + (y - 1) * xdim] + (1 - scalar) * nNW[x + y * xdim]; // and the northwest-moving particles
     }
   }
   for (var y = ydim - 2; y > 0; y--) {
@@ -368,33 +399,29 @@ function stream() {
   for (var y = 1; y < ydim - 1; y++) {
     // now start in the SW corner...
     for (var x = 1; x < xdim - 1; x++) {
-      nW[x + y * xdim] = nW[x + 1 + y * xdim]; // move the west-moving particles
-      nSW[x + y * xdim] = nSW[x + 1 + (y + 1) * xdim]; // and the southwest-moving particles
+      nW[x + y * xdim] =
+        scalar * nW[x + 1 + y * xdim] + (1 - scalar) * nW[x + y * xdim]; // move the west-moving particles
+      nSW[x + y * xdim] =
+        scalar * nSW[x + 1 + (y + 1) * xdim] + (1 - scalar) * nSW[x + y * xdim]; // and the southwest-moving particles
+
+      // if (isNaN(nSW[x + y * xdim])) {
+      //   debugger;
+      // }
     }
   }
-  for (var y = 1; y < ydim; y++) {
+  for (var y = 1; y < ydim - 1; y++) {
     // Now handle bounce-back from barriers
     for (var x = 1; x < xdim - 1; x++) {
-      if (false && y == ydim - 1) {
-        var index = x + y * xdim;
-        // nE[x + 1 + y * xdim] = nW[index];
-        // nW[x - 1 + y * xdim] = nE[index];
-        nN[x + (y + 1) * xdim] = nS[index] + nN[index];
-        // nS[x + (y - 1) * xdim] = nN[index];
-        nNE[x + 1 + (y + 1) * xdim] = nSW[index] + nNE[index];
-        nNW[x - 1 + (y + 1) * xdim] = nSE[index] + nNW[index];
-        // nSE[x + 1 + (y - 1) * xdim] = nNW[index];
-        // nSW[x - 1 + (y - 1) * xdim] = nNE[index];
-      } else if (ydim == ydim - 1 || barrier[x + y * xdim]) {
+      if (barrier[x + y * xdim]) {
         var index = x + y * xdim;
         nE[x + 1 + y * xdim] = nW[index];
-        nW[x - 1 + y * xdim] = nE[index];
+        nW[x - 1 + y * xdim] = 1 * nE[index];
         nN[x + (y + 1) * xdim] = nS[index];
         nS[x + (y - 1) * xdim] = nN[index];
         nNE[x + 1 + (y + 1) * xdim] = nSW[index];
-        nNW[x - 1 + (y + 1) * xdim] = nSE[index];
+        nNW[x - 1 + (y + 1) * xdim] = 1 * nSE[index];
         nSE[x + 1 + (y - 1) * xdim] = nNW[index];
-        nSW[x - 1 + (y - 1) * xdim] = nNE[index];
+        nSW[x - 1 + (y - 1) * xdim] = 1 * nNE[index];
         // Keep track of stuff needed to plot force vector:
       }
     }
@@ -415,31 +442,16 @@ function setEquil(x, y, newux, newuy, newrho) {
   var uxuy2 = 2 * newux * newuy;
   var u2 = ux2 + uy2;
   var u215 = 1.5 * u2;
+  // checkForNaN(i);
   n0[i] = four9ths * newrho * (1 - u215);
-  nE[i] =
-    one9th * newrho * (1 + ux3 / dxdt + (4.5 * ux2) / dxdt2 - u215 / dxdt2);
-  nW[i] =
-    one9th * newrho * (1 - ux3 / dxdt + (4.5 * ux2) / dxdt2 - u215 / dxdt2);
-  nN[i] =
-    one9th * newrho * (1 + uy3 / dxdt + (4.5 * uy2) / dxdt2 - u215 / dxdt2);
-  nS[i] =
-    one9th * newrho * (1 - uy3 / dxdt + (4.5 * uy2) / dxdt2 - u215 / dxdt2);
-  nNE[i] =
-    one36th *
-    newrho *
-    (1 + (ux3 + uy3) / dxdt + (4.5 * (u2 + uxuy2)) / dxdt2 - u215 / dxdt2);
-  nSE[i] =
-    one36th *
-    newrho *
-    (1 + (ux3 - uy3) / dxdt + (4.5 * (u2 - uxuy2)) / dxdt2 - u215 / dxdt2);
-  nNW[i] =
-    one36th *
-    newrho *
-    (1 - (ux3 - uy3) / dxdt + (4.5 * (u2 - uxuy2)) / dxdt2 - u215 / dxdt2);
-  nSW[i] =
-    one36th *
-    newrho *
-    (1 - (ux3 + uy3) / dxdt + (4.5 * (u2 + uxuy2)) / dxdt2 - u215 / dxdt2);
+  nE[i] = one9th * newrho * (1 + ux3 + 4.5 * ux2 - u215);
+  nW[i] = one9th * newrho * (1 - ux3 + 4.5 * ux2 - u215);
+  nN[i] = one9th * newrho * (1 + uy3 + 4.5 * uy2 - u215);
+  nS[i] = one9th * newrho * (1 - uy3 + 4.5 * uy2 - u215);
+  nNE[i] = one36th * newrho * (1 + (ux3 + uy3) + 4.5 * (u2 + uxuy2) - u215);
+  nSE[i] = one36th * newrho * (1 + (ux3 - uy3) + 4.5 * (u2 - uxuy2) - u215);
+  nNW[i] = one36th * newrho * (1 - (ux3 - uy3) + 4.5 * (u2 - uxuy2) - u215);
+  nSW[i] = one36th * newrho * (1 - (ux3 + uy3) + 4.5 * (u2 + uxuy2) - u215);
   rho[i] = newrho;
   ux[i] = newux;
   uy[i] = newuy;
@@ -535,29 +547,26 @@ function paintCanvas() {
       if (barrier[x + y * xdim]) {
         colorSquare(x, y, 0, 0, 0, 130);
       } else {
-        const val = curl[x + y * xdim] * 6;
-        const abs = Math.min(1, Math.abs(val));
-        const val2 = Math.pow(abs, 0.5);
-        let hue;
-        let opacity;
-        if (val > 0) {
-          hue = 0;
-          opacity = 0;
-          // intensity = Math.min(val2 * 10, 1);
-          // hue = 160 + 60 * intensity;
-        } else {
-          opacity = Math.max(0, (Math.pow(abs, 0.9) - 0.01) / 0.99);
-          // hue = (1 - intensity) * 57;
-          hue = 125 + 100 * val2;
-        }
+        const opacity = 1;
+        // hue = (125 + rho[x + y * xdim] * 1000) % 360;
+        const hue = sigmoid(curl[x + y * xdim] * 30) * 360;
+
         // debugger;
         const [r, g, b] = hslToRgb(hue / 360, 1, 0.6);
+        if (r == g) {
+          // debugger;
+        }
         colorSquare(x, y, r, g, b, opacity * 255);
       }
     }
   }
   //if (pixelGraphics)
   context.putImageData(image, 0, 0); // blast image to the screen
+}
+
+function sigmoid(x) {
+  const exp = Math.exp(x);
+  return exp / (1 + exp);
 }
 
 function colorSquare(x, y, r, g, b, a) {

@@ -97,14 +97,14 @@ async function captureIteration() {
   const passing = unsqueezed2.equal(15);
   tf.dispose(unsqueezed2);
 
-  const subjects = blurImage(passing, kernel);
+  const subjects = passing; //blurImage(passing, kernel);
 
-  const squeeze1 = subjects.squeeze();
+  // const squeeze1 = subjects.squeeze();
 
-  const higherResSqueezed = squeeze1.squeeze();
-  tf.dispose(squeeze1);
-  const higherRes = await higherResSqueezed.data();
-  tf.dispose(higherResSqueezed);
+  // const higherResSqueezed = squeeze1.squeeze();
+  // tf.dispose(squeeze1);
+  // const higherRes = await higherResSqueezed.data();
+  // tf.dispose(higherResSqueezed);
   box = [1, 0, 0, 1];
   const croppedSubjects = tf.image.cropAndResize(
     subjects,
@@ -117,6 +117,7 @@ async function captureIteration() {
   tf.dispose(croppedSubjects);
   const croppedSubjects2d = croppedSqueezed1.squeeze();
   tf.dispose(croppedSqueezed1);
+  let higherRes;
   const out = [higherRes, 0];
   out[1] = await croppedSubjects2d.data();
   window.newBoundaries = out;
