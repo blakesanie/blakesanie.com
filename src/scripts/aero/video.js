@@ -11,7 +11,7 @@ async function getDevices() {
 }
 
 async function setDevice() {
-  window.cameraId = devices[deviceI];
+  const cameraId = devices[deviceI];
   const stream = await navigator.mediaDevices.getUserMedia({
     video: {
       deviceId: {
@@ -20,6 +20,7 @@ async function setDevice() {
     },
   });
   video.srcObject = stream;
+  await window.setMLCam(cameraId);
 }
 
 let devices;
@@ -29,10 +30,19 @@ async function videoMain() {
   devices = await getDevices();
   await setDevice();
 }
-
 videoMain();
 
 async function toggleCamera() {
   deviceI = (i + 1) % devices.length;
   await setDevice();
 }
+
+function setShowVideo(show) {
+  video.style.display = show ? "block" : "none";
+}
+
+const videoSelect = document.querySelector("#videoSelect");
+setShowVideo(videoSelect.value);
+videoSelect.addEventListener("change", (e) => {
+  setShowVideo(e.target.value);
+});

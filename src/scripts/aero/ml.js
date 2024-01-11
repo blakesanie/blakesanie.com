@@ -1,25 +1,19 @@
-const packages = [
-  "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js",
-  "https://cdn.jsdelivr.net/npm/@tensorflow-models/deeplab@0.2.2/dist/deeplab.min.js",
-];
-// this.webcamVideoElement.play
-
-function loadPackage(url) {
-  return new Promise((resolve, reject) => {
-    let s = document.createElement("script");
-    s.type = "text/javascript";
-    s.onload = resolve;
-    s.src = url;
-    document.head.appendChild(s);
-  });
-}
+let mlRunning = false;
 
 window.resumeML = async function () {
+  // debugger;
+  if (mlRunning) return;
+  mlRunning = true;
+  while (!model || !cam) {
+    await window.sleep(10);
+  }
+  await captureIteration();
   while (window.running) {
     await captureIteration();
     // console.log(tf.memory().numTensors);
     // tf.disposeVariables();
   }
+  mlRunning = false;
 };
 
 function get1dGaussianKernel(sigma, size) {
@@ -52,16 +46,6 @@ function blurImage(image, kernel) {
 }
 
 const kernel = get2dGaussianKernel(20, 10);
-
-//   const input = tf.zeros([1080, 1920, 3]);
-//   // debugger;
-//   // ...
-//   const start = new Date();
-//   model
-//     .segment(input)
-//     .then((out) =>
-//       console.log(`predicted in ${new Date().getTime() - start.getTime()}`, out)
-//     );
 
 async function captureIteration() {
   const frame = await cam.capture();
@@ -131,30 +115,21 @@ async function captureIteration() {
 let model;
 let cam;
 
-async function mlMain() {
-  // await Promise.all(packages.map((pack) => loadPackage(pack)));
-  console.log("all loaded!");
-  const modelName = "pascal"; // set to your preferred model, either `pascal`, `cityscapes` or `ade20k`
-  const quantizationBytes = 2; // either 1, 2 or 4
-  model = await deeplab.load({ base: modelName, quantizationBytes });
-  // debugger;
+window.setMLCam = async function (id) {
   cam = await tf.data.webcam(undefined, {
     resizeWidth: 600,
     resizeHeight: 450,
+    deviceId: id,
   });
-  // return;
+};
 
-  window.resumeML();
-
-  // const downsized = tf.image
-  //   .cropAndResize(
-  //     output.expandDims(2).expandDims(0),
-  //     [[0, 0, 1, 1]],
-  //     [0],
-  //     [54, 96]
-  //   )
-  //   .squeeze()
-  //   .squeeze();
+async function modelInit() {
+  const start = new Date();
+  const modelName = "pascal"; // set to your preferred model, either `pascal`, `cityscapes` or `ade20k`
+  const quantizationBytes = 1; // either 1, 2 or 4
+  model = await deeplab.load({ base: modelName, quantizationBytes });
+  console.log("model loaded in", new Date() - start);
 }
 
-mlMain();
+modelInit();
+window.resumeML();

@@ -45,16 +45,19 @@ window.running = false; // will be true when running
 
 const pauseButton = document.querySelector("#pausePlay");
 function toggleRunning(e) {
-  if (running) {
+  if (window.running) {
     window.running = false;
     e.target.innerHTML = "Resume";
     calibrateButton.classList.add("disabled");
   } else {
-    window.running = true;
+    pauseButton.classList.remove("flashing");
     e.target.innerHTML = "Pause";
     calibrateButton.classList.remove("disabled");
-    simulate();
-    window.resumeML();
+    setTimeout(() => {
+      window.running = true;
+      simulate();
+      window.resumeML();
+    }, 0);
   }
 }
 pauseButton.addEventListener("click", toggleRunning);
@@ -116,11 +119,11 @@ let c;
 const b = 0.0450364;
 const thirtyFiveToMPS = 35 * speedToMPS["kmph"];
 
-function sleep(ms) {
+window.sleep = function (ms) {
   return new Promise((res) => {
     setTimeout(res, ms);
   });
-}
+};
 
 let initialUnit;
 let initialSpeed;
@@ -135,8 +138,6 @@ async function calibrate() {
   handleNewSpeedUnit("kmph");
   setSpeedInMPS(35);
   roadSpeedSlider.value = 35;
-  if (!running) {
-  }
   const windowSize = fps; // one second
   let windowSum = 0;
   const wind = [];
@@ -155,7 +156,7 @@ async function calibrate() {
       absorbedMin = Math.min(absorbedMin, avg);
       absorbedMax = Math.max(absorbedMax, avg);
     }
-    await sleep(1000 / fps);
+    await window.sleep(1000 / fps);
   }
   baselineLow = absorbedMin;
   baselineHigh = absorbedMax;
@@ -268,17 +269,23 @@ window.forceSavings = new Array(chartMaxSeconds * fps + 1);
 window.powerSavings = new Array(chartMaxSeconds * fps + 1);
 window.powerMA = new Array(chartMaxSeconds * chartUpdatesPerSecond + 1);
 const MAWindow = fps;
+let powerWindowSum = 0;
 // let powerSavingsSum = 0
 // let powerWindowSum = 0
 
 // Simulate function executes a bunch of steps and then schedules another call to itself:
+
+const boundaryResetEvery = 20;
+
 function simulate() {
   const start = new Date().getTime();
   checkForNewBoundary();
-  setBoundaries();
   absorbedX = 0;
   absorbedY = 0;
   for (var step = 0; step < 40; step++) {
+    if (step % boundaryResetEvery == 0) {
+      setBoundaries();
+    }
     stream();
     collide();
   }
@@ -293,13 +300,20 @@ function simulate() {
     const wattsSaved = onSpectrum * aeroEndpointWattsSaved;
     const forceSaved = wattsSaved / speedInMPS;
 
+    const firstInWindow =
+      window.powerSavings[window.powerSavings.length - MAWindow];
+    powerWindowSum -=
+      !firstInWindow || isNaN(firstInWindow) ? 0 : firstInWindow;
+    powerWindowSum += wattsSaved;
+
     window.forceSavings.shift();
     window.forceSavings.push(forceSaved);
     window.powerSavings.shift();
     window.powerSavings.push(wattsSaved);
 
-    powerSavedElement.innerHTML = Math.round(wattsSaved);
-    forceSavedElement.innerHTML = Math.round(forceSaved * 10) / 10;
+    powerSavedElement.innerHTML = Math.round(powerWindowSum / MAWindow);
+    forceSavedElement.innerHTML =
+      Math.round((powerWindowSum / MAWindow / speedInMPS) * 10) / 10;
 
     if (chartFrames % window.framesPerChartUpdate == 0) {
       if (chartFrames >= MAWindow) {
@@ -325,7 +339,7 @@ function simulate() {
   if (!stable) {
     initFluid();
   }
-  if (running) {
+  if (window.running) {
     const now = new Date().getTime();
     const duration = scheduledStart ? now - scheduledStart : now - start;
     scheduledStart = 1000 / 24 + start;
@@ -574,6 +588,19 @@ function setEquil(x, y, newux, newuy, newrho) {
   uy[i] = newuy;
 }
 
+function valToColor(c, opacityScale = 1) {
+  let hue;
+  let opacity = sigmoid(Math.abs(c) * 80 * opacityScale) * 2 - 1;
+  if (c < 0) {
+    hue = 0.16 - 0.16 * (sigmoid(-c * 50) * 2 - 1);
+  } else {
+    hue = 0.52 + 0.14 * (sigmoid(c * 50) * 2 - 1);
+  }
+  const rgb = hslToRgb(hue, 1, 0.6);
+  rgb.push(opacity * 255);
+  return rgb;
+}
+
 function paintCanvas() {
   // barrierContext.putImageData(barrierImage, 0, 0);
   if (plotType == 0) {
@@ -619,32 +646,29 @@ function paintCanvas() {
   for (var y = 0; y < ydim; y++) {
     for (var x = 0; x < xdim; x++) {
       if (barrier[x + y * xdim]) {
-        colorSquare(x, y, 0, 0, 0, 130);
+        colorSquare(x, y, 0, 0, 0, 160);
       } else {
-        let rgb;
+        let rgba;
         let opacity = 1;
+        let saturation = 1;
         if (plotType == 0) {
-          const hue = 0.7 * sigmoid(curl[x + y * xdim] * 40);
-          // opacity = sigmoid(Math.abs(200 * curl[x + y * xdim])) * 2 - 1;
-          rgb = hslToRgb(hue, 1, 0.6);
+          rgba = valToColor(curl[x + y * xdim]);
         } else if (plotType == 1) {
-          const hue = sigmoid(ux[x + y * xdim] * 30);
-          rgb = hslToRgb(hue, 1, 0.6);
+          rgba = valToColor(0.5 * (ux[x + y * xdim] - u0), 0.5);
+          // const hue = sigmoid(ux[x + y * xdim] * 30);
+          // rgb = hslToRgb(hue, 1, 0.6);
         } else if (plotType == 2) {
-          const hue = sigmoid(uy[x + y * xdim] * 30);
-          rgb = hslToRgb(hue, 1, 0.6);
+          rgba = valToColor(uy[x + y * xdim], 1);
         } else if (plotType == 3) {
           const speedX = ux[x + y * xdim];
           const speedY = uy[x + y * xdim];
-          const speed = Math.sqrt(speedX * speedX + speedY * speedY);
-          const hue = sigmoid(speed * 30);
-          rgb = hslToRgb(hue, 1, 0.6);
+          const speed = Math.sqrt(speedX * speedX + speedY * speedY) - u0;
+          rgba = valToColor(0.5 * speed, 0.5);
         } else if (plotType == 4) {
-          const hue = sigmoid(50 * (rho[x + y * xdim] - 1.05));
-          rgb = hslToRgb(hue, 1, 0.6);
+          rgba = valToColor(0.5 * (rho[x + y * xdim] - 1));
         }
 
-        colorSquare(x, y, rgb[0], rgb[1], rgb[2], opacity * 255);
+        colorSquare(x, y, rgba[0], rgba[1], rgba[2], rgba[3]);
       }
     }
   }

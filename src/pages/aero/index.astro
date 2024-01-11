@@ -42,8 +42,8 @@
           <button class="selectedButton">Speed</button>
           <button>Rendering</button>
           <button>Camera</button>
-          <button id="calibrateButton">Calibrate</button>
-          <button id="pausePlay">Pause</button>
+          <button id="calibrateButton" class="disabled">Calibrate</button>
+          <button id="pausePlay" class="flashing">Start</button>
         </div>
         <div class="moreControls render">
           <div class="inputModule">
@@ -89,13 +89,13 @@
         <div class="moreControls">
           <div class="inputModule">
             <p class="inputLabel">Device</p>
-            <button>Toggle Device</button>
+            <button>Toggle Camera</button>
           </div>
           <div class="inputModule">
             <p class="inputLabel">Feed</p>
-            <select>
-              <option>Show</option>
-              <option>Hide</option>
+            <select id="videoSelect">
+              <option value="show">Show</option>
+              <option value="">Hide</option>
             </select>
           </div>
         </div>
@@ -165,7 +165,7 @@
     #controlsBar,
     .moreControls {
       font-size: 0.8em;
-      background-color: rgba(0, 0, 0, 0.6);
+      background-color: rgba(0, 0, 0, 0.2);
       padding: 0.6em;
       box-shadow: 0 0 30px 0 rgba(255, 255, 255, 0.2);
       display: flex;
@@ -181,6 +181,7 @@
         border-radius: 0.3em;
         background-color: rgba(255, 255, 255, 0.16);
         opacity: 0.5;
+        cursor: pointer;
       }
       .selectedButton {
         opacity: 1;
@@ -251,6 +252,11 @@
       .unit {
         // font-size: 0.8em;
       }
+    }
+
+    .disabled {
+      opacity: 0.1 !important;
+      pointer-events: none;
     }
 
     /* end layouts for controls */
@@ -340,12 +346,29 @@
       /* height: 200px; */
       margin: 12px;
     }
+
+    .flashing {
+      animation: flash 0.8s ease-in-out infinite;
+      border: 0.1em solid white !important;
+    }
+
+    @keyframes flash {
+      0% {
+        opacity: 0.3;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0.3;
+      }
+    }
   </style>
 
   <script>
-    // import "../../scripts/aero/video";
-    import "../../scripts/aero/ml";
+    import "../../scripts/aero/video";
     import "../../scripts/aero/physics";
+    import "../../scripts/aero/ml";
     import "../../scripts/aero/charts";
   </script>
 </body>
