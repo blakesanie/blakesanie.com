@@ -1,0 +1,377 @@
+---
+---
+
+<head>
+  <!-- <script src="./ml.js" type="module"></script> -->
+  <meta charset="utf-8" />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Nunito"
+  /></head
+>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"
+></script>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/@tensorflow-models/deeplab@0.2.2/dist/deeplab.min.js"
+></script>
+
+<!-- import "../../scripts/aero/video";
+  import "../../scripts/aero/ml";
+  import "../../scripts/aero/physics";
+  import "../../scripts/aero/charts"; -->
+
+<!-- <script src="../../scripts/aero/video"></script>
+<script src="../../scripts/aero/ml"></script>
+<script src="../../scripts/aero/physics"></script>
+<script src="../../scripts/aero/charts"></script> -->
+
+<body>
+  <div id="cover">
+    <div class="bar" id="topBar">
+      <a class="flex1" href="/" target="_blank"
+        ><h1>Aero<br /><span id="byline">by Blake</span></h1></a
+      >
+      <div id="controlsHolder">
+        <div id="controlsBar">
+          <button class="selectedButton">Speed</button>
+          <button>Rendering</button>
+          <button>Camera</button>
+          <button id="calibrateButton" class="disabled">Calibrate</button>
+          <button id="pausePlay" class="flashing">Start</button>
+        </div>
+        <div class="moreControls render">
+          <div class="inputModule">
+            <p class="inputLabel">Speed</p>
+            <div class="hbox center">
+              <input
+                type="range"
+                min="0"
+                max="40"
+                value="25"
+                step="1"
+                id="speedSlider"
+              />
+              <div id="speedOutput">25</div>
+            </div>
+          </div>
+          <div class="inputModule">
+            <p class="inputLabel">Unit</p>
+            <select id="unitSelect">
+              <option value="mph">mph</option>
+              <option value="kmph">km/h</option>
+            </select>
+          </div>
+          <div class="inputModule">
+            <p class="inputLabel">Direction</p><select id="direction">
+              <option value="right">Right</option>
+              <option value="left">Left</option>
+            </select>
+          </div>
+        </div>
+        <div class="moreControls">
+          <div class="inputModule">
+            <p class="inputLabel">Visualized Quantity</p>
+            <select id="visSelect">
+              <option value="0">Curl</option>
+              <option value="1">X Velocity</option>
+              <option value="2">Y Velocity</option>
+              <option value="3">Speed</option>
+              <option value="4">Density</option>
+            </select>
+          </div>
+        </div>
+        <div class="moreControls">
+          <div class="inputModule">
+            <p class="inputLabel">Device</p>
+            <button>Toggle Camera</button>
+          </div>
+          <div class="inputModule">
+            <p class="inputLabel">Feed</p>
+            <select id="videoSelect">
+              <option value="show">Show</option>
+              <option value="">Hide</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="flex1"></div>
+    </div>
+
+    <!-- <div class="module"></div>
+      <div class="module">
+      </div> -->
+    <div id="frameView">
+      <div id="sixteenByNine">
+        <video autoplay playsinline webkit-playsinline muted id="videoelement"
+        ></video>
+        <img src="/assets/cycle2.jpg" />
+        <canvas id="barrierCanvas"></canvas>
+        <canvas id="physicsCanvas"></canvas>
+      </div>
+    </div>
+    <div class="bar" id="bottomBar">
+      <div class="moreControls render">
+        <div class="inputModule vbox reverse" id="powerSaving">
+          <p class="inputLabel">Power Saved</p>
+          <div class="hbox center">
+            <span class="val">0</span><span class="unit">W</span>
+          </div>
+        </div>
+        <div class="inputModule vbox reverse" id="forceSaving">
+          <p class="inputLabel">Force Saved</p>
+          <div class="hbox center">
+            <span class="val">0</span><span class="unit">F</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <canvas id="powerChart"></canvas>
+
+  <style lang="scss">
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      font-family: "Nunito", sans-serif;
+      line-height: 140%;
+    }
+    a {
+      color: white !important;
+      text-decoration: none;
+    }
+    body {
+      background-color: #353535;
+      color: white;
+    }
+    /* layouts for controls */
+
+    #controlsHolder {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.6em;
+      * {
+        color: white;
+      }
+    }
+
+    #controlsBar,
+    .moreControls {
+      font-size: 0.8em;
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 0.6em;
+      box-shadow: 0 0 30px 0 rgba(255, 255, 255, 0.2);
+      display: flex;
+      gap: 0.6em;
+      border-radius: 0.6em;
+      backdrop-filter: blur(10px);
+    }
+
+    #controlsBar {
+      button {
+        border: none;
+        padding: 0.1em 0.4em;
+        border-radius: 0.3em;
+        background-color: rgba(255, 255, 255, 0.16);
+        opacity: 0.5;
+        cursor: pointer;
+      }
+      .selectedButton {
+        opacity: 1;
+      }
+    }
+
+    .moreControls:not(.render) {
+      display: none !important;
+    }
+
+    .hbox {
+      display: flex;
+      flex-direction: row;
+      gap: 0.4em;
+    }
+
+    .vbox {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .center {
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hbox.reverse {
+      flex-direction: row-reverse;
+    }
+
+    .vbox.reverse {
+      flex-direction: column-reverse;
+    }
+
+    .inputModule {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2em;
+      > .inputLabel {
+        opacity: 0.5;
+        padding: 0 0.2em;
+      }
+      > :not(.inputLabel, #bottomBar *) {
+        width: 100%;
+        /* any input component */
+        font-size: 1.2em;
+        background-color: rgba(255, 255, 255, 0.08);
+        border: none;
+        height: 1.8em;
+        padding: 0 0.6em;
+        border-radius: 0.3em;
+      }
+      select {
+        padding: 0 0.4em !important;
+      }
+      input[type="range"] {
+        width: 8em;
+        height: 0.2em;
+      }
+      :not(div) {
+        cursor: pointer;
+      }
+      .val {
+        font-size: 2.4em;
+        line-height: 100%;
+      }
+      .unit {
+        // font-size: 0.8em;
+      }
+    }
+
+    .disabled {
+      opacity: 0.1 !important;
+      pointer-events: none;
+    }
+
+    /* end layouts for controls */
+    h1 {
+      font-size: 2em;
+      line-height: 60%;
+      padding: 0.3em 0.5em 0 0.5em;
+      font-style: italic;
+    }
+    #byline {
+      font-size: 0.4em;
+      font-style: normal;
+    }
+    .bar {
+      position: absolute;
+      z-index: 2;
+      display: flex;
+      width: 100%;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .flex1 {
+      flex: 1;
+    }
+    #topBar {
+      top: 0.5em;
+    }
+    #bottomBar {
+      bottom: 0.5em;
+    }
+    #inputs {
+    }
+    #outputs {
+      width: 15em;
+    }
+
+    #cover {
+      position: relative;
+      width: 100%;
+      max-height: 100vh;
+      max-height: 100svh;
+      overflow: hidden;
+    }
+    #cover {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #frameView {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+    }
+    .flowLeft #frameView {
+      transform: scaleX(-1);
+    }
+    #sixteenByNine {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      /* aspect-ratio: calc(16 / 9); */
+      padding-bottom: 56.25%;
+      overflow: hidden;
+    }
+    #sixteenByNine > * {
+      width: 100%;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+    body:not(.flowLeft) {
+      video {
+        /* display: none; */
+        transform: translateY(-50%) scaleX(-1) !important;
+      }
+    }
+    #sixteenByNine canvas {
+      /* background: red; */
+      background-color: rgba(0, 0, 0, 0.4);
+      width: 100%;
+      aspect-ratio: calc(16 / 9);
+      /* background-color: pink; */
+    }
+
+    #powerChart {
+      width: 100%;
+      /* height: 200px; */
+      margin: 12px;
+    }
+
+    .flashing {
+      animation: flash 0.8s ease-in-out infinite;
+      border: 0.1em solid white !important;
+    }
+
+    @keyframes flash {
+      0% {
+        opacity: 0.3;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0.3;
+      }
+    }
+  </style>
+
+  <script>
+    import "../../scripts/aero/video";
+    import "../../scripts/aero/physics";
+    import "../../scripts/aero/ml";
+    import "../../scripts/aero/charts";
+  </script>
+</body>

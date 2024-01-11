@@ -169,8 +169,10 @@ async function calibrate() {
 
 // physics
 
-const ydim = 54 + 2;
-const xdim = 96 + 2;
+const ydim = 1080 / 10 + 2;
+const xdim = 1920 / 10 + 2;
+window.xdim = xdim;
+window.ydim = ydim;
 const viscosity = 0.02;
 
 const fps = (window.fps = 24);
@@ -271,14 +273,14 @@ let powerWindowSum = 0;
 
 // Simulate function executes a bunch of steps and then schedules another call to itself:
 
-const boundaryResetEvery = 20;
+const boundaryResetEvery = 20 * 2;
 
 function simulate() {
   const start = new Date().getTime();
   checkForNewBoundary();
   absorbedX = 0;
   absorbedY = 0;
-  for (var step = 0; step < 40; step++) {
+  for (var step = 0; step < 40 * 2; step++) {
     if (step % boundaryResetEvery == 0) {
       setBoundaries();
     }
@@ -345,6 +347,15 @@ function simulate() {
 
 // Set the fluid variables at the boundaries, according to the current slider value:
 function setBoundaries() {
+  // bounds no matter what
+  for (let x = 0; x < xdim; x++) {
+    setEquil(x, 0, u0, 0, 1);
+    setEquil(x, ydim - 1, u0, 0, 1);
+  }
+  for (let y = 1; y < ydim - 1; y++) {
+    setEquil(0, y, u0, 0, 1);
+  }
+  return;
   const eqStartPerRow = [];
   let firstBarrierX;
   let firstBarrierY;
@@ -374,14 +385,7 @@ function setBoundaries() {
       eqStartPerRow.push(undefined);
     }
   }
-  // bounds no matter what
-  for (let x = 0; x < xdim; x++) {
-    setEquil(x, 0, u0, 0, 1);
-    setEquil(x, ydim - 1, u0, 0, 1);
-  }
-  for (let y = 1; y < ydim - 1; y++) {
-    setEquil(0, y, u0, 0, 1);
-  }
+
   if (!hasBarrier) return;
   // debugger;
   for (let y = ydim - 3; y >= lastBarrierY - 1; y--) {
@@ -394,7 +398,7 @@ function setBoundaries() {
     );
   }
 
-  const eqOffset = 5;
+  const eqOffset = Math.round(xdim * 0.15);
   // debugger;
   for (var y = 1; y < ydim - 1; y++) {
     for (let x = 1; x < eqStartPerRow[y - 1] - eqOffset; x++) {

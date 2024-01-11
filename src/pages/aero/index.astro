@@ -1,374 +1,206 @@
 ---
+import { Img } from "astro-imagetools/components";
 ---
 
-<head>
-  <!-- <script src="./ml.js" type="module"></script> -->
-  <meta charset="utf-8" />
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css?family=Nunito"
-  /></head
->
-
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"
-></script>
-<script
-  type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"
-></script>
-<script
-  type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/@tensorflow-models/deeplab@0.2.2/dist/deeplab.min.js"
-></script>
-
-<!-- import "../../scripts/aero/video";
-  import "../../scripts/aero/ml";
-  import "../../scripts/aero/physics";
-  import "../../scripts/aero/charts"; -->
-
-<!-- <script src="../../scripts/aero/video"></script>
-<script src="../../scripts/aero/ml"></script>
-<script src="../../scripts/aero/physics"></script>
-<script src="../../scripts/aero/charts"></script> -->
-
-<body>
-  <div id="cover">
-    <div class="bar" id="topBar">
-      <a class="flex1" href="/" target="_blank"
-        ><h1>Aero<br /><span id="byline">by Blake</span></h1></a
-      >
-      <div id="controlsHolder">
-        <div id="controlsBar">
-          <button class="selectedButton">Speed</button>
-          <button>Rendering</button>
-          <button>Camera</button>
-          <button id="calibrateButton" class="disabled">Calibrate</button>
-          <button id="pausePlay" class="flashing">Start</button>
-        </div>
-        <div class="moreControls render">
-          <div class="inputModule">
-            <p class="inputLabel">Speed</p>
-            <div class="hbox center">
-              <input
-                type="range"
-                min="0"
-                max="40"
-                value="25"
-                step="1"
-                id="speedSlider"
-              />
-              <div id="speedOutput">25</div>
-            </div>
-          </div>
-          <div class="inputModule">
-            <p class="inputLabel">Unit</p>
-            <select id="unitSelect">
-              <option value="mph">mph</option>
-              <option value="kmph">km/h</option>
-            </select>
-          </div>
-          <div class="inputModule">
-            <p class="inputLabel">Direction</p><select id="direction">
-              <option value="right">Right</option>
-              <option value="left">Left</option>
-            </select>
-          </div>
-        </div>
-        <div class="moreControls">
-          <div class="inputModule">
-            <p class="inputLabel">Visualized Quantity</p>
-            <select id="visSelect">
-              <option value="0">Curl</option>
-              <option value="1">X Velocity</option>
-              <option value="2">Y Velocity</option>
-              <option value="3">Speed</option>
-              <option value="4">Density</option>
-            </select>
-          </div>
-        </div>
-        <div class="moreControls">
-          <div class="inputModule">
-            <p class="inputLabel">Device</p>
-            <button>Toggle Camera</button>
-          </div>
-          <div class="inputModule">
-            <p class="inputLabel">Feed</p>
-            <select id="videoSelect">
-              <option value="show">Show</option>
-              <option value="">Hide</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="flex1"></div>
-    </div>
-
-    <!-- <div class="module"></div>
-      <div class="module">
-      </div> -->
-    <div id="frameView">
-      <div id="sixteenByNine">
-        <video autoplay playsinline webkit-playsinline muted id="videoelement"
-        ></video>
-        <canvas id="barrierCanvas"></canvas>
-        <canvas id="physicsCanvas"></canvas>
+<html>
+  <head
+    ><meta charset="utf-8" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Nunito"
+    /></head
+  >
+  <body>
+    <div id="cover">
+      <Img
+        src="/src/assets/images/aero.png"
+        alt=""
+        loading="lazy"
+        placeholder="blurred"
+        format="webp"
+        breakpoints={[400, 800, 1200, 1600, 2000]}
+        quality={50}
+      />
+      <Img
+        src="/src/assets/images/aero_before.jpg"
+        alt=""
+        loading="lazy"
+        placeholder="blurred"
+        format="webp"
+        breakpoints={[400, 800, 1200, 1600, 2000]}
+        quality={50}
+        attributes={{
+          img: {
+            id: "topImage",
+          },
+        }}
+      />
+      <div id="coverMain">
+        <h1>Aero<br /><span id="byline">by Blake</span></h1>
+        <h2>
+          Virtual wind tunnel.<br />For your garage.<br />By webcam.
+        </h2>
+        <a class="button" href="/aero/app">Launch App</a>
       </div>
     </div>
-    <div class="bar" id="bottomBar">
-      <div class="moreControls render">
-        <div class="inputModule vbox reverse" id="powerSaving">
-          <p class="inputLabel">Power Saved</p>
-          <div class="hbox center">
-            <span class="val">0</span><span class="unit">W</span>
-          </div>
-        </div>
-        <div class="inputModule vbox reverse" id="forceSaving">
-          <p class="inputLabel">Force Saved</p>
-          <div class="hbox center">
-            <span class="val">0</span><span class="unit">F</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <canvas id="powerChart"></canvas>
+    <h3>Expand your Indoor Cycling Training Arsenal</h3>
+    <p>
+      On the road, finding and utilizing an optimal cycling body position
+      significantly reduces the defeating effects of wind resistance - a
+      cyclist's worst enemy at speed. Finding and practicing this positioning
+      means spending hundreds of hours on the road, or if the budget allows,
+      comissioning your closest wind tunnel. Today, <span class="italics"
+        >Aero</span
+      > will navigate you towards wind resistance minimization - from the web.
+    </p><p>
+      <span class="italics">Aero</span> enables interactive experiementation of your
+      body geometry as you pedal along at home. Finally picture these invisible effects
+      in vivid color. Improve your power efficiency in a way power meters themselves
+      can't. Bring your webcam. That's all.
+    </p>
+    <h3>Academic Design & Cutting-Edge Innovation</h3>
+    <p>
+      Hi, I'm <a href="/" target="_blank">Blake</a>. In graduate school, I
+      studied and further advanced state-of-the-art Machine Learning methods.
+      Driving this passion was (and still is) a strong desire to quantitatively
+      model real-world use cases and apply computational insight.
+    </p><p>
+      As I continue along my endurance triathlon journey, I'm learning to
+      harmoniously and compoundingly leverage my complete skillset - swimming,
+      biking, and running, but also Machine Learning, Physics, Mathematics, and
+      Programming.
+    </p>
+    <p>
+      <span class="italics">Aero</span> blew me back into top research journals,
+      where I brushed up on computer vision-based image segmentation, fluid dynamics,
+      Eulerian simulation, and hardware-accelerated web technologies. Culminating
+      from a thorough academic survey, chaotic whiteboard sessions, curious software
+      experiments, and key development victories, I share this tool with the cycling
+      community.
+    </p>
+  </body>
+</html>
 
-  <style lang="scss">
-    * {
-      padding: 0;
-      margin: 0;
-      box-sizing: border-box;
-      font-family: "Nunito", sans-serif;
-      line-height: 140%;
-    }
-    a {
-      color: white !important;
-      text-decoration: none;
-    }
-    body {
-      background-color: #353535;
-      color: white;
-    }
-    /* layouts for controls */
+<style lang="scss" is:global>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Nunito, sans-serif;
+    line-height: 150%;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 100px;
+  }
+  body :not(#cover, #cover *) {
+    max-width: 800px;
+  }
+  .italics {
+    font-style: italic;
+  }
+  #cover {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 100px);
+    height: calc(100svh - 100px);
+    margin-bottom: 1em;
+  }
 
-    #controlsHolder {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 0.6em;
-      * {
-        color: white;
-      }
+  img {
+    position: absolute;
+    height: 100% !important;
+    object-fit: cover;
+    z-index: -1;
+  }
+  @keyframes fadeout {
+    0% {
+      opacity: 1;
     }
+    100% {
+      opacity: 0;
+    }
+  }
 
-    #controlsBar,
-    .moreControls {
-      font-size: 0.8em;
+  @keyframes fadeInBackground {
+    from {
       background-color: rgba(0, 0, 0, 0.2);
-      padding: 0.6em;
-      box-shadow: 0 0 30px 0 rgba(255, 255, 255, 0.2);
-      display: flex;
-      gap: 0.6em;
-      border-radius: 0.6em;
-      backdrop-filter: blur(10px);
     }
+    to {
+      background-color: transparent;
+    }
+  }
 
-    #controlsBar {
-      button {
-        border: none;
-        padding: 0.1em 0.4em;
-        border-radius: 0.3em;
-        background-color: rgba(255, 255, 255, 0.16);
-        opacity: 0.5;
-        cursor: pointer;
-      }
-      .selectedButton {
-        opacity: 1;
-      }
-    }
+  #topImage {
+    animation: fadeout 4s ease-in-out infinite alternate both;
+  }
 
-    .moreControls:not(.render) {
-      display: none !important;
-    }
+  #coverMain {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .hbox {
-      display: flex;
-      flex-direction: row;
-      gap: 0.4em;
-    }
-
-    .vbox {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .center {
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hbox.reverse {
-      flex-direction: row-reverse;
-    }
-
-    .vbox.reverse {
-      flex-direction: column-reverse;
-    }
-
-    .inputModule {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.2em;
-      > .inputLabel {
-        opacity: 0.5;
-        padding: 0 0.2em;
-      }
-      > :not(.inputLabel, #bottomBar *) {
-        width: 100%;
-        /* any input component */
-        font-size: 1.2em;
-        background-color: rgba(255, 255, 255, 0.08);
-        border: none;
-        height: 1.8em;
-        padding: 0 0.6em;
-        border-radius: 0.3em;
-      }
-      select {
-        padding: 0 0.4em !important;
-      }
-      input[type="range"] {
-        width: 8em;
-        height: 0.2em;
-      }
-      :not(div) {
-        cursor: pointer;
-      }
-      .val {
-        font-size: 2.4em;
-        line-height: 100%;
-      }
-      .unit {
-        // font-size: 0.8em;
-      }
-    }
-
-    .disabled {
-      opacity: 0.1 !important;
-      pointer-events: none;
-    }
-
-    /* end layouts for controls */
-    h1 {
-      font-size: 2em;
-      line-height: 60%;
-      padding: 0.3em 0.5em 0 0.5em;
-      font-style: italic;
-    }
+  h1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: left;
+    color: white;
+    // animation: fadeInBackground 4s ease-in-out infinite alternate both;
+    font-size: 3.3em;
+    line-height: 0.4em;
+    padding: 0.4em 0.7em;
+    padding-top: 0.7em;
+    font-style: italic;
+    // filter: saturate(0) contrast(30000%);
     #byline {
-      font-size: 0.4em;
       font-style: normal;
+      font-size: 0.3em;
     }
-    .bar {
-      position: absolute;
-      z-index: 2;
-      display: flex;
-      width: 100%;
-      align-items: flex-start;
-      justify-content: center;
-    }
-    .flex1 {
-      flex: 1;
-    }
-    #topBar {
-      top: 0.5em;
-    }
-    #bottomBar {
-      bottom: 0.5em;
-    }
-    #inputs {
-    }
-    #outputs {
-      width: 15em;
-    }
+    // border-bottom-right-radius: 0.2em;
+  }
+  h2 {
+    font-size: 2.6em;
+    text-align: center;
+    align-self: center;
+    color: white;
+  }
 
-    #cover {
-      position: relative;
-      width: 100%;
-      max-height: 100vh;
-      max-height: 100svh;
-      overflow: hidden;
-    }
-    #cover {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    #frameView {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16/9;
-    }
-    .flowLeft #frameView {
-      transform: scaleX(-1);
-    }
-    #sixteenByNine {
-      position: absolute;
-      width: 100%;
-      top: 50%;
-      transform: translateY(-50%);
-      /* aspect-ratio: calc(16 / 9); */
-      padding-bottom: 56.25%;
-      overflow: hidden;
-    }
-    #sixteenByNine > * {
-      width: 100%;
-      position: absolute;
-      top: 50%;
-      left: 0;
-      transform: translateY(-50%);
-    }
-    body:not(.flowLeft) video {
-      /* display: none; */
-      transform: translateY(-50%) scaleX(-1) !important;
-    }
-    #sixteenByNine canvas {
-      /* background: red; */
-      background-color: rgba(0, 0, 0, 0.4);
-      width: 100%;
-      aspect-ratio: calc(16 / 9);
-      /* background-color: pink; */
-    }
+  .button {
+    color: white !important;
+    text-decoration: none !important;
+    backdrop-filter: blur(0.5em);
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid white;
+    box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.3);
+    padding: 0.5em 0.8em;
+    font-size: 1.2em;
+    margin-top: 1em;
+    border-radius: 0.4em;
+    cursor: pointer;
+  }
 
-    #powerChart {
-      width: 100%;
-      /* height: 200px; */
-      margin: 12px;
-    }
+  h3 {
+    font-size: 1.5em;
+    margin: 0.5em 1.5em;
+    margin-top: 1em;
+    text-align: center;
+  }
 
-    .flashing {
-      animation: flash 0.8s ease-in-out infinite;
-      border: 0.1em solid white !important;
+  p {
+    font-size: 1.2em;
+    margin: 0.4em 1.5em;
+    text-indent: 2em;
+    a {
+      color: rgb(30, 127, 255) !important;
+      text-decoration: underline;
     }
-
-    @keyframes flash {
-      0% {
-        opacity: 0.3;
-      }
-      50% {
-        opacity: 1;
-      }
-      100% {
-        opacity: 0.3;
-      }
-    }
-  </style>
-
-  <script>
-    import "../../scripts/aero/video";
-    import "../../scripts/aero/physics";
-    import "../../scripts/aero/ml";
-    import "../../scripts/aero/charts";
-  </script>
-</body>
+  }
+</style>

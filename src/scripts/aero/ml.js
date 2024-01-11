@@ -1,3 +1,9 @@
+// const canvas = document.createElement("canvas");
+// const ctx = canvas.getContext("2d");
+// ctx.canvas.height = 1080;
+// ctx.canvas.width = 1920;
+// ctx.drawImage(img, 0, 0);
+
 let mlRunning = false;
 
 window.resumeML = async function () {
@@ -48,14 +54,16 @@ function blurImage(image, kernel) {
 const kernel = get2dGaussianKernel(20, 10);
 
 async function captureIteration() {
-  const frame = await cam.capture();
+  const frame = tf.browser.fromPixels(document.querySelector("img")); //await cam.capture();
+  // debugger;
   const [height, width, depth] = frame.shape;
   const newHeight = (width / 16) * 9;
   const y1 = (height - newHeight) / 2 / height;
 
   const expanded = frame.expandDims(0);
   tf.dispose(frame);
-  let box = window.directionRight ? [y1, 1, 1 - y1, 0] : [y1, 0, 1 - y1, 1];
+  let box =
+    window.directionRight && false ? [y1, 1, 1 - y1, 0] : [y1, 0, 1 - y1, 1];
   const cropped = tf.image.cropAndResize(expanded, [box], [0], [720, 1280]);
   tf.dispose(expanded);
   // frame.dispose();
@@ -78,10 +86,13 @@ async function captureIteration() {
   tf.dispose(output);
   const unsqueezed2 = unsqueezed1.expandDims(0);
   tf.dispose(unsqueezed1);
-  const passing = unsqueezed2.equal(15);
+  const passingBike = unsqueezed2.equal(2);
+  const passingPerson = unsqueezed2.equal(15);
   tf.dispose(unsqueezed2);
 
-  const subjects = passing; //blurImage(passing, kernel);
+  const subjects = passingBike.add(passingPerson); //blurImage(passing, kernel);
+  tf.dispose(passingBike);
+  tf.dispose(passingPerson);
 
   // const squeeze1 = subjects.squeeze();
 
@@ -94,7 +105,7 @@ async function captureIteration() {
     subjects,
     [box],
     [0],
-    [54, 96]
+    [window.ydim - 2, window.xdim - 2]
   );
   tf.dispose(subjects);
   const croppedSqueezed1 = croppedSubjects.squeeze();
@@ -123,12 +134,22 @@ window.setMLCam = async function (id) {
   });
 };
 
+// let img;
+
 async function modelInit() {
   const start = new Date();
   const modelName = "pascal"; // set to your preferred model, either `pascal`, `cityscapes` or `ade20k`
   const quantizationBytes = 1; // either 1, 2 or 4
   model = await deeplab.load({ base: modelName, quantizationBytes });
   console.log("model loaded in", new Date() - start);
+  // img = document.createElement("img");
+  // img.onload = function () {
+  //   debugger;
+  //   captureIteration();
+  // };
+  // img.src = "/assets/cycle2.jpg";
+
+  // document.body.append(img);
 }
 
 modelInit();
