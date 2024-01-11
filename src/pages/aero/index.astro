@@ -4,10 +4,11 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
 ---
 
 <CommonHead
-  fontUrl="https://fonts.googleapis.com/css2?family=Nunito:wght@300;500&display=swap"
-  title="Aero Cycling Simulation"
+  fontUrl="https://fonts.googleapis.com/css2?family=Nunito:wght@300;500;700&display=swap"
+  title="Aero - Virtual Cycling Wind Tunnel"
   description="On the road, finding and utilizing an optimal cycling body position significantly reduces the defeating effects of wind resistance - a cyclist's worst enemy at speed. Finding and practicing this positioning means spending hundreds of hours on the road, or if the budget allows, comissioning your closest wind tunnel. Today, Aero will navigate you towards wind resistance minimization - from the web."
   image="/src/assets/images/aero.png"
+  themeColor="black"
 >
   <div id="cover">
     <Img
@@ -43,17 +44,17 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
   </div>
   <h3>Expand your Indoor Cycling Training Arsenal</h3>
   <p>
-    On the road, finding and utilizing an optimal cycling body position
-    significantly reduces the defeating effects of wind resistance - a cyclist's
-    worst enemy at speed. Finding and practicing this positioning means spending
-    hundreds of hours on the road, or if the budget allows, comissioning your
-    closest wind tunnel. Today, <span class="italics">Aero</span> will navigate you
-    towards wind resistance minimization - from the web.
+    On the road, utilizing an optimal cycling body position significantly
+    reduces the defeating effects of wind resistance - a cyclist's worst enemy
+    at speed. Finding and practicing this positioning means spending hundreds of
+    hours on the road, or if the budget allows, comissioning your closest wind
+    tunnel. Today, <span class="italics">Aero</span> navigates you towards wind resistance
+    minimization - on the web.
   </p><p>
     <span class="italics">Aero</span> enables interactive experiementation of your
     body geometry as you pedal along at home. Finally picture these invisible effects
     in vivid color. Improve your power efficiency in a way power meters themselves
-    can't. Bring your webcam. That's all.
+    can't analyze. Bring your webcam. That's all.
   </p>
   <h3>Academic Design & Cutting-Edge Innovation</h3>
   <p>
@@ -64,8 +65,8 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
   </p><p>
     As I continue along my endurance triathlon journey, I'm learning to
     harmoniously and compoundingly leverage my complete skillset - swimming,
-    biking, and running, but also Machine Learning, Physics, Mathematics, and
-    Programming.
+    biking, and running, but also machine learning, physics, mathematics, and
+    programming.
   </p>
   <p>
     <span class="italics">Aero</span> blew me back into top research journals, where
@@ -83,7 +84,7 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;700&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -110,6 +111,7 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
   }
   .italics {
     font-style: italic;
+    font-weight: 700;
   }
   #cover {
     position: relative;
@@ -205,7 +207,7 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
     margin: 1em 1.5em;
     margin-top: 1.6em;
     text-align: center;
-    font-weight: 500;
+    font-weight: 700;
   }
 
   p {
@@ -213,8 +215,9 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
     margin: 0.4em 1.5em;
     text-indent: 2em;
     a {
-      color: rgb(30, 127, 255) !important;
+      color: rgb(0, 99, 227) !important;
       text-decoration: underline;
+      font-weight: 500;
     }
   }
 
