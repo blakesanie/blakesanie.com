@@ -169,14 +169,14 @@ async function calibrate() {
 
 // physics
 
-const gridHeight = 54 + 2;
-const gridWidth = 96 + 2;
+const ydim = 54 + 2;
+const xdim = 96 + 2;
 const viscosity = 0.02;
 
 const fps = (window.fps = 24);
 
 let sceneWidth = 2.5; // meters
-let dx = sceneWidth / gridWidth; // meters per cell
+let dx = sceneWidth / xdim; // meters per cell
 
 var pxPerSquare = 10; //Number(sizeSelect.options[sizeSelect.selectedIndex].value);
 
@@ -191,13 +191,9 @@ var pxPerSquare = 10; //Number(sizeSelect.options[sizeSelect.selectedIndex].valu
 
 var canvas = document.getElementById("physicsCanvas");
 var context = canvas.getContext("2d");
-context.canvas.width = gridWidth * pxPerSquare;
-context.canvas.height = gridHeight * pxPerSquare;
+context.canvas.width = (xdim - 2) * pxPerSquare;
+context.canvas.height = (ydim - 2) * pxPerSquare;
 var image = context.createImageData(canvas.width, canvas.height); // for direct pixel manipulation (faster than fillRect)
-for (var i = 3; i < image.data.length; i += 4) image.data[i] = 255; // set all alpha values to opaque
-
-var xdim = canvas.width / pxPerSquare; // grid dimensions for simulation
-var ydim = canvas.height / pxPerSquare;
 
 var four9ths = 4.0 / 9.0; // abbreviations
 var one9th = 1.0 / 9.0;
@@ -643,8 +639,8 @@ function paintCanvas() {
   //   chartFrames++;
   // }
 
-  for (var y = 0; y < ydim; y++) {
-    for (var x = 0; x < xdim; x++) {
+  for (var y = 1; y < ydim - 1; y++) {
+    for (var x = 1; x < xdim - 1; x++) {
       if (barrier[x + y * xdim]) {
         colorSquare(x, y, 0, 0, 0, 160);
       } else {
@@ -668,7 +664,7 @@ function paintCanvas() {
           rgba = valToColor(0.5 * (rho[x + y * xdim] - 1));
         }
 
-        colorSquare(x, y, rgba[0], rgba[1], rgba[2], rgba[3]);
+        colorSquare(x - 1, y + 1, rgba[0], rgba[1], rgba[2], rgba[3]);
       }
     }
   }
