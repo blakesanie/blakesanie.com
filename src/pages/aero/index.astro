@@ -5,11 +5,13 @@ import { Img } from "astro-imagetools/components";
 <html>
   <head
     ><meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;500&display=swap"
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Nunito"
-    /></head
-  >
+    />
+  </head>
   <body>
     <div id="cover">
       <Img
@@ -79,128 +81,132 @@ import { Img } from "astro-imagetools/components";
       community.
     </p>
   </body>
+
+  <style lang="scss" is:global>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Nunito, sans-serif;
+      line-height: 150%;
+      font-weight: 300;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 100px;
+    }
+    body :not(#cover, #cover *) {
+      max-width: 800px;
+    }
+    .italics {
+      font-style: italic;
+    }
+    #cover {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 100px);
+      height: calc(100svh - 100px);
+      margin-bottom: 1em;
+    }
+
+    img {
+      position: absolute;
+      height: 100% !important;
+      object-fit: cover;
+      z-index: -1;
+    }
+    @keyframes fadeout {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeInBackground {
+      from {
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+      to {
+        background-color: transparent;
+      }
+    }
+
+    #topImage {
+      animation: fadeout 4s ease-in-out infinite alternate both;
+    }
+
+    #coverMain {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      position: absolute;
+      top: 0;
+      left: 0;
+      text-align: left;
+      color: white;
+      // animation: fadeInBackground 4s ease-in-out infinite alternate both;
+      font-size: 3.3em;
+      line-height: 0.4em;
+      padding: 0.4em 0.7em;
+      padding-top: 0.7em;
+      font-style: italic;
+      // filter: saturate(0) contrast(30000%);
+      #byline {
+        font-style: normal;
+        font-size: 0.3em;
+      }
+      font-weight: 500;
+      // border-bottom-right-radius: 0.2em;
+    }
+    h2 {
+      font-size: 2.6em;
+      text-align: center;
+      align-self: center;
+      color: white;
+      font-weight: 500;
+    }
+
+    .button {
+      color: white !important;
+      text-decoration: none !important;
+      backdrop-filter: blur(0.5em);
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px solid white;
+      box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.3);
+      padding: 0.5em 0.8em;
+      font-size: 1.2em;
+      margin-top: 1em;
+      border-radius: 0.4em;
+      cursor: pointer;
+    }
+
+    h3 {
+      font-size: 1.5em;
+      margin: 0.5em 1.5em;
+      margin-top: 1em;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin: 0.4em 1.5em;
+      text-indent: 2em;
+      a {
+        color: rgb(30, 127, 255) !important;
+        text-decoration: underline;
+      }
+    }
+  </style>
 </html>
-
-<style lang="scss" is:global>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Nunito, sans-serif;
-    line-height: 150%;
-  }
-  body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 100px;
-  }
-  body :not(#cover, #cover *) {
-    max-width: 800px;
-  }
-  .italics {
-    font-style: italic;
-  }
-  #cover {
-    position: relative;
-    width: 100%;
-    height: calc(100vh - 100px);
-    height: calc(100svh - 100px);
-    margin-bottom: 1em;
-  }
-
-  img {
-    position: absolute;
-    height: 100% !important;
-    object-fit: cover;
-    z-index: -1;
-  }
-  @keyframes fadeout {
-    0% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
-
-  @keyframes fadeInBackground {
-    from {
-      background-color: rgba(0, 0, 0, 0.2);
-    }
-    to {
-      background-color: transparent;
-    }
-  }
-
-  #topImage {
-    animation: fadeout 4s ease-in-out infinite alternate both;
-  }
-
-  #coverMain {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  h1 {
-    position: absolute;
-    top: 0;
-    left: 0;
-    text-align: left;
-    color: white;
-    // animation: fadeInBackground 4s ease-in-out infinite alternate both;
-    font-size: 3.3em;
-    line-height: 0.4em;
-    padding: 0.4em 0.7em;
-    padding-top: 0.7em;
-    font-style: italic;
-    // filter: saturate(0) contrast(30000%);
-    #byline {
-      font-style: normal;
-      font-size: 0.3em;
-    }
-    // border-bottom-right-radius: 0.2em;
-  }
-  h2 {
-    font-size: 2.6em;
-    text-align: center;
-    align-self: center;
-    color: white;
-  }
-
-  .button {
-    color: white !important;
-    text-decoration: none !important;
-    backdrop-filter: blur(0.5em);
-    background-color: rgba(0, 0, 0, 0.3);
-    border: 1px solid white;
-    box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.3);
-    padding: 0.5em 0.8em;
-    font-size: 1.2em;
-    margin-top: 1em;
-    border-radius: 0.4em;
-    cursor: pointer;
-  }
-
-  h3 {
-    font-size: 1.5em;
-    margin: 0.5em 1.5em;
-    margin-top: 1em;
-    text-align: center;
-  }
-
-  p {
-    font-size: 1.2em;
-    margin: 0.4em 1.5em;
-    text-indent: 2em;
-    a {
-      color: rgb(30, 127, 255) !important;
-      text-decoration: underline;
-    }
-  }
-</style>
