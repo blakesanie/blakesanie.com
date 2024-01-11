@@ -1,8 +1,82 @@
 ---
 import { Img } from "astro-imagetools/components";
+import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
 ---
 
-<html>
+<CommonHead
+  fontUrl="https://fonts.googleapis.com/css2?family=Nunito:wght@300;500&display=swap"
+  title="Aero Cycling Simulation"
+  description="On the road, finding and utilizing an optimal cycling body position significantly reduces the defeating effects of wind resistance - a cyclist's worst enemy at speed. Finding and practicing this positioning means spending hundreds of hours on the road, or if the budget allows, comissioning your closest wind tunnel. Today, Aero will navigate you towards wind resistance minimization - from the web."
+  image="/src/assets/images/aero.png"
+>
+  <div id="cover">
+    <Img
+      src="/src/assets/images/aero.png"
+      alt=""
+      loading="lazy"
+      placeholder="blurred"
+      format="webp"
+      breakpoints={[400, 800, 1200, 1600, 2000]}
+      quality={50}
+    />
+    <Img
+      src="/src/assets/images/aero_before.jpg"
+      alt=""
+      loading="lazy"
+      placeholder="blurred"
+      format="webp"
+      breakpoints={[400, 800, 1200, 1600, 2000]}
+      quality={50}
+      attributes={{
+        img: {
+          id: "topImage",
+        },
+      }}
+    />
+    <div id="coverMain">
+      <h1>Aero<br /><span id="byline">by Blake</span></h1>
+      <h2>
+        Virtual wind tunnel.<br />For your garage.<br />By webcam.
+      </h2>
+      <a class="button" href="/aero/app">Launch App</a>
+    </div>
+  </div>
+  <h3>Expand your Indoor Cycling Training Arsenal</h3>
+  <p>
+    On the road, finding and utilizing an optimal cycling body position
+    significantly reduces the defeating effects of wind resistance - a cyclist's
+    worst enemy at speed. Finding and practicing this positioning means spending
+    hundreds of hours on the road, or if the budget allows, comissioning your
+    closest wind tunnel. Today, <span class="italics">Aero</span> will navigate you
+    towards wind resistance minimization - from the web.
+  </p><p>
+    <span class="italics">Aero</span> enables interactive experiementation of your
+    body geometry as you pedal along at home. Finally picture these invisible effects
+    in vivid color. Improve your power efficiency in a way power meters themselves
+    can't. Bring your webcam. That's all.
+  </p>
+  <h3>Academic Design & Cutting-Edge Innovation</h3>
+  <p>
+    Hi, I'm <a href="/" target="_blank">Blake</a>. In graduate school, I studied
+    and further advanced state-of-the-art Machine Learning methods. Driving this
+    passion was (and still is) a strong desire to quantitatively model
+    real-world use cases and apply computational insight.
+  </p><p>
+    As I continue along my endurance triathlon journey, I'm learning to
+    harmoniously and compoundingly leverage my complete skillset - swimming,
+    biking, and running, but also Machine Learning, Physics, Mathematics, and
+    Programming.
+  </p>
+  <p>
+    <span class="italics">Aero</span> blew me back into top research journals, where
+    I brushed up on computer vision-based image segmentation, fluid dynamics, Eulerian
+    simulation, and hardware-accelerated web technologies. Culminating from a thorough
+    academic survey, chaotic whiteboard sessions, curious software experiments, and
+    key development victories, I share this tool with the cycling community.
+  </p>
+</CommonHead>
+
+<!-- <html>
   <head
     ><meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -13,208 +87,140 @@ import { Img } from "astro-imagetools/components";
       rel="stylesheet"
     />
   </head>
-  <body>
-    <div id="cover">
-      <Img
-        src="/src/assets/images/aero.png"
-        alt=""
-        loading="lazy"
-        placeholder="blurred"
-        format="webp"
-        breakpoints={[400, 800, 1200, 1600, 2000]}
-        quality={50}
-      />
-      <Img
-        src="/src/assets/images/aero_before.jpg"
-        alt=""
-        loading="lazy"
-        placeholder="blurred"
-        format="webp"
-        breakpoints={[400, 800, 1200, 1600, 2000]}
-        quality={50}
-        attributes={{
-          img: {
-            id: "topImage",
-          },
-        }}
-      />
-      <div id="coverMain">
-        <h1>Aero<br /><span id="byline">by Blake</span></h1>
-        <h2>
-          Virtual wind tunnel.<br />For your garage.<br />By webcam.
-        </h2>
-        <a class="button" href="/aero/app">Launch App</a>
-      </div>
-    </div>
-    <h3>Expand your Indoor Cycling Training Arsenal</h3>
-    <p>
-      On the road, finding and utilizing an optimal cycling body position
-      significantly reduces the defeating effects of wind resistance - a
-      cyclist's worst enemy at speed. Finding and practicing this positioning
-      means spending hundreds of hours on the road, or if the budget allows,
-      comissioning your closest wind tunnel. Today, <span class="italics"
-        >Aero</span
-      > will navigate you towards wind resistance minimization - from the web.
-    </p><p>
-      <span class="italics">Aero</span> enables interactive experiementation of your
-      body geometry as you pedal along at home. Finally picture these invisible effects
-      in vivid color. Improve your power efficiency in a way power meters themselves
-      can't. Bring your webcam. That's all.
-    </p>
-    <h3>Academic Design & Cutting-Edge Innovation</h3>
-    <p>
-      Hi, I'm <a href="/" target="_blank">Blake</a>. In graduate school, I
-      studied and further advanced state-of-the-art Machine Learning methods.
-      Driving this passion was (and still is) a strong desire to quantitatively
-      model real-world use cases and apply computational insight.
-    </p><p>
-      As I continue along my endurance triathlon journey, I'm learning to
-      harmoniously and compoundingly leverage my complete skillset - swimming,
-      biking, and running, but also Machine Learning, Physics, Mathematics, and
-      Programming.
-    </p>
-    <p>
-      <span class="italics">Aero</span> blew me back into top research journals,
-      where I brushed up on computer vision-based image segmentation, fluid dynamics,
-      Eulerian simulation, and hardware-accelerated web technologies. Culminating
-      from a thorough academic survey, chaotic whiteboard sessions, curious software
-      experiments, and key development victories, I share this tool with the cycling
-      community.
-    </p>
-  </body>
+  <body> </body>
+</html> -->
 
-  <style lang="scss" is:global>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Nunito, sans-serif;
-      line-height: 150%;
-      font-weight: 300;
-    }
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-bottom: 100px;
-    }
-    body :not(#cover, #cover *) {
-      max-width: 800px;
-    }
-    .italics {
-      font-style: italic;
-    }
-    #cover {
-      position: relative;
-      width: 100%;
-      height: calc(100vh - 100px);
-      height: calc(100svh - 100px);
-      margin-bottom: 1em;
-    }
+<style lang="scss" is:global>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Nunito, sans-serif;
+    line-height: 150%;
+    font-weight: 300;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 100px;
+  }
+  body :not(#cover, #cover *) {
+    max-width: 800px;
+  }
+  .italics {
+    font-style: italic;
+  }
+  #cover {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 100px);
+    height: calc(100svh - 100px);
+    margin-bottom: 1em;
+  }
 
-    img {
-      position: absolute;
-      height: 100% !important;
-      object-fit: cover;
-      z-index: -1;
+  img {
+    position: absolute;
+    height: 100% !important;
+    object-fit: cover;
+    z-index: -1;
+  }
+  @keyframes fadeout {
+    0% {
+      opacity: 1;
     }
-    @keyframes fadeout {
-      0% {
-        opacity: 1;
-      }
-      100% {
-        opacity: 0;
-      }
+    100% {
+      opacity: 0;
     }
+  }
 
-    @keyframes fadeInBackground {
-      from {
-        background-color: rgba(0, 0, 0, 0.2);
-      }
-      to {
-        background-color: transparent;
-      }
+  @keyframes fadeInBackground {
+    from {
+      background-color: rgba(0, 0, 0, 0.2);
     }
+    to {
+      background-color: transparent;
+    }
+  }
 
-    #topImage {
-      animation: fadeout 4s ease-in-out infinite alternate both;
-    }
+  #topImage {
+    animation: fadeout 4s ease-in-out infinite alternate both;
+  }
 
-    #coverMain {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+  #coverMain {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 
-    h1 {
-      position: absolute;
-      top: 0;
-      left: 0;
-      text-align: left;
-      color: white;
-      // animation: fadeInBackground 4s ease-in-out infinite alternate both;
-      font-size: 3.3em;
-      line-height: 0.4em;
-      padding: 0.4em 0.7em;
-      padding-top: 0.7em;
-      font-style: italic;
-      // filter: saturate(0) contrast(30000%);
-      #byline {
-        font-style: normal;
-        font-size: 0.3em;
-      }
-      font-weight: 500;
-      // border-bottom-right-radius: 0.2em;
+  h1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: left;
+    color: white;
+    // animation: fadeInBackground 4s ease-in-out infinite alternate both;
+    font-size: 3.3em;
+    line-height: 0.4em;
+    padding: 0.4em 0.7em;
+    padding-top: 0.7em;
+    font-style: italic;
+    // filter: saturate(0) contrast(30000%);
+    #byline {
+      font-style: normal;
+      font-size: 0.3em;
     }
+    font-weight: 500;
+    // border-bottom-right-radius: 0.2em;
+  }
+  h2 {
+    font-size: 2.6em;
+    text-align: center;
+    align-self: center;
+    color: white;
+    font-weight: 500;
+    padding: 0 1em;
+  }
+
+  .button {
+    color: white !important;
+    text-decoration: none !important;
+    backdrop-filter: blur(0.5em);
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid white;
+    box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.3);
+    padding: 0.5em 0.8em;
+    font-size: 1.2em;
+    margin-top: 1em;
+    border-radius: 0.4em;
+    cursor: pointer;
+  }
+
+  h3 {
+    font-size: 1.5em;
+    margin: 1em 1.5em;
+    margin-top: 1.6em;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  p {
+    font-size: 1.2em;
+    margin: 0.4em 1.5em;
+    text-indent: 2em;
+    a {
+      color: rgb(30, 127, 255) !important;
+      text-decoration: underline;
+    }
+  }
+
+  @media screen and (max-width: 500px) {
     h2 {
-      font-size: 2.6em;
-      text-align: center;
-      align-self: center;
-      color: white;
-      font-weight: 500;
-      padding: 0 1em;
+      font-size: 2em;
     }
-
-    .button {
-      color: white !important;
-      text-decoration: none !important;
-      backdrop-filter: blur(0.5em);
-      background-color: rgba(0, 0, 0, 0.3);
-      border: 1px solid white;
-      box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.3);
-      padding: 0.5em 0.8em;
-      font-size: 1.2em;
-      margin-top: 1em;
-      border-radius: 0.4em;
-      cursor: pointer;
-    }
-
-    h3 {
-      font-size: 1.5em;
-      margin: 0.5em 1.5em;
-      margin-top: 1em;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    p {
-      font-size: 1.2em;
-      margin: 0.4em 1.5em;
-      text-indent: 2em;
-      a {
-        color: rgb(30, 127, 255) !important;
-        text-decoration: underline;
-      }
-    }
-
-    @media screen and (max-width: 500px) {
-      h2 {
-        font-size: 2em;
-      }
-    }
-  </style>
-</html>
+  }
+</style>
