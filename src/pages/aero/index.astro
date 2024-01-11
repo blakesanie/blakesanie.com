@@ -5,6 +5,7 @@ import { Img } from "astro-imagetools/components";
 <html>
   <head
     ><meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -175,6 +176,7 @@ import { Img } from "astro-imagetools/components";
       align-self: center;
       color: white;
       font-weight: 500;
+      padding: 0 1em;
     }
 
     .button {
@@ -206,6 +208,12 @@ import { Img } from "astro-imagetools/components";
       a {
         color: rgb(30, 127, 255) !important;
         text-decoration: underline;
+      }
+    }
+
+    @media screen and (max-width: 500px) {
+      h2 {
+        font-size: 2em;
       }
     }
   </style>
