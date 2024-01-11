@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <link
     rel="stylesheet"
-    href="https://fonts.googleapis.com/css?family=Comfortaa"
+    href="https://fonts.googleapis.com/css?family=Nunito"
   /></head
 >
 
@@ -37,40 +37,67 @@
       <a class="flex1" href="/" target="_blank"
         ><h1>Aero<br /><span id="byline">by Blake</span></h1></a
       >
-      <div class="controlBox hbox wrap center" id="inputs">
-        <p class="val" id="speed">25</p>
-        <div class="vbox center">
-          <input
-            type="range"
-            id="speedSlider"
-            min="1"
-            max="40"
-            value="25"
-            step="1"
-          />
-          <div class="hbox">
+      <div id="controlsHolder">
+        <div id="controlsBar">
+          <button class="selectedButton">Speed</button>
+          <button>Rendering</button>
+          <button>Camera</button>
+          <button id="calibrateButton">Calibrate</button>
+          <button id="pausePlay">Pause</button>
+        </div>
+        <div class="moreControls render">
+          <div class="inputModule">
+            <p class="inputLabel">Speed</p>
+            <div class="hbox center">
+              <input
+                type="range"
+                min="0"
+                max="40"
+                value="25"
+                step="1"
+                id="speedSlider"
+              />
+              <div id="speedOutput">25</div>
+            </div>
+          </div>
+          <div class="inputModule">
+            <p class="inputLabel">Unit</p>
             <select id="unitSelect">
               <option value="mph">mph</option>
               <option value="kmph">km/h</option>
             </select>
-
-            <select id="direction">
+          </div>
+          <div class="inputModule">
+            <p class="inputLabel">Direction</p><select id="direction">
               <option value="right">Right</option>
               <option value="left">Left</option>
             </select>
           </div>
         </div>
-        <div class="hbox">
-          <button id="pausePlay" class="majorButton">Start</button>
-          <div class="vbox">
-            <button id="calibrate" class="disabled">Calibrate</button><button
-              id="clear">Reset Log</button
-            >
+        <div class="moreControls">
+          <div class="inputModule">
+            <p class="inputLabel">Visualized Quantity</p>
+            <select id="visSelect">
+              <option value="0">Curl</option>
+              <option value="1">X Velocity</option>
+              <option value="2">Y Velocity</option>
+              <option value="3">Speed</option>
+              <option value="4">Density</option>
+            </select>
           </div>
-          <button id="cameraToggle" class="majorButton"
-            >Toggle<br />Camera</button
-          >
-          <button id="advancedButton" class="majorButton">Advanced</button>
+        </div>
+        <div class="moreControls">
+          <div class="inputModule">
+            <p class="inputLabel">Device</p>
+            <button>Toggle Device</button>
+          </div>
+          <div class="inputModule">
+            <p class="inputLabel">Feed</p>
+            <select>
+              <option>Show</option>
+              <option>Hide</option>
+            </select>
+          </div>
         </div>
       </div>
       <div class="flex1"></div>
@@ -88,30 +115,30 @@
       </div>
     </div>
     <div class="bar" id="bottomBar">
-      <div class="controlBox hbox center" id="outputs">
-        <div class="vbox center" id="powerSaving">
-          <p class="moduleValue">
-            <span class="val">-</span><span class="unit">W</span>
-          </p>
-          <p class="label">Power Saved</p>
+      <div class="moreControls render">
+        <div class="inputModule vbox reverse" id="powerSaving">
+          <p class="inputLabel">Power Saved</p>
+          <div class="hbox center">
+            <span class="val">0</span><span class="unit">W</span>
+          </div>
         </div>
-        <div class="vbox center" id="forceSaving">
-          <p class="moduleValue">
-            <span class="val">-</span><span class="unit">N</span>
-          </p>
-          <p class="label">Force Saved</p>
+        <div class="inputModule vbox reverse" id="forceSaving">
+          <p class="inputLabel">Force Saved</p>
+          <div class="hbox center">
+            <span class="val">0</span><span class="unit">F</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
   <canvas id="powerChart"></canvas>
 
-  <style>
+  <style lang="scss">
     * {
       padding: 0;
       margin: 0;
       box-sizing: border-box;
-      font-family: "Comfortaa", sans-serif;
+      font-family: "Nunito", sans-serif;
       line-height: 140%;
     }
     a {
@@ -124,29 +151,55 @@
     }
     /* layouts for controls */
 
-    .controlBox {
-      gap: 0.6rem !important;
-      background-color: rgba(0, 0, 0, 0.3);
-      padding: 0.4em 1em;
-      border-radius: 1em;
-      backdrop-filter: blur(7px);
-      justify-content: space-around !important;
+    #controlsHolder {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.6em;
+      * {
+        color: white;
+      }
     }
 
-    .controlBox * {
-      text-wrap: nowrap;
+    #controlsBar,
+    .moreControls {
+      font-size: 0.8em;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 0.6em;
+      box-shadow: 0 0 30px 0 rgba(255, 255, 255, 0.2);
+      display: flex;
+      gap: 0.6em;
+      border-radius: 0.6em;
+      backdrop-filter: blur(10px);
+    }
+
+    #controlsBar {
+      button {
+        border: none;
+        padding: 0.1em 0.4em;
+        border-radius: 0.3em;
+        background-color: rgba(255, 255, 255, 0.16);
+        opacity: 0.5;
+      }
+      .selectedButton {
+        opacity: 1;
+      }
+    }
+
+    .moreControls:not(.render) {
+      display: none !important;
     }
 
     .hbox {
       display: flex;
       flex-direction: row;
-      gap: 0.2rem;
+      gap: 0.4em;
     }
 
     .vbox {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
     }
 
     .center {
@@ -154,78 +207,50 @@
       justify-content: center;
     }
 
-    .controlBox select,
-    .controlBox button {
-      background-color: rgba(0, 0, 0, 0.4);
-      color: white;
-      border: none;
-      border-radius: 0.6em;
-      cursor: pointer;
+    .hbox.reverse {
+      flex-direction: row-reverse;
     }
 
-    .disabled {
-      pointer-events: none;
-      opacity: 0.4;
+    .vbox.reverse {
+      flex-direction: column-reverse;
     }
 
-    #speedSlider {
-      cursor: pointer;
-      min-width: 0;
-      width: 9.25em;
-      -webkit-appearance: none;
-      height: 0.2em;
-      background: rgba(255, 255, 255, 0.2);
-      outline: none;
-      border-radius: 100px;
-      margin: 0.6em 0;
-    }
-
-    /* #speedSlider > * {
-      background: #04aa6d !important;
-    }
-
-    #speedSlider::-webkit-slider-thumb,
-    #speedSlider::-moz-range-thumb {
-      -webkit-appearance: none !important;
-      appearance: none !important;
-      width: 1em !important;
-      height: 1em !important;
-      background: #04aa6d !important;
-      cursor: pointer !important;
-    } */
-
-    .controlBox select {
-      padding: 0.3em 0.2em 0.2em 0.2em;
-      font-size: 0.8em;
-    }
-
-    .controlBox button {
-      font-size: 0.8em;
-      padding: 0.2em 0.5em 0.07em 0.5em;
-    }
-
-    .controlBox .majorButton {
-      height: 3.6em;
-    }
-
-    #pausePlay {
-      width: 5em;
-    }
-
-    .val {
-      line-height: 120%;
-      padding-top: 0.15em;
-      font-size: 2.6em;
-    }
-
-    .unit {
-      font-size: 0.8em;
-      padding-left: 0.5em;
-    }
-
-    .controlBox .label {
-      font-size: 0.8em;
-      margin-top: -0.8em;
+    .inputModule {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2em;
+      > .inputLabel {
+        opacity: 0.5;
+        padding: 0 0.2em;
+      }
+      > :not(.inputLabel, #bottomBar *) {
+        width: 100%;
+        /* any input component */
+        font-size: 1.2em;
+        background-color: rgba(255, 255, 255, 0.08);
+        border: none;
+        height: 1.8em;
+        padding: 0 0.6em;
+        border-radius: 0.3em;
+      }
+      select {
+        padding: 0 0.4em !important;
+      }
+      input[type="range"] {
+        width: 8em;
+        height: 0.2em;
+      }
+      :not(div) {
+        cursor: pointer;
+      }
+      .val {
+        font-size: 2.4em;
+        line-height: 100%;
+      }
+      .unit {
+        // font-size: 0.8em;
+      }
     }
 
     /* end layouts for controls */
@@ -244,7 +269,7 @@
       z-index: 2;
       display: flex;
       width: 100%;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
     }
     .flex1 {
@@ -318,7 +343,7 @@
   </style>
 
   <script>
-    import "../../scripts/aero/video";
+    // import "../../scripts/aero/video";
     import "../../scripts/aero/ml";
     import "../../scripts/aero/physics";
     import "../../scripts/aero/charts";

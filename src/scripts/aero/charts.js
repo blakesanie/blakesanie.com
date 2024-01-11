@@ -9,7 +9,7 @@ const powerCanvas = document.getElementById("powerChart");
 //   { year: 2015, count: 30 },
 //   { year: 2016, count: 28 },
 // ];
-Chart.defaults.font.family = "Comfortaa";
+Chart.defaults.font.family = "Nunito";
 
 const powerColor = "#4EB7FF";
 const forceColor = "#FF6E28";
@@ -44,6 +44,9 @@ const powerChart = new Chart(powerCanvas, {
             }
           },
           color: tickColor,
+          font: {
+            size: 16,
+          },
         },
         grid: {
           color: gridColor,
@@ -75,6 +78,9 @@ const powerChart = new Chart(powerCanvas, {
         },
         ticks: {
           color: tickColor,
+          font: {
+            size: 20,
+          },
         },
       },
       y1: {
@@ -98,6 +104,9 @@ const powerChart = new Chart(powerCanvas, {
         },
         ticks: {
           color: tickColor,
+          font: {
+            size: 20,
+          },
         },
       },
     },
@@ -169,15 +178,18 @@ window.updateCharts = function () {
   //   powerChart.data.datasets[0].data = window.powerSavings; //newPower;
   //   powerChart.data.datasets[1].data = window.forceSavings; //newForce;
   //   data.power = makePowerData();
-  const scalar = window.fps / window.chartUpdatesPerSecond;
-  const offset =
-    powerChart.data.labels.length + scalar * (1 - window.powerMA.length) - 1;
-  powerChart.data.datasets[2].data = window.powerMA.map((power, i) => {
-    return {
-      x: offset + i * scalar,
-      y: power,
-    };
-  });
+  // debugger;
+  powerChart.data.datasets[2].data = window.powerMA
+    .map((power, i) => {
+      if (!power) {
+        return;
+      }
+      return {
+        x: i * window.framesPerChartUpdate,
+        y: power,
+      };
+    })
+    .filter((val) => val);
   powerChart.update();
 };
 

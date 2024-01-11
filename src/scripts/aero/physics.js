@@ -24,15 +24,19 @@ speedUnitSelect.addEventListener("change", (e) => {
   handleNewSpeedUnit(e.target.value);
 });
 
-const speedOutput = document.querySelector("#speed.val");
-let nominalSpeed = roadSpeedSlider.value;
-let speedInMPS = nominalSpeed * speedToMPS[speedUnit];
+const speedOutput = document.querySelector("#speedOutput");
+let nominalSpeed;
+let speedInMPS;
+let u0;
+// debugger;
 
 function setSpeedInMPS(speed) {
   nominalSpeed = speed;
   speedInMPS = speed * speedToMPS[speedUnit];
+  u0 = 0.1 * speedInMPS * 0.056;
   speedOutput.innerHTML = Math.round(speed);
 }
+setSpeedInMPS(roadSpeedSlider.value);
 roadSpeedSlider.addEventListener("input", (e) => {
   setSpeedInMPS(e.target.value);
 });
@@ -66,13 +70,45 @@ directionSelect.addEventListener("change", (e) => {
   }
 });
 
-const calibrateButton = document.querySelector("button#calibrate");
+const calibrateButton = document.querySelector("#calibrateButton");
 calibrateButton.addEventListener("click", (e) => {
   calibrate();
 });
 
 const powerSavedElement = document.querySelector("#powerSaving .val");
 const forceSavedElement = document.querySelector("#forceSaving .val");
+
+let expandedControlI = 0;
+const moreControlsList = document.querySelectorAll(
+  "#controlsHolder .moreControls"
+);
+const controlButtons = document.querySelectorAll("#controlsBar > button");
+controlButtons.forEach((element, i) => {
+  element.addEventListener("click", () => {
+    if (i < moreControlsList.length) {
+      if (expandedControlI == i) {
+        moreControlsList[i].classList.remove("render");
+        element.classList.remove("selectedButton");
+        expandedControlI = undefined;
+      } else {
+        if (expandedControlI !== undefined) {
+          moreControlsList[expandedControlI].classList.remove("render");
+          controlButtons[expandedControlI].classList.remove("selectedButton");
+        }
+        moreControlsList[i].classList.add("render");
+        element.classList.add("selectedButton");
+        expandedControlI = i;
+      }
+    }
+  });
+});
+
+const visSelect = document.querySelector("#visSelect");
+let plotType = visSelect.value;
+visSelect.addEventListener("change", (e) => {
+  plotType = Number(e.target.value);
+  paintCanvas();
+});
 
 // calibration
 
@@ -88,7 +124,9 @@ function sleep(ms) {
 
 let initialUnit;
 let initialSpeed;
-let topForce;
+
+let baselineLow;
+let baselineHigh;
 
 async function calibrate() {
   initialUnit = speedUnit;
@@ -99,20 +137,29 @@ async function calibrate() {
   roadSpeedSlider.value = 35;
   if (!running) {
   }
-  let maxFavg = -Infinity;
-  let minFavg = Infinity;
+  const windowSize = fps; // one second
+  let windowSum = 0;
+  const wind = [];
   const waitingMs = 10000;
+  let absorbedMin = Infinity;
+  let absorbedMax = -Infinity;
   let stopTime = new Date(new Date().getTime() + waitingMs);
   while (new Date() < stopTime) {
-    if (forceAvg !== undefined) {
-      maxFavg = Math.max(maxFavg, forceAvg);
-      minFavg = Math.min(minFavg, forceAvg);
+    if (wind.length == windowSize) {
+      windowSum -= wind.shift();
+    }
+    wind.push(lastAbsorbedX / speedInMPS);
+    windowSum += lastAbsorbedX / speedInMPS;
+    if (wind.length == windowSize) {
+      const avg = windowSum / windowSize;
+      absorbedMin = Math.min(absorbedMin, avg);
+      absorbedMax = Math.max(absorbedMax, avg);
     }
     await sleep(1000 / fps);
   }
-  topForce = maxFavg;
-  c = (b * thirtyFiveToMPS * thirtyFiveToMPS) / (maxFavg - minFavg);
-  console.log("found c to be", c, maxFavg, minFavg);
+  baselineLow = absorbedMin;
+  baselineHigh = absorbedMax;
+  console.log("set baselines", baselineLow, baselineHigh);
   speedUnitSelect.value = initialUnit;
   handleNewSpeedUnit(initialUnit);
   setSpeedInMPS(initialSpeed);
@@ -123,8 +170,6 @@ async function calibrate() {
 
 const gridHeight = 54 + 2;
 const gridWidth = 96 + 2;
-
-const u0 = 0.05; //0.1;
 const viscosity = 0.02;
 
 const fps = (window.fps = 24);
@@ -209,34 +254,73 @@ async function checkForNewBoundary() {
 }
 
 let scheduledStart;
+let absorbedX;
+let absorbedY;
+let lastAbsorbedX;
+let lastAbsorbedY;
+
+let chartFrames = 0;
+let chartMaxSeconds = 10;
+const chartUpdatesPerSecond = 4;
+window.framesPerChartUpdate = fps / chartUpdatesPerSecond;
+
+window.forceSavings = new Array(chartMaxSeconds * fps + 1);
+window.powerSavings = new Array(chartMaxSeconds * fps + 1);
+window.powerMA = new Array(chartMaxSeconds * chartUpdatesPerSecond + 1);
+const MAWindow = fps;
+// let powerSavingsSum = 0
+// let powerWindowSum = 0
 
 // Simulate function executes a bunch of steps and then schedules another call to itself:
 function simulate() {
   const start = new Date().getTime();
-  const deltaX = speedInMPS / fps;
-  let dx = sceneWidth / gridWidth; // meters per cell
-  // speed = deltaX/dt
-  // dt = 1 / fps
-  // deltaX = speed/fps
-  // steps = deltaX / dx
-  var stepsPerFrame = Math.round((deltaX / dx) * 4);
-  // dx/dt = 1
-  // dxForC = 1/fps
-  // debugger;
   checkForNewBoundary();
   setBoundaries();
-  // Execute a bunch of time steps:
-  // debugger;
-  for (var step = 0; step < stepsPerFrame; step++) {
+  absorbedX = 0;
+  absorbedY = 0;
+  for (var step = 0; step < 40; step++) {
     stream();
     collide();
+  }
+  lastAbsorbedX = absorbedX;
+  lastAbsorbedY = absorbedY;
+  if (baselineLow) {
+    const onSpectrum =
+      (baselineHigh - lastAbsorbedX / speedInMPS) /
+      (baselineHigh - baselineLow);
+    const aeroEndpointWattsSaved =
+      0.0450364 * speedInMPS * speedInMPS * speedInMPS;
+    const wattsSaved = onSpectrum * aeroEndpointWattsSaved;
+    const forceSaved = wattsSaved / speedInMPS;
+
+    window.forceSavings.shift();
+    window.forceSavings.push(forceSaved);
+    window.powerSavings.shift();
+    window.powerSavings.push(wattsSaved);
+
+    powerSavedElement.innerHTML = Math.round(wattsSaved);
+    forceSavedElement.innerHTML = Math.round(forceSaved * 10) / 10;
+
+    if (chartFrames % window.framesPerChartUpdate == 0) {
+      if (chartFrames >= MAWindow) {
+        // debugger;
+        let windowSum = 0;
+        for (let i = 0; i < MAWindow; i++) {
+          windowSum += window.powerSavings[window.powerSavings.length - 1 - i];
+        }
+        window.powerMA.shift();
+        window.powerMA.push(windowSum / MAWindow);
+      }
+      window.updateCharts();
+    }
+
+    chartFrames++;
   }
   paintCanvas();
   var stable = true;
   for (var x = 0; x < xdim; x++) {
     var index = x + (ydim / 2) * xdim; // look at middle row only
     if (rho[index] < 0) stable = false;
-    alert("unstable");
   }
   if (!stable) {
     initFluid();
@@ -256,12 +340,14 @@ function setBoundaries() {
   let firstBarrierY;
   let lastBarrierX;
   let lastBarrierY;
+  let hasBarrier = false;
   // let minBarrierX = Infinity;
-  for (let y = 0; y < ydim; y++) {
+  for (let y = 1; y < ydim - 1; y++) {
     let barrierFound = false;
-    for (let x = 0; x < xdim; x++) {
+    for (let x = 1; x < xdim - 1; x++) {
       const i = x + y * xdim;
       if (barrier[i]) {
+        hasBarrier = true;
         if (firstBarrierX === undefined) {
           firstBarrierX = x;
           firstBarrierY = y;
@@ -278,29 +364,38 @@ function setBoundaries() {
       eqStartPerRow.push(undefined);
     }
   }
-  for (let y = 0; y < firstBarrierY; y++) {
-    eqStartPerRow[y] = firstBarrierX;
+  // bounds no matter what
+  for (let x = 0; x < xdim; x++) {
+    setEquil(x, 0, u0, 0, 1);
+    setEquil(x, ydim - 1, u0, 0, 1);
   }
-  for (let y = firstBarrierY + 1; y <= lastBarrierY; y++) {
+  for (let y = 1; y < ydim - 1; y++) {
+    setEquil(0, y, u0, 0, 1);
+  }
+  if (!hasBarrier) return;
+  // debugger;
+  for (let y = ydim - 3; y >= lastBarrierY - 1; y--) {
+    eqStartPerRow[y] = lastBarrierX;
+  }
+  for (let y = lastBarrierY - 2; y >= 0; y--) {
     eqStartPerRow[y] = Math.min(
       eqStartPerRow[y] || Infinity,
-      eqStartPerRow[y - 1]
+      eqStartPerRow[y + 1]
     );
   }
 
   const eqOffset = 5;
-
-  for (var y = 0; y < ydim; y++) {
-    for (x = 0; x < eqStartPerRow[y] - eqOffset; x++) {
+  // debugger;
+  for (var y = 1; y < ydim - 1; y++) {
+    for (let x = 1; x < eqStartPerRow[y - 1] - eqOffset; x++) {
       setEquil(x, y, u0, 0, 1);
+      // colorSquare(x, y, 0, 0, 0, 255);
+      // context.putImageData(image, 0, 0);
     }
   }
-  for (var x = eqStartPerRow[0] - eqOffset; x < xdim; x++) {
-    setEquil(x, 0, u0, 0, 1);
-  }
-  for (var x = eqStartPerRow[ydim - 1] - eqOffset; x < xdim; x++) {
-    setEquil(x, ydim - 1, u0, 0, 1);
-  }
+  // debugger;
+  // paintCanvas();
+  // debugger;
 }
 
 // Collide particles within each cell (here's the physics!):
@@ -423,6 +518,28 @@ function stream() {
         nSE[x + 1 + (y - 1) * xdim] = nNW[index];
         nSW[x - 1 + (y - 1) * xdim] = 1 * nNE[index];
         // Keep track of stuff needed to plot force vector:
+        absorbedX +=
+          nE[index] +
+          nSE[index] +
+          nNE[index] -
+          nNW[index] -
+          nW[index] -
+          nSW[index];
+        absorbedY +=
+          nS[index] +
+          nSW[index] +
+          nSE[index] -
+          nN[index] -
+          nNE[index] -
+          nNW[index];
+        nW[index] = 0;
+        nN[index] = 0;
+        nE[index] = 0;
+        nS[index] = 0;
+        nNW[index] = 0;
+        nSW[index] = 0;
+        nNE[index] = 0;
+        nSE[index] = 0;
       }
     }
   }
@@ -457,106 +574,77 @@ function setEquil(x, y, newux, newuy, newrho) {
   uy[i] = newuy;
 }
 
-function computeNaturalForce() {
-  let Fx = 0;
-  let Fy = 0;
-  for (var y = 1; y < ydim - 1; y++) {
-    // Now handle bounce-back from barriers
-    for (var x = 1; x < xdim - 1; x++) {
-      if (barrier[x + y * xdim]) {
-        var index = x + y * xdim;
-        Fx +=
-          nE[index] +
-          nNE[index] +
-          nSE[index] -
-          nW[index] -
-          nNW[index] -
-          nSW[index];
-        Fy +=
-          nN[index] +
-          nNE[index] +
-          nNW[index] -
-          nS[index] -
-          nSE[index] -
-          nSW[index];
-      }
-    }
-  }
-  return [Fx, Fy];
-}
-
-let chartFrames = 0;
-let chartMaxSeconds = 10;
-let chartUpdatesPerSecond = (window.chartUpdatesPerSecond = 4);
-
-window.forceSavings = new Array(chartMaxSeconds * fps + 1);
-window.powerSavings = new Array(chartMaxSeconds * fps + 1);
-const MAWindow = fps;
-window.powerMA = [];
-// let powerWindowSum = 0;
-// window.forceMA = new Array(chartMaxSeconds * fps + 1);
-// let forceWindowSum = 0;
-
-let forceSum = 0;
-let forceAvg;
-let naturalForces = [];
-let numNaturalForces = 0;
-
 function paintCanvas() {
   // barrierContext.putImageData(barrierImage, 0, 0);
-  computeCurl();
-  const [Fx, Fy] = computeNaturalForce();
-  forceSum += Fx;
-  naturalForces.push(Fx);
-  if (naturalForces.length > MAWindow) {
-    forceSum -= naturalForces[naturalForces.length - MAWindow - 1];
-    naturalForces.shift();
-    forceAvg = forceSum / MAWindow;
+  if (plotType == 0) {
+    computeCurl();
   }
-  if (c) {
-    const forceSaved = c * (topForce - Fx);
-    window.forceSavings.push(forceSaved);
-    forceSavedElement.innerHTML = Math.round(forceSaved * 10) / 10;
-    const powerSaved = forceSaved * speedInMPS;
-    window.powerSavings.push(powerSaved);
-    powerSavedElement.innerHTML = Math.round(powerSaved);
-    window.forceSavings.shift();
-    window.powerSavings.shift();
-    if (chartFrames % (fps / chartUpdatesPerSecond) == 0) {
-      if (window.powerSavings[window.powerSavings.length - MAWindow]) {
-        let powerMAVal = 0;
-        for (let i = 0; i < MAWindow; i++) {
-          powerMAVal += window.powerSavings[window.powerSavings.length - i - 1];
-        }
-        powerMAVal /= MAWindow;
-        if (
-          window.powerMA.length ==
-          chartMaxSeconds * chartUpdatesPerSecond + 1
-        ) {
-          window.powerMA.shift();
-        }
-        window.powerMA.push(powerMAVal);
-      }
-      window.updateCharts();
-    }
-    chartFrames++;
-  }
+  // const [Fx, Fy] = computeNaturalForce();
+  // forceSum += Fx;
+  // naturalForces.push(Fx);
+  // if (naturalForces.length > MAWindow) {
+  //   forceSum -= naturalForces[naturalForces.length - MAWindow - 1];
+  //   naturalForces.shift();
+  //   forceAvg = forceSum / MAWindow;
+  // }
+  // if (c) {
+  //   const forceSaved = c * (topForce - Fx);
+  //   window.forceSavings.push(forceSaved);
+  //   forceSavedElement.innerHTML = Math.round(forceSaved * 10) / 10;
+  //   const powerSaved = forceSaved * speedInMPS;
+  //   window.powerSavings.push(powerSaved);
+  //   powerSavedElement.innerHTML = Math.round(powerSaved);
+  //   window.forceSavings.shift();
+  //   window.powerSavings.shift();
+  //   if (chartFrames % (fps / chartUpdatesPerSecond) == 0) {
+  //     if (window.powerSavings[window.powerSavings.length - MAWindow]) {
+  //       let powerMAVal = 0;
+  //       for (let i = 0; i < MAWindow; i++) {
+  //         powerMAVal += window.powerSavings[window.powerSavings.length - i - 1];
+  //       }
+  //       powerMAVal /= MAWindow;
+  //       if (
+  //         window.powerMA.length ==
+  //         chartMaxSeconds * chartUpdatesPerSecond + 1
+  //       ) {
+  //         window.powerMA.shift();
+  //       }
+  //       window.powerMA.push(powerMAVal);
+  //     }
+  //     window.updateCharts();
+  //   }
+  //   chartFrames++;
+  // }
 
   for (var y = 0; y < ydim; y++) {
     for (var x = 0; x < xdim; x++) {
       if (barrier[x + y * xdim]) {
         colorSquare(x, y, 0, 0, 0, 130);
       } else {
-        const opacity = 1;
-        // hue = (125 + rho[x + y * xdim] * 1000) % 360;
-        const hue = sigmoid(curl[x + y * xdim] * 30) * 360;
-
-        // debugger;
-        const [r, g, b] = hslToRgb(hue / 360, 1, 0.6);
-        if (r == g) {
-          // debugger;
+        let rgb;
+        let opacity = 1;
+        if (plotType == 0) {
+          const hue = 0.7 * sigmoid(curl[x + y * xdim] * 40);
+          // opacity = sigmoid(Math.abs(200 * curl[x + y * xdim])) * 2 - 1;
+          rgb = hslToRgb(hue, 1, 0.6);
+        } else if (plotType == 1) {
+          const hue = sigmoid(ux[x + y * xdim] * 30);
+          rgb = hslToRgb(hue, 1, 0.6);
+        } else if (plotType == 2) {
+          const hue = sigmoid(uy[x + y * xdim] * 30);
+          rgb = hslToRgb(hue, 1, 0.6);
+        } else if (plotType == 3) {
+          const speedX = ux[x + y * xdim];
+          const speedY = uy[x + y * xdim];
+          const speed = Math.sqrt(speedX * speedX + speedY * speedY);
+          const hue = sigmoid(speed * 30);
+          rgb = hslToRgb(hue, 1, 0.6);
+        } else if (plotType == 4) {
+          const hue = sigmoid(50 * (rho[x + y * xdim] - 1.05));
+          rgb = hslToRgb(hue, 1, 0.6);
         }
-        colorSquare(x, y, r, g, b, opacity * 255);
+
+        colorSquare(x, y, rgb[0], rgb[1], rgb[2], opacity * 255);
       }
     }
   }
@@ -611,8 +699,9 @@ function initFluid() {
 initFluid(); // initialize to steady rightward flow
 
 function hslToRgb(h, s, l) {
-  // 0 to 360, 0-1, 0-1
+  // 0 to 1, 0-1, 0-1
   // Convert HSL to RGB
+  h = h % 1;
   let r, g, b;
 
   if (s === 0) {
