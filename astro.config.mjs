@@ -20,7 +20,6 @@ const noSitemap = new Set(Object.keys(redirects));
 noSitemap.add("chicago");
 noSitemap.add("public");
 noSitemap.add("music");
-noSitemap.add("aero");
 
 export default defineConfig({
   // output: "static",
