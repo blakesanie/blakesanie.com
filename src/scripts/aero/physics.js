@@ -169,8 +169,8 @@ async function calibrate() {
 
 // physics
 
-const ydim = 1080 / 10 + 2;
-const xdim = 1920 / 10 + 2;
+const ydim = 1080 / 20 + 2;
+const xdim = 1920 / 20 + 2;
 window.xdim = xdim;
 window.ydim = ydim;
 const viscosity = 0.02;
@@ -355,7 +355,7 @@ function setBoundaries() {
   for (let y = 1; y < ydim - 1; y++) {
     setEquil(0, y, u0, 0, 1);
   }
-  return;
+  // return;
   const eqStartPerRow = [];
   let firstBarrierX;
   let firstBarrierY;

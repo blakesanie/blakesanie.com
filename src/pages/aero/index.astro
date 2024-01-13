@@ -46,10 +46,9 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
   <p>
     On the road, utilizing an optimal cycling body position significantly
     reduces the defeating effects of wind resistance - a cyclist's worst enemy
-    at speed. Finding and practicing this positioning means spending hundreds of
-    hours on the road, or if the budget allows, comissioning your closest wind
-    tunnel. Today, <span class="italics">Aero</span> navigates you towards wind resistance
-    minimization - on the web.
+    at speed. Finding and practicing aerodynamic positioning used to mean
+    spending hundreds of hours on the road, or if the budget allows,
+    comissioning your closest wind tunnel - but not anymore.
   </p><p>
     <span class="italics">Aero</span> enables interactive experiementation of your
     body geometry as you pedal along at home. Finally picture these invisible effects
@@ -58,22 +57,22 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
   </p>
   <h3>Academic Design & Cutting-Edge Innovation</h3>
   <p>
-    Hi, I'm <a href="/" target="_blank">Blake</a>. In graduate school, I studied
-    and further advanced state-of-the-art machine learning methods. Driving this
-    passion was (and still is) a strong desire to quantitatively model
-    real-world use cases and apply computational insight.
+    Hi, I'm <a href="/" target="_blank">Blake</a>. During graduate school, I
+    studied and further advanced state-of-the-art machine learning methods.
+    Today, this flame continues to burn bright - a passion to quantitatively
+    model real-world use cases and apply computational insight.
   </p><p>
-    As I continue along my endurance triathlon journey, I'm learning to
-    harmoniously and compoundingly leverage my complete skillset - swimming,
-    biking, and running, but also machine learning, physics, mathematics, and
-    programming.
+    As I traverse my endurance triathlon journey, I'm learning to harmoniously
+    and compoundingly leverage my complete skillset - swimming, biking, and
+    running, but also machine learning, physics, mathematics, and programming.
   </p>
   <p>
     <span class="italics">Aero</span> blew me back into top research journals, where
     I brushed up on computer vision-based image segmentation, fluid dynamics, Eulerian
     simulation, and hardware-accelerated web technologies. Culminating from a thorough
     academic survey, chaotic whiteboard sessions, curious software experiments, and
-    key development victories, I share this tool with the cycling community.
+    key development victories, I am thrilled to share this tool with the cycling
+    community.
   </p>
 </CommonHead>
 
@@ -190,9 +189,9 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
   }
 
   .button {
-    color: white !important;
+    color: white;
     text-decoration: none !important;
-    backdrop-filter: blur(0.5em);
+    backdrop-filter: blur(0.25em);
     background-color: rgba(0, 0, 0, 0.3);
     border: 1px solid white;
     box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.3);
@@ -201,8 +200,14 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
     margin-top: 1em;
     border-radius: 0.4em;
     cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
+  .button:hover {
+    background-color: rgb(255, 255, 255);
+    color: black;
+  }
   h3 {
     font-size: 1.5em;
     margin: 1em 1.5em;
@@ -217,7 +222,7 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
     text-indent: 2em;
     color: rgba(0, 0, 0, 0.6);
     a {
-      color: rgb(0, 99, 227) !important;
+      color: rgb(0, 124, 219) !important;
       text-decoration: underline;
       font-weight: 500;
     }

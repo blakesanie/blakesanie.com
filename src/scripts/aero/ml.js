@@ -54,7 +54,7 @@ function blurImage(image, kernel) {
 const kernel = get2dGaussianKernel(20, 10);
 
 async function captureIteration() {
-  const frame = tf.browser.fromPixels(document.querySelector("img")); //await cam.capture();
+  const frame = await cam.capture(); //tf.browser.fromPixels(document.querySelector("img"));
   // debugger;
   const [height, width, depth] = frame.shape;
   const newHeight = (width / 16) * 9;
@@ -62,8 +62,7 @@ async function captureIteration() {
 
   const expanded = frame.expandDims(0);
   tf.dispose(frame);
-  let box =
-    window.directionRight && false ? [y1, 1, 1 - y1, 0] : [y1, 0, 1 - y1, 1];
+  let box = window.directionRight ? [y1, 1, 1 - y1, 0] : [y1, 0, 1 - y1, 1];
   const cropped = tf.image.cropAndResize(expanded, [box], [0], [720, 1280]);
   tf.dispose(expanded);
   // frame.dispose();

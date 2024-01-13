@@ -24,7 +24,7 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
   <div id="cover">
     <div class="bar" id="topBar">
       <a class="flex1" href="/aero"
-        ><h1>Aero<br /><span id="byline">by Blake</span></h1></a
+        ><h1>Aero<span id="byline">by Blake</span></h1></a
       >
       <div id="controlsHolder">
         <div id="controlsBar">
@@ -99,7 +99,6 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
       <div id="sixteenByNine">
         <video autoplay playsinline webkit-playsinline muted id="videoelement"
         ></video>
-        <img src="/assets/cycle2.jpg" />
         <canvas id="barrierCanvas"></canvas>
         <canvas id="physicsCanvas"></canvas>
       </div>
@@ -168,11 +167,12 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
   #controlsBar {
     button {
       border: none;
-      padding: 0.1em 0.4em;
+      padding: 0.2em 0.6em;
       border-radius: 0.3em;
       background-color: rgba(255, 255, 255, 0.16);
       opacity: 0.5;
       cursor: pointer;
+      font-size: 1.2em;
     }
     .selectedButton {
       opacity: 1;
@@ -254,12 +254,14 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
   h1 {
     font-size: 2em;
     line-height: 60%;
-    padding: 0.3em 0.5em 0 0.5em;
+    padding: 0.5em 0.5em 0.3em 0.5em;
     font-style: italic;
   }
   #byline {
     font-size: 0.4em;
+    margin-top: 0.3em;
     font-style: normal;
+    display: block;
   }
   .bar {
     position: absolute;
@@ -354,6 +356,24 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
     }
     100% {
       opacity: 0.3;
+    }
+  }
+
+  @media screen and (max-width: 500px) {
+    body {
+      font-size: 12px;
+    }
+    #topBar {
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      // background-color: red;
+    }
+    #byline {
+      display: inline;
+      margin-left: 0.5em;
+      margin-top: 0em;
     }
   }
 </style>
