@@ -271,16 +271,13 @@ let typed;
   }, 4000);
 
   const sections = document.querySelectorAll(".sectionTransitionParent");
-  const firstSection = document.getElementById("firstSection");
-
-  const particlesElement = document.getElementById("particles-js");
 
   window.addEventListener("scroll", (e) => {
 
     const screenCenter = window.scrollY + window.innerHeight / 2;
     let sectionHeight = sections[0].offsetHeight;
     const rate = sectionHeight * 0.15;
-    sections.forEach((section) => {
+    sections.forEach((section, i) => {
       if (!(section instanceof HTMLElement)) {
         return;
       }
@@ -299,7 +296,10 @@ let typed;
         distUnder;
       const dist =
         sectionCenter - Math.max(bestScreenCenter, effectiveScreenCenter);
-      const diff = dist / sectionHeight;
+      let diff = dist / sectionHeight;
+      if (i == 0) {
+        diff *= -1
+      }
       const bg = section.querySelector(".bg");
       if (!(bg instanceof HTMLElement)) {
         return;
@@ -312,7 +312,7 @@ let typed;
           continue;
         }
         if (!child.classList.contains("bg")) {
-          child.style.transform = `translateY(${-diff * rate}px)`;
+          child.style.transform = `translateY(${diff * rate}px)`;
         } else {
           // child.style.transform = `translateY(${diff * 300}px)`;
         }
@@ -385,10 +385,10 @@ let typed;
     width: 10em;
   }
   :global(.newline) {
-    font-size: 0.6em;
+    font-size: 0.5em;
   }
   :global(.smallCursor .typed-cursor) {
-    font-size: 0.6em;
+    font-size: 0.5em;
   }
   .fullCenter {
     display: flex;
