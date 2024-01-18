@@ -175,28 +175,99 @@ const markupData = [
   // document.getElementById("canvas3d").onload = function () {
   //   alert("myframe is loaded");
   // };
-  import Typed from "typed.js";
+import Typed from "typed.js";
+
+// let shortTyped;
+
+//     function typeToShort() {
+//       return new Promise((resolve, reject) => {
+//         shortTyped = new Typed("#typed", {
+//           strings: ["", "Hi, I'm Blake. "],
+//           typeSpeed: 50,
+//           backSpeed: 40,
+//           loop: false,
+//           onComplete: function() {
+//             longTyped.destroy();
+//             resolve();
+//           }
+//         });
+//       })
+//     }
+
+//     let longTyped;
+
+//     async function typeToLong() {
+//       return new Promise((resolve, reject) => {
+//         longTyped = new Typed("#typed", {
+//           strings: ["Hi, I'm Blake. <br><span class='newline'>Scroll to learn more...</span> ", "Hi, I'm Blake. "],
+//           typeSpeed: 50,
+//           backSpeed: 40,
+//           loop: false,
+//           smartBackspace: true,
+//           onComplete: function() {
+//             // shortTyped.destroy();
+//             resolve();
+//           }
+//         });
+//       })
+//     }
+
+
+const strings = [
+  "Hi, I'm Blake. ^900 <br/>^0 <span class='newline'>Scroll to learn more...</span> ^1800",
+  "Hi, I'm Blake. <br/>",
+  ""
+]
+
+let pauses = 0
+let typed;
+
   setTimeout(() => {
-    let typed = new Typed("#typed", {
-      strings: ["Hi, I'm Blake", ""],
-      typeSpeed: 50,
-      backSpeed: 40,
-      loop: false,
-      // loopCount: 1,
-      onComplete: () => {
-        typed.destroy();
-        typed = new Typed("#typed", {
-          strings: [
-            "^500 Scroll to learn more... ^1000",
-            "^500 Hi, ^500I'm Blake. ^2000",
-          ],
-          typeSpeed: 50,
-          backSpeed: 40,
-          loop: true,
-          smartBackspace: true,
+
+    typed = new Typed('#typed', {
+      strings: ["Hi, I'm Blake. <br/>^0 <span class='newline'>Scroll to learn more...</span> ^1800", "Hi, I'm Blake. <br/>", ""],
+             typeSpeed: 40,
+         backSpeed: 30,
+         backDelay: 0,
+      onTypingPaused: () => {
+          if (pauses == 0) {
+            document.body.classList.add('smallCursor')
+
+          }
+          pauses++
+        },
+        onStringTyped: (i) => {
+          if (i == 2) {
+            document.body.classList.remove('smallCursor')
+          }
+        },
+        onComplete: () => {
+          typed.destroy()
+          typed = new Typed("#typed", {
+          strings: strings,
+         loop: true,
+         typeSpeed: 40,
+         backSpeed: 30,
+         backDelay: 0,
+        onTypingPaused: () => {
+          if (pauses % 3 == 0) {
+            document.body.classList.add('smallCursor')
+
+          }
+          pauses++
+        },
+        onStringTyped: (i) => {
+          if (i == 1) {
+            document.body.classList.remove('smallCursor')
+          }
+        }
         });
-      },
-    });
+        }
+    })
+
+
+
+    
   }, 4000);
 
   const sections = document.querySelectorAll(".sectionTransitionParent");
@@ -247,6 +318,7 @@ const markupData = [
         }
       }
     });
+
 
 
     
@@ -303,12 +375,20 @@ const markupData = [
     opacity: 1;
     padding: 0 1em;
     height: 1.4em;
+    line-height: 80%;
     text-align: center;
     /* pointer-events: none; */
     /* filter: contrast(4); */
     /* backdrop-filter: contrast(4); */
     /* clip-path: ; */
     /* margin-top: 0.5em; */
+    width: 10em;
+  }
+  :global(.newline) {
+    font-size: 0.6em;
+  }
+  :global(.smallCursor .typed-cursor) {
+    font-size: 0.6em;
   }
   .fullCenter {
     display: flex;
