@@ -68,9 +68,9 @@ A few details in tehnical implementation require attention to complete an effect
 
 - Dynamically shifting the initial air flow point (front of wind tunnel) to accomodate the object's shape and position within the wind tunnel. This extension to the Lattice-Boltzmann algorithm prevents differences in fluid behavior across ends of the wind tunnel because the the object's position relative within the wind tunnel is unchanging.
 
-### Chasing Power and Force Savings
+### Relating Speed, Position, Power, and Force
 
-With the appropriate simulation method by my side, I needed a way to relate cycling speed, body position, and power savings. Luckily, I discovered the below real-world data aggregated by the team at <a href="https://silca.cc/blogs/silca/body-position-and-aerodynamics-on-a-bike" target="_blank" rel="nofollow">Silca</a> relates power savings and cycling speed in various body positions.
+With the appropriate simulation method by my side, I then needed a quantitiative model between the measures of interest. As a starting point, I discovered the below real-world data aggregated by the team at <a href="https://silca.cc/blogs/silca/body-position-and-aerodynamics-on-a-bike" target="_blank" rel="nofollow">Silca</a> relates power savings and cycling speed in various body positions.
 
 <InlineImg
   src="/src/assets/images/aero/data.webp"
@@ -94,33 +94,50 @@ $P_\text{saved}=c v^3,\hspace{2mm} c=.0450364$
   "Colliding" process. During each frame, I must collect the momentum $p$
   applied against the cyclist. An equivalent description of this quantity is the
   forward momentum the cyclist must additionally generate to maintain constant
-  road speed. This is found by collecting the net mass of air "streamed" into a
-  barrier cell, before being reflected back onto the source cell, times the
-  current speed. Let us not forget that this momentum acts as a vector across
-  both principle axes, thus $p_x$ and $p_y$ are computed respectively by net
-  Eastward air movement and net Southward air movement. For simplicity, I will
-  focus on fluid momentum in the $x$ direction. Note that $v$ already lives
-  along the $x$ axis, as the wind tunnel blows air horizontally.
+  road speed.
+</div>
+<div class="allInline">
+  $p$ is found by collecting the net mass of air "streamed" into a barrier cell,
+  before being reflected back onto the source cell, times the current speed. Let
+  us not forget that this momentum acts as a vector across both principle axes,
+  thus $p_x$ and $p_y$ are computed respectively by net Eastward air movement
+  and net Southward air movement. For simplicity, I will focus on fluid momentum
+  in the $x$ direction. Note that $v$ already lives along the $x$ axis, as the
+  wind tunnel blows air horizontally.
 </div>
 
 $p_x=mv=v\sum_{i=0}^{n}\sum_{b\in\text{barriers}}(\text{NE}_b + \text{E}_b + \text{SE}_b - \text{SW}_b - \text{W}_b - \text{NW}_b)$
 
+$m_{\text{air}_x}=\sum_{i=0}^{n}\sum_{b\in B}(\text{NE}_b + \text{E}_b + \text{SE}_b - \text{SW}_b - \text{W}_b - \text{NW}_b)$
+
+$m_{\text{air}_y}=\sum_{i=0}^{n}\sum_{b\in B}(\text{SW}_b + \text{S}_b + \text{SE}_b - \text{NE}_b - \text{N}_b - \text{NW}_b)$
+
+$\vec{m_\text{air}}=\langle m_{\text{air}_x},m_{\text{air}_y} \rangle$
+
+$\vec{W_\text{air}} = \frac{1}{2}\vec{m_\text{air}}v^2$
+
+$\vec{F_\text{air}} = \vec{W_\text{air}} \Delta x,\hspace{2mm}\Delta x = v \Delta t = \frac{v}{f}$
+
+$F_\text{resistance} = F_{\text{air}_x} + F_\text{rr}$
+
+$F_\text{rr} = C_\text{rr} F_{\text{air}_y},\hspace{2mm} C_\text{rr} = 0.0025$
+
+### Chasing Power and Force Savings
+
+However, I required a baseline measure of air resistance's effects that operates independent of speed, since speed can change throughout the simulation. A linear relationship between fluid mass colliding with the cyclist and speed is easily induced - at rest, air resistance imposes no effect, though as speed increases, distance traversed per unit time increases proportionally. Because one can expect concentrated regions of the atmosphere to exist in fluid equilibirum, with uniform density, speed must be proportional to the mass of air colliding with the cyclist per unit time.
+
 <div class="allInline">
-  The simulation progresses with a frame rate $f=24$ frames per second, with
-  each frame running $n=40$ iterations of the "Streaming" and "Colliding"
-  process.
+  Hence, we must take a step back from momentum. Dividing our measure $p_x$ by
+  speed $v$ directly yields $m_x$ - the mass of air colliding with the cyclist
+  in the $x$ direction during a frame's duration. I designed a necessary
+  calibration, where the cyclist is instructed to hold a "Hoods" position, then
+  their lowest possible "Aero Bars" position. During this short time window, the
+  program collects the quantities neede to find maximum and minimum $m_x$
+  measures: $m_\text{max}$ and $m_\text
+  {min}$, respectively.
 </div>
 
-Now with a working fluid simulation, I can computationally observe the energy absored by the body from the passing atmosphere. Recall from the "Stream" step that air densities propogated onto the object are reversed onto the source cell. These collisions must conserve both energy and momentum.
-
-Consider the behavior of the moving air sample. Since its direction is simply reversed (for instance, initial North-West movement transforms in-place into South-East movement after reflection), its modeled speed remains constant; its own momentum and energy is conserved. This implies the same must be true for the cyclist; an additional supply of energy must be supplied through the pedals to account for the momentum absorbed in the direction opposite of travel. Of course, these considerations apply with velocity as a vector, thus the constraints hold for each cartesian component. Let's break this down mathematically:
-
-<div class="allInline">
-  Simulating with frame rate $r$ (frames per second), collect the net mass of
-  air $m$ reflected by the object in the positive direction during the current
-  frame. $v$. The cyclist must make up for a forward momentum loss of $mv$ to
-  retain their own speed.
-</div>
+With these calibrated baselines, the platform has all it needs to estimate power savings with the current barrier state (reflecting body position) at the current speed. First, interpolate the current fluid mass colliding with the cyclist per frame $m$
 
 ## Computer Vision Considerations
 

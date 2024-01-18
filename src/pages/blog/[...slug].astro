@@ -200,11 +200,24 @@ const { title, description, date, image, author } = frontmatter;
     text-align: center;
     display: block;
   }
+  :global(.math * ) {
+
+    font-family: KaTeX_Main, "Times New Roman", serif;
+  }
   :global(.allInline .math) {
     display: inline;
   }
   :global(.allInline:not(.center) .math) {
     font-size: 0.85em;
+  }
+  :global(.math .base > .mord) {
+    /* padding: 0 0.1em; */
+  }
+  :global(.math .sizing > .mtight) {
+    margin-right: 0.2em;
+  }
+  :global(.math .mpunct) {
+    margin-right: 0.2em;
   }
   /* :global(.math *) {
     font-size: 1.5em;
