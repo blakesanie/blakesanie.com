@@ -3,12 +3,13 @@ author: Blake Sanie
 date: Nov 28 2020
 title: "Generating Optimal Keyboard Layouts (with Code)"
 description: "Battling QWERTY with modern computing methods."
-image: /public/assets/posts/qwerty/qwerty.jpg
+image: /src/assets/images/qwerty/qwerty.jpg
 publish: true
 ---
+
 import InlineImg from "../components/basic/InlineImg.astro";
 
-<InlineImg src="/public/assets/posts/qwerty/qwerty.jpg"/>
+<InlineImg src="/src/assets/images/qwerty/qwerty.jpg" />
 
 Today, the ubiquitous [QWERTY](https://en.wikipedia.org/wiki/QWERTY) keyboard is assumed to be the optimal layout for typing in the English language. Because QWERTY was developed in the 1870's, I challenged myself to use modern computer science to generate a more optimal keyboard.
 
@@ -67,22 +68,22 @@ Our keyboard models need to understand how characters relate to each other in va
 
 The letters on modern keyboards make up three rows: the home (middle), top, and bottom rows. Let's start by grouping all 26 characters into these rows.
 
-<InlineImg src="/public/assets/posts/qwerty/row.gif" alt="The home row"/>
+<InlineImg src="/src/assets/images/qwerty/row.gif" alt="The home row" />
 
 The most frequently read characters are to be placed in the middle row for fast access, followed by the top row, then the bottom.
 
 ```javascript
 // Top Row
 
-['m','f','l','d','u','w','y','g','c','b']
+["m", "f", "l", "d", "u", "w", "y", "g", "c", "b"][
+  // Home Row
 
-// Home Row
+  ("n", "t", "s", "r", "a", "h", "o", "i", "e")
+][
+  // Bottom Row
 
-['n','t','s','r','a','h','o','i','e']
-
-// Bottom Row
-
-['x','p','k','v','q','j','z']
+  ("x", "p", "k", "v", "q", "j", "z")
+];
 ```
 
 ## 3. Determining Optimal Permutations for Rows
@@ -94,8 +95,9 @@ For each row, iterate through all key permutations. Let's consider the optimal o
 ```javascript
 // Final Keyboard
 
-['c','w','b','m','f','g','l','d','u','y']['n','h','r','o','i','s','e','t','a']
-['v','q','j','k','x','z','p']
+["c", "w", "b", "m", "f", "g", "l", "d", "u", "y"][
+  ("n", "h", "r", "o", "i", "s", "e", "t", "a")
+][("v", "q", "j", "k", "x", "z", "p")];
 ```
 
 ## 4. Comparing to QWERTY

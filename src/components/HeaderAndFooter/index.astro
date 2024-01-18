@@ -17,7 +17,7 @@ let headerColor = Astro.props.color || "#007ED4bb";
 Astro.props.themeColor = Astro.props.themeColor || "rgb(72, 161, 223)";
 const textColor = Astro.props.darkText ? "black" : "white";
 const navPadding = 0.5; // was 0.6 em
-const isHome = Astro.url.pathname === "/";
+const isHome = Astro.props.isHome;
 const { allowMainStyles, noContentPadding, hideSpotify } = Astro.props;
 const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
 
@@ -963,15 +963,20 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
 
   .pageContent :global(p),
   .pageContent :global(li) {
-    font-size: 1.2em;
+    font-size: 1.2rem;
     color: #666;
     line-height: 150%;
     /* padding: 0.5em 0; */
   }
 
   .pageContent :global(p) {
-    text-indent: 2em;
     padding: 0.5em 0;
+    text-indent: 1.2em;
+  }
+
+  .pageContent :global(li > p) {
+
+    text-indent: 0em;
   }
 
   .pageContent :global(strong) {
@@ -980,12 +985,14 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
 
   .pageContent :global(ul),
   .pageContent :global(ol) {
-    padding-left: 2em;
+    padding-left: 2.5em;
+
   }
 
   .pageContent :global(li) {
     /* line-height: 150%; */
-    padding: 0.3em 0;
+    /* padding: 0.3em 0; */
+    padding-left: 0.2em;
   }
 
   .noPageContentPadding {

@@ -3,11 +3,12 @@ author: Blake Sanie
 date: May 1 2023
 title: Fantasy Football System Design
 description: Fantasy sports platform design decisions, system design principles, technology, and tooling.
-image: /public/assets/posts/fantasy/complete.png
+image: /src/assets/images/fantasy/complete.png
 publish: true
 ---
+
 import InlineImg from "../components/basic/InlineImg.astro";
-import Code from "../components/basic/Code.astro"
+import Code from "../components/basic/Code.astro";
 
 ## Introduction: Game Event Stream Processing
 
@@ -17,7 +18,10 @@ Several sports media companies offer app-driven Fantasy Football experiences, th
 
 This piece aims to explore crucial design decisions, system design principles, and technology and tooling considerations that fulfill the business needs of Fantasy Football platforms from the perspective of a sports media company.
 
-<InlineImg src="/public/assets/posts/fantasy/complete.png" alt="Fantasy Football Backend System Design Overview"/>
+<InlineImg
+  src="/src/assets/images/fantasy/complete.png"
+  alt="Fantasy Football Backend System Design Overview"
+/>
 
 ## Requirement Analysis
 
@@ -38,7 +42,10 @@ This piece aims to explore crucial design decisions, system design principles, a
 
 Football, and sports more generally, are complex to model in full. For simplicity's sake, let us only track snaps, passes, runs, tackles, and touchdowns. Outside of direct gameplay, challenges and penalties will be considered. Assume all contextual game and player data is already populated.
 
-<InlineImg src="/public/assets/posts/fantasy/ingestion.png" alt="Game Event Data Ingestion Overview"/>
+<InlineImg
+  src="/src/assets/images/fantasy/ingestion.png"
+  alt="Game Event Data Ingestion Overview"
+/>
 
 ## Stream Management and Usage
 
@@ -52,10 +59,9 @@ At a scorer's fingertips is an interface that establishes a unique `gameID`, `pl
 
 Apache Kafka is the chosen Publisher-Subscriber queue technology because of its robust buffer policy. Messages are written to high-throughput topics backed by log files. Each subscriber manages its location in the queue, thus able to catch up at its own pace and even replay previous messages in order if needed - since this buffer is the entrance of event data into our backend, consumption retries and behavior reproducibility are paramount in case of bugs or downtime.
 
-To be safe, this topic will persist messages for a week, after which they will be archived in blob file storage. Also, we can configure Kafka to distribute topic logs across multiple partitions, each on a different broker, and replicate for durability. Proactively, if a broker goes down, the topic will still be available for consumption and any temporarily lost data can be recovered from its copy. 
+To be safe, this topic will persist messages for a week, after which they will be archived in blob file storage. Also, we can configure Kafka to distribute topic logs across multiple partitions, each on a different broker, and replicate for durability. Proactively, if a broker goes down, the topic will still be available for consumption and any temporarily lost data can be recovered from its copy.
 
 Finally, Kafka's log file design guarantees at-least-once delivery. When a consumer successfully receives a message, it will acknowledge the delivery and update its new queue offset. When consumption failure occurs, the acknowledgment is not sent and Kafka attempts retransmission. This is not as ideal as exactly-once delivery, but it at least ensures that data loss is a nonpossibility; the only drawback is implementing the safe handling of duplicate messages.
-
 
 ### Stream Organization
 
@@ -63,7 +69,10 @@ Events must be consumed in the order of transmission to accurately depict game s
 
 Kafka partitions allow for messages to be split between multiple consumers. Thus to prepare for maximum consumer scalability, the more partitions, the marrier. However, since there are only ever 10 simulatanous games each emmitting events every 3 seconds, there is no signmificant need for further partition orchestration.
 
-<InlineImg src="/public/assets/posts/fantasy/queue.png" alt="Kafka Topic Partitioning"/>
+<InlineImg
+  src="/src/assets/images/fantasy/queue.png"
+  alt="Kafka Topic Partitioning"
+/>
 
 ### Ingestion Service
 
@@ -71,19 +80,18 @@ When the scorer speaks, the Ingestion Service listens. It employs a scalable clu
 
 The simplest solution is to spin up a few compute instances to form a consumer group across all partitions. The incoming message load can be divided and conquered by the finite compute instances, but this approach does not scale to message volume.
 
-
 Alternatively, we may deploy a horizontally scalable cluster of general event ingestion workers. Like before, these workers form a consumer group to optimally distribute incoming messages. If a worker goes down, more are already running and will take on a temporarily heightened load until the replacement node spins up. Additionally, the number of workers may be scaled during gametime. But this method is not perfect. We will need more advanced logic to handle out-of-order data operations - in other words, when batch 2 begins before batch 1 completes since events are ingested asynchronously. Though more complex, this method allows us to achieve the stated goals with some clever software design.
 
 Because each consumer must commit consumption acknoledgements to the Kafka partition it reads from, the number of performing concurrent workers is limited by the number of partitions. Any more than this breaks the data consumption guarantee by greedily reading ahead before knowing if the current read succeeds. Therefore, as hinted at before, the more partitions, the better. Excess workers are idle, though a few extra instances are beneficial for immediate failover.
 
-<InlineImg src="/public/assets/posts/fantasy/consumers.png" alt="Ingestion Service Worker Cluster"/>
-
+<InlineImg
+  src="/src/assets/images/fantasy/consumers.png"
+  alt="Ingestion Service Worker Cluster"
+/>
 
 ### Container Orchestration and Scalability
 
 As mentioned, workers are designed to be horizontally scalable to fit variable demand. This is accomplished by orchestrating a cluster of Docker containers, each running an instance of the ingestion service. Docker Swarm provides stable cluster network configuration and scalability basics. Kubernetes is the Swiss-Army knife of advanced container orchestration, though it is overkill for our design. A simple Docker contrainer scheduler based on the game schedule will suffice.
-
-
 
 ## Data Modeling, Organization, and Operations
 
@@ -109,79 +117,78 @@ Yet a simple `valid` column is not enough. This is only satisfactory when an eve
 
 Planning ahead, if future rules allow for an event to be overturned multiple times, our design still accurately depicts the scenario: just invalidate the only valid entry for that event (could be the original or previously corrected), and insert the corrected row.
 
-
 ### Proposed Entities
 
-Below, we materialize these ideas into concrete schemata. 
-
+Below, we materialize these ideas into concrete schemata.
 
 #### Plays
+
 <div class="x-scroll">
-| gameID      | playNumber | eventNumber | startTimestamp | gameSecondsPlayed | posession | fieldPosition | down|
-| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |----------- |
-| bfjsu      | 1      | 1 | 1671127112555 | 15 | SF | 24 | 1 |
-| ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
-| bfjsu      | 90      | 321 | 1671127114134 | 1304 | ATL | 56 | 3 |
+  | gameID | playNumber | eventNumber | startTimestamp | gameSecondsPlayed |
+  posession | fieldPosition | down| | ----------- | ----------- | ----------- |
+  ----------- | ----------- | ----------- | ----------- |----------- | | bfjsu |
+  1 | 1 | 1671127112555 | 15 | SF | 24 | 1 | | ... | ... | ... | ... | ... | ...
+  | ... | ... | ... | ... | ... | ... | ... | | bfjsu | 90 | 321 | 1671127114134
+  | 1304 | ATL | 56 | 3 |
 </div>
 
-
-
 #### Passes
+
 <div class="x-scroll">
-| gameID      | playNumber | eventNumber | passerID | throwYard | receptionYard | recieverID | isTouchdown
-| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- | -- | - |
-| bfjsu      | 4      | 8 | jiglp | 2 | 10 | jkhne | false |
-| bfjsu      | 12      | 19 | jiglp | 50 | 60 | gnslw | true |
-| ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
+  | gameID | playNumber | eventNumber | passerID | throwYard | receptionYard |
+  recieverID | isTouchdown | ----------- | ----------- | ----------- |
+  ----------- | ----------- | ----------- | -- | - | | bfjsu | 4 | 8 | jiglp | 2
+  | 10 | jkhne | false | | bfjsu | 12 | 19 | jiglp | 50 | 60 | gnslw | true | |
+  ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
 </div>
 
 #### Tackles
+
 <div class="x-scroll">
 
-| gameID      | playNumber | tacklerID | tackledID | fieldPosition | valid 
-| ----------- | ----------- | ----------- | --- | --- | --- |
-| bfjsu      | 1      | nvhew | ndjks | 27 | true |
-| bfjsu   | 2      | kfnsw | bkjwe | 30 | true |
-| bfjsu   | 2      | nvhew | zokjf | 0 | true |
-| ... | ... | ... |... | ... | ... | ... | ... | ... | ... |
+| gameID | playNumber | tacklerID | tackledID | fieldPosition | valid |
+| ------ | ---------- | --------- | --------- | ------------- | ----- | --- | --- | --- | --- |
+| bfjsu  | 1          | nvhew     | ndjks     | 27            | true  |
+| bfjsu  | 2          | kfnsw     | bkjwe     | 30            | true  |
+| bfjsu  | 2          | nvhew     | zokjf     | 0             | true  |
+| ...    | ...        | ...       | ...       | ...           | ...   | ... | ... | ... | ... |
+
 </div>
 
 #### Runs
+
 <div class="x-scroll">
-| gameID      | playNumber | eventNumber | playerID | startYard | endYard | isRush | isTouchdown | valid |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- | -- | - | - |
-| bfjsu      | 4      | 7 | jkhne | 10 | 25 | false | false | true |
-| bfjsu   | 7     | 14 | lksqs | 25 | 40 | true | false | true |
-| bfjsu   | 8      | 20 | nxmze | 40 | 100 | true | true | false |
-| bfjsu   | 8      | 20 | nxmze | 40 | 90 | true | false | true |
-| ... | ... | ... | ... | ... | ... | ... |... | ... | ... | ... | ... | ... | ... |
+  | gameID | playNumber | eventNumber | playerID | startYard | endYard | isRush
+  | isTouchdown | valid | | ----------- | ----------- | ----------- |
+  ----------- | ----------- | ----------- | -- | - | - | | bfjsu | 4 | 7 | jkhne
+  | 10 | 25 | false | false | true | | bfjsu | 7 | 14 | lksqs | 25 | 40 | true |
+  false | true | | bfjsu | 8 | 20 | nxmze | 40 | 100 | true | true | false | |
+  bfjsu | 8 | 20 | nxmze | 40 | 90 | true | false | true | | ... | ... | ... |
+  ... | ... | ... | ... |... | ... | ... | ... | ... | ... | ... |
 </div>
-
-
 
 With these simplified entities, basic football plays can be tracked and queried for insight. Below are a few relevant queries that could be useful within our Fantasy Football use case.
 
 ### Proposed Queries
 
-
 The notion of "raw" events in the database successfully captures the complete story of each game, though passes complexity to the data consumer; in reality, this is no issue since queries themselves are static in nature. In other words, a more complex query can be written once and never again.
 
-
 1. Find a player's rushing yards for a given game
+
 ```sql
 select sum(endYard - startYard) from Runs
 where playerID = ... and gameID = ... and valid = true;
 ```
 
-
-
 2. Find a player's passing yards for a given game
+
 ```sql
 select sum(throwYard - receptionYard) from Passes
 where passerID = ... and gameID = ... and valid = true;
 ```
 
 3. Find a how many solo tackles are attributed to a player for a given game
+
 ```sql
 select count(*) from (
    select count(*) from Tackles
@@ -193,8 +200,8 @@ select count(*) from (
 ) soloTackles;
 ```
 
-
 4. Find all touchdown timestamps for a given game, and the players credited
+
 ```sql
 select startTimestamp from (
    select playNumber from Passes
@@ -217,11 +224,13 @@ A better approach is to not complicate writing patterns at the expense of infreq
 In SQL, let us demonstrate the improved writting pattern for a `Run` event.
 
 1. Insert an `Run` event
+
 ```sql
 insert into Runs values (...);
 ```
 
 2. Nullify the `Run` event
+
 ```sql
 update Runs
 set valid = false

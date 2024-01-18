@@ -3,13 +3,13 @@ author: Blake Sanie
 date: Dec 17 2020
 title: "Deconstructing the Iconic Apple Watch Bubble UI"
 description: "How does Apple's bold, fluid, dynamic layout function behind the scenes?"
-image: /public/assets/posts/bubble/zones.png
+image: /src/assets/images/bubble/zones.png
 publish: true
 ---
 
 import InlineImg from "../components/basic/InlineImg.astro";
 
-<InlineImg src="/public/assets/posts/bubble/watchcover.jpg" />
+<InlineImg src="/src/assets/images/bubble/watchcover.jpg" />
 
 When the first [Apple Watch](https://en.wikipedia.org/wiki/Apple_Watch) launched in 2015, I was blown away by the design of the home screen in [WatchOS](https://en.wikipedia.org/wiki/WatchOS). The layout deviates from more standard, grid-based app organization methods, and instead proposes an original, visually dynamic interface.
 
@@ -26,7 +26,7 @@ Disclaimer: _The discussion of the UI's underlying functionality and design stem
 Let's start with a basic honeycomb grid for our bubbles. We'll handle sizing and other effects later on. Every other row is one bubble shorter than the others, and the last row may be incomplete, though centered.
 
 <InlineImg
-  src="/public/assets/posts/bubble/honeycomb.png"
+  src="/src/assets/images/bubble/honeycomb.png"
   alt="Model starting point: honeycomb layout"
 />
 
@@ -54,7 +54,7 @@ Diving deeper into the layout's underlying mechanisms, let's use our defined reg
 First, we need to define another key visual landmark: the corner zone.
 
 <InlineImg
-  src="/public/assets/posts/bubble/zones.png"
+  src="/src/assets/images/bubble/zones.png"
   alt="Corner Zones visualized over the graphic Bubble UI model"
 />
 
@@ -144,7 +144,7 @@ Bubbles in the center region are already compact and hence do not require transl
 Bubbles in the outer region are translated inward by the amount of its maximum size. If such bubbles reside in corner zones, they translate towards the corresponding internal corner or, otherwise, the canvas's center.
 
 <InlineImg
-  src="/public/assets/posts/bubble/grav.png"
+  src="/src/assets/images/bubble/grav.png"
   alt="Direction of translation based on canvas location"
 />
 
@@ -170,12 +170,12 @@ Surprisingly, implementing gravitation is easier than any other transformation d
 Put simply, the gravitation effect involves translating bubbles in the outer region towards the fringe region, proportional to the bubble's distances from the fringe edge. For our purposes, we define a linear relationship between distance to fringe and displacement, but this can be implemented in a number of different ways (exponential, square, square root, etc).
 
 <InlineImg
-  src="/public/assets/posts/bubble/gravout.png"
+  src="/src/assets/images/bubble/gravout.png"
   alt="With no gravitation, bubbles in the outer region are distanced by max size"
 />
 
 <InlineImg
-  src="/public/assets/posts/bubble/gravheavy.png"
+  src="/src/assets/images/bubble/gravheavy.png"
   alt="Non-zero gravitation effectively scales down the separation distance between bubbles in the outer region"
   quality={100}
 />

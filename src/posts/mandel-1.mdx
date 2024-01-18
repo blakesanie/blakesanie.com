@@ -3,7 +3,7 @@ author: Blake Sanie
 date: Nove 28 2020
 title: "Visualizing the Mandelbrot Set With Python (< 50 Lines)"
 description: "Complex mathematics plus programming equals infinite graphical beauty."
-image: /public/assets/posts/mandel/mandel1.png
+image: /src/assets/images/mandel/mandel1.png
 publish: true
 ---
 
@@ -11,28 +11,41 @@ import InlineImg from "../components/basic/InlineImg.astro";
 
 The [Mandelbrot Set](https://en.wikipedia.org/wiki/Mandelbrot_set) is known to be one of the most beautiful fractals in mathematics. Though first discovered at the beginning of the 20th century, we can use computers to create detailed renderings of the infinitely self-similar image. Equally as beautiful is the fact that we can render the Mandelbrot set with less than 50 lines of Python.
 
-<InlineImg src="/public/assets/posts/mandel/mandel1.png" alt="My first attempt at rendering the Mandelbrot Set. Not bad, eh?"/>
+<InlineImg
+  src="/src/assets/images/mandel/mandel1.png"
+  alt="My first attempt at rendering the Mandelbrot Set. Not bad, eh?"
+/>
 
 ## What Even is the Mandelbrot Set?
 
-The formal definition of the Mandelbrot Set is the *“set of values of c in the complex plane for which the orbit of 0 under iteration of the quadratic map*
+The formal definition of the Mandelbrot Set is the _“set of values of c in the complex plane for which the orbit of 0 under iteration of the quadratic map_
 
 $$z_{n+1} = z_n^2+c$$
 
-*remains bounded...”*
+_remains bounded...”_
 
- ### What does this mean?
+### What does this mean?
+
 <div class="allInline">
-Basically, take a complex number $a + bi$, square it, then add itself. Now take the solution, square it, then add the original number. As you repeat this process, the solution may approach infinity (diverge). On the other hand, the solution after continual iteration may stay bounded to finite numbers.
+  Basically, take a complex number $a + bi$, square it, then add itself. Now
+  take the solution, square it, then add the original number. As you repeat this
+  process, the solution may approach infinity (diverge). On the other hand, the
+  solution after continual iteration may stay bounded to finite numbers.
 </div>
-The black regions of the Mandelbrot Set are the complex numbers that when iterated over by the function, stay bounded. Where the Mandelbrot set gets really interesting is understanding the behavior near these points by *visualizing at what rate the function diverges.*
+The black regions of the Mandelbrot Set are the complex numbers that when iterated
+over by the function, stay bounded. Where the Mandelbrot set gets really interesting
+is understanding the behavior near these points by *visualizing at what rate the
+function diverges.*
 
 ## Math Breakdown
 
 ### Can computers even understand complex numbers?
 
 <div class="allInline">
-Not exactly, but we can represent complex numbers through their real and imaginary components considired in a cartesian plane ($a + bi$ becomes $a$, $b$ as $x$, $y$). Computations with each component are done separately, meaning we can omit i if we think ahead.
+  Not exactly, but we can represent complex numbers through their real and
+  imaginary components considired in a cartesian plane ($a + bi$ becomes $a$,
+  $b$ as $x$, $y$). Computations with each component are done separately,
+  meaning we can omit i if we think ahead.
 </div>
 
 ### How do I square complex numbers?
@@ -46,13 +59,19 @@ $a^2 + 2ab - b^2$
 $(a^2 - b^2) + (2ab)i$
 
 <div class="allInline">
-Really, the square of $a + bi$ is another imaginary number, where the new a is $a^2 — b^2$ and the new $b$ is $2ab$. **This concept is crucial to this project's calculations.**
+  Really, the square of $a + bi$ is another imaginary number, where the new a is
+  $a^2 — b^2$ and the new $b$ is $2ab$. **This concept is crucial to this
+  project's calculations.**
 </div>
 
 ### How do I know when the function diverges?
 
 <div class="allInline">
-It is known that if the function's complex solution is ever greater than two, the function must diverge. In cartesian terms, this means that the function diverges when the distance from the origin is greater than two. Using the **[Pythagorian theorem](https://en.wikipedia.org/wiki/Pythagorean_theorem)**, we can define this case as: $x^2 + y^2 > 4$.
+  It is known that if the function's complex solution is ever greater than two,
+  the function must diverge. In cartesian terms, this means that the function
+  diverges when the distance from the origin is greater than two. Using the
+  **[Pythagorian theorem](https://en.wikipedia.org/wiki/Pythagorean_theorem)**,
+  we can define this case as: $x^2 + y^2 > 4$.
 </div>
 
 ## Setting Up the Program
@@ -60,6 +79,7 @@ It is known that if the function's complex solution is ever greater than two, th
 Let's take this step by step.
 
 First, we import our dependencies and modules. **[Pillow](https://pillow.readthedocs.io/)** is Python's well known image processing library. Colorsys and math are modules we'll use in our calculations. Finally, we can access os to open the image file once written.
+
 ```python
 from PIL import Image
 import colorsys
@@ -68,6 +88,7 @@ import os
 ```
 
 Next, we define the frame for our image. Variable meanings are self explanatory. precision is the threshold (max number of iterations) we will use in determining if a point diverges under iteration. Increasing this value will create more accurate calculations and images, while increase processing time.
+
 ```python
 width = 1000 #pixels
 x = -0.65
@@ -96,10 +117,12 @@ pixels = img.load()
 ```
 
 ## Mandelbrot Rendering Algorithm
+
 <div class="allInline">
 This algorithm is often called the “escape time algorithm,” since we find how many iterations are needed for a point to definitively diverge. Then, we color the image based on this value.
 
 We loop through the image's pixels, and map each pixel to a cartesian point $(x, y)$. The original $x$ and $y$ values are stored for later use.
+
 ```python
 for row in range(height):
     for col in range(width):
@@ -143,16 +166,18 @@ def powerColor(distance, exp, const, scale):
     rgb = colorsys.hsv_to_rgb(const + scale * color,1 - 0.6 * color,0.9)
     return tuple(round(i * 255) for i in rgb)
 ```
+
         </div>
 
 All that's left to do is to write the file, and then open it through the operating system.
+
 ```python
 img.save('output.png')
 os.system('open output.png')
 ```
+
 ## Put it All Together
 
 Run the program, and gaze.
 
-<InlineImg src="/public/assets/posts/mandel/mandel2.png" />
-
+<InlineImg src="/src/assets/images/mandel/mandel2.png" />

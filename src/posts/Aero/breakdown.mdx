@@ -1,0 +1,136 @@
+---
+author: Blake Sanie
+date: Jan 13 2024
+title: "Aero: Virtual Cycling Wind Tunnel - Technical Breakdown"
+description: "How machine learning, mathematics, and physical mechanics join to maximize cycling performance."
+image: /src/assets/images/aero/aero.png
+---
+
+import InlineImg from "../../components/basic/InlineImg.astro";
+
+Progressing along my endurance triathlon adventure during the cold winter means crafting an indoor training regiment without compromise. Yes, I converted my bike into a stationary rig and sprinting away on virtual routes (all standard practice), though diving deeper, I sought a way to optimize my body positioning before hitting the road again in the spring.
+
+My search of existing tools turned empty - applying advanced kinematic theory within a computationally defined environment seemed too much a moonshot, especially when targetting a consumer hardware runtime. Still, no reason stood to prove my vision unattainable.
+
+Being equal parts athletic competitor and technological innovator, I took matters into my own hands.
+
+<InlineImg src="/src/assets/images/aero/aero.png" />
+
+## Creating Aero
+
+To kick off 2024, I designed and developed <a href="/aero" target="_blank" >Aero</a> - the world's first consumer-accessible virtual wind tunnel, focused on helping cyclists minimize air resistance due to suboptimal body geometry. Even better, complete functionality sits right behind the same web browser you are using to read this.
+
+Finding success in Aero's creation required seamlessly stitching together advanced applications of physical mechanics and machine learning. The below sections outline and further dissect these respective components.
+
+## Physics Theory, Applied
+
+Rocketing at significant speeds through the still air simplifies to the disrupting of a fluid at equilibrium. In the most basic of forms, air resistance increases linearly with respect to cross sectional area, and quadratically with respect to velocity:
+
+$F_{D}=\frac{1}{2}\rho v^2 C_D A$
+
+<div class="allInline">
+  with drag force $F_D$, fluid density $\rho$, velocity $v$, drag coefficient
+  $C_D$, and cross sectional area $A$. However, this baseline kinematic model
+  relies on many material generalizations and does not consider chaotic fluid
+  dynamics (i.e. turbulent flow) that result from nontrivial object shapes and
+  positions. In fact, my desire to model the effects of{" "}
+  <span class="italic">arbitrary</span> body shapes eliminates all possibilties
+  of a closed-form approximation for air resistance. Putting pen and paper
+  aside, pivoting towards a simulation-based approach allows for situational
+  precision while leveraging academically studied numerical and computational
+  methods.
+</div>
+
+### Modelling Fluid Dynamics
+
+Cutting-edge fluid simulation methods follow one of two paradigms.
+
+- `Eulerian` approaches discretize and fix the environment (grid or mesh), each managing fluid behavior within their respective bounds.
+
+- `LaGrangian` approaches discretize and fix the fluid (as particles), each managing their respective state (position, velocity, etc) within the environment.
+
+Aero's fluid simulation relies on an Eulerian method in order to ensure uniform measurement across the environment while easily parallizing underlying grid-based computations.
+
+Deeper, I evolved the <a href="https://en.wikipedia.org/wiki/Lattice_Boltzmann_methods" target="_blank" rel="nofollow">Lattice-Boltzmann Algorithm</a> to support the platform's wind tunnel dynamics - more on improvements later. The method operates as follows:
+
+1. Form a lattice-structured environent, where each cell of the environment grid stores an eight-way particle distribution: moving North, North-East, East, South-East, South, South-West, West, North-West, and staying at rest. The density of particles in each catagory are initialized to reflect a constant rate of laminar flow (a state of equilibrium that observes the <a href="https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_equations" target="_blank" rel="nofollow">Navier-Stokes Equations</a>).
+
+2. Propogate the expected densitives to the corresponding cell. For instance, transfer the density of North-traveling particles to the cell above the current. Careful formulation of this sequential process is necessary to ensure densities are not overwritten while still a dependency in pending computatations. This is called the "Stream" step. <span class="italic">Handle collisions by reflecting movement into barriers back onto the source cell</span>.
+
+3. Smooth each cell's new fluid movement distribution towards an equilibrium state. This "Collide" phase is introduces nonlinearity to fluid movement - a realistic mechanism to handle movement dampening and compounding.
+   Find an in-depth explanation of the relevant mathematical foundation <a href="https://www.ndsu.edu/fileadmin/physics.ndsu.edu/Wagner/LBbook.pdf" target="_blank" rel="nofollow">here</a>.
+
+4. Jump to step 2, forming a cycle that models passage of time.
+
+A few details in tehnical implementation require attention to complete an effective simulation. These include:
+
+- Resetting environment boundaries to uniform equilibrium density (repeat as step 1 at edges of canvas) to keep the fluid moving in the indended direction. This can happen with any time interval, though tighter intervals promote simulation stability.
+
+- Dynamically shifting the initial air flow point (front of wind tunnel) to accomodate the object's shape and position within the wind tunnel. This extension to the Lattice-Boltzmann algorithm prevents differences in fluid behavior across ends of the wind tunnel because the the object's position relative within the wind tunnel is unchanging.
+
+### Chasing Power and Force Savings
+
+With the appropriate simulation method by my side, I needed a way to relate cycling speed, body position, and power savings. Luckily, I discovered the below real-world data aggregated by the team at <a href="https://silca.cc/blogs/silca/body-position-and-aerodynamics-on-a-bike" target="_blank" rel="nofollow">Silca</a> relates power savings and cycling speed in various body positions.
+
+<InlineImg
+  src="/src/assets/images/aero/data.webp"
+  alt="Power savings with body positions versus speed, by Silca."
+/>
+
+I am mainly interested in modelling maximum power savings, which occurs in
+the Aero Bars position. Using <a href="https://www.desmos.com/calculator/pqub09as7u" target="_blank" rel="nofollow">this Desmos plot</a>, I found the relationship between maximum power savings (Watts) and cycling speed (m/s) to be:
+
+$P_\text{saved}=c v^3,\hspace{2mm} c=.0450364$
+
+<InlineImg
+  src="/src/assets/images/aero/desmos.png"
+  alt="Regression model between cycling speed and maximum power savings."
+/>
+
+<div class="allInline">
+  At this point, I needed a means of relating simulation mechanics to the above
+  regression model. The simulation progresses with a frame rate $f=24$ frames
+  per second, with each frame running $n=40$ iterations of the "Streaming" and
+  "Colliding" process. During each frame, I must collect the momentum $p$
+  applied against the cyclist. An equivalent description of this quantity is the
+  forward momentum the cyclist must additionally generate to maintain constant
+  road speed. This is found by collecting the net mass of air "streamed" into a
+  barrier cell, before being reflected back onto the source cell, times the
+  current speed. Let us not forget that this momentum acts as a vector across
+  both principle axes, thus $p_x$ and $p_y$ are computed respectively by net
+  Eastward air movement and net Southward air movement. For simplicity, I will
+  focus on fluid momentum in the $x$ direction. Note that $v$ already lives
+  along the $x$ axis, as the wind tunnel blows air horizontally.
+</div>
+
+$p_x=mv=v\sum_{i=0}^{n}\sum_{b\in\text{barriers}}(\text{NE}_b + \text{E}_b + \text{SE}_b - \text{SW}_b - \text{W}_b - \text{NW}_b)$
+
+<div class="allInline">
+  The simulation progresses with a frame rate $f=24$ frames per second, with
+  each frame running $n=40$ iterations of the "Streaming" and "Colliding"
+  process.
+</div>
+
+Now with a working fluid simulation, I can computationally observe the energy absored by the body from the passing atmosphere. Recall from the "Stream" step that air densities propogated onto the object are reversed onto the source cell. These collisions must conserve both energy and momentum.
+
+Consider the behavior of the moving air sample. Since its direction is simply reversed (for instance, initial North-West movement transforms in-place into South-East movement after reflection), its modeled speed remains constant; its own momentum and energy is conserved. This implies the same must be true for the cyclist; an additional supply of energy must be supplied through the pedals to account for the momentum absorbed in the direction opposite of travel. Of course, these considerations apply with velocity as a vector, thus the constraints hold for each cartesian component. Let's break this down mathematically:
+
+<div class="allInline">
+  Simulating with frame rate $r$ (frames per second), collect the net mass of
+  air $m$ reflected by the object in the positive direction during the current
+  frame. $v$. The cyclist must make up for a forward momentum loss of $mv$ to
+  retain their own speed.
+</div>
+
+## Computer Vision Considerations
+
+### Image Segmentation
+
+### Barrier Detection Workflow
+
+## Web-Optimized Implementation and Runtime
+
+### Hardware-Optimized Machine Learning Runtime
+
+$$
+$$

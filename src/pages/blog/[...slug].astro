@@ -129,10 +129,11 @@ const { title, description, date, image, author } = frontmatter;
   />
 
   <link
-    slot="head"
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"
-  />
+    href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+    integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"
+    crossorigin="anonymous"
+/>
   {
     breadcrumbs.length > 0 && (
       <BreadCrumbs breadcrumbs={breadcrumbs} base="/blog" />
@@ -238,6 +239,13 @@ const { title, description, date, image, author } = frontmatter;
     margin: 0 0.2em;
     border-radius: 0.3em;
     font-weight: 600;
+  }
+  :global(.italic) {
+    font-style: italic;
+  }
+  :global(.bold) {
+    font-weight: 600;
+    color: black;
   }
 </style>
 

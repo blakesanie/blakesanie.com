@@ -2,8 +2,8 @@
 author: Blake Sanie
 date: Jan 1 2022
 title: "New Year's Math Magic: Inscribing Circles Inside the Standard Parabola"
-description: 'A "timeless" geometric discovery'
-image: /public/assets/posts/newyear/diagram.png
+description: 'A "timeless" geometric discovery.'
+image: /src/assets/images/newyear/diagram.png
 publish: true
 ---
 
@@ -16,8 +16,8 @@ On New Year's Eve, I came across a puzzling twitter post:
 {" "}
 
 <div class="embed">
-<Fragment
-  set:html={`<blockquote class="twitter-tweet">
+  <Fragment
+    set:html={`<blockquote class="twitter-tweet">
   <p lang="en" dir="ltr">
     Traditionally, my last puzzle of the year. 🥂 🧩 ♥️{" "}
     <a href="https://twitter.com/hashtag/mathiratti?src=hash&amp;ref_src=twsrc%5Etfw">
@@ -31,7 +31,7 @@ On New Year's Eve, I came across a puzzling twitter post:
   src="https://platform.twitter.com/widgets.js"
   charset="utf-8"
 ></script>`}
-/>
+  />
 </div>
 
 I thought, surely, the answer must be a nasty decimal - I was far from wrong, and my curiosity led me down a road to a mind-blowing realization.
@@ -52,7 +52,7 @@ I hypothesized that **for all $r>0$, if a circle with radius $r$ is inscribed in
 More formally, I want to determine if:
 
 <div class="allInline center">
-center$_i + r_i = $ center $_{i+1} - r_{i+1}$
+  center$_i + r_i = $ center $_{i + 1} - r_{i + 1}$
 </div>
 
 <div class="allInline">
@@ -61,7 +61,10 @@ center$_i + r_i = $ center $_{i+1} - r_{i+1}$
 
 </div>
 
-<InlineImg src="/public/assets/posts/newyear/diagram.png" alt="Illustration of hypothesis"/>
+<InlineImg
+  src="/src/assets/images/newyear/diagram.png"
+  alt="Illustration of hypothesis"
+/>
 
 ## The Radius Segment
 
@@ -69,6 +72,7 @@ center$_i + r_i = $ center $_{i+1} - r_{i+1}$
 First, we must model the radius of each circle as the segment connecting (for simplicity) the $+x$ half of the standard parabola to the $y$-axis that is simultaneously normal to such parabola.
 
 Given this interpretation, we can find the slope of the radius by finding the negative reciprocal of the parabola's slope.
+
 </div>
 
 $$ f(x)=x^2 $$
@@ -83,52 +87,59 @@ slope of radius $=\frac{-1}{f\prime (x)}=\frac{-1}{2x}$
 With this slope, we can express the radius as the sum of horizontal and vertical components. The horizontal component is, well, the definition of $x$. The vertical component, fascinatingly, is always $1/2$, since moving backwards $x$ units along the $x$-axis yields a $y$-change of $(\frac{-1}{2x}) * -x = -\frac{1}{2}$.
 </div>
 
-<InlineImg src="/public/assets/posts/newyear/circle.png" alt="Component breakdown of radius"/>
+<InlineImg
+  src="/src/assets/images/newyear/circle.png"
+  alt="Component breakdown of radius"
+/>
 
 <div class="allInline">
-Hence, the length of the radius is the magnitude of the resulting hypotenuse. We can calculate the $y$-value of the center accordingly.
+  Hence, the length of the radius is the magnitude of the resulting hypotenuse.
+  We can calculate the $y$-value of the center accordingly.
 </div>
 
-
 $r_i=\sqrt{x_i^2+\frac{1}{2}^2}$
-
 
 $$ \downarrow $$
 
 $ x_i = \sqrt{r_i^2-\frac{1}{4}} $
 
 <div class="allInline center">
-center$_i=f(x_i)+\frac{1}{2}=r_i^2+\frac{1}{4}$
+  center$_i=f(x_i)+\frac{1}
+  {2}=r_i^2+\frac{1}
+  {4}$
 </div>
-
 
 ## Proof by Induction
 
 ### Base Case
 
 <div class="allInline">
-Fundamentally, there exists a circle of radius of radius $r > 0$, and its center can be found by $r^2 + \frac{1}{4}$. The circle with $r = 0$ is excluded from the domain since it constructs a point. By the way, notice anything special about the constant $\frac{1}{4}$? It's the focus of the standard parabola!
+  Fundamentally, there exists a circle of radius of radius $r > 0$, and its
+  center can be found by $r^2 + \frac{1}
+  {4}$. The circle with $r = 0$ is excluded from the domain since it constructs a
+  point. By the way, notice anything special about the constant $\frac{1}
+  {4}$? It's the focus of the standard parabola!
 </div>
 
 ### Inductive Step
 
 <div class="allInline">
-Having supported the base case, if we prove that our hypothesis holds true when transitioning from $i$ to $i + 1$, then our hypothesis must hold true for all $i > 0$.
+  Having supported the base case, if we prove that our hypothesis holds true
+  when transitioning from $i$ to $i + 1$, then our hypothesis must hold true for
+  all $i > 0$.
 </div>
 
 Let's begin by stating our hypothesis, and manipulating the relationship until a conclusion is reached.
 
 <div class="allInline center">
-center$_i + r_i = $ center $_{i+1} - r_{i+1}$
+  center$_i + r_i = $ center $_{i + 1} - r_{i + 1}$
 </div>
 
 $r_i^2+\frac{1}{4}+r_i=r_{i+1}^2+\frac{1}{4}-r_{i+1}$
 
 $r_{i+1}^2-r_{i+1}-(r_i^2+r_i)=0$
 
-<div class="center">
-Now factor using the Quadratic Formula, where
-</div>
+<div class="center">Now factor using the Quadratic Formula, where</div>
 
 $a=1$
 $b=-1$
@@ -148,13 +159,17 @@ In conclusion, we accept the hypotheses - the radius of every circle inscribed i
 
 😂 Ah, and that's why the tweet was made "traditionally".
 
-
 ## What about non-standard Parabolas?
 
 So far, we have seen that inscribing circles by the horizontal bounds of the standard parabola and circle beneath is possible for incrementing radii, starting at any non-zero radius.
 
 <div class="allInline">
-Keep imagining the standard parabola with its inscribed circles. When the function becomes $f(x) = ax^2$, where $a = 1$ does not hold, a vertical (and in a way, horizontal) stretch transformation is applied. Hence, this same transformation will be applied to the inscribed circles, yielding ellipses - the unique property of inscribed circles with incrementing radii does not hold here.
+  Keep imagining the standard parabola with its inscribed circles. When the
+  function becomes $f(x) = ax^2$, where $a = 1$ does not hold, a vertical (and
+  in a way, horizontal) stretch transformation is applied. Hence, this same
+  transformation will be applied to the inscribed circles, yielding ellipses -
+  the unique property of inscribed circles with incrementing radii does not hold
+  here.
 </div>
 
 ## Visualization
@@ -177,7 +192,10 @@ x^2 +(y - 100^2 - 1/4)^2 <= 100^2
 ```
 
 Pasting into [Desmos](https://medium.com/r/?url=https%3A%2F%2Fwww.desmos.com%2Fcalculator%2F9rtrnrpzlh) renders the beautiful phenomenon I stumbled upon to start 2022.
- 
-<InlineImg src="/public/assets/posts/newyear/desmos.png" alt="Final visualization of inscribed circles in standard parabola"/>
+
+<InlineImg
+  src="/src/assets/images/newyear/desmos.png"
+  alt="Final visualization of inscribed circles in standard parabola"
+/>
 
 Thanks for reading!
