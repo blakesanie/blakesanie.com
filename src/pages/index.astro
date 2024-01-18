@@ -148,41 +148,8 @@ const markupData = [
 ---
 
 <HeaderAndFooter color="rgba(0,0,0,0.5)" title="Home" themeColor="black" isHome={true}>
-  <HomePageSection id="firstSection" class="homePageSection">
-    <!-- <canvas id="canvas3d"></canvas> -->
-    <!-- <iframe id="canvas3d" src="/hero/index.html"></iframe> -->
-    <!-- <Spline /> -->
-    <Blobs />
-    <div id="wwdc">
-      <!-- <img src="/images/wwdc_blake.png" /> -->
-      <!-- <Img
-        src="/src/assets/images/wwdc_blake2.png"
-        alt=""
-        layout="fullWidth"
-        placeholder="blurred"
-      /> -->
-      <img src="/assets/wwdc_blake.png" />
-    </div>
+  <HomePageSection id="firstSection" class="homePageSection sectionTransitionParent" imageUrl="/src/assets/images/cover.jpg">
     <h1><span id="typed">Hi, I'm Blake.</span></h1>
-    <!-- <script
-      type="module"
-      src="https://unpkg.com/@splinetool/viewer@0.9.261/build/spline-viewer.js"
-    ></script>
-    <spline-viewer
-      id="spline-viewer"
-      url="https://prod.spline.design/KDmGPoqNmLmqK9H2/scene.splinecode"
-    ></spline-viewer> -->
-    <!-- <div class="nameZone fullCenter">
-      <div id="wwdc">
-        <img src="/images/wwdc_blake.png" />
-      </div>
-      <h1 class="typed">
-        <span id="typed"> Hi, I'm Blake.</span>
-      </h1>
-    </div>
-    <img id="mainMac" src="/images/bg/macbook.jpg" />
-    <Particles id="particles-js" /> -->
-    <!-- <Particles id="particles-js" /> -->
   </HomePageSection>
   {
     markupData.map((data, i) => (
@@ -196,16 +163,6 @@ const markupData = [
     ))
   }
 </HeaderAndFooter>
-
-<!-- <script>
-  // import { Application } from "@splinetool/runtime";
-  import { Application } from "../../public/hero/runtime.js";
-  const canvas = document.getElementById("canvas3d");
-  const app = new Application(canvas);
-  // spline.load("https://prod.spline.design/KDmGPoqNmLmqK9H2/scene.splinecode");
-  app.load("/hero/scene.splinecode");
-</script> -->
-
 {
   message && (
     <Fragment
@@ -244,44 +201,14 @@ const markupData = [
 
   const sections = document.querySelectorAll(".sectionTransitionParent");
   const firstSection = document.getElementById("firstSection");
-  const wwdc = document.getElementById("wwdc");
-  // const onScreen: Set<Element> = new Set();
-
-  // const observer = new IntersectionObserver(
-  //   (entries) => {
-  //     for (const entry of entries) {
-  //       const intersecting = entry.isIntersecting;
-  //       // console.log(entry.target, "intersecting", intersecting);
-  //       if (intersecting) {
-  //         onScreen.add(entry.target);
-  //       } else {
-  //         onScreen.delete(entry.target);
-  //       }
-  //     }
-  //   },
-  //   {
-  //     rootMargin: "200px",
-  //   }
-  // );
-
-  // for (let i = 0; i < sections.length; i++) {
-  //   const section = sections[i];
-  //   observer.observe(section);
-  // }
 
   const particlesElement = document.getElementById("particles-js");
 
   window.addEventListener("scroll", (e) => {
-    // console.log(
-    //   "onscreen",
-    //   Array.from(onScreen).map((element: Element) =>
-    //     element.querySelector("h2")?.textContent?.substring(0, 10)
-    //   )
-    // );
-    const rate = window.innerHeight * 0.13;
 
     const screenCenter = window.scrollY + window.innerHeight / 2;
     let sectionHeight = sections[0].offsetHeight;
+    const rate = sectionHeight * 0.15;
     sections.forEach((section) => {
       if (!(section instanceof HTMLElement)) {
         return;
@@ -306,8 +233,6 @@ const markupData = [
       if (!(bg instanceof HTMLElement)) {
         return;
       }
-      // bg.style.transform = `translateY(${-diff * 100}px)`;
-      // bg.style.opacity = `${0.2 + 0.6 * Math.max(0, 1 - Math.abs(diff) * 1)}`;
       const children = section.childNodes;
       bg.style.opacity = 0.05 + 0.55 * (1 - Math.abs(diff));
       for (let i = 0; i < children.length; i++) {
@@ -316,34 +241,15 @@ const markupData = [
           continue;
         }
         if (!child.classList.contains("bg")) {
-          child.style.transform = `translateY(${diff * rate}px)`;
+          child.style.transform = `translateY(${-diff * rate}px)`;
         } else {
           // child.style.transform = `translateY(${diff * 300}px)`;
         }
       }
     });
 
-    particlesElement.style.filter = `blur(${
-      (window.scrollY / sectionHeight) * 14
-    }px)`;
 
-    for (let i = 0; i < firstSection.children.length; i++) {
-      const child = firstSection.children[i];
-      if (window.scrollY < window.innerHeight) {
-        console.log("in view");
-        if (child.id == "blobField") {
-          child.querySelector("svg").style.opacity =
-            1 - window.scrollY / sectionHeight;
-        } else {
-          child.style.filter = `blur(${
-            (window.scrollY / sectionHeight) * 14
-          }px)`;
-          child.style.transform = `translateY(${
-            (window.scrollY / sectionHeight) * rate * 2.5
-          }px)`;
-        }
-      }
-    }
+    
   });
 </script>
 
