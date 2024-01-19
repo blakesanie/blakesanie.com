@@ -78,35 +78,29 @@ With the appropriate simulation method by my side, I then needed a quantitiative
 />
 
 I am mainly interested in modelling maximum power savings, which occurs in
-the Aero Bars position. Using <a href="https://www.desmos.com/calculator/pqub09as7u" target="_blank" rel="nofollow">this Desmos plot</a>, I found the relationship between maximum power savings (Watts) and cycling speed (m/s) to be:
+the Aero Bars position. Using <a href="https://www.desmos.com/calculator/moh6irec7q" target="_blank" rel="nofollow">this Desmos plot</a>, I found the relationship between maximum force savings (N) and cycling speed (m/s) to be:
 
-$P_\text{saved}=c v^3,\hspace{2mm} c=.0450364$
+$F_\text{saved}=c v^2,\hspace{2mm} c=.0450363$
+
+Which maintains the quadratic order hekd by the ideal drag force equation!
 
 <InlineImg
   src="/src/assets/images/aero/desmos.png"
-  alt="Regression model between cycling speed and maximum power savings."
+  alt="Regression model between cycling speed and maximum force savings."
 />
 
 <div class="allInline">
   At this point, I needed a means of relating simulation mechanics to the above
   regression model. The simulation progresses with a frame rate $f=24$ frames
   per second, with each frame running $n=40$ iterations of the "Streaming" and
-  "Colliding" process. During each frame, I must collect the momentum $p$
-  applied against the cyclist. An equivalent description of this quantity is the
-  forward momentum the cyclist must additionally generate to maintain constant
-  road speed.
-</div>
-<div class="allInline">
-  $p$ is found by collecting the net mass of air "streamed" into a barrier cell,
-  before being reflected back onto the source cell, times the current speed. Let
-  us not forget that this momentum acts as a vector across both principle axes,
-  thus $p_x$ and $p_y$ are computed respectively by net Eastward air movement
-  and net Southward air movement. For simplicity, I will focus on fluid momentum
-  in the $x$ direction. Note that $v$ already lives along the $x$ axis, as the
-  wind tunnel blows air horizontally.
+  "Colliding" process.
 </div>
 
-$p_x=mv=v\sum_{i=0}^{n}\sum_{b\in\text{barriers}}(\text{NE}_b + \text{E}_b + \text{SE}_b - \text{SW}_b - \text{W}_b - \text{NW}_b)$
+<div class="allInline">
+  During the computation of each frame, I accumulate the mass colliding in the
+  net $x$ and $y$ directions across all barrier cells $B$ (areas occupied by the
+  bike and cyclist). Together, these components form a vector $\vec{m_\text{air}}$.
+</div>
 
 $m_{\text{air}_x}=\sum_{i=0}^{n}\sum_{b\in B}(\text{NE}_b + \text{E}_b + \text{SE}_b - \text{SW}_b - \text{W}_b - \text{NW}_b)$
 
@@ -114,13 +108,43 @@ $m_{\text{air}_y}=\sum_{i=0}^{n}\sum_{b\in B}(\text{SW}_b + \text{S}_b + \text{S
 
 $\vec{m_\text{air}}=\langle m_{\text{air}_x},m_{\text{air}_y} \rangle$
 
+On the road, the cyclist's kinetic energy is lost to the surrounding air. Analygously, the air in the wind tunnel transfers its kinetic energy into the body. The amount of work (joules), or change in energy, subjected to the body is expressed as:
+
 $\vec{W_\text{air}} = \frac{1}{2}\vec{m_\text{air}}v^2$
+
+Further, the air resistance force vector is found by applying the computed work over the traversed distance, which is itself the quotient of velocity and frame rate.
 
 $\vec{F_\text{air}} = \vec{W_\text{air}} \Delta x,\hspace{2mm}\Delta x = v \Delta t = \frac{v}{f}$
 
+<div class="allInline">
+Keep in mind that a cyclist must combat a horizontal force working against them, however, $\vec{F_\text{air}}$ has an unconsidered vertical component. This detail should not be overlooked, as $F_{\text{air}_y}$ induces an increase in <a href="https://silca.cc/blogs/silca/part-4b-rolling-resistance-and-impedance" target="_blank" rel="nofollow">Rolling Resistance</a>, $F_\text{rr}$, which is a horizontally acting force on the cyclist. $C_\text{rr}=0.004$ is the emperical rolling resistance constant for road tires with intended pressure on smooth asphault, found by <a href="https://silca.cc/blogs/silca/part-4b-rolling-resistance-and-impedance" target="_blank" rel="nofollow">Silca</a>.
+</div>
+
 $F_\text{resistance} = F_{\text{air}_x} + F_\text{rr}$
 
-$F_\text{rr} = C_\text{rr} F_{\text{air}_y},\hspace{2mm} C_\text{rr} = 0.0025$
+$F_\text{rr} = C_\text{rr} F_{\text{air}_y},\hspace{2mm} C_\text{rr} = 0.004$
+
+<div class="allInline">
+  At this point, relative values of $F_\text{resistance}$ hold physically
+  accurate, but the values in absolute may be inflated by barrier configuraiton,
+  simulation speed, scene width, among other external variables. I eliminate the
+  effect of these factors by imposing a calibration step - for 10 seconds, the
+  cyclist alternates between a "Hoods" position to record $\dot{F}_\text{high}$
+  (baseline for zero force savings) and the lowest possible "Aero Bars" position
+  to record $\dot{F}_\text{low}$ (baseline for maximum force savings). Here,
+  $\dot{F}_\text
+  {high}$ and $\dot{F}_\text{low}$ vary in third degree with speed, tracing all derivations
+  steps. Thus, I divide these baselines by $v^3$ so that the baselines remain valid
+  independent of air speed , which may change throughout the simulation. To recompute
+  force from the baseline space, a factor of $v^3$ is applied. Once calibrated, force
+  savings are quickly estimated by interpolating the normalized observed horizontal
+  resistance force between the two bounds, and scaling the force savings regression
+  model accordingly.
+</div>
+
+$F_\text{saved} = v^3 * \frac{\dot{F}_\text{high} - F_\text{resistance}/ v^3}{\dot{F}_\text{high}-\dot{F}_\text{low}} * cv^2$
+$= \frac{\dot{F}_\text{high} - F_\text{resistance}/ v^3}{\dot{F}_\text{high}-\dot{F}_\text{low}} cv^5$
+$P_\text{saved} = F_\text{saved}v$
 
 ### Chasing Power and Force Savings
 
