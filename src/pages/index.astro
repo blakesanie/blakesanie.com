@@ -149,7 +149,7 @@ const markupData = [
 
 <HeaderAndFooter color="rgba(0,0,0,0.5)" title="Home" themeColor="black" isHome={true}>
   <HomePageSection id="firstSection" class="homePageSection sectionTransitionParent" imageUrl="/src/assets/images/cover.jpg">
-    <h1><span id="typed">Hi, I'm Blake.</span></h1>
+    <h1>Hi, I'm Blake.<br/><span id="typed"></span></h1>
   </HomePageSection>
   {
     markupData.map((data, i) => (
@@ -225,50 +225,17 @@ let typed;
   setTimeout(() => {
 
     typed = new Typed('#typed', {
-      strings: ["Hi, I'm Blake. <br/>^0 <span class='newline'>Scroll to learn more...</span> ^1800", "Hi, I'm Blake. <br/>", ""],
-             typeSpeed: 40,
-         backSpeed: 30,
-         backDelay: 0,
-      onTypingPaused: () => {
-          if (pauses == 0) {
-            document.body.classList.add('smallCursor')
-
-          }
-          pauses++
-        },
-        onStringTyped: (i) => {
-          if (i == 2) {
-            document.body.classList.remove('smallCursor')
-          }
-        },
-        onComplete: () => {
-          typed.destroy()
-          typed = new Typed("#typed", {
-          strings: strings,
-         loop: true,
-         typeSpeed: 40,
-         backSpeed: 30,
-         backDelay: 0,
-        onTypingPaused: () => {
-          if (pauses % 3 == 0) {
-            document.body.classList.add('smallCursor')
-
-          }
-          pauses++
-        },
-        onStringTyped: (i) => {
-          if (i == 1) {
-            document.body.classList.remove('smallCursor')
-          }
-        }
-        });
-        }
+      strings: ["^500 Scroll to learn more..."],
+             typeSpeed: 50,
+         backSpeed: 40,
+         backDelay: 1500,
+         loop: true
     })
 
 
 
     
-  }, 4000);
+  }, 2000);
 
   const sections = document.querySelectorAll(".sectionTransitionParent");
 
@@ -342,40 +309,18 @@ let typed;
   .homePageSection {
     max-height: min(1000px, 170vw);
   }
-  #firstSection > *:not(#spline) {
-    pointer-events: none;
-    z-index: 1;
-  }
-  .nameZone {
-    padding: 2em;
-    border: 1px solid green;
-  }
-  #wwdc {
-    width: 10em;
-    padding: 0.5em;
-    /* background: radial-gradient(
-      closest-side at 4.5em 5em,
-      rgba(255, 123, 0, 0.344) 0%,
-      transparent 100%
-    ); */
-    overflow: visible;
-    /* z-index: 9; */
-    /* animation: fadeIn 6s ease-in; */
-  }
-  #wwdc img {
-    width: 100%;
-    aspect-ratio: 0.7557;
-    animation: fadeIn 2s ease-in;
+  #firstSection  {
+    animation: fadeIn 3s ease;
   }
   h1 {
     /* animation: fadeIn 3s ease-in; */
     /* z-index: 9; */
     font-size: 3.4em;
     /* mix-blend-mode: soft-light; */
-    opacity: 1;
+    opacity: 1 !important;
     padding: 0 1em;
     height: 1.4em;
-    line-height: 80%;
+    line-height: 70%;
     text-align: center;
     /* pointer-events: none; */
     /* filter: contrast(4); */
@@ -383,11 +328,9 @@ let typed;
     /* clip-path: ; */
     /* margin-top: 0.5em; */
     width: 10em;
+    z-index: 99999;
   }
-  :global(.newline) {
-    font-size: 0.5em;
-  }
-  :global(.smallCursor .typed-cursor) {
+  #typed, :global(.typed-cursor) {
     font-size: 0.5em;
   }
   .fullCenter {
@@ -413,10 +356,6 @@ let typed;
   }
 
   @media screen and (max-width: 800px) {
-    #firstSection {
-      /* height: calc(100vh - 80px);
-      height: calc(100svh - 80px); */
-    }
     :global(main) {
       margin-top: 0 !important;
     }
