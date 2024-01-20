@@ -1,18 +1,10 @@
 ---
 import HeaderAndFooter from "../components/HeaderAndFooter/index.astro";
 import HomePageSection from "../components/HomePageSection.astro";
-import Spline from "../components/Spline.astro";
-import Blobs from "../components/Blobs.astro";
-//@ts-ignore
-import { Img } from "astro-imagetools/components";
 
 const { message } = Astro.props;
 
 const markupData = [
-  // {
-  //   imageUrl: "/images/macbook3.jpeg",
-  //   links: [],
-  // },
   {
     text: [
       "I'm an inventive Software Engineer passionate for revolutionizing Financial Services, based in Chicago.",
@@ -62,10 +54,6 @@ const markupData = [
         href: "/aero",
         label: "Aero",
       },
-      // {
-      //   href: "/photo/gear",
-      //   label: "Gear",
-      // },
     ],
     style: {
       maxHeight: "min(500px,130vw)",
@@ -84,10 +72,6 @@ const markupData = [
         label: "Capture Map",
         nofollow: true,
       },
-      // {
-      //   href: "/photo/gear",
-      //   label: "Gear",
-      // },
     ],
     style: {
       maxHeight: "min(500px,130vw)",
@@ -108,10 +92,6 @@ const markupData = [
             Math.floor(new Date().getMonth() / 3)
           ] + " Menu",
       },
-      // {
-      //   href: "/photo/gear",
-      //   label: "Gear",
-      // },
     ],
     style: {
       maxHeight: "min(500px,130vw)",
@@ -147,9 +127,21 @@ const markupData = [
 ];
 ---
 
-<HeaderAndFooter color="rgba(0,0,0,0.5)" title="Home" themeColor="black" isHome={true}>
-  <HomePageSection id="firstSection" class="homePageSection sectionTransitionParent" imageUrl="/src/assets/images/cover.jpg">
-    <h1>Hi, I'm Blake.<br/><span id="typed"></span></h1>
+<HeaderAndFooter
+  color="rgba(0,0,0,0.5)"
+  title="Home"
+  themeColor="black"
+  isHome={true}
+>
+  <HomePageSection
+    id="firstSection"
+    class="homePageSection sectionTransitionParent"
+    imageUrl="/src/assets/images/cover.jpg"
+  >
+    <h1>Hi, I'm Blake</h1>
+    <div id="typedContainer">
+      <span id="typed"></span>
+    </div>
   </HomePageSection>
   {
     markupData.map((data, i) => (
@@ -172,87 +164,36 @@ const markupData = [
 }
 
 <script>
-  // document.getElementById("canvas3d").onload = function () {
-  //   alert("myframe is loaded");
-  // };
-import Typed from "typed.js";
+  import Typed from "typed.js";
 
-// let shortTyped;
-
-//     function typeToShort() {
-//       return new Promise((resolve, reject) => {
-//         shortTyped = new Typed("#typed", {
-//           strings: ["", "Hi, I'm Blake. "],
-//           typeSpeed: 50,
-//           backSpeed: 40,
-//           loop: false,
-//           onComplete: function() {
-//             longTyped.destroy();
-//             resolve();
-//           }
-//         });
-//       })
-//     }
-
-//     let longTyped;
-
-//     async function typeToLong() {
-//       return new Promise((resolve, reject) => {
-//         longTyped = new Typed("#typed", {
-//           strings: ["Hi, I'm Blake. <br><span class='newline'>Scroll to learn more...</span> ", "Hi, I'm Blake. "],
-//           typeSpeed: 50,
-//           backSpeed: 40,
-//           loop: false,
-//           smartBackspace: true,
-//           onComplete: function() {
-//             // shortTyped.destroy();
-//             resolve();
-//           }
-//         });
-//       })
-//     }
-
-
-const strings = [
-  "Hi, I'm Blake. ^900 <br/>^0 <span class='newline'>Scroll to learn more...</span> ^1800",
-  "Hi, I'm Blake. <br/>",
-  ""
-]
-
-let pauses = 0
-let typed;
+  const typedElement = document.getElementById("typedContainer");
+  const h1 = document.querySelector("h1");
 
   setTimeout(() => {
-
-    typed = new Typed('#typed', {
+    const typed = new Typed("#typed", {
       strings: ["^500 Scroll to learn more..."],
-             typeSpeed: 50,
-         backSpeed: 40,
-         backDelay: 1500,
-         loop: true
-    })
-
-
-
-    
+      typeSpeed: 50,
+      backSpeed: 40,
+      backDelay: 1500,
+      loop: true,
+    });
   }, 2000);
 
-  const sections = document.querySelectorAll(".sectionTransitionParent");
+  const sections = document.querySelectorAll<HTMLElement>(
+    ".sectionTransitionParent"
+  );
 
-  window.addEventListener("scroll", (e) => {
-
+  function handleScroll() {
     const screenCenter = window.scrollY + window.innerHeight / 2;
     let sectionHeight = sections[0].offsetHeight;
     const rate = sectionHeight * 0.15;
     sections.forEach((section, i) => {
-      if (!(section instanceof HTMLElement)) {
-        return;
-      }
       const sectionCenter = section.offsetTop + section.offsetHeight / 2;
       let effectiveScreenCenter = screenCenter;
       if (sectionCenter < window.innerHeight / 2) {
         // handles proper interpolation when top sections do not span window height, so the peak opacity is before the window center
-        effectiveScreenCenter = sectionCenter;
+        effectiveScreenCenter =
+          screenCenter - (window.innerHeight / 2 - sectionHeight / 2);
       }
       const distUnder =
         document.body.scrollHeight - section.offsetTop - section.offsetHeight;
@@ -264,32 +205,31 @@ let typed;
       const dist =
         sectionCenter - Math.max(bestScreenCenter, effectiveScreenCenter);
       let diff = dist / sectionHeight;
-      if (i == 0) {
-        diff *= -1
-      }
-      const bg = section.querySelector(".bg");
-      if (!(bg instanceof HTMLElement)) {
-        return;
-      }
+      const bg = section.querySelector<HTMLElement>(".bg");
       const children = section.childNodes;
-      bg.style.opacity = 0.05 + 0.55 * (1 - Math.abs(diff));
-      for (let i = 0; i < children.length; i++) {
-        const child = children[i];
-        if (!(child instanceof HTMLElement)) {
-          continue;
-        }
-        if (!child.classList.contains("bg")) {
-          child.style.transform = `translateY(${diff * rate}px)`;
-        } else {
-          // child.style.transform = `translateY(${diff * 300}px)`;
+      if (bg) {
+        bg.style.opacity = 0.05 + 0.55 * (1 - Math.abs(diff)) + "";
+      }
+      if (i == 0 && h1 && typedElement) {
+        h1.style.transform = `translateY(${1.4 * diff * rate}px)`;
+        typedElement.style.transform = `translateY(${0.7 * diff * rate}px)`;
+      } else {
+        for (let j = 0; j < children.length; j++) {
+          const child = children[j];
+          if (!(child instanceof HTMLElement)) {
+            continue;
+          }
+          if (!child.classList.contains("bg")) {
+            child.style.transform = `translateY(${diff * rate}px)`;
+          }
         }
       }
     });
+  }
 
+  window.addEventListener("scroll", handleScroll);
 
-
-    
-  });
+  handleScroll();
 </script>
 
 <style>
@@ -309,8 +249,11 @@ let typed;
   .homePageSection {
     max-height: min(1000px, 170vw);
   }
-  #firstSection  {
+  #firstSection {
     animation: fadeIn 3s ease;
+  }
+  :global(.bg) {
+    opacity: 0.05;
   }
   h1 {
     /* animation: fadeIn 3s ease-in; */
@@ -319,8 +262,6 @@ let typed;
     /* mix-blend-mode: soft-light; */
     opacity: 1 !important;
     padding: 0 1em;
-    height: 1.4em;
-    line-height: 70%;
     text-align: center;
     /* pointer-events: none; */
     /* filter: contrast(4); */
@@ -330,8 +271,11 @@ let typed;
     width: 10em;
     z-index: 99999;
   }
-  #typed, :global(.typed-cursor) {
-    font-size: 0.5em;
+  #typedContainer {
+    font-size: 1.6em;
+    height: 2em;
+    z-index: 100;
+    margin-top: -0.2em;
   }
   .fullCenter {
     display: flex;
