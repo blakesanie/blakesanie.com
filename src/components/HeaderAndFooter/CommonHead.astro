@@ -2,14 +2,163 @@
 import { GoogleFontsOptimizer } from "astro-google-fonts-optimizer";
 import { SEO } from "astro-seo";
 import { renderImg } from "astro-imagetools/api";
+import satori from "satori";
+import { Resvg } from "@resvg/resvg-js";
+import fs from "fs";
 Astro.props.fontUrl =
   Astro.props.fontUrl ||
   "https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&display=swap";
 
+const font = fs.readFileSync(
+  "src/assets/fonts/Assistant/static/Assistant-Regular.ttf"
+);
+const font2 = fs.readFileSync(
+  "src/assets/fonts/Assistant/static/Assistant-SemiBold.ttf"
+);
+
+const ogBg = fs.readFileSync(
+  "photo-portfolio/portfolio2k/Manhattan--20Bridge.jpg"
+);
+const b64 = ogBg.toString("base64");
+console.log(b64);
+
+// const fontBuffer = await font.arrayBuffer();
+const title = Astro.props.title
+  ? Astro.props.title + " | Blake Sanie"
+  : "Blake Sanie";
+
+if (!Astro.props.image) {
+  const svg = await satori(
+    {
+      type: "div",
+      props: {
+        children: [
+          {
+            type: "img",
+            props: {
+              src: `data:image/jpeg;base64,${b64}`,
+              style: {
+                // opacity: 0.5,
+                transform: `scale(1.2) translate(8%,6%)`,
+              },
+            },
+          },
+          {
+            type: "div",
+            props: {
+              children: [
+                Astro.props.title || "Blake Sanie",
+                {
+                  type: "div",
+                  props: {
+                    children: Astro.props.title ? "Blake Sanie" : "",
+                    style: {
+                      fontSize: 60,
+                      opacity: 1,
+                      fontWeight: 400,
+                    },
+                  },
+                },
+              ],
+              style: {
+                display: "flex",
+                flexDirection: "column",
+                position: "absolute",
+                top: 50,
+                left: 70,
+                color: "white",
+                fontSize: 120,
+                maxWidth: 1200 - 50 * 2,
+                fontWeight: 700,
+                // textShadow: `0px 0px 40px black`,
+              },
+            },
+          },
+          // {
+          //   type: "div",
+          //   props: {
+          //     children: "Blake Sanie",
+          //     style: {
+          //       position: "absolute",
+          //       bottom: 180,
+          //       left: 50,
+          //       color: "white",
+          //       fontSize: 90,
+          //     },
+          //   },
+          // },
+          // {
+          //   type: "div",
+          //   props: {
+          //     children: [
+          //       {
+          //         type: "div",
+          //         props: {
+          //           children: "Software Engineer. Photographer.",
+          //         },
+          //       },
+          //       "Marathoner. Lifelong Student.",
+          //     ],
+          //     style: {
+          //       display: "flex",
+          //       flexDirection: "column",
+          //       position: "absolute",
+          //       bottom: 40,
+          //       left: 50,
+          //       color: "white",
+          //       fontSize: 50,
+          //       // opacity: 0.7,
+          //       fontWeight: 700,
+          //     },
+          //   },
+          // },
+        ],
+        style: {
+          display: "flex",
+          // background: "linear-gradient(140deg, #0032D9, #00CE84)",
+          background: "black",
+          width: "100%",
+          height: "100%",
+        },
+      },
+    },
+    {
+      width: 1200,
+      height: 630,
+      fonts: [
+        {
+          name: "Assistant",
+          data: font,
+          weight: 400,
+          style: "normal",
+        },
+        {
+          name: "Assistant",
+          data: font2,
+          weight: 700,
+          style: "normal",
+        },
+      ],
+    }
+  );
+
+  const resvg = new Resvg(svg, {
+    fitTo: {
+      mode: "width",
+      value: 1200,
+    },
+  });
+  const pngData = resvg.render().asPng().toString("base64");
+
+  Astro.props.image = `data:image/jpeg;base64,${pngData}`;
+}
+
+// console.log(svg);
+
 const { noindex } = Astro.props;
 
 const { link, style, img } = await renderImg({
-  src: Astro.props.image || "/src/assets/images/cover.jpg",
+  src: Astro.props.image,
   breakpoints: [1200],
   format: "webp",
   alt: "",
@@ -26,9 +175,6 @@ const imageAlt =
 const description =
   Astro.props.description ||
   "Software Engineer. Photographer. Marathoner. Lifelong Student.";
-const title = Astro.props.title
-  ? Astro.props.title + " | Blake Sanie"
-  : "Blake Sanie";
 
 // console.log("title, desc", title, description, "props", Astro.props);
 ---
@@ -200,5 +346,6 @@ const title = Astro.props.title
     <GoogleFontsOptimizer url={Astro.props.fontUrl} />
     <slot name="head" />
   </head>
+  <!-- <Fragment set:html={svg} /> -->
   <body class:list={Astro.props.bodyClasslist}><slot /></body>
 </html>
