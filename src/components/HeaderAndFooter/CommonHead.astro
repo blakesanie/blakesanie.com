@@ -26,9 +26,9 @@ console.log(b64);
 const title = Astro.props.title
   ? Astro.props.title + " | Blake Sanie"
   : "Blake Sanie";
-
+let svg = "";
 if (!Astro.props.image) {
-  const svg = await satori(
+  svg = await satori(
     {
       type: "div",
       props: {
@@ -51,10 +51,22 @@ if (!Astro.props.image) {
                 {
                   type: "div",
                   props: {
-                    children: Astro.props.title ? "Blake Sanie" : "",
+                    children: Astro.props.title
+                      ? "Blake Sanie"
+                      : [
+                          "Software Engineer. Photographer.",
+                          {
+                            type: "div",
+                            props: {
+                              children: "Marathoner. Lifelong Student.",
+                            },
+                          },
+                        ],
                     style: {
-                      fontSize: 60,
-                      opacity: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      fontSize: Astro.props.title ? 60 : 40,
+                      opacity: Astro.props.title ? 0.4 : 0.4,
                       fontWeight: 400,
                     },
                   },
@@ -70,6 +82,7 @@ if (!Astro.props.image) {
                 fontSize: 120,
                 maxWidth: 1200 - 50 * 2,
                 fontWeight: 700,
+                gap: -8,
                 // textShadow: `0px 0px 40px black`,
               },
             },
@@ -346,6 +359,6 @@ const description =
     <GoogleFontsOptimizer url={Astro.props.fontUrl} />
     <slot name="head" />
   </head>
-  <!-- <Fragment set:html={svg} /> -->
-  <body class:list={Astro.props.bodyClasslist}><slot /></body>
+  <Fragment set:html={svg} />
+  <!-- <body class:list={Astro.props.bodyClasslist}><slot /></body> -->
 </html>
