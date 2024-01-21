@@ -9,8 +9,8 @@ Astro.props.fontUrl =
 const { noindex } = Astro.props;
 
 const { link, style, img } = await renderImg({
-  src: Astro.props.image || "/public/og/thumb.jpg",
-  breakpoints: [1000],
+  src: Astro.props.image || "/src/assets/images/cover.jpg",
+  breakpoints: [1200],
   format: "webp",
   alt: "",
   quality: 40,
