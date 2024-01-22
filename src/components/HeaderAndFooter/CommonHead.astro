@@ -20,7 +20,6 @@ const ogBg = fs.readFileSync(
   "photo-portfolio/portfolio2k/Manhattan--20Bridge.jpg"
 );
 const b64 = ogBg.toString("base64");
-console.log(b64);
 
 // const fontBuffer = await font.arrayBuffer();
 const title = Astro.props.title
@@ -28,6 +27,30 @@ const title = Astro.props.title
   : "Blake Sanie";
 let svg = "";
 if (!Astro.props.image) {
+  const arrowSvg = Astro.props.redirect
+    ? {
+        type: "svg",
+        props: {
+          xmlns: "http://www.w3.org/2000/svg",
+          viewBox: "0 0 24 24",
+          children: {
+            type: "path",
+            props: {
+              fill: "white",
+              d: "M6.4 18L5 16.6L14.6 7H6V5h12v12h-2V8.4z",
+            },
+          },
+          width: 60,
+          height: 60,
+          style: {
+            opacity: 0.5,
+            marginTop: 30,
+            marginLeft: -4,
+          },
+        },
+      }
+    : "";
+
   svg = await satori(
     {
       type: "div",
@@ -47,7 +70,16 @@ if (!Astro.props.image) {
             type: "div",
             props: {
               children: [
-                Astro.props.title || "Blake Sanie",
+                {
+                  type: "div",
+                  props: {
+                    children: [Astro.props.title || "Blake Sanie", arrowSvg],
+                    style: {
+                      display: "flex",
+                    },
+                  },
+                },
+                ,
                 {
                   type: "div",
                   props: {
@@ -165,8 +197,6 @@ if (!Astro.props.image) {
 
   Astro.props.image = `data:image/jpeg;base64,${pngData}`;
 }
-
-// console.log(svg);
 
 const { noindex } = Astro.props;
 
@@ -359,6 +389,6 @@ const description =
     <GoogleFontsOptimizer url={Astro.props.fontUrl} />
     <slot name="head" />
   </head>
-  <Fragment set:html={svg} />
-  <!-- <body class:list={Astro.props.bodyClasslist}><slot /></body> -->
+  <!-- <Fragment set:html={svg} /> -->
+  <body class:list={Astro.props.bodyClasslist}><slot /></body>
 </html>
