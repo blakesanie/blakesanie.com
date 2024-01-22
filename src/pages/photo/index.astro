@@ -1859,7 +1859,7 @@ const description =
         }),
         import("https://deno.land/x/clip_bpe@v0.0.6/mod.js"),
         // restore below line to fetch("/assets/imageEmbeddings(no number).jsonjson"),
-        fetch("/assets/imageEmbeddings_27242513.json"),
+        fetch("/assets/imageEmbeddings.json"),
       ]);
       modelSession = session;
       tokenizer = new Tokenizer.default();
@@ -1901,12 +1901,11 @@ const description =
         }, 0);
         similarities[name] = similarity;
       }
-      const ranking = Object.entries(similarities).sort(function (
-        first,
-        second
-      ) {
-        return second[1] - first[1];
-      });
+      const ranking = Object.entries(similarities).sort(
+        function (first, second) {
+          return second[1] - first[1];
+        }
+      );
       const indices = {};
       for (let i = 0; i < ranking.length; i++) {
         const name = ranking[i][0];
