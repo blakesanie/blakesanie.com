@@ -87,17 +87,20 @@
   "email": {
     "href": "mailto:blake@sanie.com",
     "short": "Email",
-    "title": "Blake's email in your mailbox"
+    "title": "Blake's email in your mailbox",
+    "internal": true
   },
   "contact": {
     "href": "/contact.vcf",
     "short": "Contact Card",
-    "title": "Blake's Contact Card"
+    "title": "Blake's Contact Card",
+    "internal": true
   },
   "menu": {
     "href": "/menu.pdf",
     "short": "Menu",
-    "title": "Gourmet Menu"
+    "title": "Gourmet Menu",
+    "internal": true
   },
   "deploy": {
     "href": "/deploy",

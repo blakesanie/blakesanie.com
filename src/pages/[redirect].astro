@@ -13,13 +13,13 @@ export function getStaticPaths() {
 }
 
 const { redirect } = Astro.params;
-const { title, href, short } = redirects[redirect];
+const { title, href, short, internal } = redirects[redirect];
 ---
 
 <HeaderAndFooter
   allowMainStyles
   title={short || title}
-  redirect
+  redirect={internal ? false : true}
   description={`Redirect to ${title}, found at ${href}`}
   noindex
   hideSpotify
