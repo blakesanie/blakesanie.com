@@ -1,9 +1,10 @@
 ---
 author: Blake Sanie
-date: Jan 13 2024
+date: Feb 1 2024
 title: "Aero: Virtual Cycling Wind Tunnel - Technical Breakdown"
 description: "How machine learning, mathematics, and physical mechanics join to maximize cycling performance."
 image: /src/assets/images/aero/aero.png
+publish: true
 ---
 
 import InlineImg from "../../components/basic/InlineImg.astro";
@@ -136,13 +137,12 @@ $F_\text{rr} = C_\text{rr} F_{\text{air}_y},\hspace{2mm} C_\text{rr} = 0.004$
   to record $\dot{F}_\text{low}$ (baseline for maximum force savings). Here, all
   forces vary in third degree with speed, tracing all derivations steps. Thus, $\dot
   {F}_\text
-  {high}$ and $\dot{F}_\text{low}$ take into account a $v^3$ normalization
-  factor so that the baselines remain valid independent of airspeed, which may
-  change throughout the simulation. To recompute force from the baseline space,
-  a factor of $v^3$ is applied. Once calibrated, force savings are quickly
-  estimated by interpolating the normalized observed horizontal resistance force
-  between the two bounds and scaling the force savings regression model
-  accordingly.
+  {high}$ and $\dot{F}_\text{low}$ take into account a $v^3$ normalization factor
+  so that the baselines remain valid independent of airspeed, which may change throughout
+  the simulation. To recompute force from the baseline space, a factor of $v^3$ is
+  applied. Once calibrated, force savings are quickly estimated by interpolating
+  the normalized observed horizontal resistance force between the two bounds and
+  scaling the force savings regression model accordingly.
 </div>
 
 $F_\text{saved} = v^3 * \frac{\dot{F}_\text{high} - F_\text{resistance}/ v^3}{\dot{F}_\text{high}-\dot{F}_\text{low}} * cv^2$
