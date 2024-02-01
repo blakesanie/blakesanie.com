@@ -74,6 +74,7 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
     key development victories, I am thrilled to share this tool with the cycling
     community.
   </p>
+  <a class="button" href="/blog/Aero/breakdown">Read Technical Breakdown</a>
 </CommonHead>
 
 <!-- <html>
@@ -189,24 +190,57 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
   }
 
   .button {
-    color: white;
     text-decoration: none !important;
-    backdrop-filter: blur(0.25em);
-    background-color: rgba(0, 0, 0, 0.3);
-    border: 1px solid white;
-    box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.3);
     padding: 0.5em 0.8em;
     font-size: 1.2em;
     margin-top: 1em;
     border-radius: 0.4em;
     cursor: pointer;
     font-weight: 500;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      border 0.2s ease,
+      border-radius 0.2s ease,
+      transform 0.14s ease;
+    background: linear-gradient(
+      117deg,
+      rgba(200, 0, 0, 0.4) 0%,
+      rgba(200, 167, 0, 0.4) 50%,
+      rgba(0, 200, 188, 0.4) 50%,
+      rgba(0, 80, 200, 0.4) 100%
+    );
+    color: black;
+    filter: saturate(2.5);
+    border: 0.1em solid white;
+  }
+
+  #cover .button {
+    backdrop-filter: blur(0.25em);
+    color: white;
+    background: linear-gradient(
+      117deg,
+      rgba(200, 0, 0, 0.3) 0%,
+      rgba(200, 167, 0, 0.3) 50%,
+      rgba(0, 200, 188, 0.3) 50%,
+      rgba(0, 80, 200, 0.3) 100%
+    );
+    filter: saturate(1.7);
+    // border: 1px solid white;
+    // box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.3);
   }
 
   .button:hover {
-    background-color: rgb(255, 255, 255);
-    color: black;
+    // border: 0.1em solid black;
+    transform: scale(1.03);
+    // text-decoration: underline !important;
+  }
+
+  #cover .button:hover {
+    // border: 0.4em solid white;
+    // border-radius: 0.8em;
+    transform: scale(1.1);
+    // color: black !important;
   }
   h3 {
     font-size: 1.5em;
