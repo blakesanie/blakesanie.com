@@ -3,7 +3,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import { SEO } from "astro-seo";
 import Button from "../../components/basic/Button.astro";
 import { formatDate } from "../../components/basic/PageCard.astro";
-import BreadCrumbs from "../../components/basic/BreadCrumbs.astro";
+// import BreadCrumbs from "../../components/basic/BreadCrumbs.astro";
 import fs from "fs";
 
 export async function getStaticPaths() {
@@ -133,12 +133,12 @@ const { title, description, date, image, author } = frontmatter;
     href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
     integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"
     crossorigin="anonymous"
-/>
-  {
+  />
+  <!-- {
     breadcrumbs.length > 0 && (
       <BreadCrumbs breadcrumbs={breadcrumbs} base="/blog" />
     )
-  }
+  } -->
   <h1>{title}</h1>
   <!-- <div id="date">
     {date.toISOString()}
@@ -200,8 +200,7 @@ const { title, description, date, image, author } = frontmatter;
     text-align: center;
     display: block;
   }
-  :global(.math * ) {
-
+  :global(.math *) {
     font-family: KaTeX_Main, "Times New Roman", serif;
   }
   :global(.allInline .math) {
