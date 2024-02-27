@@ -18,6 +18,7 @@ import redirects from "/src/redirects.json";
 const noSitemap = new Set(Object.keys(redirects));
 // so not in sitemap
 noSitemap.add("chicago");
+noSitemap.add("lease");
 noSitemap.add("public");
 noSitemap.add("music");
 
