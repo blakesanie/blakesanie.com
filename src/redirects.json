@@ -103,7 +103,7 @@
     "internal": true
   },
   "deploy": {
-    "href": "/deploy",
+    "href": "https://vercel.com/blakesanie/blakesanie-com/deployments",
     "short": "Deploy",
     "title": "Deployments on Vercel"
   }
