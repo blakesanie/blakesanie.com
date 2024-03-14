@@ -26,6 +26,7 @@ async function setDevice() {
   console.log("facing mode", mode);
   let stream;
   try {
+    await window.setMLCam(mode);
     stream = await navigator.mediaDevices.getUserMedia({
       video: {
         facingMode: {
@@ -35,6 +36,7 @@ async function setDevice() {
     });
   } catch (e) {
     mode = undefined;
+    await window.setMLCam(mode);
     window.facingUser = undefined;
     stream = await navigator.mediaDevices.getUserMedia({
       video: true,
@@ -42,7 +44,6 @@ async function setDevice() {
   }
   // console.log("new device stream", stream, devices, cameraId);
   video.srcObject = stream;
-  await window.setMLCam(mode);
 }
 
 window.facingUser = true;
