@@ -18,8 +18,8 @@ async function setDevice() {
   const cameraId = devices[deviceI];
   const stream = await navigator.mediaDevices.getUserMedia({
     video: {
-      deviceId: {
-        exact: cameraId,
+      facingMode: {
+        exact: "environment",
       },
     },
   });
