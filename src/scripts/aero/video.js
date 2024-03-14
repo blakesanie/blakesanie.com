@@ -24,7 +24,7 @@ async function setDevice() {
       },
     },
   });
-  console.log("new device stream", stream);
+  console.log("new device stream", stream, devices, cameraId);
   video.srcObject = stream;
   await window.setMLCam(cameraId);
 }
