@@ -7,6 +7,7 @@ function handleSuccess(stream) {
 }
 
 async function getDevices() {
+  await navigator.mediaDevices.getUserMedia({ video: true });
   const allDevices = await navigator.mediaDevices.enumerateDevices();
   console.log("all Devices", allDevices);
   return allDevices
@@ -23,6 +24,7 @@ async function setDevice() {
       },
     },
   });
+  console.log("new device stream", stream);
   video.srcObject = stream;
   await window.setMLCam(cameraId);
 }
