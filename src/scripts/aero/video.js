@@ -1,4 +1,6 @@
 const video = document.getElementById("videoelement");
+const toggleButton = document.getElementById("toggleCamera");
+toggleButton.addEventListener("click", toggleCamera);
 
 function handleSuccess(stream) {
   video.srcObject = stream;
@@ -36,7 +38,7 @@ videoMain();
 
 async function toggleCamera() {
   console.log("devices", devices);
-  deviceI = (i + 1) % devices.length;
+  deviceI = (deviceI + 1) % devices.length;
   await setDevice();
 }
 
