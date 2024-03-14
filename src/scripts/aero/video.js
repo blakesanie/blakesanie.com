@@ -17,20 +17,29 @@ function handleSuccess(stream) {
 
 async function setDevice() {
   // const cameraId = devices[deviceI];
-  const mode = window.facingUser ? "user" : "environment";
+  let mode = window.facingUser ? "user" : "environment";
   if (window.facingUser) {
     document.body.classList.remove("facingEnv");
   } else {
     document.body.classList.add("facingEnv");
   }
   console.log("facing mode", mode);
-  const stream = await navigator.mediaDevices.getUserMedia({
-    video: {
-      facingMode: {
-        exact: mode,
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: {
+          exact: mode,
+        },
       },
-    },
-  });
+    });
+  } catch (e) {
+    mode = undefined;
+    window.facingUser = undefined;
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+    });
+  }
   // console.log("new device stream", stream, devices, cameraId);
   video.srcObject = stream;
   await window.setMLCam(mode);
@@ -40,11 +49,15 @@ window.facingUser = true;
 
 async function videoMain() {
   // devices = await getDevices();
+
   await setDevice();
 }
 videoMain();
 
 async function toggleCamera() {
+  if (window.facingUser === undefined) {
+    return;
+  }
   // console.log("devices", devices);
   // deviceI = (deviceI + 1) % devices.length;
   window.facingUser = !window.facingUser;

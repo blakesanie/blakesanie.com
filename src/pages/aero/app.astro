@@ -322,11 +322,15 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
     left: 0;
     transform: translateY(-50%);
   }
-  body:not(.flowLeft) {
-    video {
-      /* display: none; */
-      transform: translateY(-50%) scaleX(-1) !important;
-    }
+  video {
+    transform: translateY(-50%) scaleX(-1) !important;
+  }
+  :global(.flowLeft) video,
+  :global(.facingEnv) video {
+    transform: translateY(-50%) !important;
+  }
+  :global(.facingEnv) :global(.flowLeft) video {
+    transform: translateY(-50%) scaleX(-1) !important;
   }
   #sixteenByNine canvas {
     /* background: red; */
