@@ -125,12 +125,12 @@ async function captureIteration() {
 let model;
 let cam;
 
-window.setMLCam = async function (id) {
+window.setMLCam = async function (mode) {
   cam = await tf.data.webcam(document.getElementById("videoelement"), {
     resizeWidth: 600,
     resizeHeight: 450,
     // deviceId: id,
-    // facingMode: "environment",
+    facingMode: mode,
   });
 };
 
