@@ -5,7 +5,9 @@ function handleSuccess(stream) {
 }
 
 async function getDevices() {
-  return (await navigator.mediaDevices.enumerateDevices())
+  const allDevices = await navigator.mediaDevices.enumerateDevices();
+  console.log("all Devices", allDevices);
+  return allDevices
     .filter((device) => device.kind.startsWith("video"))
     .map((device) => device.deviceId);
 }
@@ -15,7 +17,7 @@ async function setDevice() {
   const stream = await navigator.mediaDevices.getUserMedia({
     video: {
       deviceId: {
-        exact: window.cameraId,
+        exact: cameraId,
       },
     },
   });
@@ -33,6 +35,7 @@ async function videoMain() {
 videoMain();
 
 async function toggleCamera() {
+  console.log("devices", devices);
   deviceI = (i + 1) % devices.length;
   await setDevice();
 }
