@@ -17,16 +17,18 @@ function handleSuccess(stream) {
 
 async function setDevice() {
   // const cameraId = devices[deviceI];
+  const mode = facingUser ? "user" : "environment";
+  console.log("facing mode", mode);
   const stream = await navigator.mediaDevices.getUserMedia({
     video: {
       facingMode: {
-        exact: facingUser ? "user" : "environment",
+        exact: mode,
       },
     },
   });
   // console.log("new device stream", stream, devices, cameraId);
   video.srcObject = stream;
-  await window.setMLCam();
+  await window.setMLCam(mode);
 }
 
 let facingUser = true;

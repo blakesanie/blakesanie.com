@@ -126,7 +126,7 @@ let model;
 let cam;
 
 window.setMLCam = async function (mode) {
-  cam = await tf.data.webcam(document.getElementById("videoelement"), {
+  cam = await tf.data.webcam(undefined, {
     resizeWidth: 600,
     resizeHeight: 450,
     // deviceId: id,
