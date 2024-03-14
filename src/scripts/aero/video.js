@@ -18,6 +18,11 @@ function handleSuccess(stream) {
 async function setDevice() {
   // const cameraId = devices[deviceI];
   const mode = facingUser ? "user" : "environment";
+  if (facingUser) {
+    document.body.classList.remove("facingEnv");
+  } else {
+    document.body.classList.add("facingEnv");
+  }
   console.log("facing mode", mode);
   const stream = await navigator.mediaDevices.getUserMedia({
     video: {
