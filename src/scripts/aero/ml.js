@@ -56,6 +56,7 @@ const kernel = get2dGaussianKernel(20, 10);
 async function captureIteration() {
   console.log("capturing from cam", cam);
   const frame = await cam.capture(); //tf.browser.fromPixels(document.querySelector("img"));
+  console.log("got frame!");
   // debugger;
   const [height, width, depth] = frame.shape;
   const newHeight = (width / 16) * 9;
