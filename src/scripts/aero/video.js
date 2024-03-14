@@ -6,41 +6,41 @@ function handleSuccess(stream) {
   video.srcObject = stream;
 }
 
-async function getDevices() {
-  await navigator.mediaDevices.getUserMedia({ video: true });
-  const allDevices = await navigator.mediaDevices.enumerateDevices();
-  console.log("all Devices", allDevices);
-  return allDevices
-    .filter((device) => device.kind.startsWith("video"))
-    .map((device) => device.deviceId);
-}
+// async function getDevices() {
+//   await navigator.mediaDevices.getUserMedia({ video: true });
+//   const allDevices = await navigator.mediaDevices.enumerateDevices();
+//   console.log("all Devices", allDevices);
+//   return allDevices
+//     .filter((device) => device.kind.startsWith("video"))
+//     .map((device) => device.deviceId);
+// }
 
 async function setDevice() {
-  const cameraId = devices[deviceI];
+  // const cameraId = devices[deviceI];
   const stream = await navigator.mediaDevices.getUserMedia({
     video: {
       facingMode: {
-        exact: "environment",
+        exact: facingUser ? "user" : "environment",
       },
     },
   });
-  console.log("new device stream", stream, devices, cameraId);
+  // console.log("new device stream", stream, devices, cameraId);
   video.srcObject = stream;
-  await window.setMLCam(cameraId);
+  await window.setMLCam();
 }
 
-let devices;
-let deviceI = 0;
+let facingUser = true;
 
 async function videoMain() {
-  devices = await getDevices();
+  // devices = await getDevices();
   await setDevice();
 }
 videoMain();
 
 async function toggleCamera() {
-  console.log("devices", devices);
-  deviceI = (deviceI + 1) % devices.length;
+  // console.log("devices", devices);
+  // deviceI = (deviceI + 1) % devices.length;
+  facingUser = !facingUser;
   await setDevice();
 }
 
