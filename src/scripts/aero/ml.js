@@ -4,12 +4,12 @@
 // ctx.canvas.width = 1920;
 // ctx.drawImage(img, 0, 0);
 
-let mlRunning = false;
+window.mlRunning = false;
 
 window.resumeML = async function () {
   // debugger;
-  if (mlRunning) return;
-  mlRunning = true;
+  if (window.mlRunning) return;
+  window.mlRunning = true;
   while (!model || !cam) {
     await window.sleep(10);
   }
@@ -19,7 +19,7 @@ window.resumeML = async function () {
     // console.log(tf.memory().numTensors);
     // tf.disposeVariables();
   }
-  mlRunning = false;
+  window.mlRunning = false;
 };
 
 function get1dGaussianKernel(sigma, size) {

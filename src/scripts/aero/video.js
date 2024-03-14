@@ -16,7 +16,7 @@ function handleSuccess(stream) {
 // }
 
 async function setDevice() {
-  window.running = false;
+  window.mlRunning = false;
   // const cameraId = devices[deviceI];
   let mode = window.facingUser ? "user" : "environment";
   if (window.facingUser) {
@@ -45,7 +45,7 @@ async function setDevice() {
   }
   // console.log("new device stream", stream, devices, cameraId);
   video.srcObject = stream;
-  window.running = true;
+  window.mlRunning = true;
   window.resumeML();
 }
 
