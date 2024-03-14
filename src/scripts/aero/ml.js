@@ -54,6 +54,7 @@ function blurImage(image, kernel) {
 const kernel = get2dGaussianKernel(20, 10);
 
 async function captureIteration() {
+  console.log("capturing from cam", cam);
   const frame = await cam.capture(); //tf.browser.fromPixels(document.querySelector("img"));
   // debugger;
   const [height, width, depth] = frame.shape;
@@ -134,6 +135,7 @@ window.setMLCam = async function (mode) {
   if (mode) {
     options.facingMode = mode;
   }
+  console.log("get cam with options", options);
   cam = await tf.data.webcam(undefined, options);
 };
 
