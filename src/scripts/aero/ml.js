@@ -126,10 +126,11 @@ let model;
 let cam;
 
 window.setMLCam = async function (id) {
-  cam = await tf.data.webcam(undefined, {
+  cam = await tf.data.webcam(document.getElementById("videoelement"), {
     resizeWidth: 600,
     resizeHeight: 450,
-    deviceId: id,
+    // deviceId: id,
+    // facingMode: "environment",
   });
 };
 
