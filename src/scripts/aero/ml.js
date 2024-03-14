@@ -55,8 +55,9 @@ const kernel = get2dGaussianKernel(20, 10);
 
 async function captureIteration() {
   console.log("capturing from cam", cam);
+  let frame;
   try {
-    const frame = await cam.capture(); //tf.browser.fromPixels(document.querySelector("img"));
+    frame = await cam.capture(); //tf.browser.fromPixels(document.querySelector("img"));
   } catch (e) {
     console.error("error getting frame");
     return;
