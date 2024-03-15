@@ -14,7 +14,7 @@ window.resumeML = async function () {
     await window.sleep(10);
   }
   await captureIteration();
-  while (window.running) {
+  while (window.running && window.mlRunning) {
     await captureIteration();
     // console.log(tf.memory().numTensors);
     // tf.disposeVariables();
@@ -129,6 +129,9 @@ let model;
 let cam;
 
 window.setMLCam = async function (mode) {
+  while (window.mlRunning) {
+    await window.sleep(20);
+  }
   const options = {
     resizeWidth: 600,
     resizeHeight: 450,
