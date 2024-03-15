@@ -65,7 +65,7 @@ async function captureIteration() {
 
   const expanded = frame.expandDims(0);
   tf.dispose(frame);
-  let shouldInvertX = window.directionRight;
+  let shouldInvertX = Boolean(window.directionRight);
   if (window.facingUser === false) {
     shouldInvertX != shouldInvertX;
   }
