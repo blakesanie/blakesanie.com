@@ -17,6 +17,7 @@ function handleSuccess(stream) {
 
 async function setDevice() {
   window.mlRunning = false;
+  await window.sleep(1000);
   // const cameraId = devices[deviceI];
   let mode = window.facingUser ? "user" : "environment";
   if (window.facingUser) {
