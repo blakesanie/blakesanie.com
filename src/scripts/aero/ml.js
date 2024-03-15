@@ -66,11 +66,8 @@ async function captureIteration() {
   const expanded = frame.expandDims(0);
   tf.dispose(frame);
   let shouldInvertX = Boolean(window.directionRight);
-  if (!window.facingUser && !(window.facingUser === undefined)) {
-    console.log("should invert before", shouldInvertX);
-    shouldInvertX != shouldInvertX;
-    console.log("should invert after", shouldInvertX);
-  } else {
+  if (window.facingUser === false) {
+    shouldInvertX = !shouldInvertX;
   }
   console.log(
     "SHOULD INVERT TENSOR",
