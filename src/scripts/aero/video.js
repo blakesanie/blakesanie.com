@@ -45,7 +45,7 @@ async function setDevice() {
   }
   // console.log("new device stream", stream, devices, cameraId);
   video.srcObject = stream;
-  window.mlRunning = true;
+  // window.mlRunning = true;
   window.resumeML();
 }
 
