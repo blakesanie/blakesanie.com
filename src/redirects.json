@@ -106,5 +106,10 @@
     "href": "https://vercel.com/blakesanie/blakesanie-com/deployments",
     "short": "Deploy",
     "title": "Deployments on Vercel"
+  },
+  "newsletter": {
+    "href": "https://axiomsofascent.substack.com/subscribe",
+    "short": "Newsletter",
+    "title": "Axioms of Ascent newsletter"
   }
 }

@@ -8,6 +8,7 @@ import Icon from "astro-icon";
 import NavLink from "./NavLink.astro";
 import NowPlaying from "./NowPlaying.astro";
 import SoundBars from "./SoundBars.astro";
+import Newsletter from "../Newsletter/index.astro";
 const mobileMaxWidth = 800; // still manually declared in media query declaration
 const headerWidth = 200;
 const mobileHeaderHeight = 80;
@@ -240,8 +241,8 @@ const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
   </main>
   <footer></footer>
   <slot name="topLevel" />
+  <Newsletter />
 </CommonHead>
-
 <style is:global>
   * {
     margin: 0;

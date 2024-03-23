@@ -1,0 +1,89 @@
+---
+import { Icon } from "astro-icon";
+import redirects from "/src/redirects.json";
+---
+
+<a id="newsCTA" href={redirects.newsletter.href} target="_blank"
+  ><div id="joinNL">Join my newsletter</div><div id="nlTitle">
+    Axioms of Ascent
+  </div>
+
+  <Icon pack="ion" name="close-round" color="white" width={22} id="closeNL" />
+</a>
+
+<script>
+  const element = document.getElementById("newsCTA");
+  const stored = localStorage.getItem("closeNLUntil");
+  const parsedDate = new Date(stored);
+  const now = new Date();
+  if (now > parsedDate) {
+    setTimeout(() => {
+      element?.classList.add("active");
+    }, 2000);
+  }
+
+  document.getElementById("closeNL")?.addEventListener("click", (e) => {
+    element?.classList.remove("active");
+    e.stopPropagation();
+    e.preventDefault();
+    const exp = new Date(now.getTime() + 12 * 60 * 60 * 1000); // 12 hours in milliseconds
+    localStorage.setItem("closeNLUntil", exp.toISOString());
+  });
+</script>
+
+<style>
+  #newsCTA {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 20px 30px;
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 142, 104, 0.88);
+    color: white;
+    border-radius: 12px;
+    text-align: center;
+    transition:
+      background-color 0.2s ease,
+      opacity 0.7s ease,
+      transform 0.7s ease;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(100%);
+    color: white;
+  }
+
+  #newsCTA:global(.active) {
+    pointer-events: all;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  #newsCTA:hover {
+    /* background-color: black; */
+  }
+
+  #joinNL {
+    font-size: 14px;
+    color: white;
+    font-weight: 400;
+    opacity: 0.6;
+  }
+
+  #nlTitle {
+    font-size: 20px;
+    color: white;
+    font-weight: 600;
+  }
+
+  #closeNL {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    opacity: 0.3;
+    padding: 4px;
+    transition: opacity 0.2s ease;
+  }
+  #closeNL:hover {
+    opacity: 1;
+  }
+</style>
