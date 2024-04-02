@@ -58,6 +58,34 @@ const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
       }
       <ul>
         <div class="navSection">
+          <p>Life</p>
+          <NavLink
+            hoverZoneBehind={hoverZoneBehind}
+            icon="uil:envelope-heart"
+            href="/newsletter"
+            textColor={textColor}
+            chip="Weekly"
+          >
+            Newsletter
+          </NavLink>
+          <NavLink
+            hoverZoneBehind={hoverZoneBehind}
+            icon="majesticons:newspaper-line"
+            href="/press"
+            textColor={textColor}
+          >
+            Press
+          </NavLink>
+          <NavLink
+            hoverZoneBehind={hoverZoneBehind}
+            icon="jam:write"
+            href="/blog"
+            textColor={textColor}
+          >
+            Blog
+          </NavLink>
+        </div>
+        <div class="navSection">
           <p>Engineering</p>
           <NavLink
             hoverZoneBehind={hoverZoneBehind}
@@ -120,43 +148,7 @@ const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
               Booking
             </NavLink> -->
         </div>
-        <div class="navSection">
-          <p>Life</p>
-          <NavLink
-            hoverZoneBehind={hoverZoneBehind}
-            icon="majesticons:newspaper-line"
-            href="/press"
-            textColor={textColor}
-          >
-            Press
-          </NavLink>
-          <NavLink
-            hoverZoneBehind={hoverZoneBehind}
-            icon="jam:write"
-            href="/blog"
-            textColor={textColor}
-          >
-            Blog
-          </NavLink>
-          <NavLink
-            hoverZoneBehind={hoverZoneBehind}
-            icon="lucide:instagram"
-            href="/instagram"
-            textColor={textColor}
-          >
-            Instagram
-          </NavLink>
-          <NavLink
-            hoverZoneBehind={hoverZoneBehind}
-            icon="la:strava"
-            href="/strava"
-            chip="70.3"
-            chipIcon="mdot"
-            textColor={textColor}
-          >
-            Strava
-          </NavLink>
-        </div>
+
         <!-- <div class="navSection">
             <p>Content</p>
             <NavLink hoverZoneBehind={hoverZoneBehind}} icon="ic:round-candlestick-chart" href="/quant">
@@ -176,6 +168,15 @@ const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
           </div> -->
         <div class="navSection">
           <p>Connect</p>
+          <NavLink
+            hoverZoneBehind={hoverZoneBehind}
+            icon="la:strava"
+            href="/strava"
+            chip="IM 70.3"
+            textColor={textColor}
+          >
+            Strava
+          </NavLink>
           <NavLink
             class="email"
             hoverZoneBehind={hoverZoneBehind}
@@ -202,6 +203,14 @@ const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
             textColor={textColor}
           >
             LinkedIn
+          </NavLink>
+          <NavLink
+            hoverZoneBehind={hoverZoneBehind}
+            icon="lucide:instagram"
+            href="/instagram"
+            textColor={textColor}
+          >
+            Instagram
           </NavLink>
         </div>
         {
