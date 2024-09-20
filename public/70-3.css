@@ -1,0 +1,16 @@
+li > ul {
+  list-style: none;
+  padding-left: 0 !important;
+}
+
+li p {
+  color: black !important;
+  font-weight: 700;
+}
+
+li > ul > li {
+  padding-left: 0 !important;
+  /* color: #999 !important; */
+  font-weight: 400 !important;
+  margin-top: -0.3em;
+}

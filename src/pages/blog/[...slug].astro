@@ -55,7 +55,7 @@ export async function getStaticPaths() {
       ("prev" in updated.props && !updated.props.prev) ||
       ("next" in updated.props && !updated.props.next)
     ) {
-      throw Exception("prev or next is not correct for slug " + slug);
+      throw Error("prev or next is not correct for slug " + slug);
     }
     return updated;
   });
@@ -94,7 +94,7 @@ const { title, description, date, image, author } = frontmatter;
       article: {
         publishedTime: date.toISOString(),
         modifiedTime: date.toISOString(),
-        author: author.split(","),
+        authors: author.split(","),
       },
       image: {
         type: "image/" + image.split(".").pop(),
