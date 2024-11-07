@@ -1021,8 +1021,6 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   }
 
   .pageContent :global(table) {
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    border-radius: 6px;
     border-spacing: 0;
   }
 
@@ -1030,6 +1028,12 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     overflow-x: scroll;
     width: auto;
     max-width: 100%;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+  }
+
+  .pageContent :global(td:empty) {
+    display: none;
   }
 
   .pageContent :global(th),
@@ -1042,7 +1046,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     background: rgba(0, 0, 0, 0.04);
   }
 
-  .pageContent :global(td:not(:last-child)) {
-    border-right: 2px solid rgba(0, 0, 0, 0.2);
+  .pageContent :global(td:not(:first-child)) {
+    border-left: 2px solid rgba(0, 0, 0, 0.2);
   }
 </style>
