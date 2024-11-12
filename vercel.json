@@ -2,20 +2,5 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm config set registry http://registry.npmjs.org && npm install",
-  "outputDirectory": "dist",
-  "functions": {
-    "api/photo/*.js": {
-      "includeFiles": "/photo/**/*.html"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/photo/map/:path",
-      "destination": "/api/photo/:path?map=true"
-    },
-    {
-      "source": "/photo/:path",
-      "destination": "/api/photo/:path"
-    }
-  ]
+  "outputDirectory": "dist"
 }

@@ -1,4 +1,5 @@
 ---
+// @ts-nocheck
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import Toggle from "../../components/Toggle/index.astro";
 import { Img } from "astro-imagetools/components";
@@ -15,6 +16,8 @@ import { writeFileSync } from "fs";
 // console.log("exiftool", exiftoolJson["DSC05014.jpg"]);
 
 const initialMode = Astro.props.initialMode || "gallery";
+const initialImage = Astro.props.initialImag;
+console.log("initial image", initialImage);
 
 // const images = await Astro.glob("./portfolio/*").then((files) => {
 //   console.log("files", files);
@@ -50,7 +53,6 @@ function applyRenamings(str, renamings) {
   if (!str) {
     return str;
   }
-  // console.log("str is", str);
   for (const [key, value] of Object.entries(renamings)) {
     if (!value) {
       return undefined;
@@ -59,10 +61,6 @@ function applyRenamings(str, renamings) {
   }
   return str;
 }
-
-const ogWidth = 1000;
-
-const ogThumbs = {};
 
 const glob = await import.meta.glob("/photo-portfolio/portfolio2k/*");
 const images = {};
@@ -77,22 +75,9 @@ await Promise.all(
       icc: true,
       jfif: true,
     });
-    const name = path.split("/").pop()?.split(".")[0];
+    const name = path.split("/").pop()?.split(".")[0] as string;
     // const cleanName = decodeURIComponent(name.replaceAll("--", "%"));
     const { width, height } = await sizeOf("." + path);
-
-    let { link, style, img } = await renderImg({
-      src: path,
-      breakpoints: [ogWidth],
-      format: "webp",
-      alt: "",
-      quality: 50,
-    });
-
-    ogThumbs[name] = img
-      .split('srcset="')[1]
-      .split('"')[0]
-      .replace("/_astro/", "");
 
     let im2 = await renderImg({
       src: path,
@@ -138,22 +123,8 @@ await Promise.all(
           : {}
       ),
     };
-    // console.log(
-    //   "decode",
-    //   exif.makerNote,
-    //   "to",
-    //   String.fromCharCode.apply(null, exif.makerNote)
-    // );
-    // console.log("exif", exif, extracted);
     images[name] = extracted;
   })
-);
-
-// write ogThumbs to json file
-// const fs = require("fs");
-writeFileSync(
-  "api/photo/.thumbs.js",
-  `export default ${JSON.stringify(ogThumbs)}`
 );
 
 let minLat = Infinity;
@@ -161,19 +132,27 @@ let maxLat = -Infinity;
 let minLng = Infinity;
 let maxLng = -Infinity;
 
-for (const [name, image] of Object.entries(images)) {
-  if (image.latitude) {
-    minLat = Math.min(minLat, image.latitude);
-    maxLat = Math.max(maxLat, image.latitude);
-    minLng = Math.min(minLng, image.longitude);
-    maxLng = Math.max(maxLng, image.longitude);
-    image.neighbor = Infinity;
-    for (const [name2, image2] of Object.entries(images)) {
-      if (image2.latitude && name != name2) {
-        const dx = image2.longitude - image.longitude;
-        const dy = image2.latitude - image.latitude;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        image.neighbor = Math.min(image.neighbor, dist);
+for (let [name, image] of Object.entries(images) as [string, Object][]) {
+  if ("latitude" in image && "longitude" in image && "neighbor" in image) {
+    if (image.latitude) {
+      minLat = Math.min(minLat, image.latitude);
+      maxLat = Math.max(maxLat, image.latitude);
+      minLng = Math.min(minLng, image.longitude);
+      maxLng = Math.max(maxLng, image.longitude);
+      image.neighbor = Infinity;
+      for (const [name2, image2] of Object.entries(images)) {
+        if (
+          "latitude" in image2 &&
+          "longitude" in image2 &&
+          "neighbor" in image2
+        ) {
+          if (image2.latitude && name != name2) {
+            const dx = image2.longitude - image.longitude;
+            const dy = image2.latitude - image.latitude;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            image.neighbor = Math.min(image.neighbor, dist);
+          }
+        }
       }
     }
   }
@@ -202,6 +181,7 @@ const description =
   hoverZoneBehind
   title={title}
   description={description}
+  image={Astro.props.image}
 >
   <h1>Photography</h1>
   <p>
