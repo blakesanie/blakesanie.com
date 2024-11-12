@@ -1,0 +1,40 @@
+---
+import PhotographyPage from "./index.astro";
+
+export async function getStaticPaths() {
+  const glob = await import.meta.glob("/photo-portfolio/portfolio2k/*");
+  return (
+    await Promise.all(
+      Object.keys(glob).map(async (path) => {
+        const name = path.split("/").pop()?.split(".")[0] as string;
+        return [
+          {
+            params: {
+              slug: name,
+            },
+            props: {
+              image: path,
+            },
+          },
+          {
+            params: {
+              slug: "map/" + name,
+            },
+            props: {
+              image: path,
+              initialMode: "map",
+            },
+          },
+        ];
+      })
+    )
+  ).flat();
+}
+const imageName = decodeURIComponent(Astro.params.slug.replaceAll("--", "%"));
+---
+
+<PhotographyPage
+  image={Astro.props.image}
+  imageName={imageName}
+  initialMode={Astro.props.initialMode}
+/>
