@@ -30,7 +30,9 @@ export async function getStaticPaths() {
     )
   ).flat();
 }
-const imageName = decodeURIComponent(Astro.params.slug.replaceAll("--", "%"));
+const imageName = decodeURIComponent(
+  Astro.params.slug.replaceAll("--", "%")
+).replaceAll("map/", "");
 ---
 
 <PhotographyPage
