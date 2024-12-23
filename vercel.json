@@ -2,5 +2,27 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm config set registry http://registry.npmjs.org && npm install",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/blog/70-3",
+      "destination": "https://blakesanie.substack.com/p/ironman-703-so-much-to-learn"
+    },
+    {
+      "source": "/blog/Aero/breakdown",
+      "destination": "https://blakesanie.substack.com/p/aero-virtual-cycling-wind-tunnel"
+    },
+    {
+      "source": "/blog/fantasy-football-system-design",
+      "destination": "https://blakesanie.substack.com/p/fantasy-football-system-design"
+    },
+    {
+      "source": "/blog/bubble-ui",
+      "destination": "https://blakesanie.substack.com/p/deconstructing-the-iconic-apple-watch"
+    },
+    {
+      "source": "/blog/qwerty",
+      "destination": "https://blakesanie.substack.com/p/generating-optimal-keyboard-layouts"
+    }
+  ]
 }

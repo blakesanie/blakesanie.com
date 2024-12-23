@@ -107,9 +107,19 @@
     "short": "Deploy",
     "title": "Deployments on Vercel"
   },
-  "newsletter": {
+  "axioms": {
     "href": "https://axiomsofascent.substack.com/subscribe",
     "short": "Newsletter",
     "title": "Axioms of Ascent newsletter"
+  },
+  "blog": {
+    "href": "https://blakesanie.substack.com/subscribe",
+    "short": "Blog",
+    "title": "Blog"
+  },
+  "newsletter": {
+    "href": "https://blakesanie.substack.com/subscribe",
+    "short": "Blog",
+    "title": "Blog"
   }
 }
