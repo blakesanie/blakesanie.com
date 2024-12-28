@@ -115,16 +115,16 @@
   "blog": {
     "href": "https://blakesanie.substack.com/subscribe",
     "short": "Blog",
-    "title": "Blog"
+    "title": "Blake Sanie's Blog"
   },
   "newsletter": {
     "href": "https://blakesanie.substack.com/subscribe",
-    "short": "Blog",
-    "title": "Blog"
+    "short": "Newsletter",
+    "title": "Blake Sanie's Newsletter"
   },
   "substack": {
     "href": "https://blakesanie.substack.com/subscribe",
-    "short": "Blog",
-    "title": "Blog"
+    "short": "Substack",
+    "title": "Blake Sanie's Substack"
   }
 }
