@@ -188,10 +188,10 @@ const description =
 >
   <h1>Photography</h1>
   <p>
-    My enthusiasm for capturing photographs lends me a creative release from my
-    logical, algorithmic side. It also enables me to truly admire the
-    compositional beauty in front of my eyes every day, from San Francisco, to
-    Venice, to my own backyard.
+    Photography offers me a creative escape from my logical, algorithmic side,
+    allowing me to see the world with fresh eyes. From the vibrant streets of
+    San Francisco to the timeless charm of Venice - even the familiar beauty of
+    my own backyard - I find endless inspiration in the compositions around me.
   </p>
   <Toggle
     actions={[
@@ -207,7 +207,7 @@ const description =
     defaultAction={initialMode == "gallery" ? "galleryButton" : "mapButton"}
     id="photoToggle"
   />
-  <div id="advancedLabel">AI search via Zero-Shot Image Classification</div>
+  <div id="advancedLabel">Search with OpenAI CLIP Zero-Shot Classification</div>
   <div id="AISearch" class="minimized">
     <input
       type="text"
@@ -1818,7 +1818,7 @@ const description =
     advancedLabel.addEventListener("click", () => {
       if (advancedOpen) {
         advancedLabel.innerHTML =
-          "AI search via Zero-Shot Image Classification";
+          "Search with OpenAI CLIP Zero-Shot Classification";
         AISearch.classList.add("minimized");
       } else {
         advancedLabel.innerHTML = "Close AI image search";
@@ -1842,7 +1842,7 @@ const description =
         }),
         import("https://deno.land/x/clip_bpe@v0.0.6/mod.js"),
         // restore below line to fetch("/assets/imageEmbeddings(no number).jsonjson"),
-        fetch("/assets/imageEmbeddings.json"),
+        fetch("/assets/imageEmbeddings_1.json"),
       ]);
       modelSession = session;
       tokenizer = new Tokenizer.default();
