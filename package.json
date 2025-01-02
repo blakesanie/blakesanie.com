@@ -8,7 +8,8 @@
     "build": "rm -rf photo-portfolio && git clone --depth=1 https://${PORTFOLIO_PAT}:@github.com/blakesanie/photo-portfolio.git && mv photo-portfolio/imageEmbeddings.json public/assets/imageEmbeddings.json && python src/tooling/randomize_embeddings_file.py && astro build",
     "build-local": "cp photo-portfolio/imageEmbeddings.json public/assets/imageEmbeddings.json && python src/tooling/randomize_embeddings_file.py && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "dev-vercel": "vercel dev"
   },
   "dependencies": {
     "@astrojs/mdx": "^0.19.4",
