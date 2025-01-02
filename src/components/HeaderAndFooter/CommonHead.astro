@@ -5,6 +5,7 @@ import { renderImg } from "astro-imagetools/api";
 import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
 import fs from "fs";
+import RemoveLogs from "../basic/RemoveLogs.astro";
 Astro.props.fontUrl =
   Astro.props.fontUrl ||
   "https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&display=swap";
@@ -223,6 +224,7 @@ const description =
 ---
 
 <html lang="en">
+<RemoveLogs />
   <head>
     <!-- <meta charset="utf-8" /> -->
     <!-- <meta viewport="width=device-width, initial-scale=1" /> -->

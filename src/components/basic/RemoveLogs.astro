@@ -1,0 +1,20 @@
+---
+const prod = import.meta.env.MODE === 'production';
+---
+{prod ? (
+<script>
+    window.originalConsoleLog = console.log;
+    console.log = function () {
+        window.originalConsoleLog('wrapper')
+    };
+</script>
+    )
+    :
+    (<script>
+    window.originalConsoleLog = console.log;
+    console.log = function (...arguments) {
+        window.originalConsoleLog('dev log:')
+        window.originalConsoleLog(...arguments);
+        };
+        </script>)
+        }

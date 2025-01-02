@@ -256,7 +256,11 @@ const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
   >
     <slot />
   </main>
-  <footer></footer>
+  <footer>
+    <div>© Blake Sanie</div>
+    <a onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Top</a>
+    <a href="/">Easter Eggs</a>
+  </footer>
   <slot name="topLevel" />
   <!-- <Newsletter /> -->
 </CommonHead>
@@ -315,6 +319,18 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   }
   :global(button) {
     color: black;
+  }
+  footer {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0.5;
+    font-size: 0.8em;
+    padding: 1em;
+    gap: 1.4em;
+  }
+  footer a {
+    cursor: pointer;
   }
   header {
     background: var(--headerColor);
