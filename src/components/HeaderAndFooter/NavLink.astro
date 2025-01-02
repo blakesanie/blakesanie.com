@@ -1,7 +1,7 @@
 ---
 import { Icon } from "astro-icon";
 import HoverZone from "./HoverZone.astro";
-import redirects from "../../redirects.json";
+import SmartHref from "./SmartHref.astro";
 const { icon, chip, chipIcon, chipColor, href, id, hoverZoneBehind } =
   Astro.props;
 let [iconPack, iconName] = icon.split(":");
@@ -23,17 +23,13 @@ const active =
   path == route ||
   (path.startsWith("blog") && route.startsWith("blog")) ||
   Astro.props.active; // for nested urls: blog/.../.......
-// const firstRouteMatches =
-//   Astro.url.pathname.split("/")[1] == href.split("/")[1];
-const redirect = redirects[href.substring(1)];
-const redirectHref = redirect?.href;
-// console.log("redirect is", redirectHref);
+
 
 const { textColor } = Astro.props;
 ---
 
 <li class:list={[{ active: active }, Astro.props.class]}>
-  <a href={redirectHref || href} id={id}>
+  <SmartHref href={href} id={id}>
     <!-- <Icon icon={icon} class="icon" /> -->
     {active && hoverZoneBehind && <HoverZone />}
     <Icon pack={iconPack} name={iconName} />
@@ -57,14 +53,14 @@ const { textColor } = Astro.props;
       )
     }
     {active && !hoverZoneBehind && <HoverZone />}
-  </a>
+  </SmartHref>
 
   <style define:vars={{ chipColor: chipColor, textColor }}>
     li {
       list-style: none;
     }
 
-    a {
+    li > a {
       position: relative;
       display: flex;
       align-items: center;

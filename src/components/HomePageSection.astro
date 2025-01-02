@@ -2,6 +2,7 @@
 
 // @ts-ignore
 import { Img } from "astro-imagetools/components";
+import SmartHref from "./HeaderAndFooter/SmartHref.astro";
 interface LinkInterface {
   target: string;
   href: string;
@@ -39,9 +40,9 @@ const maxImageOpacity = 0.5;
       <div class="links">
         {links.map(({ target, href, label, ...props }) => {
           return (
-            <a href={href} target={target} class:list={[props.class, "link"]}>
+            <SmartHref href={href} target={target} class:list={[props.class, "link"]}>
               {label}
-            </a>
+            </SmartHref>
           );
         })}
       </div>

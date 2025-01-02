@@ -1,0 +1,11 @@
+---
+import redirects from "../../redirects.json";
+
+let {href} = Astro.props;
+const key = href.substring(1) as string
+const fullHref = redirects[key]?.href;
+console.log('href', href, 'fullHref', fullHref)
+---
+<a href={ fullHref || href} {...Astro.props}>
+    <slot />
+</a>
