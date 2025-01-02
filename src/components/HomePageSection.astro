@@ -51,6 +51,21 @@ const maxImageOpacity = 0.5;
   <slot />
 </div>
 
+<style is:global>
+  main {
+    margin-left: 0 !important;
+  }
+  header::before {
+    content: "";
+    position: fixed;
+    width: var(--headerWidth);
+    height: 100%;
+    top:0;
+    left: 0;
+    backdrop-filter: blur(5px);
+  }
+</style>
+
 <style>
   .section {
     position: relative;
@@ -63,6 +78,12 @@ const maxImageOpacity = 0.5;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    padding-left: var(--headerWidth);
+  }
+  @media screen and (max-width:800px) {
+    .section {
+      padding-left: 0;
+    }
   }
   :global(.bg) {
     position: absolute;

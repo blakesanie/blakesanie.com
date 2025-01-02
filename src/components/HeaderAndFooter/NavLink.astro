@@ -58,11 +58,13 @@ const { textColor } = Astro.props;
   <style define:vars={{ chipColor: chipColor, textColor }}>
     li {
       list-style: none;
+      display: flex;
     }
 
     li > a {
       position: relative;
       display: flex;
+      gap: 0.6em;
       align-items: center;
       padding: 0 calc(var(--navPadding) * 2);
       font-size: 1em;
@@ -107,15 +109,15 @@ const { textColor } = Astro.props;
       max-width: 1.2em;
       min-height: 1.2em;
       max-height: 1.2em;
-      margin-right: 0.6em;
-      color: --var(textColor);
+      //margin-right: 0.6em;
+      color: var(--textColor);
       opacity: 0.5;
       /* OR */
       /* fill: blue; */
     }
 
     .navChip svg {
-      fill: --var(textColor);
+      fill: var(--textColor);
     }
 
     .navChip [astro-icon] {

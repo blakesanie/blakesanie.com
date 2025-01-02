@@ -30,6 +30,9 @@ const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
 
 <CommonHead {...Astro.props} bodyClasslist={[{ isHome: isHome }]}>
   <header class:list={[{ darkText: textColor == "black" }]}>
+    <!--<div>-->
+    <!--<img src="https://i.scdn.co/image/ab67616d00001e02a84994855921f317b6ce0096" width="400">-->
+    <!--</div>-->
     <svg
       id="hamburger"
       xmlns="http://www.w3.org/2000/svg"
@@ -296,7 +299,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       headerColor,
       headerColorOpaque,
       mobileMaxWidth: mobileMaxWidth + "px",
-      navPadding: navPadding + "em",
+      navPadding: navPadding + "rem",
       textColor,
     }}
 >
@@ -319,7 +322,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     width: var(--headerWidth);
     height: 100vh;
     /* overflow: hidden; */
-    overflow-x: hidden;
+    //overflow-x: hidden;
     color: var(--textColor);
     display: flex;
     flex-direction: column;
@@ -367,6 +370,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     /* z-index: -10; */
   }
   #logo {
+    z-index: 1;
     font-size: 1.3em;
     font-weight: 500;
     display: flex;
@@ -434,12 +438,15 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     flex-direction: column;
     /* border: 1px solid red; */
   }
+  .navSection :global(a) {
+    width: 100%;
+  }
   .navSection p {
     font-size: 0.8em;
     opacity: 0.8;
     font-weight: 600;
     margin-bottom: 0.5em;
-    padding-left: calc(var(--navPadding) * 2);
+    padding: 0 calc(var(--navPadding) * 2);
     display: flex;
     align-items: center;
     /* align-items: center; */
@@ -540,9 +547,12 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       height: var(--headerHeight);
       /* margin-top: calc(-1 * var(--mobileHeaderHeight)); */
       top: 0;
-      backdrop-filter: blur(6px);
       overflow: hidden;
       /* overflow: visible; */
+      backdrop-filter: blur(6px);
+    }
+    header::before {
+      display: none;
     }
     header.expanded {
       overflow-y: scroll;
@@ -585,7 +595,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       padding: 0 0.3em;
     }
     nav {
-      --navPadding: 0.4em;
+      --navPadding: 0.4rem;
       padding: 0 0.5em;
     }
     nav ul {
@@ -595,9 +605,6 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     }
     nav ul > * {
       /* min-width: 140px; */
-    }
-    .navSection {
-      /* align-items: center; */
     }
     #below {
       display: none;
@@ -621,13 +628,34 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       margin-top: 0;
     }
     nav ul {
-      flex-direction: column;
+      //flex-direction: column;
       /* padding-left: 1em; */
       max-width: 300px;
       margin-left: auto;
       margin-right: auto;
     }
     .navSection {
+      width: 50%;
+    }
+    .navSection :global(a){
+      width: auto;
+    }
+    .navSection:nth-of-type(2n+1) p {
+      justify-content: right;
+    }
+    .navSection:nth-of-type(2n+1) :global(li), .navSection:nth-of-type(2n+1) :global(a) {
+      flex-direction: row-reverse;
+      //color: red;
+    }
+    .navSection:nth-of-type(2n+1) * {
+      text-align: right;
+      //color: red;
+    }
+    :global(#nowPlayingSection *) {
+      text-align: center !important;
+      justify-content: center !important;
+    }
+    :global(#nowPlayingSection) {
       width: 100%;
     }
     #hamburger {
