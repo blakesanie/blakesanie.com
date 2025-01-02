@@ -7,7 +7,7 @@ const { shadowColor, textColor } = Astro.props;
 <a id="nowPlaying" target="_blank">
   <img class="loading" id="albumCover" />
   <div class="right">
-    <div id="songTitle" class="loading">sont tile</div>
+    <div id="songTitle" class="loading">song tile</div>
     <div id="songArtist" class="loading">song artist</div>
     <div id="songAlbum" class="loading">song album</div>
   </div>
@@ -35,10 +35,11 @@ const { shadowColor, textColor } = Astro.props;
   #nowPlaying {
     display: flex;
     padding: 0.5em var(--navPadding);
+      padding-bottom: 0;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    cursor: ;
+    cursor: pointer;
   }
   @keyframes placeHolderShimmer {
     0% {
@@ -85,14 +86,14 @@ const { shadowColor, textColor } = Astro.props;
     padding: 0.4em 0;
     margin: 0 0.2em;
     width: 100%;
-    min-width: 150px;
+    //min-width: 100px;
     z-index: 3;
   }
   .right > div {
     margin: 0.2em 0;
   }
   .right > div.loading {
-    width: 150px;
+    width: 100%;
   }
   #songTitle {
     font-size: 1em;
@@ -193,4 +194,24 @@ const { shadowColor, textColor } = Astro.props;
   }
 
   startInterval();
+
+  const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+          const belowEl = document.getElementById("below").children[0] as HTMLElement;
+          console.log(entry)
+          if (entry.isIntersecting) {
+              belowEl.style.display = "none";
+            } else {
+              belowEl.style.display = "flex";
+            }
+          });
+  }, {
+      // Offset to trigger the callback 20px *after* the element is in full view
+      rootMargin: '-100px 0px -100px 0px' // Top offset of 20px
+  })
+
+  const targetElement = document.getElementById("albumCover");
+  observer.observe(targetElement);
+
+
 </script>
