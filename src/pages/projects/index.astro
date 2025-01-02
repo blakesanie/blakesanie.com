@@ -653,39 +653,6 @@ const projects: ProjectInterface[] = [
   </div>
 </HeaderAndFooter>
 
-<script>
-  const techIcons = document.querySelectorAll(".tech svg");
-
-  for (let i = 0; i < techIcons.length; i++) {
-    function showTech(e) {
-      const target = e.target;
-      if (target) {
-        const attr = target.getAttribute("tech");
-        const selected = target.parentNode?.querySelector(".selectedTech");
-        if (attr && selected) {
-          selected.innerHTML = attr;
-        }
-      }
-    }
-    techIcons[i].addEventListener("mouseenter", showTech);
-    techIcons[i].addEventListener("click", showTech);
-  }
-
-  const containers = document.querySelectorAll(".tech");
-  for (let i = 0; i < containers.length; i++) {
-    const container = containers[i];
-    container.addEventListener("mouseleave", (e) => {
-      const target = e.target;
-      if (target) {
-        const selected = target.querySelector(".selectedTech");
-        if (selected) {
-          selected.innerHTML = "";
-        }
-      }
-    });
-  }
-</script>
-
 <style>
   .project {
     padding: 1em 1.25em;
@@ -792,3 +759,36 @@ const projects: ProjectInterface[] = [
     margin: 0.5em;
   }
 </style>
+
+<script>
+  const techIcons = document.querySelectorAll(".tech svg");
+
+  for (let i = 0; i < techIcons.length; i++) {
+    function showTech(e) {
+      const target = e.target;
+      if (target) {
+        const attr = target.getAttribute("tech");
+        const selected = target.parentNode?.querySelector(".selectedTech");
+        if (attr && selected) {
+          selected.innerHTML = attr;
+        }
+      }
+    }
+    techIcons[i].addEventListener("mouseenter", showTech);
+    techIcons[i].addEventListener("click", showTech);
+  }
+
+  const containers = document.querySelectorAll(".tech");
+  for (let i = 0; i < containers.length; i++) {
+    const container = containers[i];
+    container.addEventListener("mouseleave", (e) => {
+      const target = e.target as HTMLElement;
+      if (target) {
+        const selected = target.querySelector(".selectedTech");
+        if (selected) {
+          selected.innerHTML = "";
+        }
+      }
+    });
+  }
+</script>

@@ -151,75 +151,6 @@ const markupData = [
   )
 }
 
-<script>
-  import Typed from "typed.js";
-
-  const typedElement = document.getElementById("typedContainer");
-  const h1 = document.querySelector("h1");
-
-  setTimeout(() => {
-    const typed = new Typed("#typed", {
-      strings: ["^500 Scroll to learn more..."],
-      typeSpeed: 50,
-      backSpeed: 40,
-      backDelay: 1500,
-      loop: true,
-    });
-  }, 2000);
-
-  const sections = document.querySelectorAll<HTMLElement>(
-    ".sectionTransitionParent"
-  );
-
-  function handleScroll() {
-    const screenCenter = window.scrollY + window.innerHeight / 2;
-    let sectionHeight = sections[0].offsetHeight;
-    const rate = sectionHeight * 0.15;
-    sections.forEach((section, i) => {
-      const sectionCenter = section.offsetTop + section.offsetHeight / 2;
-      let effectiveScreenCenter = screenCenter;
-      if (sectionCenter < window.innerHeight / 2) {
-        // handles proper interpolation when top sections do not span window height, so the peak opacity is before the window center
-        effectiveScreenCenter =
-          screenCenter - (window.innerHeight / 2 - sectionHeight / 2);
-      }
-      const distUnder =
-        document.body.scrollHeight - section.offsetTop - section.offsetHeight;
-      const bestScreenCenter =
-        window.scrollY +
-        window.innerHeight -
-        section.offsetHeight / 2 -
-        distUnder;
-      const dist =
-        sectionCenter - Math.max(bestScreenCenter, effectiveScreenCenter);
-      let diff = dist / sectionHeight;
-      const bg = section.querySelector<HTMLElement>(".bg");
-      const children = section.childNodes;
-      if (bg) {
-        bg.style.opacity = 0.05 + 0.55 * (1 - Math.abs(diff)) + "";
-      }
-      if (i == 0 && h1 && typedElement) {
-        h1.style.transform = `translateY(${1.4 * diff * rate}px)`;
-        typedElement.style.transform = `translateY(${0.7 * diff * rate}px)`;
-      } else {
-        for (let j = 0; j < children.length; j++) {
-          const child = children[j];
-          if (!(child instanceof HTMLElement)) {
-            continue;
-          }
-          if (!child.classList.contains("bg")) {
-            child.style.transform = `translateY(${diff * rate}px)`;
-          }
-        }
-      }
-    });
-  }
-
-  window.addEventListener("scroll", handleScroll);
-
-  handleScroll();
-</script>
-
 <style>
   html {
     color-scheme: only dark;
@@ -305,3 +236,73 @@ const markupData = [
     }
   }
 </style>
+
+<script>
+  import Typed from "typed.js";
+
+  const typedElement = document.getElementById("typedContainer");
+  const h1 = document.querySelector("h1");
+
+  setTimeout(() => {
+    const typed = new Typed("#typed", {
+      strings: ["^500 Scroll to learn more..."],
+      typeSpeed: 50,
+      backSpeed: 40,
+      backDelay: 1500,
+      loop: true,
+    });
+  }, 2000);
+
+  const sections = document.querySelectorAll<HTMLElement>(
+    ".sectionTransitionParent"
+  );
+
+  function handleScroll() {
+    const screenCenter = window.scrollY + window.innerHeight / 2;
+    let sectionHeight = sections[0].offsetHeight;
+    const rate = sectionHeight * 0.15;
+    sections.forEach((section, i) => {
+      const sectionCenter = section.offsetTop + section.offsetHeight / 2;
+      let effectiveScreenCenter = screenCenter;
+      if (sectionCenter < window.innerHeight / 2) {
+        // handles proper interpolation when top sections do not span window height, so the peak opacity is before the window center
+        effectiveScreenCenter =
+          screenCenter - (window.innerHeight / 2 - sectionHeight / 2);
+      }
+      const distUnder =
+        document.body.scrollHeight - section.offsetTop - section.offsetHeight;
+      const bestScreenCenter =
+        window.scrollY +
+        window.innerHeight -
+        section.offsetHeight / 2 -
+        distUnder;
+      const dist =
+        sectionCenter - Math.max(bestScreenCenter, effectiveScreenCenter);
+      let diff = dist / sectionHeight;
+      const bg = section.querySelector<HTMLElement>(".bg");
+      const children = section.childNodes;
+      if (bg) {
+        bg.style.opacity = 0.05 + 0.55 * (1 - Math.abs(diff)) + "";
+      }
+      if (i == 0 && h1 && typedElement) {
+        h1.style.transform = `translateY(${1.4 * diff * rate}px)`;
+        typedElement.style.transform = `translateY(${0.7 * diff * rate}px)`;
+      } else {
+        for (let j = 0; j < children.length; j++) {
+          const child = children[j];
+          if (!(child instanceof HTMLElement)) {
+            continue;
+          }
+          if (!child.classList.contains("bg")) {
+            child.style.transform = `translateY(${diff * rate}px)`;
+          }
+        }
+      }
+    });
+  }
+
+  window.addEventListener("scroll", handleScroll);
+
+  handleScroll();
+</script>
+
