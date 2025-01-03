@@ -94,7 +94,7 @@ async function processLink({ link, image, date, title }) {
   };
 }
 const press = await Promise.all(links.map((link) => processLink(link)));
-console.log(press);
+// console.log(press);
 // const f1 = await fetch(links[0]);
 // console.log("f1", await f1.text());
 ---

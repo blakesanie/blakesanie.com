@@ -312,6 +312,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     font-weight: 500;
     max-width: 100%;
     overflow-x: hidden;
+    position: relative;
   }
   :global(*) {
     font-family: "Assistant", sans-serif;
@@ -328,6 +329,10 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     font-size: 0.8em;
     padding: 1em;
     gap: 1.4em;
+    left: var(--headerWidth);
+    position: absolute;
+    bottom: 0;
+    width: calc(100% - var(--headerWidth));
   }
   footer a {
     cursor: pointer;
@@ -556,6 +561,10 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   }
 
   @media screen and (max-width: 800px) {
+    footer {
+      left: 0;
+      width: 100%;
+    }
     header {
       width: 100%;
       padding: 0.7em 0;

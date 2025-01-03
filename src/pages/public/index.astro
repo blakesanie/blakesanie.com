@@ -4,7 +4,7 @@ import fs from "fs";
 import RecursiveAnchor from "../../components/RecursiveAnchor.astro";
 
 const files = await glob("public/**/*");
-console.log(files);
+// console.log(files);
 
 const tree = {};
 
@@ -25,7 +25,7 @@ for (let file of files) {
   }
   subtree[parts[parts.length - 1]] = "/" + file;
 }
-console.log("tree", tree);
+// console.log("tree", tree);
 ---
 
 <html>

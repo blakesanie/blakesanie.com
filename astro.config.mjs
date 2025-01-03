@@ -6,15 +6,13 @@ import mdx from "@astrojs/mdx";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 // import vercelStatic from "@astrojs/vercel/static";
-
 // https://astro.build/config
 // export default defineConfig({});
-
 // export default {
 //   integrations: [astroImageTools],
 // };
-
 import redirects from "/src/redirects.json";
+
 const noSitemap = new Set(Object.keys(redirects));
 // so not in sitemap
 noSitemap.add("chicago");
@@ -58,33 +56,33 @@ export default defineConfig({
       CSS: true,
       HTML: {
         "html-minifier-terser": {
-          removeAttributeQuotes: true,
-          collapseBooleanAttributes: true,
-          decodeEntities: true,
-          minifyCSS: true,
-          minifyJS: true,
-          noNewlinesBeforeTagClose: true,
-          preventAttributesEscaping: true,
-          processConditionalComments: true,
-          removeComments: true,
-          removeEmptyAttributes: true,
-          removeRedundantAttributes: true,
-          removeScriptTypeAttributes: true,
-          removeStyleLinkTypeAttributes: true,
-          useShortDoctype: true
-        }
-      },
-    JavaScript: {
-      terser: {
-        compress: {
-          drop_console: true,
-          keep_infinity: true,
-          unsafe_math: true,
+          // removeAttributeQuotes: true,
+          // collapseBooleanAttributes: true,
+          // decodeEntities: true,
+          // minifyCSS: true,
+          // minifyJS: true,
+          // noNewlinesBeforeTagClose: true,
+          // preventAttributesEscaping: true,
+          // processConditionalComments: true,
+          // removeComments: true,
+          // removeEmptyAttributes: true,
+          // removeRedundantAttributes: true,
+          // removeScriptTypeAttributes: true,
+          // removeStyleLinkTypeAttributes: true,
+          // useShortDoctype: true,
         },
-        toplevel: true,
-        ecma: 2020
-      }
-    },
+      },
+      JavaScript: {
+        terser: {
+          compress: {
+            // drop_console: true,
+            // keep_infinity: true,
+            // unsafe_math: true,
+          },
+          // toplevel: true,
+          // ecma: 2020
+        },
+      },
       SVG: true,
       Image: false,
     }),

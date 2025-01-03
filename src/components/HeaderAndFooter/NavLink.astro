@@ -6,9 +6,9 @@ const { icon, chip, chipIcon, chipColor, href, id, hoverZoneBehind } =
   Astro.props;
 let [iconPack, iconName] = icon.split(":");
 let [chipPack, chipName] = chipIcon ? chipIcon.split(":") : [0, 0];
-if (chipIcon && chipIcon.includes("70.3")) {
-  console.log(chipPack, chipName);
-}
+// if (chipIcon && chipIcon.includes("70.3")) {
+//   console.log(chipPack, chipName);
+// }
 let path = Astro.url.pathname.substring(1).split("?")[0];
 if (path.charAt(path.length - 1) == "/") {
   path = path.substring(0, path.length - 1);
