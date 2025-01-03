@@ -257,9 +257,11 @@ const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
     <slot />
   </main>
   <footer>
+    <div>
     <div>© Blake Sanie</div>
     <a onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Top</a>
     <a href="/">Easter Eggs</a>
+    </div>
   </footer>
   <slot name="topLevel" />
   <!-- <Newsletter /> -->
@@ -322,6 +324,11 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     color: black;
   }
   footer {
+    width: calc(100% - var(--headerWidth));
+    padding-left: var(--headerWidth);
+  }
+
+  footer > div {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -329,10 +336,9 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     font-size: 0.8em;
     padding: 1em;
     gap: 1.4em;
-    left: var(--headerWidth);
-    position: absolute;
+    position: relative;
     bottom: 0;
-    width: calc(100% - var(--headerWidth));
+    width: 100%;
   }
   footer a {
     cursor: pointer;
@@ -562,7 +568,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
 
   @media screen and (max-width: 800px) {
     footer {
-      left: 0;
+      padding-left: 0;
       width: 100%;
     }
     header {
@@ -1061,8 +1067,10 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   };
   window.addEventListener("scroll", () => {
     if (window.innerWidth > mobileMaxWidth) {
+      console.log('window.innerWidth > mobileMaxWidth')
       return;
     }
+    debugger
     const currentScroll = window.scrollY;
     const timestamp = new Date();
     const scrollVelocity =
