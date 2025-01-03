@@ -47,16 +47,46 @@ export default defineConfig({
       gfm: true,
     }),
     astroImageTools,
-    compress({
-      img: false,
-      Image: false,
-    }),
     sitemap({
       filter(page) {
         const routeFirst = page.split("/")[0];
         if (noSitemap.has(routeFirst)) return false;
         return true;
       },
+    }),
+    compress({
+      CSS: true,
+      HTML: {
+        "html-minifier-terser": {
+          removeAttributeQuotes: true,
+          collapseBooleanAttributes: true,
+          decodeEntities: true,
+          minifyCSS: true,
+          minifyJS: true,
+          noNewlinesBeforeTagClose: true,
+          preventAttributesEscaping: true,
+          processConditionalComments: true,
+          removeComments: true,
+          removeEmptyAttributes: true,
+          removeRedundantAttributes: true,
+          removeScriptTypeAttributes: true,
+          removeStyleLinkTypeAttributes: true,
+          useShortDoctype: true
+        }
+      },
+    JavaScript: {
+      terser: {
+        compress: {
+          drop_console: true,
+          keep_infinity: true,
+          unsafe_math: true,
+        },
+        toplevel: true,
+        ecma: 2020
+      }
+    },
+      SVG: true,
+      Image: false,
     }),
   ],
 });

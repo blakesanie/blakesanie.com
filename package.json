@@ -50,6 +50,7 @@
     "remark-math": "^5.1.1",
     "sass": "^1.69.7",
     "satori": "^0.10.11",
+    "terser": "^5.37.0",
     "tsparticles": "^2.9.3",
     "typed.js": "^2.0.16",
     "vercel": "^29.4.0",
