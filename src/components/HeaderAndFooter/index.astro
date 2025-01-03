@@ -8,6 +8,7 @@ import Icon from "astro-icon";
 import NavLink from "./NavLink.astro";
 import NowPlaying from "./NowPlaying.astro";
 import SoundBars from "./SoundBars.astro";
+import {HeaderVars} from "./shared";
 // import Newsletter from "../Newsletter/index.astro";
 const mobileMaxWidth = 800; // still manually declared in media query declaration
 const headerWidth = 130;
@@ -26,7 +27,7 @@ const { allowMainStyles, noContentPadding, hideSpotify } = Astro.props;
 const hoverZoneBehind = isHome; // || Astro.props.hoverZoneBehind;
 
 // console.log("title, desc", title, description, "props", Astro.props)
-const headerVars = {
+const headerVars: HeaderVars = {
   mobileHeaderHeight: mobileHeaderHeight,
   headerHeightTransitionDuration,
   headerPositionTransitionDuration,
@@ -269,7 +270,6 @@ const headerVars = {
     <div>
     <div>© Blake Sanie</div>
     <a onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Top</a>
-    <a href="/">Easter Eggs</a>
     </div>
   </footer>
   <slot name="topLevel" />
@@ -323,6 +323,10 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     font-weight: 500;
     max-width: 100%;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100svh;
   }
   :global(*) {
     font-family: "Assistant", sans-serif;
@@ -333,7 +337,6 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   }
   footer {
     width: 100%;
-    padding-left: var(--headerWidth);
     position: relative;
   }
 
@@ -343,7 +346,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     flex-wrap: wrap;
     opacity: 0.5;
     font-size: 0.8em;
-    padding: 1em;
+    padding: 1em 1em 1em calc(1em + var(--headerWidth));
     gap: 1.4em;
     position: relative;
     bottom: 0;
@@ -576,9 +579,8 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   }
 
   @media screen and (max-width: 800px) {
-    footer {
-      padding-left: 0;
-      width: 100%;
+    footer > div {
+      padding: 1em;
     }
     header {
       width: 100%;
