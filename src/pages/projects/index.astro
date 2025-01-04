@@ -535,7 +535,10 @@ function toFragrment(str: string) {
         return (
             <div class="project" id={id || toFragrment(title)}>
             <div class="info">
-              <h2 class="title">{title}</h2>
+              <h2 class="title">{title}
+                <Icon name="ic:round-content-copy" class="copy"/>
+                <Icon name="ic:round-check" class="check"/>
+              </h2>
               <p class="desc">{description}</p>
               {tech && (
                 <div class="tech">
@@ -640,7 +643,8 @@ function toFragrment(str: string) {
   }
   .title {
     font-size: 1.4em;
-    cursor: alias;
+    display: flex;
+    align-items: center;
     /* margin-bottom: 0.6em; */
   }
   .desc {
@@ -653,7 +657,23 @@ function toFragrment(str: string) {
     justify-content: center;
     /* margin-top: 0.8em; */
   }
-  [astro-icon] {
+
+  .title [astro-icon] {
+    height: 0.9em;
+    color: #00000040;
+    margin-left: 0.2em;
+    cursor: pointer;
+  }
+
+  .title [astro-icon]:hover {
+    color: var(--headerColor);
+  }
+
+  .title .check {
+    display: none;
+  }
+
+  .tech [astro-icon] {
     /* width: 40px; */
     height: 1.8em;
     border-radius: 0.2em;
@@ -662,7 +682,7 @@ function toFragrment(str: string) {
     cursor: pointer;
   }
 
-  [astro-icon]:hover {
+  .tech [astro-icon]:hover {
     transform: scale(1.2);
   }
 
@@ -727,13 +747,34 @@ function toFragrment(str: string) {
     });
   }
 
-  const titles = document.querySelectorAll("h2.title");
-  for (let i = 0; i < titles.length; i++) {
-    const title = titles[i];
-    title.addEventListener("click", () => {
-      const id = title.parentElement.parentElement.id;
+
+  const copyIcons = {}
+  const checkIcons = {}
+
+  const titleIcons = document.querySelectorAll("h2 svg");
+  for (let i = 0; i < titleIcons.length; i++) {
+    const titleIcon = titleIcons[i] as HTMLElement;
+    const id = titleIcon.parentElement.parentElement.parentElement.id
+    if (titleIcon.classList.contains("check")) {
+      checkIcons[id] = titleIcon
+    } else {
+      copyIcons[id] = titleIcon
+    }
+    titleIcon.addEventListener("click", () => {
       const url = window.location.href.split('#')[0] + '#' + id
+      navigator.clipboard.writeText(url)
       history.pushState(null, null, url);
+      for (const id2 in copyIcons) {
+        if (id == id2) {
+          checkIcons[id].style.display = 'block'
+          copyIcons[id].style.display = 'none'
+        } else {
+          copyIcons[id2].style.display = "block";
+          checkIcons[id2].style.display = "none";
+        }
+      }
+      // checkIcons[id].style.display = 'block'
+      // titleIcon.style.display = 'none'
     })
   }
 
