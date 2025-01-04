@@ -1,10 +1,5 @@
 import { defineConfig } from "astro/config";
-import { astroImageTools } from "astro-imagetools";
 import compress from "astro-compress";
-import sitemap from "astro-sitemap";
-import mdx from "@astrojs/mdx";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
 // import vercelStatic from "@astrojs/vercel/static";
 // https://astro.build/config
 // export default defineConfig({});
@@ -60,11 +55,52 @@ export default defineConfig({
       },
     }),
     compress({
-      CSS: true,
-      HTML: true,
-      JavaScript: true,
+      CSS: {
+        csso: {
+          comments: false,
+          restructure: true,
+        },
+      },
+      HTML: {
+        "html-minifier-terser": {
+          removeComments: true,
+          removeAttributeQuotes: true,
+          removeStyleQuotes: true,
+          removeScriptTypeAttributes: true,
+          removeStyleLinkTypeAttributes: true,
+          minifyCSS: true,
+          minifyJS: true,
+          continueOnParseError: true,
+          collapseWhitespace: true,
+          collapseBooleanAttributes: true,
+        },
+      },
+      JavaScript: {
+        terser: {
+          compress: true,
+          ie8: false,
+          keep_classnames: false,
+          keep_fnames: false,
+          mangle: true,
+          toplevel: true,
+        },
+      },
       SVG: true,
       Image: false,
+      // cssOptions: {
+      //   preset: "default", // CSS minification preset
+      // },
+      // htmlOptions: {
+      //   collapseWhitespace: true,
+      //   removeComments: true,
+      //   minifyCSS: true,
+      //   minifyJS: true,
+      //   removeAttributeQuotes: true,
+      // },
+      // jsOptions: {
+      //   compress: true,
+      //   mangle: true, // Shorten variable names
+      // },
     }),
   ],
 });
