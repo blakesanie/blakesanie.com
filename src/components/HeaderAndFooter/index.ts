@@ -180,7 +180,6 @@ window.addEventListener("scroll", () => {
   if (window.innerWidth > mobileMaxWidth) {
     return;
   }
-  debugger;
   const currentScroll = window.scrollY;
   const timestamp = new Date().getTime();
   const scrollVelocity =
@@ -275,12 +274,6 @@ hamburger?.addEventListener("click", hamburgerClick);
 // }
 
 let wideScrollY = 0;
-// let wideScrollYBeforeResize = 0;
-
-header.addEventListener("scroll", () => {
-  // wideScrollY = header.scrollTop;
-  // console.log("change wideScrollY", wideScrollY);
-});
 
 let wasMobile = false;
 const evaluateTransitionable = () => {
@@ -315,3 +308,12 @@ const evaluateTransitionable = () => {
 };
 evaluateTransitionable();
 window.addEventListener("resize", evaluateTransitionable);
+
+header.addEventListener("click", (e) => {
+  e.stopPropagation();
+});
+window.addEventListener("click", () => {
+  if (menuExpanded && window.innerWidth <= mobileMaxWidth) {
+    hamburgerClick();
+  }
+});

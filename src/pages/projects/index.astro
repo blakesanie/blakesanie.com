@@ -7,6 +7,7 @@ import Button from "../../components/basic/Button.astro";
 
 interface ProjectInterface {
   title: string;
+  id?: string;
   description: string;
   image?: string;
   youtube?: string;
@@ -26,6 +27,7 @@ const projects: ProjectInterface[] = [
   {
     title: "Learned Early Exit Network (LeeNet)",
     image: "/src/assets/images/leenet/leenet.png",
+    id: "leenet",
     description: "A new class of deep neural network (DNN) architecture - by dynamically exiting at intermediate layers based on self-learned confidence thresholds, LeeNet achieves significant efficiency gains with minimal accuracy trade-offs across diverse datasets and model architectures. Results showcase up to a 69% reduction in computational cost and 1.47x inference speedup, bridging the gap between deep learning and resource-constrained environments. Voted project of the year in Georgia Tech's CS 6220 graduate course.",
     links: [
       {
@@ -181,6 +183,7 @@ const projects: ProjectInterface[] = [
   {
     title: "Knowledge-Based AI for Image Composition",
     image: "/src/assets/images/projects/kbai.png",
+    id: 'kbai',
     description:
       "An AI photography composition copilot, driven by a novel, data-free approach. This framework builds upon Human-Cognitive Theory, modern aesthetic perception research, and the SOAR Cognitive Architecture to generate human-level instructions for camera repositioning and zoom adjustment. Deeper, unsupervised learning methods such as GradCam with a proposed multi-class design, clustering algorithms, statistical modelling, and nearest-neighbor indexes support my framework's innovations in aesthetically-focused computational photography.",
     links: [
@@ -218,6 +221,7 @@ const projects: ProjectInterface[] = [
   },
   {
     title: "White Balancing via Deep Learning",
+    id: 'white-balance',
     description:
       "Applying novel Deep Learning methods towards accurate automatic color calibration of off-neutral images. Learning from the Unsplash dataset of properly white-balanced stock images, this experiment follows a technical exploration of digital color space, lossless graphical augmentation, computer vision and perception, and state-of-the-art ML model architectures such as ViT (Vision Transformer) alongside convolutional approaches.",
     image: "/src/assets/images/projects/whitebalance.png",
@@ -503,6 +507,10 @@ const projects: ProjectInterface[] = [
     ],
   },
 ];
+
+function toFragrment(str: string) {
+  return str.split('(')[0].toLowerCase().replaceAll(' ', '-')
+}
 ---
 
 <HeaderAndFooter
@@ -521,11 +529,11 @@ const projects: ProjectInterface[] = [
   </p>
   <div id="projects">
     {
-      projects.map(({ title, description, tech, ...project }) => {
+      projects.map(({title, id, description, tech, ...project}) => {
         const defaultLink =
           project.links && project.links[0] && project.links[0].href;
         return (
-          <div class="project">
+            <div class="project" id={id || toFragrment(title)}>
             <div class="info">
               <h2 class="title">{title}</h2>
               <p class="desc">{description}</p>
@@ -616,7 +624,7 @@ const projects: ProjectInterface[] = [
   .demo iframe.youtube {
     /* object-fit: contain; */
     background-repeat: no-repeat;
-    border-radius: 12px;
+    //border-radius: 12px;
   }
   .demo iframe.youtube {
     aspect-ratio: calc(16 / 9);
@@ -632,6 +640,7 @@ const projects: ProjectInterface[] = [
   }
   .title {
     font-size: 1.4em;
+    cursor: alias;
     /* margin-bottom: 0.6em; */
   }
   .desc {
@@ -717,4 +726,15 @@ const projects: ProjectInterface[] = [
       }
     });
   }
+
+  const titles = document.querySelectorAll("h2.title");
+  for (let i = 0; i < titles.length; i++) {
+    const title = titles[i];
+    title.addEventListener("click", () => {
+      const id = title.parentElement.parentElement.id;
+      const url = window.location.href.split('#')[0] + '#' + id
+      history.pushState(null, null, url);
+    })
+  }
+
 </script>
