@@ -7,8 +7,7 @@ const {
   headerHeightTransitionDuration,
   headerPositionTransitionDuration,
   mobileMaxWidth,
-  navPadding,
-  isHome,
+  noTab,
   hoverZoneBehind,
 } = headerVars;
 
@@ -43,52 +42,58 @@ if (activeAnchor) {
   positionHoverAtAnchor(activeAnchor);
 }
 
-function isTouchScreen() {
-  return (
-    "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0 ||
-    // @ts-ignore
-    navigator.msMaxTouchPoints > 0
+function isMobileDevice() {
+  const userAgent = navigator.userAgent.toLowerCase();
+  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(
+    userAgent,
   );
 }
 
-const isTouch = isTouchScreen();
-document.body.classList.add(isTouch ? "touch" : "no-touch");
+// function isPhone() {
+//   const userAgent = navigator.userAgent.toLowerCase();
+//   return /iphone|ipod|android.*mobile/.test(userAgent); // Matches phones
+// }
+//
+// function isTablet() {
+//   const userAgent = navigator.userAgent.toLowerCase();
+//   return /ipad|android(?!.*mobile)/.test(userAgent); // Matches tablets
+// }
+
+const isMobile = isMobileDevice();
+document.body.classList.add(isMobile ? "mobile" : "desktop");
 
 let menuExpanded = false;
 
 for (let i = 0; i < anchors.length; i++) {
-  if (!isTouch) {
-    anchors[i].addEventListener("mouseenter", (e) => {
-      moveHoverToAnchor(anchors[i]);
-    });
-    anchors[i].addEventListener("mousemove", (e) => {
-      e.stopPropagation();
-    });
-  }
+  anchors[i].addEventListener("mouseenter", (e) => {
+    moveHoverToAnchor(anchors[i]);
+  });
+  anchors[i].addEventListener("mousemove", (e) => {
+    e.stopPropagation();
+  });
+
   anchors[i].addEventListener("click", (e) => {
     activeAnchor = anchors[i];
     moveHoverToAnchor(anchors[i]);
   });
 }
-if (!isTouch) {
-  // release hover effect back to resting state when leaving specified area
-  for (let i = 0; i < mouseOffSections.length; i++) {
-    mouseOffSections[i].addEventListener("mouseleave", (e) => {
+
+// release hover effect back to resting state when leaving specified area
+for (let i = 0; i < mouseOffSections.length; i++) {
+  mouseOffSections[i].addEventListener("mouseleave", (e) => {
+    moveHoverToAnchor(undefined);
+  });
+  mouseOffSections[i].addEventListener("mousemove", (e) => {
+    if (window.innerWidth <= mobileMaxWidth) {
       moveHoverToAnchor(undefined);
-    });
-    mouseOffSections[i].addEventListener("mousemove", (e) => {
-      if (window.innerWidth <= mobileMaxWidth) {
-        moveHoverToAnchor(undefined);
-      }
-    });
-  }
-  // some elements within the area may not need a hover focus, so explicitly call them out here
-  for (let i = 0; i < mouseNoFocusSections.length; i++) {
-    mouseNoFocusSections[i].addEventListener("mouseenter", (e) => {
-      moveHoverToAnchor(undefined);
-    });
-  }
+    }
+  });
+}
+// some elements within the area may not need a hover focus, so explicitly call them out here
+for (let i = 0; i < mouseNoFocusSections.length; i++) {
+  mouseNoFocusSections[i].addEventListener("mouseenter", (e) => {
+    moveHoverToAnchor(undefined);
+  });
 }
 
 let hoveFadeOutTimeout: NodeJS.Timeout;
@@ -127,9 +132,8 @@ function positionHoverAtAnchor(anchor: HTMLAnchorElement) {
   // move to target space
   hoverZone.style.transform = `translate(${targetX}px, ${targetY}px)`;
   hoverZone.style.height = anchor.offsetHeight + "px";
-
   hoverZone.style.width =
-    isHome && window.innerWidth > mobileMaxWidth
+    noTab && window.innerWidth > mobileMaxWidth
       ? `calc(${anchor.offsetWidth + "px"} - var(--navPadding) * 2)`
       : anchor.offsetWidth + "px";
 }

@@ -33,12 +33,12 @@ const headerVars: HeaderVars = {
   headerPositionTransitionDuration,
   mobileMaxWidth,
   navPadding,
-  isHome,
+  noTab: isHome,
   hoverZoneBehind,
 };
 ---
 
-<CommonHead {...Astro.props} bodyClasslist={[{ isHome: isHome }]}>
+<CommonHead {...Astro.props} bodyClasslist={[{ isHome: isHome}]}>
   <header class:list={[{ darkText: textColor == "black" }]}>
     <!--<div>-->
     <!--<img src="https://i.scdn.co/image/ab67616d00001e02a84994855921f317b6ce0096" width="400">-->
@@ -211,7 +211,7 @@ const headerVars: HeaderVars = {
             href="/contact.vcf"
             textColor={textColor}
           >
-            Contact Card
+            Contact
           </NavLink>
 
           <NavLink
@@ -334,6 +334,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   :global(*) {
     font-family: "Assistant", sans-serif;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    text-wrap: pretty;
   }
   :global(button) {
     color: black;
@@ -507,11 +508,11 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     /* font-weight: 600; */
   }
 
-  :global(.touch .email) {
+  :global(.mobile .email) {
     display: none;
   }
 
-  :global(.no-touch .contactCard) {
+  :global(.desktop .contactCard) {
     display: none;
   }
 
@@ -520,7 +521,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    padding: 0 1.7em;
+    //padding: 0 1.7em;
     font-size: 0.8em;
     /* color: rgba(255, 255, 255, 0.5); */
     color: var(--textColor);
@@ -758,6 +759,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     text-align: center;
     padding-top: 1em;
     padding-bottom: 0.5em;
+    text-wrap: balance;
   }
 
   /* .pageContent :global(h4),
@@ -875,7 +877,39 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     headerVars
   }}
 >
-  window.headerVars = headerVars;
+
+  function hasAlwaysVisibleScrollbars() {
+      // Create a temporary div element
+      var testDiv = document.createElement('div');
+
+      // Apply styles to ensure the div is scrollable
+      testDiv.style.overflow = 'scroll';
+      testDiv.style.width = '50px';
+      testDiv.style.height = '50px';
+      testDiv.style.position = 'absolute';
+
+      // Append the div to the body
+      document.body.appendChild(testDiv);
+
+      // Check the scrollbar width
+      var scrollbarWidth = testDiv.offsetWidth - testDiv.clientWidth;
+
+      // Remove the temporary div
+      document.body.removeChild(testDiv);
+
+      // Return true if the scrollbar width is greater than 0
+      return scrollbarWidth > 0;
+      }
+
+    const hasScrollbars = true || hasAlwaysVisibleScrollbars();
+  if (hasScrollbars) {
+    document.body.classList.add('scrollbars');
+      }
+
+  window.headerVars = {
+    ...headerVars,
+    noTab: headerVars.noTab || hasScrollbars
+  }
 </script>
 
 <script src="./index.ts"></script>

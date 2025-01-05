@@ -13,6 +13,6 @@ export interface HeaderVars {
   headerPositionTransitionDuration: number;
   mobileMaxWidth: number;
   navPadding: number;
-  isHome: boolean;
+  noTab: boolean;
   hoverZoneBehind: boolean;
 }
