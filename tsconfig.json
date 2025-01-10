@@ -1,0 +1,21 @@
+{
+  "extends": "astro/tsconfigs/base",
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    }
+//    {
+//      "path": "./tsconfig.node.json"
+//    }
+  ],
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  }
+}

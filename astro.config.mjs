@@ -7,6 +7,7 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import redirects from "/src/redirects.json";
 import react from "@astrojs/react";
+import tailwind from "@astrojs/tailwind";
 const noSitemap = new Set(Object.keys(redirects));
 // so not in sitemap
 noSitemap.add("chicago");
@@ -94,5 +95,5 @@ export default defineConfig({
     //   compress: true,
     //   mangle: true, // Shorten variable names
     // },
-  }), react()]
+  }), react(), tailwind()]
 });

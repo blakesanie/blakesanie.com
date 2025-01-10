@@ -1,7 +1,9 @@
-import {useMemo, useState} from "react";
-import type {AppState} from "./Types";
+import React, { useMemo, useState } from "react";
+import type { AppState } from "./Types";
 import simulate from "./simulation";
 import styles from "./Page.module.css"; // import MenuItem from '@mui/material/MenuItem';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 // import MenuItem from '@mui/material/MenuItem';
 
@@ -87,16 +89,18 @@ function App() {
     // );
 
     return (
-        <div
-            className={styles.app}
-            onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                    event.target.dispatchEvent(new Event("blur"));
-                }
-            }}
-        >
-            <p>from react</p>
-        </div>
+      <div
+        className={styles.app}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.target.dispatchEvent(new Event("blur"));
+          }
+        }}
+      >
+        <p>from react</p>
+        <Label htmlFor="email">Email</Label>
+        <Input type="email" id="email" placeholder="Email" />
+      </div>
     );
 }
 
