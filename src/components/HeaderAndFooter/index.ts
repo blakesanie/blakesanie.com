@@ -1,4 +1,4 @@
-import { HeaderVars } from "./shared"; // @ts-ignore
+import type { HeaderVars } from "./shared"; // @ts-ignore
 
 // @ts-ignore
 const headerVars = window.headerVars as HeaderVars;

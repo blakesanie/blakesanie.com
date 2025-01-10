@@ -31,7 +31,7 @@
     "@types/react-dom": "^19.0.2",
     "@vercel/edge": "^1.1.1",
     "@vercel/og": "^0.6.2",
-    "astro": "^2.4.4",
+    "astro": "^5.1.5",
     "astro-compress": "^2.2.3",
     "astro-google-fonts-optimizer": "^0.2.2",
     "astro-icon": "^0.8.0",
