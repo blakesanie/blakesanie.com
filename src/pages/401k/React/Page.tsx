@@ -131,15 +131,19 @@ function App() {
           <tr className={styles.paramGroup}>
             <td className={styles.paramSectionName}>Restrictions</td>
             <td className={styles.inputGroup}>
-              <FancyInput label={"Max Personal Contribution"} prefix={"$"}>
-                <NumberInput
-                  defaultValue={appState.MPC}
-                  min={0}
-                  onBlur={(x) => {
+              <FancyInput
+                label={"Max Personal Contribution"}
+                prefix={"$"}
+                inputProps={{
+                  defaultValue: appState.MPC,
+                  min: 0,
+                  max: appState.MTC,
+                  onBlur: (x) => {
                     setAppState({ ...appState, MPC: x });
-                  }}
-                />
-              </FancyInput>
+                  },
+                }}
+                InputType={NumberInput}
+              ></FancyInput>
 
               <FancyInput label={"Max Total Contribution"}>
                 <NumberInput

@@ -1,58 +1,45 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
+import styles from "./FancyInput.module.css";
 
 interface NumberInputProps {
   label?: string;
-  children: React.ReactNode;
+  InputType?: React.ComponentType;
   prefix?: string;
   suffix?: string;
+  inputProps?: object;
+  children?: React.ReactNode;
 }
 
 const FancyInput: React.FC<NumberInputProps> = ({
   label,
+  InputType,
   children,
   prefix,
   suffix,
+  inputProps,
 }) => {
-  return (
-    <div
-      style={{
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        border: "1px solid black",
-        padding: "0 0.6em",
-      }}
-    >
-      {label && (
-        <label
-          style={{
-            // position: "absolute",
-            // top: 0,
-            // left: "0.5em",
-            height: "0.6em",
-            lineHeight: "0.6em",
-            marginBottom: "-0.6em",
-            transform: `translateY(-50%)`,
-            fontSize: 12,
-            padding: "0 0.4em",
-            marginLeft: "-0.4em",
-            background: "white",
-            zIndex: 2,
-          }}
-        >
-          {label}
-        </label>
-      )}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
+  const [error, setError] = useState("");
+
+  const inputComponent = useMemo(() => {
+    if (children) return children;
+    return (
+      <InputType
+        {...inputProps}
+        // @ts-ignore
+        onError={(err) => {
+          setError(err);
         }}
-      >
-        {prefix ? <div>{prefix}</div> : null}
-        {children}
-        {suffix ? <div>{suffix}</div> : null}
+      />
+    );
+  }, [InputType, children, inputProps]);
+
+  return (
+    <div className={styles.container}>
+      {label && <label className={styles.label}>{label}</label>}
+      <div className={styles.row}>
+        {prefix ? <div className={styles.prefix}>{prefix}</div> : null}
+        <div className={styles.input}>{inputComponent}</div>
+        {suffix ? <div className={styles.suffix}>{suffix}</div> : null}
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ interface NumberInputProps {
   onBlur?: (n: number, e: React.FocusEvent | undefined) => void;
   prefix?: string;
   suffix?: string;
+  onError?: (err: string) => void;
 }
 
 const NumberInput: React.FC<NumberInputProps> = ({
@@ -16,11 +17,11 @@ const NumberInput: React.FC<NumberInputProps> = ({
   onBlur,
   prefix,
   suffix,
+  onError,
 }) => {
   const [value, setValue] = useState("");
   const [trailingDot, setTrailingDot] = useState(false);
   const [hasInteraction, setHasInteraction] = useState(false);
-  const [error, setError] = useState("");
   const ref = useRef<HTMLInputElement>(null);
 
   const minExists = min !== undefined;
@@ -29,15 +30,15 @@ const NumberInput: React.FC<NumberInputProps> = ({
   function checkBounds(val: number | undefined) {
     console.log("check bounds");
 
-    if (val !== undefined) {
+    if (val !== undefined && onError) {
       if (minExists && val < min) {
-        setError("Must be at least " + min);
+        onError("Must be at least " + min);
         return true;
       } else if (maxExists && val > max) {
-        setError("Must be at most " + max);
+        onError("Must be at most " + max);
         return true;
       } else {
-        setError("");
+        onError("");
       }
     }
     return false;
@@ -69,7 +70,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
       } else {
         setValue("" + (min || 0));
       }
-      setError("");
+      if (onError) onError("");
       if (onBlur) onBlur(floatVal, e);
     },
     [min, max, val, onBlur],
@@ -95,28 +96,8 @@ const NumberInput: React.FC<NumberInputProps> = ({
           boxShadow: "none",
           // border-color: transparent;
           border: "none",
-          padding: "0.4em 0.4em",
         }}
       />
-      {error && (
-        <label
-          style={{
-            // position: "absolute",
-            // top: 0,
-            // left: "0.5em",
-            color: "red",
-            lineHeight: "0.6em",
-            transform: `translateY(50%)`,
-            fontSize: 12,
-            padding: "0 0.3em",
-            background: "white",
-            marginTop: "-0.6em",
-            marginLeft: "0.3em",
-          }}
-        >
-          {error}
-        </label>
-      )}
     </>
   );
 };
