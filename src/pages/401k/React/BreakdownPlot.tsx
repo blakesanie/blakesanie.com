@@ -44,6 +44,46 @@ const BreakdownPlot: React.FC<BreakdownPlotProps> = ({ result }) => {
         Chart.defaults.font.family = "Assistant";
         chart = new Chart(chartRef.current, {
           type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Prior Contribution",
+                data: [],
+                borderWidth: 1,
+                stack: true,
+                fill: "origin",
+              },
+              {
+                label: "Prior Match",
+                data: [],
+                borderWidth: 1,
+                stack: true,
+                fill: "-1",
+              },
+              {
+                label: "Contribution",
+                data: [],
+                borderWidth: 1,
+                stack: true,
+                fill: "-1",
+              },
+              {
+                label: "Match",
+                data: [],
+                borderWidth: 1,
+                stack: true,
+                fill: "-1",
+              },
+              {
+                label: "Growth",
+                data: [],
+                borderWidth: 1,
+                stack: true,
+                fill: "-1",
+              },
+            ],
+          },
           options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -81,47 +121,38 @@ const BreakdownPlot: React.FC<BreakdownPlotProps> = ({ result }) => {
           },
         });
       }
-      chart.data = {
-        labels: result.map((_, i) => i + 1),
-        datasets: [
-          {
-            label: "Prior Contribution",
-            data: result.map((r) => r.YTDContribution - r.contribution),
-            borderWidth: 1,
-            stack: true,
-            fill: "origin",
-          },
-          {
-            label: "Prior Match",
-            data: result.map((r) => r.YTDMatch - r.match),
-            borderWidth: 1,
-            stack: true,
-            fill: "-1",
-          },
-          {
-            label: "Contribution",
-            data: result.map((r) => r.contribution),
-            borderWidth: 1,
-            stack: true,
-            fill: "-1",
-          },
-          {
-            label: "Match",
-            data: result.map((r) => r.match),
-            borderWidth: 1,
-            stack: true,
-            fill: "-1",
-          },
-          {
-            label: "Growth",
-            data: result.map((r) => r.growth),
-            borderWidth: 1,
-            stack: true,
-            fill: "-1",
-          },
-        ],
-      };
-      chart.update("none");
+      const d1 = result.map((r) => r.YTDContribution - r.contribution);
+      const d2 = result.map((r) => r.YTDMatch - r.match);
+      const d3 = result.map((r) => r.contribution);
+      const d4 = result.map((r) => r.match);
+      const d5 = result.map((r) => r.growth);
+      const series = [d1, d2, d3, d4, d5];
+      debugger;
+      if (d1.length > chart.data.labels.length) {
+        for (let i = chart.data.labels.length; i < d1.length; i++) {
+          chart.data.labels.push(i);
+        }
+      } else if (d1.length < chart.data.labels.length) {
+        for (let i = chart.data.labels.length - 1; i >= d1.length; i--) {
+          chart.data.labels.pop();
+        }
+      }
+      for (let i = 0; i < series.length; i++) {
+        const s = series[i];
+        const datasetData = chart.data.datasets[i].data;
+        for (let j = 0; j < s.length; j++) {
+          if (j >= datasetData.length) {
+            datasetData.push(s[j]);
+          } else {
+            datasetData[j] = s[j];
+          }
+        }
+        for (let j = datasetData.length - 1; j >= s.length; j--) {
+          datasetData.pop();
+        }
+      }
+
+      chart.update();
     }
 
     drawChart();

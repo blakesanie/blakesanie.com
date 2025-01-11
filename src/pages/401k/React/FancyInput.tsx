@@ -34,8 +34,14 @@ const FancyInput: React.FC<NumberInputProps> = ({
   }, [InputType, children, inputProps]);
 
   return (
-    <div className={styles.container}>
-      {label && <label className={styles.label}>{label}</label>}
+    <div
+      className={styles.container + (error ? " " + styles.error : "")}
+      style={{
+        borderColor: error ? "red" : "transparent",
+      }}
+    >
+      {label && <div className={styles.label}>{label}</div>}
+      {error && <div className={styles.errorLabel}>{error}</div>}
       <div className={styles.row}>
         {prefix ? <div className={styles.prefix}>{prefix}</div> : null}
         <div className={styles.input}>{inputComponent}</div>

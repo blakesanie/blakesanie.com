@@ -175,6 +175,7 @@ function App() {
                 <NumberInput
                   defaultValue={appState.PP}
                   min={1}
+                  max={52}
                   onBlur={(x) => {
                     setAppState({ ...appState, PP: x });
                   }}
