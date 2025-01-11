@@ -4,59 +4,10 @@
 }
 
 .paramSection {
+    width: 100%;
+}
+
+.inputGroup {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 1em;
-}
-
-.paramGroup {
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.1);
-    padding: 1.4em;
-    border-radius: 1em;
-    gap: 1em;
-}
-
-.paramGroup h2 {
-    text-align: center;
-}
-
-.paramGroup > div {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 1em;
-}
-
-.paramGroup > div > * {
-    display: block;
-    width: 100%;
-}
-
-.paramGroup span {
-    /*display: block;*/
-    display: block;
-}
-
-.paramGroup :global(.MuiInputBase-root) {
-    max-width: 100%;
-    min-width: 100%;
-    padding: 0 0.8em;
-}
-
-/*.paramGroup :global(.MuiInputBase-root) {*/
-/*    padding: 0;*/
-/*}*/
-
-/*.paramGroup :global(.MuiInputBase-root) * {*/
-/*    max-width: 100%;*/
-/*    min-width: 100%;*/
-/*}*/
-
-.paramGroup input {
-    max-width: 3em;
-    font-size: 1.2em;
-    padding: 0.4em 0;
 }

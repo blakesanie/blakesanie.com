@@ -1,9 +1,13 @@
 import React, { useMemo, useState } from "react";
 import type { AppState } from "./Types";
-import simulate from "./simulation";
 import styles from "./Page.module.css"; // import MenuItem from '@mui/material/MenuItem';
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import NumberInput from "./NumberInput"; // import MenuItem from '@mui/material/MenuItem';
+import simulate, { daysInMonth } from "./simulation"; // import MenuItem from '@mui/material/MenuItem';
+import FancyInput from "./FancyInput";
+import MatchAmount from "./MatchAmount";
+import OptimalPlot from "./OptimalPlot";
+import BreakdownPlot from "./BreakdownPlot";
+import ResultTable from "./ResultTable";
 
 // import MenuItem from '@mui/material/MenuItem';
 
@@ -46,62 +50,213 @@ const months = [
 ];
 
 function App() {
-    const [appState, setAppState] = useState<AppState>({
-        MPC: 23500,
-        MTC: 70000,
-        G: 4900,
-        PP: 26,
-        B: 3,
-        M: [
-            [100, 3],
-            [50, 3],
-        ],
-        YTD: 0,
-        m: new Date().getMonth(),
-        d: new Date().getDate(),
-        TU: 0
-    });
+  const [appState, setAppState] = useState<AppState>({
+    MPC: 23500,
+    MTC: 70000,
+    G: 4900,
+    PP: 26,
+    B: 3,
+    M: [
+      [100, 3],
+      [50, 3],
+    ],
+    YTD: 0,
+    YTDT: 0,
+    m: new Date().getMonth(),
+    d: new Date().getDate(),
+    TU: 0,
+  });
 
-    const [highlightedContribution, setHighlightedContribution] = useState(0);
+  const [highlightedContribution, setHighlightedContribution] = useState(50);
 
-    console.log("appstate", appState);
+  console.log("appstate", appState);
 
-    const results = useMemo(() => simulate(appState), [appState]);
-    console.log("results", results);
+  const results = useMemo(() => simulate(appState), [appState]);
+  // console.log("results", results);
 
+  // const maxPersonalContribution = useMemo(
+  //   () => (
+  //     <NumericFormat
+  //       value={appState.MPC}
+  //       onChange={(e) => {
+  //         appState.MPC = e.target.value;
+  //         setAppState({ ...appState });
+  //       }}
+  //       customInput={(props) => <TextField {...props} />}
+  //       thousandSeparator
+  //       valueIsNumericString
+  //       variant="standard"
+  //       label="react-number-format"
+  //     />
+  //   ),
+  //   [appState.MPC]
+  // );
 
-    // const maxPersonalContribution = useMemo(
-    //   () => (
-    //     <NumericFormat
-    //       value={appState.MPC}
-    //       onChange={(e) => {
-    //         appState.MPC = e.target.value;
-    //         setAppState({ ...appState });
-    //       }}
-    //       customInput={(props) => <TextField {...props} />}
-    //       thousandSeparator
-    //       valueIsNumericString
-    //       variant="standard"
-    //       label="react-number-format"
-    //     />
-    //   ),
-    //   [appState.MPC]
-    // );
-
+  const optimalPlot = useMemo(() => {
+    if (!results) {
+      return null;
+    }
     return (
-      <div
-        className={styles.app}
-        onKeyDown={(event) => {
-          if (event.key === "Enter") {
-            event.target.dispatchEvent(new Event("blur"));
-          }
+      <OptimalPlot
+        results={results}
+        onHighlight={(i) => {
+          setHighlightedContribution(i);
         }}
-      >
-        <p>from react</p>
-        <Label htmlFor="email">Email</Label>
-        <Input type="email" id="email" placeholder="Email" />
-      </div>
+      />
     );
+  }, [results]);
+
+  const breakdownPlot = useMemo(() => {
+    if (!results || !results[highlightedContribution]) return null;
+
+    return <BreakdownPlot result={results[highlightedContribution]} />;
+  }, [highlightedContribution, results]);
+
+  const resultTable = useMemo(() => {
+    return <ResultTable result={results[highlightedContribution]} />;
+  }, [highlightedContribution, results]);
+
+  return (
+    <div
+      className={styles.app}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          event.target.dispatchEvent(new Event("blur"));
+        }
+      }}
+    >
+      <h2>Calculator Parameters</h2>
+      <table className={styles.paramSection}>
+        <tbody>
+          <tr className={styles.paramGroup}>
+            <td className={styles.paramSectionName}>Restrictions</td>
+            <td className={styles.inputGroup}>
+              <FancyInput label={"Max Personal Contribution"} prefix={"$"}>
+                <NumberInput
+                  defaultValue={appState.MPC}
+                  min={0}
+                  onBlur={(x) => {
+                    setAppState({ ...appState, MPC: x });
+                  }}
+                />
+              </FancyInput>
+
+              <FancyInput label={"Max Total Contribution"}>
+                <NumberInput
+                  defaultValue={appState.MTC}
+                  min={0}
+                  onBlur={(x) => {
+                    setAppState({ ...appState, MTC: x });
+                  }}
+                  prefix={"$ "}
+                />
+              </FancyInput>
+            </td>
+          </tr>
+          <tr className={styles.paramGroup}>
+            <td className={styles.paramSectionName}>Contribution</td>
+            <td className={styles.inputGroup}>
+              <FancyInput label={"Gross Paycheck"}>
+                <NumberInput
+                  defaultValue={appState.G}
+                  label={"Gross Paycheck"}
+                  min={0}
+                  onBlur={(x) => {
+                    setAppState({ ...appState, G: x });
+                  }}
+                  prefix={"$ "}
+                />
+              </FancyInput>
+              <FancyInput label={"Pay Periods"}>
+                <NumberInput
+                  defaultValue={appState.PP}
+                  min={1}
+                  onBlur={(x) => {
+                    setAppState({ ...appState, PP: x });
+                  }}
+                  prefix={"$ "}
+                />
+              </FancyInput>
+            </td>
+          </tr>
+          <tr className={styles.paramGroup}>
+            <td className={styles.paramSectionName}>Timeline</td>
+            <td className={styles.inputGroup}>
+              <span>Start simulation on</span>
+              <FancyInput label={"Month"}>
+                <select>
+                  {months.map((mo, i) => (
+                    <option value={i}>{mo}</option>
+                  ))}
+                </select>
+              </FancyInput>
+              <FancyInput label={"Day"}>
+                <NumberInput
+                  defaultValue={appState.m}
+                  min={1}
+                  max={daysInMonth(appState.m)}
+                  onBlur={(x) => {
+                    setAppState({ ...appState, m: x });
+                  }}
+                />
+              </FancyInput>
+
+              <span>With a prior personal contribution of</span>
+              <FancyInput label={"Prior Personal Contribution"}>
+                <NumberInput
+                  defaultValue={appState.YTD}
+                  min={0}
+                  max={appState.MPC}
+                  onBlur={(x) => {
+                    setAppState({ ...appState, YTD: x });
+                  }}
+                  prefix={"$"}
+                />
+              </FancyInput>
+              <span>making a total contribution of</span>
+              <FancyInput label={"Prior Total Contribution"}>
+                <NumberInput
+                  defaultValue={appState.YTDT}
+                  min={0}
+                  max={appState.MTC}
+                  onBlur={(x) => {
+                    setAppState({ ...appState, YTDT: x });
+                  }}
+                  prefix={"$ "}
+                />
+              </FancyInput>
+            </td>
+          </tr>
+          <tr className={styles.paramGroup}>
+            <td className={styles.paramSectionName}>Match</td>
+            <td className={styles.inputGroup}>
+              <MatchAmount
+                matchPercentage={appState.B}
+                index={-1}
+                onBlur={(matchPercent, _) => {
+                  if (matchPercent !== undefined) {
+                    appState.B = matchPercent;
+                    setAppState({ ...appState });
+                  }
+                }}
+              />
+              {appState.M.map(([matchPetcentage, payPercentage], i) => (
+                <MatchAmount
+                  matchPercentage={matchPetcentage}
+                  payPercentage={payPercentage}
+                  index={i}
+                  onBlur={(matchPercent, payPercent) => {}}
+                />
+              ))}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      {optimalPlot}
+      {breakdownPlot}
+      {resultTable}
+    </div>
+  );
 }
 
 export default App;
