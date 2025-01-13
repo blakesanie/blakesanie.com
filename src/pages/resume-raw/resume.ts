@@ -14,21 +14,27 @@ const resume: Resume = {
         {
           type: "Masters of Science",
           typeAbbreviation: "M.S.",
-          startMonth: 12,
+          startMonth: "Dec",
           startYear: 2022,
-          gradMonth: 12,
+          gradMonth: "Dec",
           gradYear: 2023,
-          majors: ["Computer Science"],
+          majors: [{ name: "Computer Science", focus: "Machine Learning" }],
+          gpa: 4,
           notes: "Machine Learning Concentration",
         },
         {
           type: "Bachelors of Science",
           typeAbbreviation: "B.S.",
-          startMonth: 8,
+          startMonth: "Aug",
           startYear: 2019,
-          gradMonth: 12,
+          gradMonth: "Dec",
           gradYear: 2022,
-          majors: ["Computer Science"],
+          gpa: 4,
+          majors: [
+            {
+              name: "Computer Science",
+            },
+          ],
           notes: "Artificial Intelligence and Information Networks",
         },
       ],
@@ -145,26 +151,78 @@ const resume: Resume = {
   projects: [
     {
       name: "Learned Early Exit Network (LeeNet)",
-      bullets: ["", "", ""],
+      team: "Georgia Institute of Technology",
+      bullets: [
+        "A novel Deep Learning architecture with dynamic exiting at intermediate layers based on self-learned confidence thresholds.",
+        "Awarded project of the year in Georgia Tech's graduate Big Data course, highlighting the demonstrated potential in model efficiency.",
+      ],
     },
     {
-      name: "Quantitative Research Platform",
-      bullets: ["", "", ""],
+      name: "Distal Radius Object Identification (DROID)",
+      team: "Emory Department of Orthopaedics",
+      bullets: [
+        "Realtime iOS wrist implant manufacturer detection from X-Ray imaging, aiming to reduce emergency extraction complications.",
+        "Presented to top-industry surgeons to align use cases and unravel underlying K-means, PCA, RANSAC, transfer learning methods",
+      ],
     },
   ],
-  interests: ["", "", ""],
-  skillset: [
+  interests: [
+    "Ironman triathlon",
+    "French cuisine",
+    "landscape photography",
+    "chess",
+    "blues guitar",
+    "hydroponic gardening",
+    "graphic design",
+  ],
+  skills: [
+    {
+      domain: "Advanced AWS",
+      skills: ["Fargate", "Lambda", "DynamoDB"],
+    },
+    {
+      domain: "Monitoring",
+      skills: ["CloudWatch", "NewRelic", "Splunk"],
+    },
     {
       domain: "Machine Learning",
-      skills: ["Pytorch", "NumPy", "Pandas"],
+      skills: ["PyTorch", "NumPy", "Spark"],
     },
     {
-      domain: "Data Management",
-      skills: ["SQL", "Databricks", "DynamoDB"],
+      domain: "Full Stack",
+      skills: ["GoLang", "JavaScript", "React.js"],
     },
     {
-      domain: "Cloud Engineering",
-      skills: ["AWS", "Fargate", "Lambda"],
+      domain: "Streaming",
+      skills: ["Kafka, SQS, gRPC"],
+    },
+    {
+      domain: "Databases",
+      skills: ["SQL", "Redis", "Firebase"],
+    },
+  ],
+  competencies: [
+    "Leadership",
+    "critical thinking",
+    "production support",
+    "cost optimization",
+    "dependency coordination",
+    "French fluency",
+  ],
+  certifications: [
+    {
+      name: "AWS Solutions Architect - Associate",
+      issuer: "Amazon Web Services",
+      notes: [
+        "Deep intuition towards implementing scalable, available, durable, resilient, cost-effective cloud initiatives with 50+ AWS services",
+      ],
+    },
+    {
+      name: "Code Secure Software Engineer (CSSE)",
+      issuer: "Capital One",
+      notes: [
+        "Defense against Code Injection, XSS, Access Control, and Session Handling vulnerabilities at both service and system-level",
+      ],
     },
   ],
 };
@@ -182,7 +240,9 @@ interface Resume {
   employment?: Employer[];
   projects?: Project[];
   interests?: string[];
-  skillset?: SkillDomain[];
+  skills?: SkillDomain[];
+  competencies: string[];
+  certifications: Certification[];
 }
 
 interface Education {
@@ -195,13 +255,14 @@ interface Education {
 interface Degree {
   type: string;
   typeAbbreviation: string;
-  startMonth: number;
+  startMonth: string;
   startYear: number;
-  gradMonth: number;
+  gradMonth: string;
   gradYear: number;
-  majors: string[];
+  majors: Major[];
   minors?: string[];
   notes?: string;
+  gpa: number;
 }
 
 interface Employer {
@@ -223,10 +284,22 @@ interface Position {
 
 interface Project {
   name: string;
+  team?: string;
   bullets: string[];
 }
 
 interface SkillDomain {
   domain: string;
   skills: string[];
+}
+
+interface Major {
+  name: string;
+  focus?: string;
+}
+
+interface Certification {
+  name: string;
+  issuer: string;
+  notes: string[];
 }

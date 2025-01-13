@@ -5,6 +5,13 @@ export function formatPhone(num) {
   const s = "" + num;
   return `(${s.substring(0, 3)}) ${s.substring(s.length - 7, s.length - 4)}-${s.substring(s.length - 4)}`;
 }
+
+export function toTenths(num) {
+  if (num % 1 == 0) {
+    return "" + num + ".0";
+  }
+  return "" + Math.round(num * 10) / 10;
+}
 ---
 
 <html>
@@ -58,101 +65,87 @@ export function formatPhone(num) {
     </section>
     <section>
       <h2>Education</h2>
-      <article>
-        <h3>Georgia Institute of Technology</h3>
-        <h4>
-          <strong>M.S. Machine Learning</strong> (4.0/4 GPA), <strong
-            >B.S. Computer Science</strong
-          > (4.0/4 GPA)
-        </h4>
-        <p class="timeRange">Aug 2019 - Dec 2024</p>
-      </article>
+      {
+        resume.education.map((edu) => (
+          <article>
+            <h3>{edu.school}</h3>
+            <h4>
+              {edu.degrees.map((degree, i) => (
+                <>
+                  <strong>
+                    {degree.typeAbbreviation} {degree.majors[0].name}
+                    {degree.majors[0].focus ? (
+                      <>
+                        {" - "}
+                        {degree.majors[0].focus}
+                      </>
+                    ) : null}
+                  </strong>
+                  {` (${toTenths(degree.gpa)}/4 GPA)${i < edu.degrees.length - 1 ? ", " : ""}`}
+                </>
+              ))}
+            </h4>
+            <p class="timeRange">{`${edu.degrees[1].startMonth} ${edu.degrees[1].startYear} - ${edu.degrees[0].gradMonth} ${edu.degrees[0].gradYear}`}</p>
+          </article>
+        ))
+      }
     </section>
     <section>
       <h2>Skills & Proficiencies</h2>
       <article>
         <h4>
-          <strong>Business Skills</strong>: Leadership, critical thinking,
-          production support, cost optimization, dependency coordination, French
-          fluency
+          <strong>Business Skills</strong>: {resume.competencies.join(", ")}
         </h4>
       </article>
       <article>
         <h4>
-          <strong>Technical Skills</strong>: Advanced AWS (Fargate, Lambda,
-          DynamoDB), monitoring (CloudWatch, NewRelic, Splunk), Machine Learning
-          (PyTorch, NumPy, Spark), Full Stack (GoLang, JavaScript, React.js),
-          Streaming (Kafka, SQS, gRPC), Databases (SQL, Redis, Firebase)
+          <strong>Technical Skills</strong>: {
+            resume.skills
+              .map((skill) => `${skill.domain} (${skill.skills.join(", ")})`)
+              .join(", ")
+          }
         </h4>
       </article>
     </section>
     <section>
       <h2>Projects</h2>
-      <article>
-        <h4>
-          <strong>Learned Early Exit Network (LeeNet)</strong>, Georgia
-          Institute of Technology
-        </h4>
-        <ul>
-          <li>
-            A novel Deep Learning architecture with dynamic exiting at
-            intermediate layers based on self-learned confidence thresholds.
-          </li>
-          <li>
-            Awarded project of the year in Georgia Tech's graduate Big Data
-            course, highlighting the demonstrated potential in model efficiency.
-          </li>
-        </ul>
-      </article>
-      <article>
-        <h4>
-          <strong>Distal Radius Object Identification (DROID)</strong>, Emory
-          Department of Orthopedics
-        </h4>
-        <ul>
-          <li>
-            Realtime iOS wrist implant manufacturer identification from mere
-            x-ray imaging, aiming to reduce emergency extraction complications.
-          </li>
-          <li>
-            Presented to top-industry surgeons to align use cases and unravel
-            underlying K-means, PCA, RANSAC, transfer learning methods.
-          </li>
-        </ul>
-      </article>
+      {
+        resume.projects.map((project) => (
+          <article>
+            <h4>
+              <strong>{project.name}</strong>, {project.team}
+            </h4>
+            <ul>
+              {project.bullets.map((bullet) => (
+                <li>{bullet}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
     </section>
     <section>
       <h2>Certifications</h2>
-      <article>
-        <h4>
-          <strong>AWS Solutions Architect, Associate</strong>, Amazon Web
-          Services
-        </h4>
-        <ul>
-          <li>
-            Deep intuition towards implementing scalable, available, durable,
-            resilient, cost-effective cloud initiatives with 50+ AWS services
-          </li>
-        </ul>
-      </article>
-      <article>
-        <h4>
-          <strong>Code Secure Software Engineer (CSSE)</strong>, Capital One
-        </h4>
-        <ul>
-          <li>
-            Defense against Code Injection, XSS, Access Control, and Session
-            Handling vulnerabilities at both service and system-level
-          </li>
-        </ul>
-      </article>
+      {
+        resume.certifications.map((cert) => (
+          <article>
+            <h4>
+              <strong>{cert.name}</strong>, {cert.issuer}
+            </h4>
+            <ul>
+              {cert.notes.map((note) => (
+                <li>{note}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
     </section>
     <section>
       <h2>Interests</h2>
       <ul>
         <li>
-          Ironman triathlon, French cuisine, landscape photography, chess, blues
-          guitar, hydroponic gardening, graphic design
+          {resume.interests.join(", ")}
         </li>
       </ul>
     </section>
@@ -186,6 +179,7 @@ export function formatPhone(num) {
 
     article {
       position: relative;
+      padding: 2px 0;
       padding-left: 10px;
     }
     section > article {
