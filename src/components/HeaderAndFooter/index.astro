@@ -9,6 +9,7 @@ import NavLink from "./NavLink.astro";
 import NowPlaying from "./NowPlaying.astro";
 import SoundBars from "./SoundBars.astro";
 import {HeaderVars} from "./shared";
+import { ClientRouter } from 'astro:transitions';
 // import Newsletter from "../Newsletter/index.astro";
 const mobileMaxWidth = 800; // still manually declared in media query declaration
 const headerWidth = 130;
@@ -39,6 +40,7 @@ const headerVars: HeaderVars = {
 ---
 
 <CommonHead {...Astro.props} bodyClasslist={[{ isHome: isHome}]}>
+  <ClientRouter />
   <header class:list={[{ darkText: textColor == "black" }]}>
     <!--<div>-->
     <!--<img src="https://i.scdn.co/image/ab67616d00001e02a84994855921f317b6ce0096" width="400">-->
