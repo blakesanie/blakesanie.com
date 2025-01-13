@@ -199,7 +199,7 @@ if (!Astro.props.image) {
   Astro.props.image = `data:image/jpeg;base64,${pngData}`;
 }
 
-const { noindex } = Astro.props;
+const { noIndex } = Astro.props;
 
 const { link, style, img } = await renderImg({
   src: Astro.props.image,
@@ -220,151 +220,153 @@ const description =
   Astro.props.description ||
   "Software Engineer. Photographer. Marathoner. Lifelong Student.";
 
-// console.log("title, desc", title, description, "props", Astro.props);
+// console.log("title, desc", title, description, "props", Astro.props)
 ---
 
 <html lang="en">
-<RemoveLogs />
-  <head>
-    <!-- <meta charset="utf-8" /> -->
-    <!-- <meta viewport="width=device-width, initial-scale=1" /> -->
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no"
-    />
-    <SEO
-      title={title}
-      description={description}
-      noindex={noindex ? true : false}
-      charset="utf-8"
-      openGraph={{
-        basic: {
-          title: title,
-          type: "website",
-          image: image,
-        },
-        optional: {
-          description: description,
-        },
-        image: {
-          type: "image/" + image.split(".").pop(),
-          // width: width,
-          // height: height,
-          alt: imageAlt,
-        },
-      }}
-      twitter={{
-        creator: "@blakesanie",
-        card: "summary_large_image",
-        site: "@blakesanie",
-        title: title,
-        image: image,
-        imageAlt: "Open Graph Thumbnail Image for page. " + description,
-        description: description,
-      }}
-      extend={{}}
-    />
-    <meta
-      name="google-site-verification"
-      content="ePB1GvvA8L5Hza96sGcmDLw_jIzjhQ2JhXbIAg_8hlA"
-    />
-    <meta name="theme-color" content={Astro.props.themeColor} />
-    <link rel="sitemap" href="/sitemap-index.xml" />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="57x57"
-      href="/favicons/apple-touch-icon-57x57.png"
-    />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="114x114"
-      href="/favicons/apple-touch-icon-114x114.png"
-    />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="72x72"
-      href="/favicons/apple-touch-icon-72x72.png"
-    />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="144x144"
-      href="/favicons/apple-touch-icon-144x144.png"
-    />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="60x60"
-      href="/favicons/apple-touch-icon-60x60.png"
-    />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="120x120"
-      href="/favicons/apple-touch-icon-120x120.png"
-    />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="76x76"
-      href="/favicons/apple-touch-icon-76x76.png"
-    />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="152x152"
-      href="/favicons/apple-touch-icon-152x152.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="/favicons/favicon-196x196.png"
-      sizes="196x196"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="/favicons/favicon-96x96.png"
-      sizes="96x96"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="/favicons/favicon-32x32.png"
-      sizes="32x32"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="/favicons/favicon-16x16.png"
-      sizes="16x16"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="/favicons/favicon-128.png"
-      sizes="128x128"
-    />
-    <meta name="application-name" content=" " />
-    <meta name="msapplication-TileColor" content="#FFFFFF" />
-    <meta
-      name="msapplication-TileImage"
-      content="/favicons/mstile-144x144.png"
-    />
-    <meta
-      name="msapplication-square70x70logo"
-      content="/favicons/mstile-70x70.png"
-    />
-    <meta
-      name="msapplication-square150x150logo"
-      content="/favicons/mstile-150x150.png"
-    />
-    <meta
-      name="msapplication-wide310x150logo"
-      content="/favicons/mstile-310x150.png"
-    />
-    <meta
-      name="msapplication-square310x310logo"
-      content="/favicons/mstile-310x310.png"
-    />
+  <RemoveLogs />
 
-    <Fragment
-      set:html={`<script type="application/ld+json">{
+  <!-- <meta charset="utf-8" /> -->
+  <!-- <meta viewport="width=device-width, initial-scale=1" /> -->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no"
+  />
+  <SEO
+    title={title}
+    description={description}
+    noindex={noIndex ? true : false}
+    nofollow={Astro.props.noFollow
+      ? Astro.props.noFollow
+      : noIndex
+        ? true
+        : false}
+    charset="utf-8"
+    openGraph={{
+      basic: {
+        title: title,
+        type: "website",
+        image: image,
+      },
+      optional: {
+        description: description,
+      },
+      image: {
+        type: "image/" + image.split(".").pop(),
+        // width: width,
+        // height: height,
+        alt: imageAlt,
+      },
+    }}
+    twitter={{
+      creator: "@blakesanie",
+      card: "summary_large_image",
+      site: "@blakesanie",
+      title: title,
+      image: image,
+      imageAlt: "Open Graph Thumbnail Image for page. " + description,
+      description: description,
+    }}
+    extend={{}}
+  />
+  <meta
+    name="google-site-verification"
+    content="ePB1GvvA8L5Hza96sGcmDLw_jIzjhQ2JhXbIAg_8hlA"
+  />
+  <meta name="theme-color" content={Astro.props.themeColor} />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  <link
+    rel="apple-touch-icon-precomposed"
+    sizes="57x57"
+    href="/favicons/apple-touch-icon-57x57.png"
+  />
+  <link
+    rel="apple-touch-icon-precomposed"
+    sizes="114x114"
+    href="/favicons/apple-touch-icon-114x114.png"
+  />
+  <link
+    rel="apple-touch-icon-precomposed"
+    sizes="72x72"
+    href="/favicons/apple-touch-icon-72x72.png"
+  />
+  <link
+    rel="apple-touch-icon-precomposed"
+    sizes="144x144"
+    href="/favicons/apple-touch-icon-144x144.png"
+  />
+  <link
+    rel="apple-touch-icon-precomposed"
+    sizes="60x60"
+    href="/favicons/apple-touch-icon-60x60.png"
+  />
+  <link
+    rel="apple-touch-icon-precomposed"
+    sizes="120x120"
+    href="/favicons/apple-touch-icon-120x120.png"
+  />
+  <link
+    rel="apple-touch-icon-precomposed"
+    sizes="76x76"
+    href="/favicons/apple-touch-icon-76x76.png"
+  />
+  <link
+    rel="apple-touch-icon-precomposed"
+    sizes="152x152"
+    href="/favicons/apple-touch-icon-152x152.png"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="/favicons/favicon-196x196.png"
+    sizes="196x196"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="/favicons/favicon-96x96.png"
+    sizes="96x96"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="/favicons/favicon-32x32.png"
+    sizes="32x32"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="/favicons/favicon-16x16.png"
+    sizes="16x16"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="/favicons/favicon-128.png"
+    sizes="128x128"
+  />
+  <meta name="application-name" content=" " />
+  <meta name="msapplication-TileColor" content="#FFFFFF" />
+  <meta name="msapplication-TileImage" content="/favicons/mstile-144x144.png" />
+  <meta
+    name="msapplication-square70x70logo"
+    content="/favicons/mstile-70x70.png"
+  />
+  <meta
+    name="msapplication-square150x150logo"
+    content="/favicons/mstile-150x150.png"
+  />
+  <meta
+    name="msapplication-wide310x150logo"
+    content="/favicons/mstile-310x150.png"
+  />
+  <meta
+    name="msapplication-square310x310logo"
+    content="/favicons/mstile-310x310.png"
+  />
+
+  <Fragment
+    set:html={`<script type="application/ld+json">{
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "Blake Sanie",
@@ -373,24 +375,23 @@ const description =
         "https://linkedin.com/in/blakesanie/","https://blakesanie.medium.com/","https://instagram.com/blake_sanie/","https://github.com/blakesanie","https://twitter.com/blakesanie"
        ]
     }</script>`}
-    />
-    <script defer src="/_vercel/insights/script.js"></script>
-    <!-- Google tag (gtag.js) -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=UA-164774604-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
+  />
+  <script defer src="/_vercel/insights/script.js"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-164774604-1"
+  ></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
 
-      gtag("config", "UA-164774604-1");
-    </script>
-    <GoogleFontsOptimizer url={Astro.props.fontUrl} />
-    <slot name="head" />
-  </head>
+    gtag("config", "UA-164774604-1");
+  </script>
+  <GoogleFontsOptimizer url={Astro.props.fontUrl} />
+  <slot name="head" />
+
   <!-- <Fragment set:html={svg} /> -->
   <body class:list={Astro.props.bodyClasslist}><slot /></body>
 </html>
