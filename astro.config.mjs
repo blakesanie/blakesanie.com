@@ -15,6 +15,7 @@ noSitemap.add("lease");
 noSitemap.add("public");
 noSitemap.add("music");
 noSitemap.add("resume-raw");
+noSitemap.add("401k");
 
 // https://astro.build/config
 export default defineConfig({

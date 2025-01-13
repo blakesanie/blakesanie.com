@@ -1,34 +1,32 @@
 ---
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
-import Page from "./React/Page"
-import "../../style.css"
+import Page from "./React/Page";
+import "../../style.css";
 ---
 
 <HeaderAndFooter
-        title="401k Calculator"
-        description="401k Calculator"
+  title="401k Calculator"
+  description="401k Calculator"
+  noIndex={true}
 >
-    <h1>401k Calculator</h1>
-    <Page client:load/>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <h1>401k Calculator</h1>
+  <Page client:load />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </HeaderAndFooter>
 
 <style is:global>
-    main {
-        padding: 2em 2em;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        position: relative;
-    }
+  main {
+    padding: 2em 2em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
 
-    h1 {
-        font-size: 2em;
-        padding-top: 1em;
-        padding-bottom: 1em;
-        text-align: center;
-    }
-
+  h1 {
+    font-size: 2em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    text-align: center;
+  }
 </style>
-
-
