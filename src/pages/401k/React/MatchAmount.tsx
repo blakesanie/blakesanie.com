@@ -17,27 +17,31 @@ const MatchAmount: React.FC<MatchAmountProps> = ({
 }) => {
   return (
     <>
-      <FancyInput label="Match Percent">
-        <NumberInput
-          defaultValue={matchPercentage}
-          onBlur={(x, _) => props.onBlur(x, undefined)}
-          suffix={" %"}
-          min={0}
-        />
-      </FancyInput>
+      <FancyInput
+        label="Match Percent"
+        suffix="%"
+        inputProps={{
+          defaultValue: matchPercentage,
+          min: 0,
+          onBlur: (x, _) => props.onBlur(x, undefined),
+        }}
+        InputType={NumberInput}
+      ></FancyInput>
       {index < 0 ? (
         <span>of my pay, upfront</span>
       ) : (
         <>
           <span>{`of the ${index == 0 ? "first" : "next"}`}</span>
-          <FancyInput label="Pay Percent">
-            <NumberInput
-              defaultValue={payPercentage || 0}
-              onBlur={(x) => props.onBlur(undefined, x)}
-              suffix={" %"}
-              min={0}
-            />
-          </FancyInput>
+          <FancyInput
+            label="Pay Percent"
+            suffix="%"
+            inputProps={{
+              defaultValue: payPercentage || 0,
+              min: 0,
+              onBlur: (x) => props.onBlur(undefined, x),
+            }}
+            InputType={NumberInput}
+          ></FancyInput>
         </>
       )}
     </>

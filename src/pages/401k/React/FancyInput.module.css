@@ -8,11 +8,11 @@
     flex-direction: column;
     gap: 0.2em;
     position: relative;
-    transition: border-color 0.1s ease;
+    transition: box-shadow 0.2s ease;
 }
 
 .container:focus-within {
-    border-color: rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 0 0.8em 0 rgba(0, 98, 149, 0.6);
 }
 
 .label, .errorLabel {

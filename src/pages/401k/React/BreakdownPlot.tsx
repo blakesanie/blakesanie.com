@@ -127,7 +127,7 @@ const BreakdownPlot: React.FC<BreakdownPlotProps> = ({ result }) => {
       const d4 = result.map((r) => r.match);
       const d5 = result.map((r) => r.growth);
       const series = [d1, d2, d3, d4, d5];
-      debugger;
+      // debugger;
       if (d1.length > chart.data.labels.length) {
         for (let i = chart.data.labels.length; i < d1.length; i++) {
           chart.data.labels.push(i);

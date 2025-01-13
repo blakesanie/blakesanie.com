@@ -32,8 +32,62 @@ export type SimulationResult = {
 };
 
 export type SimulationResults = {
-    [key: number]: SimulationResult[];
+  x: number[];
+  y: SimulationResult[];
 };
+
+function makeResult(
+  appState: AppState,
+  amount: number,
+  potentialPersonalContribution: number,
+  potentialTotalContribution: number,
+  payPeriodsRemaining: number,
+  payPeriodRoi: number,
+) {
+  const snapshots: SimulationResult[] = [];
+  let remainingPersonalContribution = potentialPersonalContribution;
+  let remainingTotalContribution = potentialTotalContribution;
+
+  for (let i = 0; i < payPeriodsRemaining; i++) {
+    const result: SimulationResult = {
+      contribution: 0,
+      YTDContribution: 0,
+      match: 0,
+      YTDMatch: 0,
+      growth: 0,
+      worth: 0,
+    };
+    let contributionAmount = Math.min(amount, remainingPersonalContribution);
+    result.contribution = contributionAmount;
+    remainingPersonalContribution -= result.contribution;
+    remainingTotalContribution -= result.contribution;
+    result.match += (appState.B / 100) * appState.G;
+    for (const [matchPercent, payPercent] of appState.M) {
+      const matchAmount =
+        (matchPercent / 100) *
+        Math.min((appState.G * payPercent) / 100, contributionAmount);
+      result.match += matchAmount;
+      contributionAmount -= matchAmount;
+    }
+    result.match = Math.min(
+      result.match,
+      remainingTotalContribution - contributionAmount,
+    );
+    remainingTotalContribution -= result.match;
+    result.YTDContribution = result.contribution;
+    result.YTDMatch = result.match;
+    result.worth = result.growth + result.contribution + result.match;
+    if (i > 0) {
+      const last = snapshots[i - 1];
+      result.growth = payPeriodRoi * last.worth;
+      result.YTDContribution += last.YTDContribution;
+      result.YTDMatch += last.YTDMatch;
+      result.worth += last.worth + result.growth;
+    }
+    snapshots.push(result);
+  }
+  return snapshots;
+}
 
 export default function simulate(appState: AppState) {
   let daysSoFar = 0;
@@ -56,58 +110,169 @@ export default function simulate(appState: AppState) {
     amount <= potentialPersonalContribution;
     amount = Math.ceil(amount * 1.1)
   ) {
-    const snapshots: SimulationResult[] = [];
-    let remainingPersonalContribution = potentialPersonalContribution;
-    let remainingTotalContribution = potentialTotalContribution;
-
-    for (let i = 0; i < payPeriodsRemaining; i++) {
-      const result: SimulationResult = {
-        contribution: 0,
-        YTDContribution: 0,
-        match: 0,
-        YTDMatch: 0,
-        growth: 0,
-        worth: 0,
-      };
-      let contributionAmount = Math.min(amount, remainingPersonalContribution);
-      result.contribution = contributionAmount;
-      remainingPersonalContribution -= result.contribution;
-      remainingTotalContribution -= result.contribution;
-      result.match += (appState.B / 100) * appState.G;
-      for (const [matchPercent, payPercent] of appState.M) {
-        const matchAmount =
-          (matchPercent / 100) *
-          Math.min((appState.G * payPercent) / 100, contributionAmount);
-        result.match += matchAmount;
-        contributionAmount -= matchAmount;
-      }
-      result.match = Math.min(
-        result.match,
-        remainingTotalContribution - contributionAmount,
-      );
-      remainingTotalContribution -= result.match;
-      result.YTDContribution = result.contribution;
-      result.YTDMatch = result.match;
-      result.worth = result.growth + result.contribution + result.match;
-      if (i > 0) {
-        const last = snapshots[i - 1];
-        result.growth = payPeriodRoi * last.worth;
-        result.YTDContribution += last.YTDContribution;
-        result.YTDMatch += last.YTDMatch;
-        result.worth += last.worth + result.growth;
-      }
-      snapshots.push(result);
-    }
-    results[amount] = snapshots;
-    // if (amount < 1000) {
-    //     amount += 100;
-    // } else if (amount < 5000) {
-    //     amount += 200;
-    // } else if (amount < 10000) {
-    //     amount += 500;
-    // } else {
-    //     amount += 1000;
-    // }
+    const result = makeResult(
+      appState,
+      amount,
+      potentialPersonalContribution,
+      potentialTotalContribution,
+      payPeriodsRemaining,
+      payPeriodRoi,
+    );
+    results[amount] = result;
   }
+
+  function searchForMaxPoint(
+    lowerX: number,
+    lowerY: number,
+    lowerR: SimulationResult[],
+    upperX: number,
+    upperY: number,
+    upperR: SimulationResult[],
+  ): [x: number, y: number, r: SimulationResult[]] {
+    let bestX = lowerX;
+    let bestY = lowerY;
+    let bestResult = lowerR;
+    if (upperY > bestY) {
+      bestY = upperY;
+      bestX = upperX;
+      bestY = upperY;
+    }
+
+    while (Math.abs(upperY - lowerY) > 1 && Math.abs(upperX - lowerX) > 1) {
+      const midX = Math.round((lowerX + upperX) / 2);
+      bestResult = makeResult(
+        appState,
+        midX,
+        potentialPersonalContribution,
+        potentialTotalContribution,
+        payPeriodsRemaining,
+        payPeriodRoi,
+      );
+      const midY = bestResult[bestResult.length - 1].worth;
+
+      if (midY > bestY) {
+        const [x1, y1, r1] = searchForMaxPoint(
+          lowerX,
+          lowerY,
+          lowerR,
+          midX,
+          midY,
+          bestResult,
+        );
+        const [x2, y2, r2] = searchForMaxPoint(
+          midX,
+          midY,
+          bestResult,
+          upperX,
+          upperY,
+          upperR,
+        );
+        if (y1 > y2) {
+          return [x1, y1, r1];
+        }
+        return [x2, y2, r2];
+      }
+      if (lowerY > upperY) {
+        upperX = midX;
+        upperY = midY;
+      } else {
+        lowerX = midX;
+        lowerY = midY;
+      }
+    }
+    return [bestX, bestY, bestResult];
+  }
+
+  const keys = Object.keys(results);
+  const vals = Object.values(results);
+  const [bestX, bestY, bestR] = searchForMaxPoint(
+      parseFloat(keys[0]),
+      vals[0][vals[0].length - 1].worth,
+      vals[0],
+      parseFloat(keys[keys.length - 1]),
+      vals[vals.length - 1][vals[vals.length - 1].length - 1].worth,
+      vals[vals.length - 1],
+  );
+  results[bestX] = bestR
+
   return results;
 }
+
+/*
+function searchForMaxPoint(
+    lowerX: number,
+    lowerY: number,
+    lowerR: SimulationResult[],
+    upperX: number,
+    upperY: number,
+    upperR: SimulationResult[],
+  ): [x: number, y: number, r: SimulationResult[]] {
+    let bestX = lowerX;
+    let bestY = lowerY;
+    let bestResult = lowerR;
+    if (upperY > bestY) {
+      bestY = upperY;
+      bestX = upperX;
+      bestY = upperY;
+    }
+
+    while (Math.abs(upperY - lowerY) > 1 && Math.abs(upperX - lowerX) > 1) {
+      const midX = (lowerX + upperX) / 2;
+      bestResult = makeResult(
+        appState,
+        midX,
+        potentialPersonalContribution,
+        potentialTotalContribution,
+        payPeriodsRemaining,
+        payPeriodRoi,
+      );
+      const midY = bestResult[bestResult.length - 1].worth;
+
+      if (midY > bestY) {
+        const [x1, y1, r1] = searchForMaxPoint(
+          lowerX,
+          lowerY,
+          lowerR,
+          midX,
+          midY,
+          bestResult,
+        );
+        const [x2, y2, r2] = searchForMaxPoint(
+          midX,
+          midY,
+          bestResult,
+          upperX,
+          upperY,
+          upperR,
+        );
+        if (y1 > y2) {
+          return [x1, y1, r1];
+        }
+        return [x2, y2, r2];
+      }
+      if (lowerY > upperY) {
+        upperX = midX;
+        upperY = midY;
+      } else {
+        lowerX = midX;
+        lowerY = midY;
+      }
+    }
+    return [bestX, bestY, bestResult];
+  }
+
+  const keys = Object.keys(results);
+  const vals = Object.values(results);
+  const [bestX, bestY, bestR] = searchForMaxPoint(
+    parseFloat(keys[0]),
+    vals[0][vals[0].length - 1].worth,
+    vals[0],
+    parseFloat(keys[keys.length - 1]),
+    vals[vals.length - 1][vals[vals.length - 1].length - 1].worth,
+    vals[vals.length - 1],
+  );
+  results[bestX] = bestR
+
+  return results;
+}
+ */

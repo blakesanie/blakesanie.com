@@ -5,9 +5,10 @@ interface NumberInputProps {
   min?: number;
   max?: number;
   onBlur?: (n: number, e: React.FocusEvent | undefined) => void;
-  prefix?: string;
-  suffix?: string;
   onError?: (err: string) => void;
+  formatValue?: (str: string) => string;
+  detectError?: (x: number) => string;
+  placeholder?: string;
 }
 
 const NumberInput: React.FC<NumberInputProps> = ({
@@ -15,9 +16,10 @@ const NumberInput: React.FC<NumberInputProps> = ({
   min,
   max,
   onBlur,
-  prefix,
-  suffix,
   onError,
+  formatValue,
+  detectError,
+  placeholder,
 }) => {
   const [value, setValue] = useState("");
   const [trailingDot, setTrailingDot] = useState(false);
@@ -27,21 +29,13 @@ const NumberInput: React.FC<NumberInputProps> = ({
   const minExists = min !== undefined;
   const maxExists = max !== undefined;
 
-  function checkBounds(val: number | undefined) {
-    console.log("check bounds");
-
-    if (val !== undefined && onError) {
-      if (minExists && val < min) {
-        onError("Must be at least " + min);
-        return true;
-      } else if (maxExists && val > max) {
-        onError("Must be at most " + max);
-        return true;
-      } else {
-        onError("");
-      }
+  function checkBounds(val: number | undefined): string {
+    if (minExists && val < min) {
+      return "Must be at least " + min;
+    } else if (maxExists && val > max) {
+      return "Must be at most " + max;
     }
-    return false;
+    return "";
   }
 
   useEffect(() => {
@@ -49,13 +43,16 @@ const NumberInput: React.FC<NumberInputProps> = ({
   }, [min, max, hasInteraction]);
 
   const val = hasInteraction ? value : "" + defaultValue;
-  const dotSplit = val.split(".");
-  let display = prefix || "";
-  display += val.length ? parseInt(dotSplit[0]).toLocaleString() : "";
-  if (dotSplit.length == 2) {
-    display += "." + dotSplit[1];
+  let display = "";
+  if (formatValue) {
+    display = formatValue(val);
+  } else {
+    const dotSplit = val.split(".");
+    display += val.length ? parseInt(dotSplit[0]).toLocaleString() : "";
+    if (dotSplit.length == 2) {
+      display += "." + dotSplit[1];
+    }
   }
-  if (suffix) display += suffix;
 
   const clip = useCallback(
     (e: React.FocusEvent | undefined) => {
@@ -68,7 +65,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
         );
         setValue("" + floatVal);
       } else {
-        setValue("" + (min || 0));
+        min && setValue("" + min);
       }
       if (onError) onError("");
       if (onBlur) onBlur(floatVal, e);
@@ -79,6 +76,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
   return (
     <>
       <input
+        placeholder={placeholder}
         value={display}
         onChange={(e) => {
           // if (!e.target.value.length) {
@@ -87,7 +85,10 @@ const NumberInput: React.FC<NumberInputProps> = ({
           //
           setHasInteraction(true);
           const num = e.target.value.replace(/[^0-9.]/g, "");
-          console.log("should err", checkBounds(parseFloat(num)));
+          const f = parseFloat(num);
+          if (onError && f !== undefined) {
+            onError(detectError ? detectError(f) : checkBounds(f));
+          }
           setValue(num);
         }}
         onBlur={clip}

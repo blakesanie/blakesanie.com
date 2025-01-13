@@ -1,0 +1,248 @@
+---
+import resume from "./resume";
+
+export function formatPhone(num) {
+  const s = "" + num;
+  return `(${s.substring(0, 3)}) ${s.substring(s.length - 7, s.length - 4)}-${s.substring(s.length - 4)}`;
+}
+---
+
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>{resume.name}</h1>
+      <p>{resume.occupation}</p>
+      <p>{resume.location}</p>
+      <p>{resume.email}</p>
+      <p>{resume.website}</p>
+      <p>{formatPhone(resume.phone)}</p>
+    </header>
+    <section>
+      <h2>Experience</h2>
+      {
+        resume.employment.map((employer) => (
+          <article>
+            <h3>{employer.company}</h3>
+            {employer.positions.map((position) => (
+              <article>
+                <h4>
+                  <strong>{position.title}</strong>
+                  {", "}
+                  {position.team}
+                </h4>
+                <p class="timeRange">
+                  {position.startMonth} {position.startYear}
+                  {" - "}
+                  {position.endMonth
+                    ? `${position.endMonth} ${position.endYear}`
+                    : "Present"}
+                </p>
+                <ul>
+                  {position.bullets.map((bullet) => (
+                    <li>{bullet}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </article>
+        ))
+      }
+    </section>
+    <section>
+      <h2>Education</h2>
+      <article>
+        <h3>Georgia Institute of Technology</h3>
+        <h4>
+          <strong>M.S. Machine Learning</strong> (4.0/4 GPA), <strong
+            >B.S. Computer Science</strong
+          > (4.0/4 GPA)
+        </h4>
+        <p class="timeRange">Aug 2019 - Dec 2024</p>
+      </article>
+    </section>
+    <section>
+      <h2>Skills & Proficiencies</h2>
+      <article>
+        <h4>
+          <strong>Business Skills</strong>: Leadership, critical thinking,
+          production support, cost optimization, dependency coordination, French
+          fluency
+        </h4>
+      </article>
+      <article>
+        <h4>
+          <strong>Technical Skills</strong>: Advanced AWS (Fargate, Lambda,
+          DynamoDB), monitoring (CloudWatch, NewRelic, Splunk), Machine Learning
+          (PyTorch, NumPy, Spark), Full Stack (GoLang, JavaScript, React.js),
+          Streaming (Kafka, SQS, gRPC), Databases (SQL, Redis, Firebase)
+        </h4>
+      </article>
+    </section>
+    <section>
+      <h2>Projects</h2>
+      <article>
+        <h4>
+          <strong>Learned Early Exit Network (LeeNet)</strong>, Georgia
+          Institute of Technology
+        </h4>
+        <ul>
+          <li>
+            A novel Deep Learning architecture with dynamic exiting at
+            intermediate layers based on self-learned confidence thresholds.
+          </li>
+          <li>
+            Awarded project of the year in Georgia Tech's graduate Big Data
+            course, highlighting the demonstrated potential in model efficiency.
+          </li>
+        </ul>
+      </article>
+      <article>
+        <h4>
+          <strong>Distal Radius Object Identification (DROID)</strong>, Emory
+          Department of Orthopedics
+        </h4>
+        <ul>
+          <li>
+            Realtime iOS wrist implant manufacturer identification from mere
+            x-ray imaging, aiming to reduce emergency extraction complications.
+          </li>
+          <li>
+            Presented to top-industry surgeons to align use cases and unravel
+            underlying K-means, PCA, RANSAC, transfer learning methods.
+          </li>
+        </ul>
+      </article>
+    </section>
+    <section>
+      <h2>Certifications</h2>
+      <article>
+        <h4>
+          <strong>AWS Solutions Architect, Associate</strong>, Amazon Web
+          Services
+        </h4>
+        <ul>
+          <li>
+            Deep intuition towards implementing scalable, available, durable,
+            resilient, cost-effective cloud initiatives with 50+ AWS services
+          </li>
+        </ul>
+      </article>
+      <article>
+        <h4>
+          <strong>Code Secure Software Engineer (CSSE)</strong>, Capital One
+        </h4>
+        <ul>
+          <li>
+            Defense against Code Injection, XSS, Access Control, and Session
+            Handling vulnerabilities at both service and system-level
+          </li>
+        </ul>
+      </article>
+    </section>
+    <section>
+      <h2>Interests</h2>
+      <ul>
+        <li>
+          Ironman triathlon, French cuisine, landscape photography, chess, blues
+          guitar, hydroponic gardening, graphic design
+        </li>
+      </ul>
+    </section>
+  </body>
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;500&display=swap");
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Source Sans Pro", sans-serif;
+      list-style-type: circle;
+      font-size: 14px;
+    }
+
+    body {
+      width: 8.5in;
+      height: 11in;
+      padding: 1rem !important;
+      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+    }
+
+    section,
+    header,
+    section > * {
+      width: 100%;
+    }
+
+    article {
+      position: relative;
+      padding-left: 10px;
+    }
+    section > article {
+      padding-left: 0;
+    }
+
+    ul {
+      padding-left: 0.19in;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      width: 100%;
+      text-align: center;
+    }
+
+    header p {
+      padding: 0 0.5em;
+    }
+
+    h2 {
+      font-size: 18px;
+      border-bottom: 1px solid #ccc;
+
+      border-top: 1px solid #ccc;
+      margin: 0.05in 0;
+    }
+
+    h3 {
+      font-size: 18px;
+    }
+
+    .timeRange,
+    .location {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    strong {
+      font-style: italic;
+    }
+
+    article > article > h4 {
+      border-bottom: 1px solid #ccc;
+    }
+
+    @media print {
+      body {
+        border: none;
+      }
+    }
+  </style>
+</html>

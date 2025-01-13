@@ -6,8 +6,9 @@ interface NumberInputProps {
   InputType?: React.ComponentType;
   prefix?: string;
   suffix?: string;
-  inputProps?: object;
+  inputProps?: React.ComponentProps<any>;
   children?: React.ReactNode;
+  style?: React.CSSProperties;
 }
 
 const FancyInput: React.FC<NumberInputProps> = ({
@@ -17,6 +18,7 @@ const FancyInput: React.FC<NumberInputProps> = ({
   prefix,
   suffix,
   inputProps,
+  style,
 }) => {
   const [error, setError] = useState("");
 
@@ -37,7 +39,8 @@ const FancyInput: React.FC<NumberInputProps> = ({
     <div
       className={styles.container + (error ? " " + styles.error : "")}
       style={{
-        borderColor: error ? "red" : "transparent",
+        ...style,
+        borderColor: error ? "red !important" : "transparent",
       }}
     >
       {label && <div className={styles.label}>{label}</div>}

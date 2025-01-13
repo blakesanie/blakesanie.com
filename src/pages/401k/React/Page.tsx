@@ -13,9 +13,9 @@ import ResultTable from "./ResultTable";
 
 function dateToNumber(date: Date): number {
     return (
-        (date.getMonth() + 1) * 10000 +
-        date.getDate() * 1000 +
-        (date.getFullYear() % 100)
+      (date.getMonth() + 1) * 10000 +
+      date.getDate() * 1000 +
+      (date.getFullYear() % 100)
     );
 }
 
@@ -35,18 +35,18 @@ function dateNumberToElements(num: number) {
 // })
 
 const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 function App() {
@@ -64,7 +64,7 @@ function App() {
     YTDT: 0,
     m: new Date().getMonth(),
     d: new Date().getDate(),
-    TU: 0,
+    TU: -1,
   });
 
   const [highlightedContribution, setHighlightedContribution] = useState(50);
@@ -145,51 +145,63 @@ function App() {
                 InputType={NumberInput}
               ></FancyInput>
 
-              <FancyInput label={"Max Total Contribution"}>
-                <NumberInput
-                  defaultValue={appState.MTC}
-                  min={0}
-                  onBlur={(x) => {
+              <FancyInput
+                label={"Max Total Contribution"}
+                prefix={"$"}
+                inputProps={{
+                  defaultValue: appState.MTC,
+                  min: 0,
+                  max: appState.MTC,
+                  onBlur: (x) => {
                     setAppState({ ...appState, MTC: x });
-                  }}
-                  prefix={"$ "}
-                />
-              </FancyInput>
+                  },
+                }}
+                InputType={NumberInput}
+              ></FancyInput>
             </td>
           </tr>
           <tr className={styles.paramGroup}>
             <td className={styles.paramSectionName}>Contribution</td>
             <td className={styles.inputGroup}>
-              <FancyInput label={"Gross Paycheck"}>
-                <NumberInput
-                  defaultValue={appState.G}
-                  label={"Gross Paycheck"}
-                  min={0}
-                  onBlur={(x) => {
+              <FancyInput
+                label={"Gross Paycheck"}
+                prefix={"$"}
+                inputProps={{
+                  defaultValue: appState.G,
+                  min: 0,
+                  max: appState.G,
+                  onBlur: (x) => {
                     setAppState({ ...appState, G: x });
-                  }}
-                  prefix={"$ "}
-                />
-              </FancyInput>
-              <FancyInput label={"Pay Periods"}>
-                <NumberInput
-                  defaultValue={appState.PP}
-                  min={1}
-                  max={52}
-                  onBlur={(x) => {
+                  },
+                }}
+                InputType={NumberInput}
+              ></FancyInput>
+              <FancyInput
+                label={"Pay Periods"}
+                suffix={"days"}
+                inputProps={{
+                  defaultValue: appState.PP,
+                  min: 1,
+                  max: 52,
+                  onBlur: (x) => {
                     setAppState({ ...appState, PP: x });
-                  }}
-                  prefix={"$ "}
-                />
-              </FancyInput>
+                  },
+                }}
+                InputType={NumberInput}
+              ></FancyInput>
             </td>
           </tr>
           <tr className={styles.paramGroup}>
             <td className={styles.paramSectionName}>Timeline</td>
             <td className={styles.inputGroup}>
               <span>Start simulation on</span>
-              <FancyInput label={"Month"}>
-                <select>
+              <FancyInput
+                label={"Month"}
+                style={{
+                  minWidth: "5em",
+                }}
+              >
+                <select value={appState.m} onChange={(e) => {}}>
                   {months.map((mo, i) => (
                     <option value={i}>{mo}</option>
                   ))}
@@ -207,29 +219,33 @@ function App() {
               </FancyInput>
 
               <span>With a prior personal contribution of</span>
-              <FancyInput label={"Prior Personal Contribution"}>
-                <NumberInput
-                  defaultValue={appState.YTD}
-                  min={0}
-                  max={appState.MPC}
-                  onBlur={(x) => {
+              <FancyInput
+                label={"Prior Personal Contribution"}
+                prefix="$"
+                inputProps={{
+                  defaultValue: appState.YTD,
+                  min: 0,
+                  max: appState.MPC,
+                  onBlur: (x) => {
                     setAppState({ ...appState, YTD: x });
-                  }}
-                  prefix={"$"}
-                />
-              </FancyInput>
+                  },
+                }}
+                InputType={NumberInput}
+              ></FancyInput>
               <span>making a total contribution of</span>
-              <FancyInput label={"Prior Total Contribution"}>
-                <NumberInput
-                  defaultValue={appState.YTDT}
-                  min={0}
-                  max={appState.MTC}
-                  onBlur={(x) => {
+              <FancyInput
+                label={"Prior Total Contribution"}
+                prefix="$"
+                inputProps={{
+                  defaultValue: appState.YTDT,
+                  min: 0,
+                  max: appState.MTC,
+                  onBlur: (x) => {
                     setAppState({ ...appState, YTDT: x });
-                  }}
-                  prefix={"$ "}
-                />
-              </FancyInput>
+                  },
+                }}
+                InputType={NumberInput}
+              ></FancyInput>
             </td>
           </tr>
           <tr className={styles.paramGroup}>
@@ -253,6 +269,40 @@ function App() {
                   onBlur={(matchPercent, payPercent) => {}}
                 />
               ))}
+              <FancyInput
+                label={"True-Up Date"}
+                inputProps={{
+                  defaultValue: 111,
+                  placeholder: "No True-Up",
+                  max: 1231,
+                  formatValue: (s: string): string => {
+                    if (!s) return s;
+                    let out = "";
+                    for (let i = s.length; i < 3; i++) {
+                      out = "_" + out;
+                    }
+                    out += s;
+                    if (s.length > 0) {
+                      out =
+                        out.substring(0, out.length - 2) +
+                        "/" +
+                        out.substring(out.length - 2);
+                    }
+                    return out;
+                  },
+                  detectError: (x: number): string => {
+                    // debugger;
+                    if (x < 100) return "Invalid Date";
+                    const month = Math.floor(x / 100);
+                    if (month > 12) return "Invalid Date";
+                    const days = x % 100;
+                    if (days < 1 || days > daysInMonth(month - 1))
+                      return "Invalid Date";
+                    return "";
+                  },
+                }}
+                InputType={NumberInput}
+              ></FancyInput>
             </td>
           </tr>
         </tbody>
