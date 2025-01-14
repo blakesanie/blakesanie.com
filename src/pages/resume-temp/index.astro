@@ -1,0 +1,128 @@
+---
+import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
+import resume from "../resume-raw/resume";
+import { toTenths, formatPhone } from "../resume-raw/index.astro";
+---
+
+<HeaderAndFooter
+  title="Résumé"
+  description="My professional experience, academic achievements, demonstrated proficiencies, leadership roles, and career objective."
+>
+  <a href="/resume.pdf" target="_blank" id="pdf">Résumé as a PDF</a>
+  <section>
+    <h2>Experience</h2>
+    {
+      resume.employment.map((employer) => (
+        <article>
+          <h3>{employer.company}</h3>
+          {employer.positions.map((position) => (
+            <article>
+              <h4 class="title">
+                <strong>{position.title}</strong>
+              </h4>
+              <p class="team">{position.team}</p>
+              <p class="timeRange">
+                {position.startMonth} {position.startYear}
+                {" - "}
+                {position.endMonth
+                  ? `${position.endMonth} ${position.endYear}`
+                  : "Present"}
+              </p>
+              <ul>
+                {position.bullets.map((bullet) => (
+                  <li>{bullet}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </article>
+      ))
+    }
+  </section>
+</HeaderAndFooter>
+
+<style>
+  #pdf {
+    position: sticky;
+    top: 10px;
+    background-color: white;
+    z-index: 2;
+    font-size: 1.2em;
+    padding: 0.4em 0.8em;
+    border-radius: 0.5em;
+    box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.1s ease;
+    margin-bottom: 2rem;
+  }
+  #pdf::after {
+    content: "↗";
+    font-size: 50%;
+    position: relative;
+    vertical-align: super;
+    padding-left: 0.5em;
+  }
+  #pdf:hover {
+    box-shadow: 0 0 0 2px var(--headerColor);
+  }
+  :global(main) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    font-size: min(1em, 4vw);
+  }
+
+  :global(main) > * {
+    max-width: 1000px;
+  }
+
+  section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  h2 {
+    font-size: 1.8em;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+  }
+
+  h3 {
+    font-size: 1.4em;
+  }
+
+  h4 {
+    border-bottom: 1px solid #ccc;
+  }
+  .timeRange {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  article {
+    position: relative;
+    margin-top: 0.8em;
+  }
+
+  strong {
+    font-size: 1.2em;
+    font-style: italic;
+  }
+
+  .team {
+    font-style: italic;
+    margin: 0.8em 0;
+  }
+
+  article > article {
+    padding-left: 1em;
+  }
+
+  ul {
+    list-style: circle;
+    padding-left: 1.3em;
+  }
+</style>
