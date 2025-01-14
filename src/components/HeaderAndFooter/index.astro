@@ -9,7 +9,6 @@ import NavLink from "./NavLink.astro";
 import NowPlaying from "./NowPlaying.astro";
 import SoundBars from "./SoundBars.astro";
 import {HeaderVars} from "./shared";
-import { ClientRouter } from 'astro:transitions';
 // import Newsletter from "../Newsletter/index.astro";
 const mobileMaxWidth = 800; // still manually declared in media query declaration
 const headerWidth = 130;
@@ -24,6 +23,7 @@ Astro.props.themeColor = Astro.props.themeColor || "rgb(72, 161, 223)";
 const textColor = Astro.props.darkText ? "black" : "white";
 const navPadding = 0.5; // was 0.6 em
 const isHome = Astro.props.isHome;
+const noTab = isHome || Astro.props.noTab
 const { allowMainStyles, noContentPadding, hideSpotify } = Astro.props;
 const hoverZoneBehind = isHome; // || Astro.props.hoverZoneBehind;
 
@@ -34,13 +34,12 @@ const headerVars: HeaderVars = {
   headerPositionTransitionDuration,
   mobileMaxWidth,
   navPadding,
-  noTab: isHome,
+  noTab: noTab,
   hoverZoneBehind,
 };
 ---
 
-<CommonHead {...Astro.props} bodyClasslist={[{ isHome: isHome}]}>
-  <ClientRouter />
+<CommonHead {...Astro.props} bodyClasslist={[{ isHome: isHome, noTab: noTab}]}>
   <header class:list={[{ darkText: textColor == "black" }]}>
     <!--<div>-->
     <!--<img src="https://i.scdn.co/image/ab67616d00001e02a84994855921f317b6ce0096" width="400">-->
@@ -271,12 +270,14 @@ const headerVars: HeaderVars = {
   >
     <slot />
   </main>
+  {Astro.props.noFooter ? null : 
   <footer>
     <div>
     <div>© Blake Sanie</div>
     <a onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Top</a>
     </div>
   </footer>
+  }
   <slot name="topLevel" />
   <!-- <Newsletter /> -->
 </CommonHead>

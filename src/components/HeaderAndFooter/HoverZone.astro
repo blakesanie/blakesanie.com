@@ -49,16 +49,21 @@ import Icon from "astro-icon";
     background-color: rgba(255, 255, 255, 0.14);
   }
 
-  .isHome .navHoverZone, .scrollbars .navHoverZone {
+  .noTab .navHoverZone,
+  .scrollbars .navHoverZone {
     border-radius: var(--borderRounding) !important;
     width: calc(100% - var(--navPadding) * 2);
   }
 
-  .isHome .navHoverZone > *, .scrollbars .navHoverZone > * {
+  .noTab .navHoverZone > *,
+  .scrollbars .navHoverZone > * {
     display: none;
   }
   .hoverZoneTransition {
-    transition: opacity 0.2s ease, transform 0.2s ease, width 0.2s ease,
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      width 0.2s ease,
       height 0.2s ease;
   }
   @media screen and (max-width: 800px) {
