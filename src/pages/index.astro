@@ -41,18 +41,18 @@ const markupData = [
     ],
     imageUrl: "/src/assets/images/bg/crosland.jpg",
     links: [
-        {
-            href: "/projects#leenet",
-            label: "Learned Early Exit Network"
-        },
-        {
-            href: "/projects#kbai",
-            label: "Knowledge-Based Composition",
-        },
-        {
-            href: "/projects#white-balance",
-            label: "Deep Learning Color Balancing",
-        },
+      {
+        href: "/projects#leenet",
+        label: "Learned Early Exit Network",
+      },
+      {
+        href: "/projects#kbai",
+        label: "Knowledge-Based Composition",
+      },
+      {
+        href: "/projects#white-balance",
+        label: "Deep Learning Color Balancing",
+      },
     ],
   },
   {
@@ -97,7 +97,7 @@ const markupData = [
       {
         href: "/blog",
         label: "Blog & Newsletter",
-      }
+      },
     ],
     style: {
       maxHeight: "min(500px,130vw)",
@@ -133,7 +133,12 @@ const markupData = [
 ];
 ---
 
-<HeaderAndFooter color="rgba(0,0,0,0.5)" colorOpaque="black" themeColor="black" isHome={true}>
+<HeaderAndFooter
+  color="rgba(0,0,0,0.5)"
+  colorOpaque="black"
+  themeColor="black"
+  isHome={true}
+>
   <HomePageSection
     id="firstSection"
     class="homePageSection sectionTransitionParent"
@@ -183,6 +188,7 @@ const markupData = [
   }
   #firstSection {
     animation: fadeIn 3s ease;
+    min-height: 100vh;
   }
   :global(.bg) {
     opacity: 0.05;
@@ -318,4 +324,3 @@ const markupData = [
 
   handleScroll();
 </script>
-

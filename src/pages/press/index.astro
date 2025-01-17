@@ -1,6 +1,7 @@
 ---
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import { Img } from "astro-imagetools/components";
+import Substack from "../../components/Substack.astro";
 
 const links = [
   {
@@ -123,6 +124,7 @@ const press = await Promise.all(links.map((link) => processLink(link)));
       })
     }
   </div>
+  <Substack />
 </HeaderAndFooter>
 
 <style>

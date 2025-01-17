@@ -4,6 +4,7 @@ import { Icon } from "astro-icon";
 //@ts-ignore
 import { Img } from "astro-imagetools/components";
 import Button from "../../components/basic/Button.astro";
+import Substack from "../../components/Substack.astro";
 
 interface ProjectInterface {
   title: string;
@@ -28,12 +29,13 @@ const projects: ProjectInterface[] = [
     title: "Learned Early Exit Network (LeeNet)",
     image: "/src/assets/images/leenet/leenet.png",
     id: "leenet",
-    description: "A new class of deep neural network (DNN) architecture - by dynamically exiting at intermediate layers based on self-learned confidence thresholds, LeeNet achieves significant efficiency gains with minimal accuracy trade-offs across diverse datasets and model architectures. Results showcase up to a 69% reduction in computational cost and 1.47x inference speedup, bridging the gap between deep learning and resource-constrained environments. Voted project of the year in Georgia Tech's CS 6220 graduate course.",
+    description:
+      "A new class of deep neural network (DNN) architecture - by dynamically exiting at intermediate layers based on self-learned confidence thresholds, LeeNet achieves significant efficiency gains with minimal accuracy trade-offs across diverse datasets and model architectures. Results showcase up to a 69% reduction in computational cost and 1.47x inference speedup, bridging the gap between deep learning and resource-constrained environments. Voted project of the year in Georgia Tech's CS 6220 graduate course.",
     links: [
       {
         label: "Presentation",
         href: "/leenet.pdf",
-      }
+      },
     ],
     tech: [
       {
@@ -52,7 +54,7 @@ const projects: ProjectInterface[] = [
         icon: "logos:numpy",
         name: "NumPy",
       },
-    ]
+    ],
   },
   {
     title: "Quantitative Research Platform",
@@ -185,7 +187,7 @@ const projects: ProjectInterface[] = [
   {
     title: "Knowledge-Based AI for Image Composition",
     image: "/src/assets/images/projects/kbai.png",
-    id: 'kbai',
+    id: "kbai",
     description:
       "An AI photography composition copilot, driven by a novel, data-free approach. This framework builds upon Human-Cognitive Theory, modern aesthetic perception research, and the SOAR Cognitive Architecture to generate human-level instructions for camera repositioning and zoom adjustment. Deeper, unsupervised learning methods such as GradCam with a proposed multi-class design, clustering algorithms, statistical modelling, and nearest-neighbor indexes support my framework's innovations in aesthetically-focused computational photography.",
     links: [
@@ -223,7 +225,7 @@ const projects: ProjectInterface[] = [
   },
   {
     title: "White Balancing via Deep Learning",
-    id: 'white-balance',
+    id: "white-balance",
     description:
       "Applying novel Deep Learning methods towards accurate automatic color calibration of off-neutral images. Learning from the Unsplash dataset of properly white-balanced stock images, this experiment follows a technical exploration of digital color space, lossless graphical augmentation, computer vision and perception, and state-of-the-art ML model architectures such as ViT (Vision Transformer) alongside convolutional approaches.",
     image: "/src/assets/images/projects/whitebalance.png",
@@ -511,7 +513,7 @@ const projects: ProjectInterface[] = [
 ];
 
 function toFragrment(str: string) {
-  return str.split('(')[0].toLowerCase().replaceAll(' ', '-')
+  return str.split("(")[0].toLowerCase().replaceAll(" ", "-");
 }
 ---
 
@@ -531,15 +533,16 @@ function toFragrment(str: string) {
   </p>
   <div id="projects">
     {
-      projects.map(({title, id, description, tech, ...project}) => {
+      projects.map(({ title, id, description, tech, ...project }) => {
         const defaultLink =
           project.links && project.links[0] && project.links[0].href;
         return (
-            <div class="project" id={id || toFragrment(title)}>
+          <div class="project" id={id || toFragrment(title)}>
             <div class="info">
-              <h2 class="title">{title}
-                <Icon name="ic:round-content-copy" class="copy"/>
-                <Icon name="ic:round-check" class="check"/>
+              <h2 class="title">
+                {title}
+                <Icon name="ic:round-content-copy" class="copy" />
+                <Icon name="ic:round-check" class="check" />
               </h2>
               <p class="desc">{description}</p>
               {tech && (
@@ -590,6 +593,7 @@ function toFragrment(str: string) {
       })
     }
   </div>
+  <Substack />
 </HeaderAndFooter>
 
 <style>
@@ -750,27 +754,26 @@ function toFragrment(str: string) {
     });
   }
 
-
-  const copyIcons = {}
-  const checkIcons = {}
+  const copyIcons = {};
+  const checkIcons = {};
 
   const titleIcons = document.querySelectorAll("h2 svg");
   for (let i = 0; i < titleIcons.length; i++) {
     const titleIcon = titleIcons[i] as HTMLElement;
-    const id = titleIcon.parentElement.parentElement.parentElement.id
+    const id = titleIcon.parentElement.parentElement.parentElement.id;
     if (titleIcon.classList.contains("check")) {
-      checkIcons[id] = titleIcon
+      checkIcons[id] = titleIcon;
     } else {
-      copyIcons[id] = titleIcon
+      copyIcons[id] = titleIcon;
     }
     titleIcon.addEventListener("click", () => {
-      const url = window.location.href.split('#')[0] + '#' + id
-      navigator.clipboard.writeText(url)
+      const url = window.location.href.split("#")[0] + "#" + id;
+      navigator.clipboard.writeText(url);
       history.pushState(null, null, url);
       for (const id2 in copyIcons) {
         if (id == id2) {
-          checkIcons[id].style.display = 'block'
-          copyIcons[id].style.display = 'none'
+          checkIcons[id].style.display = "block";
+          copyIcons[id].style.display = "none";
         } else {
           copyIcons[id2].style.display = "block";
           checkIcons[id2].style.display = "none";
@@ -778,7 +781,6 @@ function toFragrment(str: string) {
       }
       // checkIcons[id].style.display = 'block'
       // titleIcon.style.display = 'none'
-    })
+    });
   }
-
 </script>
