@@ -1,0 +1,23 @@
+---
+import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
+import { Img } from "astro-imagetools/components";
+import Substack from "../../components/Substack.astro";
+---
+
+<HeaderAndFooter allowMainStyles title="" description="" noIndex>
+  <h1>Planner App in Astro</h1>
+  <div id="root"></div>
+  <script type="module">
+    import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.76.0/build/stlite.js";
+    mount(
+      `
+import streamlit as st
+
+name = st.text_input('Your name')
+st.write("Hello,", name or "world")
+`,
+      document.getElementById("root")
+    );
+  </script>
+  <Substack />
+</HeaderAndFooter>

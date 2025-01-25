@@ -1,5 +1,4 @@
 ---
-
 // @ts-ignore
 import { Img } from "astro-imagetools/components";
 import SmartHref from "./HeaderAndFooter/SmartHref.astro";
@@ -40,7 +39,11 @@ const maxImageOpacity = 0.5;
       <div class="links">
         {links.map(({ target, href, label, ...props }) => {
           return (
-            <SmartHref href={href} target={target} class:list={[props.class, "link"]}>
+            <SmartHref
+              href={href}
+              target={target}
+              class:list={[props.class, "link"]}
+            >
               {label}
             </SmartHref>
           );
@@ -60,7 +63,7 @@ const maxImageOpacity = 0.5;
     position: fixed;
     width: var(--headerWidth);
     height: 100%;
-    top:0;
+    top: 0;
     left: 0;
     backdrop-filter: blur(5px);
   }
@@ -88,7 +91,7 @@ const maxImageOpacity = 0.5;
     overflow: hidden;
     padding-left: var(--headerWidth);
   }
-  @media screen and (max-width:800px) {
+  @media screen and (max-width: 800px) {
     .section {
       padding-left: 0;
     }
