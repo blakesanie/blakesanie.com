@@ -17,8 +17,6 @@ import Substack from "../../components/Substack.astro";
 // console.log("exiftool", exiftoolJson["DSC05014.jpg"]);
 
 const initialMode = Astro.props.initialMode || "gallery";
-const initialImage = Astro.props.initialImag;
-console.log("initial image", initialImage);
 
 // const images = await Astro.glob("./portfolio/*").then((files) => {
 //   console.log("files", files);
@@ -76,8 +74,7 @@ await Promise.all(
       icc: true,
       jfif: true,
     });
-    const name = path.split("/").pop()?.split(".")[0] as string;
-    // const cleanName = decodeURIComponent(name.replaceAll("--", "%"));
+    const filename = path.split("/").pop();
     const { width, height } = await sizeOf("." + path);
 
     let im2 = await renderImg({
@@ -87,8 +84,14 @@ await Promise.all(
       alt: "",
       quality: 50,
     });
-
-    icons[name] = im2.img.split('srcset="')[1].split('"')[0];
+    const fullName = decodeURIComponent(
+      exiftoolJson[filename]["File Name"]
+        .split(".")
+        .slice(0, -1)
+        .join(".")
+        .replaceAll("_", " ")
+    );
+    icons[fullName] = im2.img.split('srcset="')[1].split('"')[0];
 
     const extracted = {
       path,
@@ -109,9 +112,9 @@ await Promise.all(
               lens: applyRenamings(
                 exif.LensModel ||
                   exif.Lens ||
-                  (exiftoolJson[name] &&
-                    (exiftoolJson[name]["Lens ID"] ||
-                      exiftoolJson[name]["Lens Spec"])),
+                  (exiftoolJson[filename] &&
+                    (exiftoolJson[filename]["Lens ID"] ||
+                      exiftoolJson[filename]["Lens Spec"])),
                 lensRenamings
               ),
               date: exif.DateTimeOriginal || exif.CreateDate,
@@ -124,7 +127,7 @@ await Promise.all(
           : {}
       ),
     };
-    images[name] = extracted;
+    images[fullName] = extracted;
   })
 );
 
@@ -1572,9 +1575,25 @@ const description =
         newurl += "/photo";
       }
       if (filename) {
-        newurl += "/" + filename;
+        const words = splitByNonAlphanumeric(removeAccents(filename));
+        const upperCamel = words
+          .map(
+            (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+          )
+          .join("");
+        newurl += "/" + upperCamel;
       }
       window.history.replaceState({}, null, newurl);
+    }
+
+    function removeAccents(str) {
+      // Normalize the string to NFD and remove diacritical marks
+      return str.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+    }
+
+    function splitByNonAlphanumeric(s) {
+      // Split by non-alphanumeric characters
+      return s.split(/[^a-zA-Z0-9]+/);
     }
 
     function activateFullScreen(filename) {
