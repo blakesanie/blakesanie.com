@@ -659,41 +659,59 @@ const description =
     //                                               $$ |                              $$    $$/
     //                                               $$/                                $$$$$$/
 
-    function getUrlQuery() {
-      var search = location.search.substring(1);
-      if (!search) {
-        return {};
-      }
-      return JSON.parse(
-        '{"' +
-          search
-            .replace(/"/g, '\\"')
-            .replace(/&/g, '","')
-            .replace(/=/g, '":"') +
-          '"}'
-      );
-    }
-
-    const initialUrlQuery = location.search
-      ? getUrlQuery().im
-      : location.pathname
-          .replace("/photo/map", "")
-          .replace("/photo", "")
-          .substring(1); // get rid one leading slash
-
-    if (initialUrlQuery) {
-      let initialQueryInterval;
-      const initialFilename = initialUrlQuery;
-      // console.log("initialFilename", initialFilename);
-      function initialFullScreen() {
+    const startingImageShort = location.pathname
+      .replaceAll("/photo/map", "")
+      .replaceAll("/photo", "")
+      .replaceAll("/", "");
+    for (const [name, data] of Object.entries(images)) {
+      const words = splitByNonAlphanumeric(removeAccents(name));
+      const upperCamel = words
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join("");
+      if (upperCamel == startingImageShort) {
         try {
-          activateFullScreen(initialFilename);
-          clearInterval(initialQueryInterval);
-        } catch {}
+          activateFullScreen(name);
+        } catch (e) {}
       }
-      initialQueryInterval = setInterval(initialFullScreen, 10);
-      initialFullScreen();
     }
+
+    // function getUrlQuery() {
+    //   var search = location.search.substring(1);
+    //   if (!search) {
+    //     return {};
+    //   }
+    //   return JSON.parse(
+    //     '{"' +
+    //       search
+    //         .replace(/"/g, '\\"')
+    //         .replace(/&/g, '","')
+    //         .replace(/=/g, '":"') +
+    //       '"}'
+    //   );
+    // }
+
+    // const initialUrlQuery = location.search
+    //   ? getUrlQuery().im
+    //   : location.pathname
+    //       .replace("/photo/map", "")
+    //       .replace("/photo", "")
+    //       .substring(1); // get rid one leading slash
+
+    // if (initialUrlQuery) {
+    //   let initialQueryInterval;
+    //   const initialFilename = initialUrlQuery;
+    //   // console.log("initialFilename", initialFilename);
+    //   function initialFullScreen() {
+    //     try {
+    //       activateFullScreen(initialFilename);
+    //       clearInterval(initialQueryInterval);
+    //     } catch {}
+    //   }
+    //   initialQueryInterval = setInterval(initialFullScreen, 10);
+    //   initialFullScreen();
+    // }
 
     //  __
     // /  |
