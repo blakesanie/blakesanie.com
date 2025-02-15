@@ -2,25 +2,15 @@
 import PhotographyPage from "./index.astro";
 import exiftoolJson from "../../../photo-portfolio/metadata.json";
 
-function removeAccents(str) {
-  // Normalize the string to NFD and remove diacritical marks
-  return str.normalize("NFD").replace(/\p{Diacritic}/gu, "");
-}
-
-function splitByNonAlphanumeric(s) {
-  // Split by non-alphanumeric characters
-  return s.split(/[^a-zA-Z0-9]+/);
-}
-
 export async function getStaticPaths() {
   const glob = await import.meta.glob("/photo-portfolio/portfolio2k/*");
-  const out = (
+  return (
     await Promise.all(
       Object.keys(glob).map(async (path) => {
         const filename = path.split("/").pop();
         const upperCamel = filename.split(".").slice(0, -1).join(".");
-
         const meta = exiftoolJson[filename];
+
         const title = decodeURIComponent(
           meta["File Name"]
             .split(".")
@@ -35,8 +25,8 @@ export async function getStaticPaths() {
               slug: upperCamel,
             },
             props: {
-              title: title,
               image: path,
+              imageName: title,
             },
           },
           {
@@ -44,22 +34,20 @@ export async function getStaticPaths() {
               slug: "map/" + upperCamel,
             },
             props: {
-              title: title,
               image: path,
               initialMode: "map",
+              imageName: title,
             },
           },
         ];
       })
     )
   ).flat();
-  console.log;
-  return out;
 }
 ---
 
 <PhotographyPage
   image={Astro.props.image}
-  imageName={Astro.props.title}
+  imageName={Astro.props.imageName}
   initialMode={Astro.props.initialMode}
 />
