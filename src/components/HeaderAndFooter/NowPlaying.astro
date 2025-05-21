@@ -1,6 +1,6 @@
 ---
 // import { Img } from "astro-imagetools/components";
-import Icon from "astro-icon";
+import { Icon } from "astro-icon/components";
 const { shadowColor, textColor } = Astro.props;
 ---
 
@@ -35,7 +35,7 @@ const { shadowColor, textColor } = Astro.props;
   #nowPlaying {
     display: flex;
     padding: 0.5em var(--navPadding);
-      padding-bottom: 0;
+    padding-bottom: 0;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
@@ -162,9 +162,8 @@ const { shadowColor, textColor } = Astro.props;
   }
 
   async function setNowPlaying(skipCache = false) {
-    const { name, live, link, album, artists, image } = await getNowPlaying(
-      skipCache
-    );
+    const { name, live, link, album, artists, image } =
+      await getNowPlaying(skipCache);
     document.getElementById("songTitle").innerText = name;
     document.getElementById("songArtist").innerText = artists.join(", ");
     document.getElementById("songAlbum").innerText = album;
@@ -195,23 +194,25 @@ const { shadowColor, textColor } = Astro.props;
 
   startInterval();
 
-  const observer = new IntersectionObserver((entries) => {
+  const observer = new IntersectionObserver(
+    (entries) => {
       entries.forEach((entry) => {
-          const belowEl = document.getElementById("below").children[0] as HTMLElement;
-          console.log(entry)
-          if (entry.isIntersecting) {
-              belowEl.style.display = "none";
-            } else {
-              belowEl.style.display = "flex";
-            }
-          });
-  }, {
+        const belowEl = document.getElementById("below")
+          .children[0] as HTMLElement;
+        console.log(entry);
+        if (entry.isIntersecting) {
+          belowEl.style.display = "none";
+        } else {
+          belowEl.style.display = "flex";
+        }
+      });
+    },
+    {
       // Offset to trigger the callback 20px *after* the element is in full view
-      rootMargin: '-100px 0px -100px 0px' // Top offset of 20px
-  })
+      rootMargin: "-100px 0px -100px 0px", // Top offset of 20px
+    }
+  );
 
   const targetElement = document.getElementById("albumCover");
   observer.observe(targetElement);
-
-
 </script>

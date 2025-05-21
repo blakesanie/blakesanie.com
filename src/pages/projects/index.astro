@@ -1,6 +1,6 @@
 ---
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
-import { Icon } from "astro-icon";
+import { Icon } from "astro-icon/components";
 //@ts-ignore
 import { Img } from "astro-imagetools/components";
 import Button from "../../components/basic/Button.astro";
@@ -43,7 +43,7 @@ const projects: ProjectInterface[] = [
         name: "Python",
       },
       {
-        icon: "logos:pytorch",
+        icon: "devicon:pytorch",
         name: "PyTorch",
       },
       {
@@ -94,7 +94,7 @@ const projects: ProjectInterface[] = [
         name: "IFTTT",
       },
       {
-        icon: "logos:netlify",
+        icon: "material-icon-theme:netlify",
         name: "Netlify",
       },
       {
@@ -202,7 +202,7 @@ const projects: ProjectInterface[] = [
     ],
     tech: [
       {
-        icon: "logos:pytorch",
+        icon: "devicon:pytorch",
         name: "PyTorch",
       },
       {
@@ -246,7 +246,7 @@ const projects: ProjectInterface[] = [
         name: "Python",
       },
       {
-        icon: "logos:pytorch",
+        icon: "devicon:pytorch",
         name: "PyTorch",
       },
       {
@@ -548,7 +548,7 @@ function toFragrment(str: string) {
               {tech && (
                 <div class="tech">
                   {tech.map(({ icon, name }) => {
-                    return <Icon name={icon} tech={name} />;
+                    return <Icon name={icon} tech={name} size="1.8em" />;
                   })}
                   <div class="selectedTech" />
                 </div>
@@ -648,7 +648,6 @@ function toFragrment(str: string) {
     padding: 1em 0;
   }
   .title {
-    font-size: 1.4em;
     display: flex;
     align-items: center;
     /* margin-bottom: 0.6em; */
@@ -664,7 +663,7 @@ function toFragrment(str: string) {
     /* margin-top: 0.8em; */
   }
 
-  .title [astro-icon] {
+  .title [data-icon] {
     height: 0.9em;
     min-width: 0.9em;
     color: #00000040;
@@ -672,7 +671,7 @@ function toFragrment(str: string) {
     cursor: pointer;
   }
 
-  .title [astro-icon]:hover {
+  .title [data-icon]:hover {
     color: var(--headerColor);
   }
 
@@ -680,16 +679,15 @@ function toFragrment(str: string) {
     display: none;
   }
 
-  .tech [astro-icon] {
+  .tech [data-icon] {
     /* width: 40px; */
-    height: 1.8em;
     border-radius: 0.2em;
     margin: 0.4em;
     transition: all 0.1s ease;
     cursor: pointer;
   }
 
-  .tech [astro-icon]:hover {
+  .tech [data-icon]:hover {
     transform: scale(1.2);
   }
 

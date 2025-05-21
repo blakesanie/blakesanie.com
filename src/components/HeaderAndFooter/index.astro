@@ -4,11 +4,11 @@ import CommonHead from "./CommonHead.astro";
 import { SEO } from "astro-seo";
 import { renderImg } from "astro-imagetools/api";
 import HoverZone from "./HoverZone.astro";
-import Icon from "astro-icon";
+import { Icon } from "astro-icon/components";
 import NavLink from "./NavLink.astro";
 import NowPlaying from "./NowPlaying.astro";
 import SoundBars from "./SoundBars.astro";
-import {HeaderVars} from "./shared";
+import { HeaderVars } from "./shared";
 // import Newsletter from "../Newsletter/index.astro";
 const mobileMaxWidth = 800; // still manually declared in media query declaration
 const headerWidth = 130;
@@ -17,13 +17,13 @@ const headerHeightTransitionDuration = 0.1;
 const headerPositionTransitionDuration = 0.3;
 
 let headerColor = Astro.props.color || "#007ED4bb";
-const headerColorOpaque = Astro.props.colorOpaque || `rgb(106, 160, 219)`
+const headerColorOpaque = Astro.props.colorOpaque || `rgb(106, 160, 219)`;
 
 Astro.props.themeColor = Astro.props.themeColor || "rgb(72, 161, 223)";
 const textColor = Astro.props.darkText ? "black" : "white";
 const navPadding = 0.5; // was 0.6 em
 const isHome = Astro.props.isHome;
-const noTab = isHome || Astro.props.noTab
+const noTab = isHome || Astro.props.noTab;
 const { allowMainStyles, noContentPadding, hideSpotify } = Astro.props;
 const hoverZoneBehind = isHome; // || Astro.props.hoverZoneBehind;
 
@@ -39,11 +39,8 @@ const headerVars: HeaderVars = {
 };
 ---
 
-<CommonHead {...Astro.props} bodyClasslist={[{ isHome: isHome, noTab: noTab}]}>
+<CommonHead {...Astro.props} bodyClasslist={[{ isHome: isHome, noTab: noTab }]}>
   <header class:list={[{ darkText: textColor == "black" }]}>
-    <!--<div>-->
-    <!--<img src="https://i.scdn.co/image/ab67616d00001e02a84994855921f317b6ce0096" width="400">-->
-    <!--</div>-->
     <svg
       id="hamburger"
       xmlns="http://www.w3.org/2000/svg"
@@ -79,15 +76,6 @@ const headerVars: HeaderVars = {
       <ul>
         <div class="navSection">
           <p>Online</p>
-          <!-- <NavLink
-            hoverZoneBehind={hoverZoneBehind}
-            icon="uil:envelope-heart"
-            href="/newsletter"
-            textColor={textColor}
-            chip="Weekly"
-          >
-            Newsletter
-          </NavLink> -->
           <NavLink
             hoverZoneBehind={hoverZoneBehind}
             icon="majesticons:newspaper-line"
@@ -126,9 +114,6 @@ const headerVars: HeaderVars = {
           >
             Résumé
           </NavLink>
-          <!-- <NavLink hoverZoneBehind={hoverZoneBehind}} icon="majesticons:users-line" href="/consultation">
-              Consultations
-            </NavLink> -->
           <NavLink
             hoverZoneBehind={hoverZoneBehind}
             icon="uil:github-alt"
@@ -158,33 +143,7 @@ const headerVars: HeaderVars = {
           >
             GPS Map
           </NavLink>
-          <!-- <NavLink hoverZoneBehind={hoverZoneBehind}}
-              icon="ion:calendar-outline"
-              href="/photo/book"
-              chip="ATL"
-              chipIcon="uil:map-pin"
-            >
-              Booking
-            </NavLink> -->
         </div>
-
-        <!-- <div class="navSection">
-            <p>Content</p>
-            <NavLink hoverZoneBehind={hoverZoneBehind}} icon="ic:round-candlestick-chart" href="/quant">
-              Quant Research
-            </NavLink>
-            <NavLink hoverZoneBehind={hoverZoneBehind}}
-              icon="majesticons:newspaper-line"
-              href="/blog"
-              chip="11K"
-              chipIcon="majesticons:eye-line"
-            >
-              Blog
-            </NavLink>
-            <NavLink hoverZoneBehind={hoverZoneBehind}} icon="ion:baseball-outline" href="/mlbVis">
-              r/mlbVis
-            </NavLink>
-          </div> -->
         <div class="navSection">
           <p>Connect</p>
           <NavLink
@@ -249,14 +208,14 @@ const headerVars: HeaderVars = {
       </ul>
     </nav>
     <p id="made">
-      Crafted by <wbr/>Blake Sanie with <a
+      Crafted by <wbr />Blake Sanie with <a
         href="https://docs.astro.build/en/getting-started/"
-        target="_blank"><Icon pack="simple-icons" name="astro" /></a
-      > and <Icon pack="ri" name="heart-2-line" />
+        target="_blank"><Icon name="simple-icons:astro" size="1.6em"/></a
+      > and <Icon name="ri:heart-2-line" size="1.6em"/>
     </p>
     <div id="below">
       <div>More Below</div>
-      </div>
+    </div>
   </header>
 
   <main
@@ -270,16 +229,17 @@ const headerVars: HeaderVars = {
   >
     <slot />
   </main>
-  {Astro.props.noFooter ? null : 
-  <footer>
-    <div>
-    <div>© Blake Sanie</div>
-    <a onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Top</a>
-    </div>
-  </footer>
+  {
+    Astro.props.noFooter ? null : (
+      <footer>
+        <div>
+          <div>© Blake Sanie</div>
+          <a onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Top</a>
+        </div>
+      </footer>
+    )
   }
   <slot name="topLevel" />
-  <!-- <Newsletter /> -->
 </CommonHead>
 <style is:global>
   * {
@@ -311,18 +271,18 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
                     $$    $$/
                      $$$$$$/                 -->
 <style
-    define:vars={{
-      headerWidth: headerWidth + "px",
-      mobileHeaderHeight: mobileHeaderHeight + "px",
-      headerHeight: mobileHeaderHeight + "px",
-      headerHeightTransitionDuration: headerHeightTransitionDuration + "s",
-      headerPositionTransitionDuration: headerPositionTransitionDuration + "s",
-      headerColor,
-      headerColorOpaque,
-      mobileMaxWidth: mobileMaxWidth + "px",
-      navPadding: navPadding + "rem",
-      textColor,
-    }}
+  define:vars={{
+    headerWidth: headerWidth + "px",
+    mobileHeaderHeight: mobileHeaderHeight + "px",
+    headerHeight: mobileHeaderHeight + "px",
+    headerHeightTransitionDuration: headerHeightTransitionDuration + "s",
+    headerPositionTransitionDuration: headerPositionTransitionDuration + "s",
+    headerColor,
+    headerColorOpaque,
+    mobileMaxWidth: mobileMaxWidth + "px",
+    navPadding: navPadding + "rem",
+    textColor,
+  }}
 >
   body {
     font-size: 16px;
@@ -431,8 +391,14 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     line-height: 1.4em;
     --logoCorner: 0;
     border-radius: calc(var(--logoCorner) * 1%);
-    transition: background-color 0.2s ease, color 0.2s ease, border-radius 0.2s ease, background-image 0.2s ease, border 0.2s ease, box-shadow 0.2s ease;
-    //border: 1px solid rgba(255,0,0,0.1);
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      border-radius 0.2s ease,
+      background-image 0.2s ease,
+      border 0.2s ease,
+      box-shadow 0.2s ease;
+    //border: 1px solid rgba(255, 0, 0, 0.1);
     //background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3cpath d='M10,0 H90 Q100,0 100,10 V90 Q100,100 90,100 H10 Q0,100 0,90 V10 Q0,0 10,0 Z' fill='none' stroke='white' stroke-width='4' stroke-dasharray='4%2c 10' stroke-dashoffset='10' stroke-opacity='0.4' stroke-linecap='square' stroke-location='inside'/%3e%3c/svg%3e");
     background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='white' stroke-width='4' stroke-dasharray='4%2c 12' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square' rx='0' ry='0'/%3e%3c/svg%3e");
   }
@@ -448,7 +414,9 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     //border: 2px solid white;
     border-radius: 6px;
     //background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='white' stroke-width='4' stroke-dasharray='4%2c 12' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square' rx='0' ry='0'/%3e%3c/svg%3e");
-    box-shadow: 0px 0px 0px 2px white, 0px 0px 0px 6px rgb(21 82 148);
+    box-shadow:
+      0px 0px 0px 2px white,
+      0px 0px 0px 6px rgb(21 82 148);
   }
   #bio {
     font-size: 0.8em;
@@ -532,9 +500,8 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     text-align: center;
   }
 
-  #made [astro-icon] {
+  #made [data-icon] {
     display: block;
-    height: 1.6em;
     margin: 0.4em;
   }
   #spotifyIcon {
@@ -568,20 +535,24 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
 
   #below > div {
     //backdrop-filter: blur(4px);
-    //background: rgba(255,255,255,0.1);
-    border:1px solid var(--textColor);
+    //background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--textColor);
     width: auto;
     border-bottom: none;
     padding: 0.3em 1em;
     border-top-left-radius: 1em;
     border-top-right-radius: 1em;
     background: var(--headerColorOpaque);
-    //background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.2) 50%);
+    //background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(255, 255, 255, 0.2) 50%
+    );
     font-size: 0.8em;
     animation: bounce 1.5s infinite ease-in-out;
     box-shadow:
-        0 0 1em 1em rgba(255,255,255,0.0),
-        0 0 2em 2em var(--headerColorOpaque);
+      0 0 1em 1em rgba(255, 255, 255, 0),
+      0 0 2em 2em var(--headerColorOpaque);
     cursor: default;
   }
 
@@ -698,16 +669,17 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     .navSection {
       width: 50%;
     }
-    .navSection :global(a){
+    .navSection :global(a) {
       width: auto;
     }
-    .navSection:nth-of-type(2n+1) p {
+    .navSection:nth-of-type(2n + 1) p {
       justify-content: right;
     }
-    .navSection:nth-of-type(2n+1) :global(li), .navSection:nth-of-type(2n+1) :global(a) {
+    .navSection:nth-of-type(2n + 1) :global(li),
+    .navSection:nth-of-type(2n + 1) :global(a) {
       flex-direction: row-reverse;
     }
-    .navSection:nth-of-type(2n+1) * {
+    .navSection:nth-of-type(2n + 1) * {
       text-align: right;
     }
     :global(#nowPlayingSection *) {
@@ -872,45 +844,43 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   }
 </style>
 
-
 <script
   define:vars={{
-    headerVars
+    headerVars,
   }}
 >
-
   function hasAlwaysVisibleScrollbars() {
-      // Create a temporary div element
-      var testDiv = document.createElement('div');
+    // Create a temporary div element
+    var testDiv = document.createElement("div");
 
-      // Apply styles to ensure the div is scrollable
-      testDiv.style.overflow = 'scroll';
-      testDiv.style.width = '50px';
-      testDiv.style.height = '50px';
-      testDiv.style.position = 'absolute';
+    // Apply styles to ensure the div is scrollable
+    testDiv.style.overflow = "scroll";
+    testDiv.style.width = "50px";
+    testDiv.style.height = "50px";
+    testDiv.style.position = "absolute";
 
-      // Append the div to the body
-      document.body.appendChild(testDiv);
+    // Append the div to the body
+    document.body.appendChild(testDiv);
 
-      // Check the scrollbar width
-      var scrollbarWidth = testDiv.offsetWidth - testDiv.clientWidth;
+    // Check the scrollbar width
+    var scrollbarWidth = testDiv.offsetWidth - testDiv.clientWidth;
 
-      // Remove the temporary div
-      document.body.removeChild(testDiv);
+    // Remove the temporary div
+    document.body.removeChild(testDiv);
 
-      // Return true if the scrollbar width is greater than 0
-      return scrollbarWidth > 0;
-      }
+    // Return true if the scrollbar width is greater than 0
+    return scrollbarWidth > 0;
+  }
 
-    const hasScrollbars = hasAlwaysVisibleScrollbars();
+  const hasScrollbars = hasAlwaysVisibleScrollbars();
   if (hasScrollbars) {
-    document.body.classList.add('scrollbars');
-      }
+    document.body.classList.add("scrollbars");
+  }
 
   window.headerVars = {
     ...headerVars,
-    noTab: headerVars.noTab || hasScrollbars
-  }
+    noTab: headerVars.noTab || hasScrollbars,
+  };
 </script>
 
 <script src="./index.ts"></script>

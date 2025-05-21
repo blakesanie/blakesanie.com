@@ -1,5 +1,5 @@
 ---
-import { Icon } from "astro-icon";
+import { Icon } from "astro-icon/components";
 import HoverZone from "./HoverZone.astro";
 import SmartHref from "./SmartHref.astro";
 const { icon, chip, chipIcon, chipColor, href, id, hoverZoneBehind } =
@@ -24,7 +24,6 @@ const active =
   (path.startsWith("blog") && route.startsWith("blog")) ||
   Astro.props.active; // for nested urls: blog/.../.......
 
-
 const { textColor } = Astro.props;
 ---
 
@@ -32,7 +31,7 @@ const { textColor } = Astro.props;
   <SmartHref href={href} id={id}>
     <!-- <Icon icon={icon} class="icon" /> -->
     {active && hoverZoneBehind && <HoverZone />}
-    <Icon pack={iconPack} name={iconName} />
+    <Icon name={iconPack + ":" + iconName} size="1.2em" />
 
     <span class="navLinkText">
       <slot />
@@ -44,7 +43,7 @@ const { textColor } = Astro.props;
             {chip}
             {chipIcon &&
               (chipPack && chipName ? (
-                <Icon pack={chipPack} name={chipName} />
+                <Icon name={chipPack + ":" + chipName} />
               ) : (
                 <Icon name={Astro.props.chipIcon} />
               ))}
@@ -104,12 +103,7 @@ const { textColor } = Astro.props;
       z-index: 1;
     }
 
-    [astro-icon] {
-      min-width: 1.2em;
-      max-width: 1.2em;
-      min-height: 1.2em;
-      max-height: 1.2em;
-      //margin-right: 0.6em;
+    [data-icon] {
       color: var(--textColor);
       opacity: 0.5;
       /* OR */
@@ -120,7 +114,7 @@ const { textColor } = Astro.props;
       fill: var(--textColor);
     }
 
-    .navChip [astro-icon] {
+    .navChip [data-icon] {
       /* color: red; */
       margin: 0;
       margin-left: 0.4em;

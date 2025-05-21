@@ -6,7 +6,7 @@ import mdx from "@astrojs/mdx";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import redirects from "/src/redirects.json";
-import react from "@astrojs/react";
+import icon from "astro-icon";
 const noSitemap = new Set(Object.keys(redirects));
 // so not in sitemap
 noSitemap.add("chicago");
@@ -104,6 +104,6 @@ export default defineConfig({
       //   mangle: true, // Shorten variable names
       // },
     }),
-    react(),
+    icon(),
   ],
 });

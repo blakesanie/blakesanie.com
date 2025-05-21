@@ -1,11 +1,11 @@
 ---
 const props = Astro.props;
 // console.log("button props", props);
-import { Icon } from "astro-icon";
+import { Icon } from "astro-icon/components";
 ---
 
 <button class:list={[props.class, "shadowHover"]}
-  >{props.icon && <Icon name={props.icon} />}<slot /></button
+  >{props.icon && <Icon name={props.icon} size="1.25em" />}<slot /></button
 >
 
 <style>
@@ -26,9 +26,7 @@ import { Icon } from "astro-icon";
   button:hover {
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   }
-  button [astro-icon] {
-    width: 1.25em;
-    height: 1.25em;
+  button [data-icon] {
     vertical-align: center;
     margin-right: 0.5em;
   }

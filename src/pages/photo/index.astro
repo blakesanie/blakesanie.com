@@ -4,7 +4,7 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import Toggle from "../../components/Toggle/index.astro";
 import { Img } from "astro-imagetools/components";
 import exifr from "exifr";
-import { Icon } from "astro-icon";
+import { Icon } from "astro-icon/components";
 import sizeOf from "image-size";
 import exiftoolJson from "../../../photo-portfolio/metadata.json";
 import { renderImg } from "astro-imagetools/api";
@@ -243,9 +243,7 @@ const description =
               placeholder="dominantColor"
               loading="lazy"
             />
-            {image.latitude && (
-              <Icon pack="mdi" name="map-marker" color="white" />
-            )}
+            {image.latitude && <Icon name="mdi:map-marker" color="white" />}
           </div>
         ))
       }

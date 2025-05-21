@@ -1,6 +1,6 @@
 ---
 const { style } = Astro.props;
-import Icon from "astro-icon";
+import { Icon } from "astro-icon/components";
 ---
 
 <div class="navHoverZone" style={style}>
@@ -9,7 +9,7 @@ import Icon from "astro-icon";
 </div>
 
 <style>
-  [astro-icon] {
+  [data-icon] {
     color: white;
     position: absolute;
     top: 0;
