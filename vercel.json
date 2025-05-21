@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run export",
   "devCommand": "npm run dev",
   "installCommand": "npm config set registry http://registry.npmjs.org && npm install",
   "outputDirectory": "dist",

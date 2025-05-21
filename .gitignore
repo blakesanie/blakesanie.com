@@ -32,3 +32,5 @@ api/*/**/.*
 # blog
 photo-portfolio
 public/assets/imageEmbeddings*.json
+public/route-builder
+/public/_next/

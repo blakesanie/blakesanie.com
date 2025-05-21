@@ -5,8 +5,12 @@
   "scripts": {
     "dev": "astro dev --host --port $PORT",
     "start": "astro dev",
-    "build": "rm -rf photo-portfolio && git clone --depth=1 https://${PORTFOLIO_PAT}:@github.com/blakesanie/photo-portfolio.git && mv photo-portfolio/imageEmbeddings.json public/assets/imageEmbeddings.json && python src/tooling/randomize_embeddings_file.py && cd route-builder && npm install && npm run build && cd .. && mkdir -p public/route-builder && cp -a route-builder/out/. public/route-builder && astro build",
-    "build-local": "cp photo-portfolio/imageEmbeddings.json public/assets/imageEmbeddings.json && python src/tooling/randomize_embeddings_file.py && cd route-builder && npm install && npm run build && cd .. && mkdir -p public/route-builder && cp -a route-builder/out/. public/route-builder && astro build",
+    "photo-clone": "rm -rf photo-portfolio && git clone --depth=1 https://${PORTFOLIO_PAT}:@github.com/blakesanie/photo-portfolio.git",
+    "photo-integrate": "cp photo-portfolio/imageEmbeddings.json public/assets/imageEmbeddings.json && python src/tooling/randomize_embeddings_file.py",
+    "build": "astro build",
+    "build-next": "cd next && npm install && npm run build && cd .. && rm -rf next/out/404 &&  cp -rn next/out/* public/",
+    "export": "npm run photo-clone && npm run export-local",
+    "export-local": "npm run photo-integrate && npm run build-next && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "dev-vercel": "vercel dev"
@@ -53,7 +57,7 @@
     "exifr": "^7.1.3",
     "glob-promise": "^6.0.5",
     "image-size": "^1.0.2",
-    "lucide-react": "^0.471.0",
+    "lucide-react": "^0.471.2",
     "medium-to-markdown": "^0.0.3",
     "node-fetch": "^3.3.2",
     "react": "^19.0.0",
