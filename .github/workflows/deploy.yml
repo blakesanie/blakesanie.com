@@ -61,8 +61,6 @@ jobs:
 
       - name: Astro Build
         run: npm run build
-        env:
-          NODE_ENV: production
 
       - name: Next Build
         run: |
