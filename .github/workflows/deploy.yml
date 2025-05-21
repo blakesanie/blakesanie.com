@@ -36,10 +36,10 @@ jobs:
       - name: Checkout site repository
         uses: actions/checkout@v4
 
-      # - name: Setup Node
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: "20"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
       # - name: Set up Python 3
       #   uses: actions/setup-python@v5
