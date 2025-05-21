@@ -7,7 +7,7 @@
     "start": "astro dev",
     "photo-clone": "rm -rf photo-portfolio && git clone --depth=1 https://${PORTFOLIO_PAT}:@github.com/blakesanie/photo-portfolio.git",
     "photo-integrate": "cp photo-portfolio/imageEmbeddings.json public/assets/imageEmbeddings.json && python src/tooling/randomize_embeddings_file.py",
-    "py": "sudo apt-get install -y python3.8 && sudo ln -sf /usr/bin/python3.8 /usr/bin/python",
+    "py": "node -v && python3 --version",
     "build": "astro build",
     "build-next": "cd next && npm install && npm run build && cd .. && rm -rf next/out/404 &&  cp -rn next/out/* dist/",
     "export": "npm run py && npm run photo-clone && npm run export-local",
