@@ -21,7 +21,17 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev librsvg2-dev libvips-dev
+          sudo apt-get install -y \
+            build-essential \
+            libcairo2-dev \
+            libjpeg-dev \
+            libpango1.0-dev \
+            libgif-dev \
+            librsvg2-dev \
+            libvips-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            pkg-config
 
       - name: Checkout site repository
         uses: actions/checkout@v4
@@ -39,10 +49,29 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run export
+      - name: Clone photo portfolio
+        run: |
+          rm -rf photo-portfolio
+          git clone --depth=1 https://${PORTFOLIO_PAT}:@github.com/blakesanie/photo-portfolio.git
+
+      - name: Integrate photo portfolio
+        run: |
+          cp photo-portfolio/imageEmbeddings.json public/assets/imageEmbeddings.json
+          python3 src/tooling/randomize_embeddings_file.py
+
+      - name: Astro Build
+        run: npm run build
         env:
           NODE_ENV: production
+
+      - name: Next Build
+        run: |
+          cd next
+          npm ci
+          npm run build
+          cd ..
+          rm -rf next/out/404
+          cp -rn next/out/* dist/
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
