@@ -5,7 +5,7 @@ import Toggle from "../../components/Toggle/index.astro";
 import { Img } from "astro-imagetools/components";
 import exifr from "exifr";
 import { Icon } from "astro-icon/components";
-import sizeOf from "image-size";
+import { imageSizeFromFile } from "image-size/fromFile";
 import exiftoolJson from "../../../photo-portfolio/metadata.json";
 import { renderImg } from "astro-imagetools/api";
 import { writeFileSync } from "fs";
@@ -85,7 +85,7 @@ await Promise.all(
     //   .replaceAll("_", " ");
     const name = filename.split(".")[0] as string;
     // const cleanName = decodeURIComponent(name.replaceAll("--", "%"));
-    const { width, height } = await sizeOf("." + path);
+    const { width, height } = await imageSizeFromFile("." + path);
 
     let im2 = await renderImg({
       src: path,
