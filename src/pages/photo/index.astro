@@ -243,7 +243,9 @@ const description =
               placeholder="dominantColor"
               loading="lazy"
             />
-            {image.latitude && <Icon name="mdi:map-marker" color="white" />}
+            {image.latitude && (
+              <Icon name="mdi:map-marker" color="white" size="25px" />
+            )}
           </div>
         ))
       }
