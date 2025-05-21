@@ -8,9 +8,9 @@
     "photo-clone": "rm -rf photo-portfolio && git clone --depth=1 https://${PORTFOLIO_PAT}:@github.com/blakesanie/photo-portfolio.git",
     "photo-integrate": "cp photo-portfolio/imageEmbeddings.json public/assets/imageEmbeddings.json && python src/tooling/randomize_embeddings_file.py",
     "build": "astro build",
-    "build-next": "cd next && npm install && npm run build && cd .. && rm -rf next/out/404 &&  cp -rn next/out/* public/",
+    "build-next": "cd next && npm install && npm run build && cd .. && rm -rf next/out/404 &&  cp -rn next/out/* dist/",
     "export": "npm run photo-clone && npm run export-local",
-    "export-local": "npm run photo-integrate && npm run build-next && astro build",
+    "export-local": "npm run photo-integrate && astro build && npm run build-next",
     "preview": "astro preview",
     "astro": "astro",
     "dev-vercel": "vercel dev"
