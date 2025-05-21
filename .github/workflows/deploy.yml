@@ -15,14 +15,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+      PORTFOLIO_PAT: ${{ secrets.PORTFOLIO_PAT }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout site repository
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "20"
+
+      - name: Set up Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
 
       - name: Install Dependencies
         run: npm ci
