@@ -72,28 +72,29 @@ jobs:
           rm -rf next/out/404
           cp -rn next/out/* dist/
 
-      # - name: Deploy to Vercel
-      #   uses: amondnet/vercel-action@v25
-      #   with:
-      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
-      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     working-directory: ./
-      #     vercel-args: "--prod" #Optional
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: ./
+          vercel-args: "--prod" #Optional
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel
 
-      - name: Deploy to Vercel (Production)
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: |
-          vercel deploy \
-            --prod \
-            --token $VERCEL_TOKEN \
-            --org $VERCEL_ORG_ID \
-            --project $VERCEL_PROJECT_ID \
-            --confirm
+      # - name: Install Vercel CLI
+      #   run: npm install -g vercel
+
+      # - name: Deploy to Vercel (Production)
+      #   env:
+      #     VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      #     VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      #     VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      #   run: |
+      #     vercel deploy \
+      #       --prod \
+      #       --token $VERCEL_TOKEN \
+      #       --org $VERCEL_ORG_ID \
+      #       --project $VERCEL_PROJECT_ID \
+      #       --confirm
