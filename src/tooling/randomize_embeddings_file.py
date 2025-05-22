@@ -5,12 +5,29 @@ r = str(int(random.random() * 100000000))
 filepath = 'public/assets/imageEmbeddings.json'
 newFilepath = filepath.replace('.', '_' + r + '.')
 
-os.rename(filepath, newFilepath)
+try:
+    os.rename(filepath, newFilepath)
+except FileNotFoundError:
+    print(f"warning - File {filepath} not found")
+    pass
 
 pagePath = 'src/pages/photo/index.astro'
 
 with open(pagePath, 'r') as file:
-    file_content = file.read()
+    lines = file.readlines()
+
+comment = 'replace embeddings at build time'
+
+file_content = ''
+found = False
+for line in lines:
+    if comment in line:
+        line = f'fetch("/assets/imageEmbeddings_{r}.json"), // {comment}\n'
+        found = True
+    file_content += line
+
+assert found, f'Comment "{comment}" not found in the file before processing.'
+assert comment in file_content, f'Comment "{comment}" not found in the file after processing.'
 
 # Perform the replacement
 modified_content = file_content.replace('imageEmbeddings.json', 'imageEmbeddings_' + r + '.json')
