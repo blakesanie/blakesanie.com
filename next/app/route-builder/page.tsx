@@ -3,19 +3,19 @@
 import Map from "./map";
 import { useOverpass } from "./useOverpass";
 import { AppSidebar } from "@/components/app-sidebar";
+// import {
+//   Breadcrumb,
+//   BreadcrumbItem,
+//   BreadcrumbLink,
+//   BreadcrumbList,
+//   BreadcrumbPage,
+//   BreadcrumbSeparator,
+// } from "@/components/ui/breadcrumb";
+// import { Separator } from "@/components/ui/separator";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
-import {
-  SidebarInset,
+  // SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
+  // SidebarTrigger,
 } from "@/components/ui/sidebar";
 
 export default function Page() {
