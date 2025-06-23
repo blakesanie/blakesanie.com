@@ -4,8 +4,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   output: "export", // Enables `next export`
   trailingSlash: true,
-  typescript: {
-    ignoreBuildErrors: true,
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 
