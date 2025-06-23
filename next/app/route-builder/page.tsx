@@ -1,7 +1,6 @@
 "use client";
-
+//@ts-ignore
 import Map from "./map";
-import { useOverpass } from "./useOverpass";
 import { AppSidebar } from "@/components/app-sidebar";
 // import {
 //   Breadcrumb,
@@ -19,15 +18,12 @@ import {
 } from "@/components/ui/sidebar";
 
 export default function Page() {
-  const { fetchCycleways, fetchOneways } = useOverpass();
   return (
     <SidebarProvider>
-      <AppSidebar />
-      {/* <SidebarInset> */}
-      <main className="w-full h-screen overflow-hidden flex flex-col">
-        <Map fetchCycleways={fetchCycleways} fetchOneways={fetchOneways} />
+      {/* <AppSidebar /> */}
+      <main className="relative w-full h-screen flex flex-col">
+        <Map />
       </main>
-      {/* </SidebarInset> */}
     </SidebarProvider>
   );
 }
