@@ -1,0 +1,19 @@
+---
+import Gallery from "../Gallery.astro";
+
+export async function getStaticPaths() {
+  return [
+    {
+      params: { slug: "blake" },
+      props: {
+        path: "./photo-portfolio/temp/blake",
+        image: "./photo-portfolio/temp/blake/LittleGrandCanyon.jpg",
+        heading: "Blake Sanie Photography",
+        allowDownload: true,
+      },
+    },
+  ];
+}
+---
+
+<Gallery {...Astro.props} />

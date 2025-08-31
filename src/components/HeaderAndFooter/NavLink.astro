@@ -22,7 +22,8 @@ const route = href
 const active =
   path == route ||
   (path.startsWith("blog") && route.startsWith("blog")) ||
-  Astro.props.active; // for nested urls: blog/.../.......
+  (path.startsWith("photo/albums") && route.startsWith("photo/albums"));
+Astro.props.active; // for nested urls: blog/.../.......
 
 const { textColor } = Astro.props;
 ---

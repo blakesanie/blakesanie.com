@@ -27,6 +27,13 @@ type ViewStateContextType = {
 
 const GEOHASH_PRECISION = 4;
 
+function mapHypotnuse() {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  return Math.hypot(width, height);
+}
+
 const ViewStateContext = createContext<ViewStateContextType | null>(null);
 
 export default function ViewStateProvider({
@@ -37,6 +44,13 @@ export default function ViewStateProvider({
   const [viewState, setViewState] = useState<MapViewState | null>(null);
   const [bounds, setBounds] = useState<LngLatBounds | null>(null);
   const prevGeohashesInScopeRef = useRef<string[]>([]);
+  const prevGeohashesAddedRef = useRef<string[]>([]);
+  const prevGeoHashesRemovedRef = useRef<string[]>([]);
+
+  // const zoomRelativeToScreen =
+  //   viewState?.zoom !== undefined ? viewState.zoom / mapHypotnuse() : 0;
+
+  // console.log("zoomRelativeToScreen:", zoomRelativeToScreen);
 
   const geohashesInScope = useMemo(() => {
     if (!bounds) return [];
@@ -57,6 +71,12 @@ export default function ViewStateProvider({
   }, [bounds?.toString()]);
 
   const [geohashesAdded, geoHashesRemoved] = useMemo((): string[][] => {
+    if (geohashesInScope.length > 14) {
+      console.warn(
+        "Too many geohashes in scope, skipping geohash change detection."
+      );
+      return [prevGeohashesAddedRef.current, prevGeoHashesRemovedRef.current];
+    }
     const previousSet = new Set(prevGeohashesInScopeRef.current);
     const currentSet = new Set(geohashesInScope);
     const geohashesAdded: string[] = [];
@@ -72,6 +92,8 @@ export default function ViewStateProvider({
       }
     }
     prevGeohashesInScopeRef.current = geohashesInScope;
+    prevGeohashesAddedRef.current = geohashesAdded;
+    prevGeoHashesRemovedRef.current = geoHashesRemoved;
     return [geohashesAdded, geoHashesRemoved];
   }, [geohashesInScope.join(",")]);
 
