@@ -7,9 +7,11 @@ export async function getStaticPaths() {
       params: { slug: "blake" },
       props: {
         path: "./photo-portfolio/temp/blake",
-        image: "./photo-portfolio/temp/blake/LittleGrandCanyon.jpg",
+        // image: "./photo-portfolio/temp/blake/LittleGrandCanyon.jpg",
         heading: "Blake Sanie Photography",
         allowDownload: true,
+        allowClip: true,
+        allowFilename: true,
       },
     },
   ];

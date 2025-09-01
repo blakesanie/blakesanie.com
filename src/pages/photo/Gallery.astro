@@ -14,7 +14,6 @@ import { readdirSync, statSync } from "fs";
 import { join, relative, dirname } from "path";
 import { ACTION_ERROR_CODES } from "astro:actions";
 
-
 export interface Props {
   path: string;
   image?: string;
@@ -30,6 +29,8 @@ export interface Props {
   heading?: string;
   subheading?: string;
   allowDownload?: boolean;
+  allowFilename?: boolean;
+  allowBlog?: boolean;
 }
 
 const initialMode = Astro.props.initialMode || "gallery";
@@ -37,6 +38,8 @@ const allowFullscreen = Astro.props.allowMap || Astro.props.allowFullscreen;
 const allowMetadata = Astro.props.allowMetadata || false;
 const allowClip = Astro.props.allowClip || false;
 const allowDownload = Astro.props.allowDownload || false;
+const allowFilename = Astro.props.allowFilename || false;
+const allowBlog = Astro.props.allowBlog || false;
 
 function removeEmpty(obj) {
   return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
@@ -123,6 +126,7 @@ if (allowClip) {
 
 const imagesArr: any[] = [];
 const icons = {};
+const downloads1080 = {};
 let minLat = Infinity;
 let maxLat = -Infinity;
 let minLng = Infinity;
@@ -134,7 +138,7 @@ await Promise.all(
       return;
     }
     const filename = path.split("/").pop();
-    const name = removeFileExtension(filename) // filename.split(".")[0] as string;
+    const name = removeFileExtension(filename); // filename.split(".")[0] as string;
     if (!exifToolJson[name]) {
       throw new Error("No exif data for " + name);
     }
@@ -159,7 +163,16 @@ await Promise.all(
       });
       icons[name] = im2.img.split('srcset="')[1].split('"')[0];
     }
-    console.log(path);
+    if (allowDownload) {
+      let im2 = await renderImg({
+        src: path,
+        breakpoints: [1080],
+        format: "jpg",
+        alt: "",
+        quality: 80,
+      });
+      downloads1080[name] = im2.img.split('srcset="')[1].split('"')[0];
+    }
     const extracted = {
       path,
       name,
@@ -212,8 +225,6 @@ await Promise.all(
   })
 );
 
-console.log(imagesArr)
-
 function removeFileExtension(filename) {
   return filename.split(".").slice(0, -1).join(".");
 }
@@ -226,24 +237,18 @@ const images = imagesArr.reduce((obj, item) => {
 
 if (Astro.props.allowMap) {
   for (let [name, image] of Object.entries(images) as [string, Object][]) {
-    if ("latitude" in image && "longitude" in image && "neighbor" in image) {
+    if ("latitude" in image && "longitude" in image) {
       if (image.latitude) {
         minLat = Math.min(minLat, image.latitude);
         maxLat = Math.max(maxLat, image.latitude);
         minLng = Math.min(minLng, image.longitude);
         maxLng = Math.max(maxLng, image.longitude);
-        image.neighbor = Infinity;
         for (const [name2, image2] of Object.entries(images)) {
-          if (
-            "latitude" in image2 &&
-            "longitude" in image2 &&
-            "neighbor" in image2
-          ) {
-            if (image2.latitude && name != name2) {
+          if ("latitude" in image2 && "longitude" in image2) {
+            if (name != name2) {
               const dx = image2.longitude - image.longitude;
               const dy = image2.latitude - image.latitude;
               const dist = Math.sqrt(dx * dx + dy * dy);
-              image.neighbor = Math.min(image.neighbor, dist);
             }
           }
         }
@@ -260,7 +265,6 @@ if (Astro.props.imageName) {
 const description =
   Astro.props.description ||
   "My highly-interactive portfolio of artistic photographs captured and developed since 2014.";
-console.log("images", images);
 ---
 
 <HeaderAndFooter
@@ -288,38 +292,50 @@ console.log("images", images);
     )
   }
   {
-    Astro.props.allowMap && (
-      <Toggle
-        actions={[
-          {
-            id: "galleryButton",
-            label: "Gallery",
-          },
-          {
-            id: "mapButton",
-            label: "Map",
-          },
-        ]}
-        defaultAction={initialMode == "gallery" ? "galleryButton" : "mapButton"}
-        id="photoToggle"
-      />
+    (allowFilename || allowClip || Astro.props.allowMap) && (
+      <div id="search">
+        {Astro.props.allowMap && (
+          <Toggle
+            actions={[
+              {
+                id: "galleryButton",
+                label: "Gallery",
+              },
+              {
+                id: "mapButton",
+                label: "Map",
+              },
+            ]}
+            defaultAction={
+              initialMode == "gallery" ? "galleryButton" : "mapButton"
+            }
+            id="photoToggle"
+          />
+        )}
+        {allowClip && (
+          <div class="textInput">
+            <div class="inputLabel">AI Image Search</div>
+            <input
+              type="text"
+              placeholder="Model still mounting..."
+              disabled="disabled"
+              id="clip"
+            />
+          </div>
+        )}
+        {allowFilename && (
+          <div class="textInput">
+            <div class="inputLabel">Filename</div>
+            <input type="text" placeholder="DSC012345.jpg" id="filename" />
+          </div>
+        )}
+      </div>
     )
-  }
-  { allowClip &&
-    (  <div id="advancedLabel">AI Image Search</div>
-      <div id="AISearch" class="minimized">
-        <input
-          type="text"
-          placeholder="Model still mounting..."
-          disabled="disabled"
-        />
-      </div>)
   }
   <div id="photoContent" class={`${Astro.props.allowMap ? "" : "noMap"}`}>
     <div id="gallery">
       {
         imagesArr.map((image) => {
-          console.log("image", image);
           return (
             <div class="galleryImage" name={image.name}>
               <Img
@@ -334,8 +350,24 @@ console.log("images", images);
               {Astro.props.allowMap && image.latitude && (
                 <Icon name="mdi:map-marker" color="white" size="25px" />
               )}
-              { allowDownload &&
-                <Icon name="material-symbols:cloud-download-outline-rounded" color="white" size="25px" class="tileDl"/>}
+              {allowDownload && (
+                <a class="tileDl" href={downloads1080[image.name]} download>
+                  {image.path.split("/").pop()}
+                  <Icon
+                    name="mi:cloud-download"
+                    color="rgb(128,128,128)"
+                    size="20px"
+                    class="dl"
+                  />
+                  <Icon
+                    name="material-symbols:download-done-rounded"
+                    color="rgb(128,128,128)"
+                    size="20px"
+                    class="dlDone"
+                    style="display: none;"
+                  />
+                </a>
+              )}
             </div>
           );
         })
@@ -427,46 +459,45 @@ console.log("images", images);
       gutter: gutter + "px",
     }}
   >
-    :global(#photoToggle) {
-      margin-bottom: 1em;
-    }
-    #advancedLabel {
-      font-size: 0.8em;
-      opacity: 0.5;
-      margin-bottom: 1em;
-      cursor: pointer;
-      transition: opacity 0.2s ease;
-      display: none;
-    }
-
-    /* :global(.modeMap) #advancedLabel, :global(.modeMap) #AISearch {
-      display: none;
-    } */
-
-    #advancedLabel:hover {
-      opacity: 1;
-    }
-
-    #AISearch {
+    #search {
+      position: relative;
       width: 100%;
-      max-width: 500px;
-      height: 2.4em;
-      transition: all 0.15s ease;
       padding-bottom: 1em;
-      box-sizing: content-box;
-      display: none;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
-    #AISearch.minimized {
-      height: 0;
-      padding: 0;
-      opacity: 0;
+    .textInput {
+      position: relative;
+      flex: 1;
+      min-width: 250px;
+      max-width: 400px;
     }
 
-    #AISearch > input {
+    #search > * {
+      margin: 0.5em;
+      margin-top: 1.3em;
+    }
+
+    .inputLabel {
+      font-size: 0.8em;
+      position: absolute;
+      top: -1.3em;
+      left: 1rem;
+      opacity: 0.3;
+      font-style: italic;
+      /* z-index: 3; */
+    }
+
+    .invalid,
+    .invalid * {
+      color: red;
+    }
+
+    #search input {
+      padding: 0.5em 1em;
       width: 100%;
-      height: 100%;
-      padding: 0 1em;
       font-size: 1em;
       border: none;
       outline: none;
@@ -513,7 +544,7 @@ console.log("images", images);
       filter: contrast(1.05);
     }
 
-    .galleryImage :global(.noMap) {
+    .noMap .galleryImage {
       cursor: default;
     }
 
@@ -526,19 +557,28 @@ console.log("images", images);
     }
 
     .tileDl {
-      background-color: rgb(0,0,0,0.5) !important;
-      right: 0 !important;
+      position: absolute;
+      display: none; /* inline so it flows like text */
+      flex-wrap: wrap; /* allow wrapping to new lines */
+      align-items: center; /* vertical centering */
+      right: 0;
       top: 0;
-      padding: 5px;
-      width: 35px !important;
-      height: 35px;
+      background-color: rgba(255, 255, 255, 0.3) !important;
+      padding: 4px 8px;
+      max-width: 100%;
       border-bottom-left-radius: 8px;
       cursor: pointer;
-      display: none;
+      /* display: none; */
+      backdrop-filter: blur(4px);
+    }
+
+    .tileDl svg {
+      flex: 0 0 auto; /* don’t stretch icon */
+      margin-left: 5px;
     }
 
     .galleryImage:hover .tileDl {
-      display: block;
+      display: inline-flex;
     }
 
     #exploreMap {
@@ -826,6 +866,62 @@ console.log("images", images);
     //                    $$$$$$/                  $$/
 
     const galleryContainer = document.getElementById("gallery");
+    const namesToImageElements = {};
+    let initialImageOrder = [];
+    for (var i = 0; i < galleryContainer.children.length; i++) {
+      const name = galleryContainer.children[i].getAttribute("name");
+      initialImageOrder.push(name);
+      namesToImageElements[name] = galleryContainer.children[i];
+      if (allowFullscreen) {
+        galleryContainer.children[i].addEventListener("click", () => {
+          // debugger;
+          activateFullScreen(name);
+        });
+      }
+    }
+
+    const filenameFilter = document.getElementById("filename");
+    if (filenameFilter) {
+      filenameFilter.addEventListener("blur", activateGallery);
+      filenameFilter.addEventListener("change", activateGallery);
+      filenameFilter.addEventListener("focusout", activateGallery);
+      filenameFilter.addEventListener("keydown", async (e) => {
+        if (e.key === "Enter") {
+          activateGallery();
+        }
+      });
+      filenameFilter.addEventListener("input", () => {
+        const passing = filterImages();
+        if (passing.length) {
+          filenameFilter.parentElement.classList.remove("invalid");
+          filenameFilter.parentElement.querySelector(".inputLabel").innerHTML =
+            "Filename";
+        } else {
+          filenameFilter.parentElement.classList.add("invalid");
+          filenameFilter.parentElement.querySelector(".inputLabel").innerHTML =
+            "No images with that prefix";
+        }
+      });
+    }
+
+    const AITextField = document.querySelector("#clip");
+
+    const memo = {};
+
+    function filterImages() {
+      if (!filenameFilter) {
+        return [...initialImageOrder];
+      }
+      const val = filenameFilter.value.trim().toLowerCase();
+      const out = [];
+      Object.entries(images).forEach(([id, image]) => {
+        const filename = image.path.split("/").pop().toLowerCase();
+        if (filename.startsWith(val)) {
+          out.push(id);
+        }
+      });
+      return out;
+    }
 
     // do the shuffling regardless
     let imageChanges = {};
@@ -836,12 +932,6 @@ console.log("images", images);
       for (var i = 0; i < galleryContainer.children.length; i++) {
         const name = galleryContainer.children[i].getAttribute("name");
         imageOrder.push(name);
-        if (allowFullscreen) {
-          galleryContainer.children[i].addEventListener("click", () => {
-            // debugger;
-            activateFullScreen(name);
-          });
-        }
       }
 
       imageChanges = {};
@@ -858,19 +948,30 @@ console.log("images", images);
       }
     }
 
-    function shuffleImgElements() {
-      for (var i = galleryContainer.children.length; i >= 0; i--) {
-        const index = Math.random() * i;
-        galleryContainer.appendChild(galleryContainer.children[index | 0]);
+    function shuffled(array) {
+      const copy = array.slice(); // or [...array]
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
       }
+      return copy;
+    }
 
-      setImageOrder();
-    }
+    // function shuffleImgElements() {
+    //   for (var i = galleryContainer.children.length; i >= 0; i--) {
+    //     const index = Math.random() * i;
+    //     galleryContainer.appendChild(galleryContainer.children[index | 0]);
+    //   }
+
+    //   setImageOrder();
+    // }
     if (randomize) {
-      shuffleImgElements();
-    } else {
-      setImageOrder();
+      initialImageOrder = shuffled(initialImageOrder);
+      for (const name of initialImageOrder) {
+        galleryContainer.appendChild(namesToImageElements[name]);
+      }
     }
+    setImageOrder();
 
     // console.log("image changes", imageChanges);
 
@@ -892,19 +993,19 @@ console.log("images", images);
       const mapButton = document.getElementById("mapButton");
 
       galleryButton?.addEventListener("click", () => {
+        debugger;
         if (mode != "gallery") {
           mode = "gallery";
-          document.getElementById("photoNavLink").click();
-          history.replaceState({}, null, "/photo");
           activateGallery();
+          document.getElementById("photoNavLink").click();
         }
       });
       mapButton?.addEventListener("click", () => {
+        debugger;
         if (mode != "map") {
           mode = "map";
-          document.getElementById("mapNavLink").click();
-          history.replaceState({}, null, "/photo/map");
           activateMap();
+          document.getElementById("mapNavLink").click();
         }
       });
     }
@@ -913,58 +1014,88 @@ console.log("images", images);
 
     let resizedSinceSwitchedToMap = false;
 
-    function activateGallery(reset = false) {
+    let lastImageOrder = "";
+
+    function showGallery() {
+      if (mapContainer) mapContainer.style.display = "none";
+      galleryContainer.style.display = "block";
+    }
+    function getImageWidth() {
+      const usableWidth = galleryContainer.clientWidth;
+      let numCols = Math.floor(Math.pow(usableWidth, 0.6) / 18);
+      return usableWidth / numCols - (gutter * (numCols - 1)) / numCols - 0.5;
+    }
+    function setGalleryImageWidths() {
+      if (mode == "map") {
+        resizedSinceSwitchedToMap = true;
+        return;
+      }
+      const width = getImageWidth();
+      // console.log("new image width", width);
+      const images = document.getElementsByClassName("galleryImage");
+      for (let i = 0; i < images.length; i++) {
+        images[i].style.width = width + "px";
+      }
+    }
+    window.addEventListener("resize", setGalleryImageWidths);
+
+    function activateGallery() {
       document.querySelector("body").classList.add("modeGallery");
       document.querySelector("body").classList.remove("modeMap");
-      function showGallery() {
-        if (mapContainer) {
-          mapContainer.style.display = "none";
-        }
-        galleryContainer.style.display = "block";
-        if (allowClip) {
-        document.getElementById("advancedLabel").style.display = "block";
-        document.getElementById("AISearch").style.display = "block";
-        }
-        // history.pushState({}, null, "/photo");
+      history.replaceState(
+        {},
+        null,
+        window.location.pathname.replace("/map", "")
+      );
+
+      const afterFilter = filterImages();
+      if (!afterFilter.length) {
+        return;
       }
-      function getImageWidth() {
-        const usableWidth = galleryContainer.clientWidth;
-        let numCols = Math.floor(Math.pow(usableWidth, 0.6) / 18);
-        return usableWidth / numCols - (gutter * (numCols - 1)) / numCols - 0.5;
+      const AIText = AITextField.value.trim().toLowerCase();
+      let storedIndices;
+      if (AIText) {
+        storedIndices = clipMemo[AIText];
+        afterFilter.sort((a, b) => storedIndices[a] - storedIndices[b]);
+      }
+      const imageOrder = afterFilter.join(",");
+      const reset = imageOrder != lastImageOrder && lastImageOrder !== "";
+      if (imageOrder != lastImageOrder) {
+        lastImageOrder = imageOrder;
+        const imagesToInclude = new Set(afterFilter);
+        for (const name of initialImageOrder) {
+          const el = namesToImageElements[name];
+          if (imagesToInclude.has(name)) {
+            el.style.display = "block";
+            el.classList.remove("hide");
+          } else {
+            el.style.display = "none";
+            el.classList.add("hide");
+          }
+        }
+
+        for (const name of afterFilter) {
+          galleryContainer.appendChild(namesToImageElements[name]);
+        }
+        setImageOrder();
       }
 
-      function setGalleryImageWidths() {
-        if (mode == "map") {
-          resizedSinceSwitchedToMap = true;
-          // console.log("resized since switch to map", resizedSinceSwitchedToMap);
-          return;
-        }
-        const width = getImageWidth();
-        // console.log("new image width", width);
-        const images = document.getElementsByClassName("galleryImage");
-        for (let i = 0; i < images.length; i++) {
-          images[i].style.width = width + "px";
-        }
-      }
       if (!msnry || reset) {
-        if (!reset) {
-          showGallery();
-
-          window.addEventListener("resize", setGalleryImageWidths);
-        }
+        showGallery();
         setGalleryImageWidths();
 
         // gallery.style.opacity = 0;
         if (msnry) {
-          msnry.destroy();
-        }
-        msnry = new Masonry("#gallery", {
-          columnWidth: ".galleryImage",
-          itemSelector: ".galleryImage",
-          gutter: gutter,
-          transitionDuration: 200,
-        });
-        if (!reset) {
+          // msnry.destroy();
+          msnry.reloadItems();
+          msnry.layout();
+        } else {
+          msnry = new Masonry("#gallery", {
+            columnWidth: ".galleryImage",
+            itemSelector: ".galleryImage:not(.hide)",
+            gutter: gutter,
+            transitionDuration: 200,
+          });
           msnry.on("layoutComplete", function () {
             galleryContainer.style.opacity = 1;
             // console.log("layout complete");
@@ -975,14 +1106,13 @@ console.log("images", images);
         if (resizedSinceSwitchedToMap) {
           galleryContainer.style.opacity = 0;
         }
-
-        showGallery();
         if (resizedSinceSwitchedToMap) {
           // console.log("RESIZE AFTER SWITCH");
           setGalleryImageWidths();
           msnry.layout();
           resizedSinceSwitchedToMap = false;
         }
+        showGallery();
       }
     }
 
@@ -997,14 +1127,15 @@ console.log("images", images);
       document.querySelector("body").classList.add("modeMap");
       function showMap() {
         galleryContainer.style.display = "none";
-        if (mapContainer) {
         mapContainer.style.display = "block";
+        const { pathname } = window.location;
+        if (!pathname.includes("/photo/map")) {
+          history.replaceState(
+            {},
+            null,
+            window.location.pathname.replace("/photo", "/photo/map")
+          );
         }
-        if (allowClip) {
-        document.getElementById("advancedLabel").style.display = "none";
-        document.getElementById("AISearch").style.display = "none";
-        }
-        // history.pushState({}, null, "/photo/map");
       }
 
       showMap();
@@ -1696,6 +1827,7 @@ console.log("images", images);
     }
 
     function setImUrlQuery(filename) {
+      debugger;
       var newurl = window.location.protocol + "//" + window.location.host;
       if (
         location.pathname == "/photo/map" ||
@@ -1917,13 +2049,18 @@ console.log("images", images);
     // $$/   $$/  $$$$$$$/     $/
 
     document.getElementById("mapNavLink").addEventListener("click", (e) => {
-      e.preventDefault();
-      document.getElementById("mapButton").click();
+      debugger;
+      if (allowMap && !window.location.pathname.includes("album")) {
+        e.preventDefault();
+        document.getElementById("mapButton").click();
+      }
     });
 
     document.getElementById("photoNavLink").addEventListener("click", (e) => {
-      e.preventDefault();
-      document.getElementById("galleryButton").click();
+      if (allowMap && !window.location.pathname.includes("album")) {
+        e.preventDefault();
+        document.getElementById("galleryButton").click();
+      }
     });
 
     //   ______   ______
@@ -1945,35 +2082,12 @@ console.log("images", images);
     let modelSession;
     let tokenizer;
     let imageEmbeddings;
-    const AITextField = document.querySelector("#AISearch > input");
 
-    const advancedLabel = document.getElementById("advancedLabel");
-    const AISearch = document.getElementById("AISearch");
-
-    let advancedOpen = false;
     let textLastSearched;
-
-    advancedLabel.addEventListener("click", () => {
-      if (advancedOpen) {
-        advancedLabel.innerHTML =
-          "AI Image Search";
-        AISearch.classList.add("minimized");
-      } else {
-        advancedLabel.innerHTML = "Close Search";
-        AISearch.classList.remove("minimized");
-      }
-      advancedOpen = !advancedOpen;
-    });
 
     async function loadModel() {
       const modelPath =
         "https://huggingface.co/rocca/openai-clip-js/resolve/main/clip-text-vit-32-uint8.onnx";
-      // `https://huggingface.co/rocca/openai-clip-js/resolve/main/clip-image-vit-32-${quantized ? "uint8" : "float32"}.onnx
-
-      //"https://huggingface.co/rocca/openai-clip-js/resolve/main/clip-text-vit-32-float32-int32.onnx";
-      // modelSession = await ort.InferenceSession.create(modelPath, {
-      //   executionProviders: ["wasm"],
-      // });
       const [session, Tokenizer, imageEmb] = await Promise.all([
         ort.InferenceSession.create(modelPath, {
           executionProviders: ["wasm"],
@@ -2000,7 +2114,9 @@ console.log("images", images);
       return results["output"].data;
     }
 
-    async function searchByText(text) {
+    const clipMemo = {};
+
+    async function rankAISearch(text) {
       const textEmbedding = await getTextEmbedding(text);
       const norm = Math.sqrt(
         textEmbedding.reduce((acc, curr) => {
@@ -2031,23 +2147,18 @@ console.log("images", images);
         const name = ranking[i][0];
         indices[name] = i;
       }
-      // console.log(
-      //   "ranking",
-      //   ranking.map((x) => x[0]),
-      //   ranking
-      // );
-      orderImageElementsByRanking(indices);
-      setImageOrder();
-      // shuffleImgElements();
-      // msnry = undefined;
-      activateGallery(true);
+      clipMemo[text] = indices;
+      if (mode == "gallery") {
+        activateGallery();
+      }
     }
 
     async function beginSearchByText() {
       const text = AITextField.value.trim().toLowerCase();
-      if (advancedOpen && text !== textLastSearched) {
+      debugger;
+      if (!clipMemo[text]) {
         textLastSearched = text;
-        await searchByText(textLastSearched);
+        await rankAISearch(textLastSearched);
       }
     }
 
@@ -2060,41 +2171,57 @@ console.log("images", images);
       }
     });
 
-    function swapElements(nodeA, nodeB) {
-      const parentA = nodeA.parentNode;
-      const siblingA = nodeA.nextSibling === nodeB ? nodeA : nodeA.nextSibling;
-      // Move `nodeA` to before the `nodeB`
-      nodeB.parentNode.insertBefore(nodeA, nodeB);
-      // Move `nodeB` to before the sibling of `nodeA`
-      parentA.insertBefore(nodeB, siblingA);
-    }
+    // function swapElements(nodeA, nodeB) {
+    //   const parentA = nodeA.parentNode;
+    //   const siblingA = nodeA.nextSibling === nodeB ? nodeA : nodeA.nextSibling;
+    //   // Move `nodeA` to before the `nodeB`
+    //   nodeB.parentNode.insertBefore(nodeA, nodeB);
+    //   // Move `nodeB` to before the sibling of `nodeA`
+    //   parentA.insertBefore(nodeB, siblingA);
+    // }
 
-    function orderImageElementsByRanking(indices) {
-      // console.log("indices", indices);
-      for (var i = 0; i < galleryContainer.children.length; i++) {
-        const child = galleryContainer.children[i];
-        const name = child.getAttribute("name");
-        const index = indices[name];
-        if (i == index) {
-          // child.style.top = ''
-          // child.style.left = ''
-          // child.removeAttribute("style");
-          continue;
+    // function orderImageElementsByRanking(indices) {
+    //   // console.log("indices", indices);
+    //   for (var i = 0; i < galleryContainer.children.length; i++) {
+    //     const child = galleryContainer.children[i];
+    //     const name = child.getAttribute("name");
+    //     const index = indices[name];
+    //     if (i == index) {
+    //       // child.style.top = ''
+    //       // child.style.left = ''
+    //       // child.removeAttribute("style");
+    //       continue;
+    //     }
+    //     const target = galleryContainer.children[index];
+    //     if (!target) {
+    //       // console.log(
+    //       //   "want to swap with element",
+    //       //   index,
+    //       //   name,
+    //       //   "but len is",
+    //       //   galleryContainer.children.length
+    //       // );
+    //     }
+    //     swapElements(child, target);
+    //     i--;
+    //   }
+    // }
+
+    // download
+
+    const downloadedMap = {};
+    for (const el of document.getElementsByClassName("tileDl")) {
+      el.addEventListener("click", (e) => {
+        debugger;
+        if (downloadedMap[el.href]) {
+          e.preventDefault();
+          e.stopPropagation;
         }
-        const target = galleryContainer.children[index];
-        if (!target) {
-          // console.log(
-          //   "want to swap with element",
-          //   index,
-          //   name,
-          //   "but len is",
-          //   galleryContainer.children.length
-          // );
-        }
-        swapElements(child, target);
-        i--;
-      }
+        downloadedMap[el.href] = true;
+        el.querySelector(".dlDone").style.display = "block";
+        el.querySelector(".dl").style.display = "none";
+      });
     }
   </script>
-  <Substack />
+  {allowBlog && <Substack />}
 </HeaderAndFooter>
