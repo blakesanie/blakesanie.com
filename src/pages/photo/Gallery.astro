@@ -31,15 +31,20 @@ export interface Props {
   allowDownload?: boolean;
   allowFilename?: boolean;
   allowBlog?: boolean;
+  alphabetical?: boolean;
+  allowUniqueUrls?: boolean;
 }
 
 const initialMode = Astro.props.initialMode || "gallery";
-const allowFullscreen = Astro.props.allowMap || Astro.props.allowFullscreen;
+const allowMap = Astro.props.allowMap || false;
+const allowFullscreen = allowMap || Astro.props.allowFullscreen || false;
 const allowMetadata = Astro.props.allowMetadata || false;
 const allowClip = Astro.props.allowClip || false;
 const allowDownload = Astro.props.allowDownload || false;
 const allowFilename = Astro.props.allowFilename || false;
 const allowBlog = Astro.props.allowBlog || false;
+const alphabetical = Astro.props.alphabetical || false;
+const allowUniqueUrls = Astro.props.allowUniqueUrls || false;
 
 function removeEmpty(obj) {
   return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
@@ -127,6 +132,7 @@ if (allowClip) {
 const imagesArr: any[] = [];
 const icons = {};
 const downloads1080 = {};
+const downloadsLarge = {};
 let minLat = Infinity;
 let maxLat = -Infinity;
 let minLng = Infinity;
@@ -162,16 +168,6 @@ await Promise.all(
         quality: 50,
       });
       icons[name] = im2.img.split('srcset="')[1].split('"')[0];
-    }
-    if (allowDownload) {
-      let im2 = await renderImg({
-        src: path,
-        breakpoints: [1080],
-        format: "jpg",
-        alt: "",
-        quality: 80,
-      });
-      downloads1080[name] = im2.img.split('srcset="')[1].split('"')[0];
     }
     const extracted = {
       path,
@@ -221,9 +217,37 @@ await Promise.all(
           )
         : {}),
     };
+    if (allowDownload) {
+      let im2 = await renderImg({
+        src: path,
+        breakpoints: [1080],
+        format: "jpg",
+        alt: "",
+        quality: 80,
+      });
+      downloads1080[name] = im2.img.split('srcset="')[1].split('"')[0];
+      if (allowFullscreen) {
+        let len = 2000;
+        if (height > width) {
+          len *= width / height;
+        }
+        let im2 = await renderImg({
+          src: path,
+          breakpoints: [len],
+          format: "jpg",
+          alt: "",
+          quality: 80,
+        });
+        extracted.dl = im2.img.split('srcset="')[1].split('"')[0];
+      }
+    }
     imagesArr.push(extracted);
   })
 );
+
+if (alphabetical) {
+  imagesArr.sort((a, b) => a.name - b.name);
+}
 
 function removeFileExtension(filename) {
   return filename.split(".").slice(0, -1).join(".");
@@ -258,7 +282,7 @@ if (Astro.props.allowMap) {
 }
 
 const gutter = 10;
-let title = Astro.props.title || "Photography";
+let title = Astro.props.title ? Astro.props.title + " | Photo" : "Photography";
 if (Astro.props.imageName) {
   title = Astro.props.imageName + " | " + title;
 }
@@ -279,18 +303,8 @@ const description =
   description={description}
   image={Astro.props.image}
 >
-  {Astro.props.heading && <h1>Photography</h1>}
-  {
-    Astro.props.subheading && (
-      <p>
-        Photography offers me a creative escape from my logical, algorithmic
-        side, allowing me to see the world with fresh eyes. From the vibrant
-        streets of San Francisco to the timeless charm of Venice - even the
-        familiar beauty of my own backyard - I find endless inspiration in the
-        compositions around me.
-      </p>
-    )
-  }
+  {Astro.props.heading && <h1>{Astro.props.heading}</h1>}
+  {Astro.props.subheading && <p>{Astro.props.subheading}</p>}
   {
     (allowFilename || allowClip || Astro.props.allowMap) && (
       <div id="search">
@@ -332,7 +346,10 @@ const description =
       </div>
     )
   }
-  <div id="photoContent" class={`${Astro.props.allowMap ? "" : "noMap"}`}>
+  <div
+    id="photoContent"
+    class={`${Astro.props.allowMap ? "" : "noMap"} ${allowFullscreen ? "" : "noFullscreen"}`}
+  >
     <div id="gallery">
       {
         imagesArr.map((image) => {
@@ -355,13 +372,13 @@ const description =
                   {image.path.split("/").pop()}
                   <Icon
                     name="mi:cloud-download"
-                    color="rgb(128,128,128)"
+                    color="black"
                     size="20px"
                     class="dl"
                   />
                   <Icon
                     name="material-symbols:download-done-rounded"
-                    color="rgb(128,128,128)"
+                    color="black"
                     size="20px"
                     class="dlDone"
                     style="display: none;"
@@ -405,7 +422,22 @@ const description =
       <div id="fullScreen" slot="topLevel">
         <div class="section" id="photoFullScreen">
           <div id="imageInfo">
-            <div id="imageName">image name</div>
+            <a id="imageName">
+              image name
+              <Icon
+                name="mi:cloud-download"
+                color="black"
+                size="20px"
+                class="dl"
+              />
+              <Icon
+                name="material-symbols:download-done-rounded"
+                color="black"
+                size="20px"
+                class="dlDone"
+                style="display: none;"
+              />
+            </a>
             <div id="metaData">
               <div>10s</div>
               <div>f2.8</div>
@@ -477,16 +509,19 @@ const description =
 
     #search > * {
       margin: 0.5em;
-      margin-top: 1.3em;
     }
 
     .inputLabel {
       font-size: 0.8em;
       position: absolute;
-      top: -1.3em;
-      left: 1rem;
-      opacity: 0.3;
+      top: -0.5em;
+      left: 0.8rem;
+      /* opacity: 0.3; */
+      color: #bbb;
       font-style: italic;
+      padding: 0 0.4em;
+      background-color: white;
+      line-height: 1em;
       /* z-index: 3; */
     }
 
@@ -499,10 +534,18 @@ const description =
       padding: 0.5em 1em;
       width: 100%;
       font-size: 1em;
-      border: none;
+      border: 1px solid #eee;
       outline: none;
-      box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
       border-radius: 8px;
+    }
+
+    #search input[disabled] {
+      background-color: white; /* or whatever color you prefer */
+      color: black; /* text color */
+    }
+
+    #search input::placeholder {
+      color: #bbb;
     }
 
     #photoContent > div {
@@ -544,7 +587,7 @@ const description =
       filter: contrast(1.05);
     }
 
-    .noMap .galleryImage {
+    .noFullScreen .galleryImage {
       cursor: default;
     }
 
@@ -559,22 +602,30 @@ const description =
     .tileDl {
       position: absolute;
       display: none; /* inline so it flows like text */
-      flex-wrap: wrap; /* allow wrapping to new lines */
+      text-align: right;
       align-items: center; /* vertical centering */
       right: 0;
       top: 0;
-      background-color: rgba(255, 255, 255, 0.3) !important;
+      background-color: rgba(255, 255, 255, 0.5);
       padding: 4px 8px;
       max-width: 100%;
       border-bottom-left-radius: 8px;
       cursor: pointer;
       /* display: none; */
       backdrop-filter: blur(4px);
+      transition: background-color 0.2s ease;
+    }
+
+    .tileDl:hover {
+      background-color: white;
     }
 
     .tileDl svg {
+      width: 1em;
+      min-width: 1em;
       flex: 0 0 auto; /* don’t stretch icon */
       margin-left: 5px;
+      transform: translateY(9%);
     }
 
     .galleryImage:hover .tileDl {
@@ -651,6 +702,22 @@ const description =
       font-size: 1.2em;
       margin-bottom: 0.2em;
       text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #imageName > * {
+      margin-left: 0.3em;
+      opacity: 0.3;
+      width: 1em;
+      min-width: 1em;
+      transform: translateY(9%);
+      transition: opacity 0.2s ease;
+    }
+
+    #imageName:hover > * {
+      opacity: 1;
     }
 
     #metaData,
@@ -774,13 +841,14 @@ const description =
       maxLat: maxLat,
       minLng: minLng,
       maxLng: maxLng,
-      allowMap: Astro.props.allowMap || false,
+      allowMap: Astro.props.allowMap,
       icons: icons,
-      allowFullscreen: allowFullscreen || false,
-      randomize: Astro.props.randomize || false,
-      allowMetadata: allowMetadata || false,
-      allowClip: allowClip || false,
+      allowFullscreen: allowFullscreen,
+      randomize: Astro.props.randomize,
+      allowClip: allowClip,
       embeddingsPublicPath: embeddingsPublicPath,
+      allowUniqueUrls: allowUniqueUrls,
+      allowDownload: allowDownload,
       // ogWidth: ogWidth,
       // defaultOGInfo: defaultOGInfo,
       // title: title + " | Blake Sanie",
@@ -830,12 +898,29 @@ const description =
         );
       }
 
-      const initialUrlQuery = location.search
-        ? getUrlQuery().im
-        : location.pathname
-            .replace("/photo/map", "")
-            .replace("/photo", "")
-            .substring(1); // get rid one leading slash
+      function getInitialFilename() {
+        if (location.search) return getUrlQuery().im;
+        const a = "/albums/";
+        const albumsIndex = location.pathname.indexOf(a);
+        if (albumsIndex >= 0) {
+          const afterAlbum = location.pathname.substring(
+            albumsIndex + a.length
+          );
+
+          const parts = afterAlbum.split("/");
+          if (parts.length > 1) {
+            return parts[1];
+          }
+          return "";
+        }
+        const afterBase = location.pathname
+          .replace("/photo/map", "")
+          .replace("/photo", "")
+          .replaceAll("/", "");
+        return afterBase;
+      }
+
+      const initialUrlQuery = getInitialFilename();
 
       if (initialUrlQuery) {
         let initialQueryInterval;
@@ -851,6 +936,15 @@ const description =
         initialFullScreen();
       }
     }
+
+    let titleParts = document.title.split(" | ");
+    let baseTitle;
+    if (location.pathname.includes("/albums/")) {
+      baseTitle = titleParts.slice(titleParts.length - 3, titleParts.length);
+    } else {
+      baseTitle = titleParts.slice(titleParts.length - 2, titleParts.length);
+    }
+    baseTitle = baseTitle.join(" | ");
 
     //  __
     // /  |
@@ -874,7 +968,7 @@ const description =
       namesToImageElements[name] = galleryContainer.children[i];
       if (allowFullscreen) {
         galleryContainer.children[i].addEventListener("click", () => {
-          // debugger;
+          //
           activateFullScreen(name);
         });
       }
@@ -993,7 +1087,6 @@ const description =
       const mapButton = document.getElementById("mapButton");
 
       galleryButton?.addEventListener("click", () => {
-        debugger;
         if (mode != "gallery") {
           mode = "gallery";
           activateGallery();
@@ -1001,7 +1094,6 @@ const description =
         }
       });
       mapButton?.addEventListener("click", () => {
-        debugger;
         if (mode != "map") {
           mode = "map";
           activateMap();
@@ -1614,7 +1706,7 @@ const description =
         function boxToZoom(latRange, lngRange) {
           function toZoom(range, size) {
             // console.log("lng range", range);
-            // debugger;
+            //
             // 400 -1 adjustment
             // 700 perfect
             const base = -Math.log10(range) / 0.35 + 8.9;
@@ -1672,13 +1764,13 @@ const description =
         let prevZoom = map.zoom;
 
         function updateVisibilities() {
-          // debugger;
+          //
           // let covers = zoomVisibilities[map.zoom];
           // if (covers) {
           //   applyVisibilities(covers);
           //   return;
           // }
-          // debugger;
+          //
           let visibleIndices = [];
           // for (let i = map.zoom - 1; i >= 0; i--) {
           //   if (zoomVisibilities[i]) {
@@ -1827,26 +1919,34 @@ const description =
     }
 
     function setImUrlQuery(filename) {
-      debugger;
-      var newurl = window.location.protocol + "//" + window.location.host;
-      if (
-        location.pathname == "/photo/map" ||
-        location.pathname.startsWith("/photo/map/")
-      ) {
-        newurl += "/photo/map";
+      if (!allowUniqueUrls) {
+        return;
+      }
+      let parts = location.pathname.substring(1).split("/");
+      if (parts[1] == "albums") {
+        parts = parts.slice(0, 3);
       } else {
-        newurl += "/photo";
+        parts = ["photo"];
       }
       if (filename) {
-        newurl += "/" + filename;
+        parts.push(filename);
       }
-      window.history.replaceState({}, null, newurl);
+      const newUrl =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        "/" +
+        parts.join("/");
+      window.history.replaceState({}, null, newUrl);
+      document.title = filename
+        ? images[filename].title + " | " + baseTitle
+        : baseTitle;
     }
 
     function activateFullScreen(filename) {
       // setOGImage(filename);
-      if (!filename || !images[filename]) {
-        document.title = "Photography | Blake Sanie";
+      const captured = images[filename];
+      if (!filename || !captured) {
         setImUrlQuery();
         fullScreenOpen = false;
         fullScreenElement.classList.remove("active");
@@ -1870,6 +1970,9 @@ const description =
             .getElementById("exit")
             .addEventListener("click", activateFullScreen);
           imageNameElement = document.getElementById("imageName");
+          enableDownload(imageNameElement);
+          imageDownloadIcon = imageNameElement.querySelector(".dl");
+          imageDownloadDoneIcon = imageNameElement.querySelector(".dlDone");
           metaDataElement = document.getElementById("metaData");
         }
         fullScreenOpen = true;
@@ -1882,8 +1985,24 @@ const description =
       const { prev, next } = imageChanges[filename];
       // console.log("prev", prev, "next", next);
       const cleanName = images[filename].title;
-      imageNameElement.innerHTML = cleanName;
-      document.title = cleanName + " | Photography | Blake Sanie";
+      const textNode = Array.from(imageNameElement.childNodes).find(
+        (node) => node.nodeType === Node.TEXT_NODE
+      );
+      textNode.nodeValue = cleanName;
+
+      imageDownloadIcon.style.display = "none";
+      imageDownloadDoneIcon.style.display = "none";
+      if (allowDownload) {
+        debugger;
+        const downloadUrl = captured.dl;
+        imageNameElement.href = downloadUrl;
+        imageNameElement.download = true;
+        if (downloadedMap[downloadUrl]) {
+          imageDownloadDoneIcon.style.display = "block";
+        } else {
+          imageDownloadIcon.style.display = "block";
+        }
+      }
       prevElement.style.display = prev ? "block" : "none";
       nextElement.style.display = next ? "block" : "none";
 
@@ -1899,7 +2018,6 @@ const description =
 
       // set meta data
       metaDataElement.innerHTML = "";
-      const captured = images[filename];
       // console.log("showcase image", filename, images[filename]);
       if (captured.shutter) {
         if (captured.shutter < 0) {
@@ -2049,7 +2167,6 @@ const description =
     // $$/   $$/  $$$$$$$/     $/
 
     document.getElementById("mapNavLink").addEventListener("click", (e) => {
-      debugger;
       if (allowMap && !window.location.pathname.includes("album")) {
         e.preventDefault();
         document.getElementById("mapButton").click();
@@ -2102,7 +2219,7 @@ const description =
       AITextField.removeAttribute("disabled");
       AITextField.setAttribute(
         "placeholder",
-        'Model ready! Try any query, ex. "New York City Sunset"'
+        'Any semantic query, ex. "New York City Sunset"'
       );
     }
 
@@ -2155,7 +2272,7 @@ const description =
 
     async function beginSearchByText() {
       const text = AITextField.value.trim().toLowerCase();
-      debugger;
+
       if (!clipMemo[text]) {
         textLastSearched = text;
         await rankAISearch(textLastSearched);
@@ -2209,18 +2326,37 @@ const description =
 
     // download
 
-    const downloadedMap = {};
-    for (const el of document.getElementsByClassName("tileDl")) {
-      el.addEventListener("click", (e) => {
-        debugger;
-        if (downloadedMap[el.href]) {
-          e.preventDefault();
-          e.stopPropagation;
+    function enableDownload(el) {
+      el.addEventListener("click", async (e) => {
+        if (!el.href) return;
+        if (navigator.canShare && navigator.canShare({ files: [] })) {
+          const response = await fetch(el.href);
+          const blob = await response.blob();
+          const file = new File([blob], el.text, { type: blob.type });
+          try {
+            await navigator.share({
+              files: [file],
+              title: el.text,
+              text: el.text,
+            });
+            return;
+          } catch (err) {}
         }
-        downloadedMap[el.href] = true;
+        const parsedUrl = new URL(el.href);
+        const key = parsedUrl.pathname;
+        if (downloadedMap[key]) {
+          e.preventDefault();
+        }
+        downloadedMap[key] = true;
         el.querySelector(".dlDone").style.display = "block";
         el.querySelector(".dl").style.display = "none";
+        e.stopPropagation();
       });
+    }
+
+    const downloadedMap = {};
+    for (const el of document.querySelectorAll("a[download]")) {
+      enableDownload(el);
     }
   </script>
   {allowBlog && <Substack />}

@@ -4,14 +4,19 @@ import Gallery from "../Gallery.astro";
 export async function getStaticPaths() {
   return [
     {
-      params: { slug: "blake" },
+      params: { slug: "mnr-labor-day-2025" },
       props: {
-        path: "./photo-portfolio/temp/blake",
-        // image: "./photo-portfolio/temp/blake/LittleGrandCanyon.jpg",
-        heading: "Blake Sanie Photography",
+        path: "./photo-portfolio/temp/mnr-labor-day-2025",
+        title: "MNR Labor Day 2025",
+        description: "Photographs from Monday Night Ride, September 1, 2025",
+        image: "./photo-portfolio/temp/mnr-labor-day-2025/DSC00237.jpg",
+        heading: "MNR Labor Day 2025",
         allowDownload: true,
         allowClip: true,
         allowFilename: true,
+        alphabetical: true,
+        allowFullscreen: true,
+        allowMetadata: true,
       },
     },
   ];
