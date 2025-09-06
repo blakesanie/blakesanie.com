@@ -100,7 +100,7 @@ function fsGlob(basePath: string): string[] {
   walk(dirPath);
   return results;
 }
-
+console.log("props", Astro.props, Astro.url);
 const glob = fsGlob(Astro.props.path);
 
 function loadJson(path) {
@@ -663,8 +663,7 @@ const description =
       max-width: none;
       height: 100dvh;
       background-color: white;
-      /* border: 10px solid yellow; */
-      z-index: 9999999;
+      z-index: -9999;
       overflow-y: scroll;
       overflow-x: hidden;
       opacity: 0;
@@ -673,6 +672,7 @@ const description =
     }
     #fullScreen.active {
       opacity: 1;
+      z-index: 9999999;
       pointer-events: all;
     }
 
@@ -1945,14 +1945,14 @@ const description =
 
     function activateFullScreen(filename) {
       // setOGImage(filename);
-      const captured = images[filename];
-      if (!filename || !captured) {
+      if (!filename || !images[filename]) {
         setImUrlQuery();
         fullScreenOpen = false;
         fullScreenElement.classList.remove("active");
         document.body.classList.remove("stop-scrolling");
         return;
       }
+      const captured = images[filename];
       openFileName = filename;
       setImUrlQuery(filename);
       if (!fullScreenOpen) {
@@ -1970,7 +1970,9 @@ const description =
             .getElementById("exit")
             .addEventListener("click", activateFullScreen);
           imageNameElement = document.getElementById("imageName");
-          enableDownload(imageNameElement);
+          if (allowDownload) {
+            enableDownload(imageNameElement);
+          }
           imageDownloadIcon = imageNameElement.querySelector(".dl");
           imageDownloadDoneIcon = imageNameElement.querySelector(".dlDone");
           metaDataElement = document.getElementById("metaData");
@@ -1978,7 +1980,6 @@ const description =
         fullScreenOpen = true;
       }
       buildSelectedMap(filename);
-
       document.body.classList.add("stop-scrolling");
 
       // set prev and next blocks
@@ -1993,7 +1994,6 @@ const description =
       imageDownloadIcon.style.display = "none";
       imageDownloadDoneIcon.style.display = "none";
       if (allowDownload) {
-        debugger;
         const downloadUrl = captured.dl;
         imageNameElement.href = downloadUrl;
         imageNameElement.download = true;
@@ -2083,10 +2083,8 @@ const description =
           if (evt.key === "Escape" || evt.key === "Esc") {
             document.getElementById("exit").click();
           } else if (evt.key === "ArrowLeft") {
-            clearInterval(blurInterval);
             prevImage();
           } else if (evt.key === "ArrowRight") {
-            clearInterval(blurInterval);
             nextImage();
           } else if (evt.key === "ArrowDown") {
             fullScreenElement.scroll({
