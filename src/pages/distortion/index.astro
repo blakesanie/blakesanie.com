@@ -10,13 +10,51 @@ const imagePath = "/og/thumb.jpg";
   <div class="tool-container">
     <div class="canvas-container">
       <canvas id="distortionCanvas"></canvas>
+      <canvas id="gridCanvas"></canvas>
       <div id="opticalCenter"></div>
+    </div>
+    <div id="reverse-projection">
+      <img id="sourceImage" src={imagePath} />
+      <canvas id="reverseGridCanvas"></canvas>
     </div>
 
     <div class="controls">
-      <label for="k">Distortion k:</label>
-      <input type="range" id="k" min="-0.9" max="2" step="0.01" value="0" />
-      <span id="kVal">0.00</span>
+      <!-- Radial distortion -->
+      <label for="k1">k1:</label>
+      <input type="range" id="k1" min="-1" max="1" step="0.001" value="0" />
+      <span id="k1Val">0.000</span>
+    </div>
+
+    <div class="controls">
+      <label for="k2">k2:</label>
+      <input type="range" id="k2" min="-1" max="1" step="0.001" value="0" />
+      <span id="k2Val">0.000</span>
+    </div>
+
+    <div class="controls">
+      <label for="k3">k3:</label>
+      <input type="range" id="k3" min="-1" max="1" step="0.001" value="0" />
+      <span id="k3Val">0.000</span>
+    </div>
+
+    <!-- Tangential distortion -->
+    <div class="controls">
+      <label for="p1">p1:</label>
+      <input type="range" id="p1" min="-0.5" max="0.5" step="0.001" value="0" />
+      <span id="p1Val">0.000</span>
+    </div>
+
+    <div class="controls">
+      <label for="p2">p2:</label>
+      <input type="range" id="p2" min="-0.5" max="0.5" step="0.001" value="0" />
+      <span id="p2Val">0.000</span>
+    </div>
+
+    <div class="controls">
+      <label>
+        <input type="checkbox" id="toggleGrid" checked />
+        Show Grid
+      </label>
     </div>
   </div>
 </CommonHead>
@@ -38,8 +76,17 @@ const imagePath = "/og/thumb.jpg";
     display: inline-block; /* shrink to canvas size */
   }
 
-  #distortionCanvas {
+  #distortionCanvas,
+  #gridCanvas {
     display: block;
+  }
+
+  #gridCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none; /* allow clicks to pass through */
   }
 
   #opticalCenter {
@@ -59,6 +106,29 @@ const imagePath = "/og/thumb.jpg";
     align-items: center;
     gap: 0.5rem;
   }
+  .controls label {
+    width: 2.5rem;
+  }
+  .controls input {
+    flex: 1;
+  }
+  #reverse-projection {
+    position: relative;
+    display: inline-block;
+  }
+
+  #reverse-projection img {
+    display: block;
+    max-width: 100%;
+  }
+
+  #reverseGridCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
 </style>
 
-<script src="./script.ts"></script>
+<script src="./_script.ts"></script>
