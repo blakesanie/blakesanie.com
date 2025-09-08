@@ -44,14 +44,25 @@ export default defineConfig({
     astroImageTools,
     sitemap({
       filter(page) {
-        const routeFirst = page.split("/")[0];
+        let parts = page.split("/");
+        if (parts.slice(-1)[0] == "") {
+          parts = parts.slice(0, -1);
+        }
+        const routeFirst = parts[0];
+        console.log("sitemap parts", parts);
         if (noSitemap.has(routeFirst)) return false;
         if (routeFirst == "photo") {
-          const image = page
-            .replace("photo/map", "")
-            .replace("photo", "")
-            .replaceAll("/", "");
-          if (image.length) return false;
+          const albumsIndex = parts.indexOf("albums");
+          if (albumsIndex >= 0) {
+            if (albumsIndex < parts.length - 2) return false;
+          } else {
+            console.log("sitemap page", page);
+            const image = page
+              .replace("photo/map", "")
+              .replace("photo", "")
+              .replaceAll("/", "");
+            if (image.length) return false;
+          }
         }
         return true;
       },

@@ -1,0 +1,41 @@
+---
+import PortfolioPage from "./index.astro";
+import exiftoolJson from "../../../photo-portfolio/metadata.json";
+
+export async function getStaticPaths() {
+  const glob = await import.meta.glob("/photo-portfolio/portfolio2k/*");
+  return (
+    await Promise.all(
+      Object.keys(glob).map(async (path) => {
+        const filename = path.split("/").pop();
+        if (!filename) throw new Error(`No filename found for path: ${path}`);
+        const upperCamel = filename.split(".").slice(0, -1).join(".");
+        const meta = exiftoolJson[filename];
+        if (!meta) throw new Error(`No metadata found for ${filename}`);
+
+        const title = decodeURIComponent(
+          meta["File Name"]
+            .split(".")
+            .slice(0, -1)
+            .join(".")
+            .replaceAll("_", " ")
+        );
+
+        return [
+          {
+            params: {
+              slug: upperCamel,
+            },
+            props: {
+              image: path,
+              imageName: title,
+            },
+          },
+        ];
+      })
+    )
+  ).flat();
+}
+---
+
+<PortfolioPage image={Astro.props.image} imageName={Astro.props.imageName} />

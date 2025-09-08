@@ -17,12 +17,13 @@ import { useOverpass } from "./OverpassProvider";
 import type { FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
 import buildLayers from "./layers";
 
-const layerCatalog: Set<string> = new Set(); // all layer ids stored
+const entitiesByGeohash = new Map<string, string[]>();
+const entityCatalog = new Set<string>();
 
 export default function MapComponent() {
   const mapRef = useRef<maplibregl.Map | null>(null);
   const deckRef = useRef<DeckGLRef | null>(null);
-  const [layers, setLayers] = useState<Map<String, Layer[]>>(new Map()); // geohash to layer
+  const [layers, setLayers] = useState<Map<string, Layer[]>>(new Map()); // geohash to layer
 
   const {
     setViewState,
@@ -38,9 +39,6 @@ export default function MapComponent() {
     pitch: 0,
     bearing: 0,
   });
-
-  const zoomedTooFarOut =
-    viewState?.zoom !== undefined && viewState.zoom < 10.5;
 
   //   const viewState = {
   //     longitude: -87.623177,
@@ -61,17 +59,14 @@ export default function MapComponent() {
 
   useEffect(() => {
     console.log("zoom level:", viewState?.zoom);
-    if (zoomedTooFarOut) {
-      console.warn("Zoom level too low, not loading processing new layers");
-      return;
-    }
     console.log("Geohashes in scope:", geohashesInScope);
     console.log("Geohashes added:", geohashesAdded);
     console.log("Geohashes removed:", geoHashesRemoved);
     for (const geohash of geoHashesRemoved) {
-      for (const layer of layers.get(geohash) || []) {
-        layerCatalog.delete(layer.id);
+      for (const entity of entitiesByGeohash.get(geohash) || []) {
+        entityCatalog.delete(entity);
       }
+      entitiesByGeohash.delete(geohash);
       layers.delete(geohash);
       console.log("Removed layers for geohash:", geohash);
     }
@@ -88,52 +83,85 @@ export default function MapComponent() {
           "Layer already exists for geohash: " + geohash
         );
         assert(
-          !layerCatalog.has(geohash),
+          !entityCatalog.has(geohash),
           "Layer catalog already has geohash: " + geohash
         );
         const geojsonBlob = geojsons[i];
         if (geojsonBlob) {
-          const newLayers = buildLayers(geojsonBlob, layerCatalog, geohash);
-          console.log("Adding layers for geohash:", geohash, newLayers);
-          layers.set(geohash, newLayers);
+          const newLayers = buildLayers(
+            geojsonBlob,
+            entityCatalog,
+            entitiesByGeohash,
+            geohash
+          );
+          if (newLayers.length === 0) {
+            console.warn("No layers built for geohash:", geohash);
+          } else {
+            console.log("Adding layers for geohash:", geohash, newLayers);
+            layers.set(geohash, newLayers);
+          }
           i++;
         }
       }
-
+      console.log("Layers after update:", layers);
+      console.log("Entities after update:", entitiesByGeohash);
+      // console.log("Entities by geohash after
       setLayers(new Map(layers));
     });
-  }, [geohashesAdded, geoHashesRemoved]);
+  }, [geohashesInScope, geohashesAdded, geoHashesRemoved]);
 
-  const layersFlat = useMemo(() => {
-    const out: any[] = [];
-    for (const layer of layers.values()) {
-      out.push(...layer);
+  const layersClean = useMemo(() => {
+    // debugger;
+    const geohashesInScopeSet = new Set(geohashesInScope);
+    for (const geohash of layers.keys()) {
+      if (!geohashesInScopeSet.has(geohash)) {
+        layers.delete(geohash);
+      }
     }
-    return out;
-  }, [layers]);
+    for (const geohash of entitiesByGeohash.keys()) {
+      if (!geohashesInScopeSet.has(geohash)) {
+        const entities = entitiesByGeohash.get(geohash);
+        for (const entity of entities || []) {
+          entityCatalog.delete(entity);
+        }
+        entitiesByGeohash.delete(geohash);
+      }
+    }
+    const flattenned: any[] = [];
+    for (const layer of layers.values()) {
+      flattenned.push(...layer);
+    }
+    return flattenned;
+  }, [layers, viewState?.latitude, viewState?.longitude, viewState?.zoom]);
 
   return (
-    <DeckGL
-      ref={deckRef}
-      layers={zoomedTooFarOut ? [] : layersFlat}
-      initialViewState={viewState}
-      onViewStateChange={function handleViewStateChange(evt) {
-        if ("viewState" in evt) {
-          setViewState(evt.viewState as MapViewState);
-          updateBounds();
-        }
-      }}
-      controller={true}
-    >
-      <MapLibre
-        ref={(instance) => {
-          if (instance) mapRef.current = instance.getMap();
+    <>
+      <DeckGL
+        ref={deckRef}
+        layers={layersClean}
+        initialViewState={viewState}
+        onViewStateChange={function handleViewStateChange(evt) {
+          if ("viewState" in evt) {
+            setViewState(evt.viewState as MapViewState);
+            updateBounds();
+          }
         }}
-        mapLib={maplibregl}
-        mapStyle="/mapstyle.json" // or your own style
-        onLoad={updateBounds}
-      />
-    </DeckGL>
+        controller={true}
+      >
+        <MapLibre
+          ref={(instance) => {
+            if (instance) mapRef.current = instance.getMap();
+          }}
+          mapLib={maplibregl}
+          mapStyle="/mapstyle.json" // or your own style
+          onLoad={updateBounds}
+        />
+      </DeckGL>
+      <div className="absolute top-0 left-0 p-4 bg-white z-10">
+        <p>{`Layers rendered: ${layersClean.length}`}</p>
+        <p>{`Entities rendered: ${entityCatalog.size}`}</p>
+      </div>
+    </>
   );
 }
 

@@ -1,0 +1,86 @@
+---
+import { getStaticPaths } from "./[slug].astro";
+//@ts-ignore
+import { Img } from "astro-imagetools/components";
+import HeaderAndFooter from "../../../components/HeaderAndFooter/index.astro";
+import Substack from "../../../components/Substack.astro";
+
+const staticPaths = await getStaticPaths();
+
+function enforcePeriod(str: string) {
+  if (str.endsWith(".")) return str;
+  return str + ".";
+}
+---
+
+<HeaderAndFooter
+  allowMainStyles
+  color="#eeeeeed0"
+  colorOpaque="rgb(241, 241, 241)"
+  themeColor="#f0f0f0"
+  darkText
+  hoverZoneBehind
+  title="Albums"
+  description="Image collections for preview and download"
+>
+  <h1>Albums</h1>
+  <p>
+    Images in bulk, refined by event or series. Available for open preview and
+    download - Enjoy!
+  </p>
+  <div id="albums">
+    {
+      staticPaths.map((item) => (
+        <a href={"/photo/albums/" + item.params.slug}>
+          <h2>{item.props.title}</h2>
+          <p>{enforcePeriod(item.props.description)}</p>
+          <Img
+            src={item.props.image}
+            alt=""
+            breakpoints={[800]}
+            quality={50}
+            format="webp"
+            placeholder="dominantColor"
+            loading="lazy"
+          />
+        </a>
+      ))
+    }
+  </div>
+  <Substack />
+</HeaderAndFooter>
+
+<style>
+  #albums {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.8em;
+    margin-top: 1.5em;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: center;
+    margin-bottom: 2em;
+  }
+  #albums > a {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    /* border: 1px solid red; */
+    padding: 1.5em;
+    border-radius: 1em;
+    min-width: min(100%, 350px);
+    max-width: 500px;
+    padding-left: 2em;
+  }
+  #albums > a * {
+    text-indent: 0 !important;
+    text-align: left;
+    padding: 0;
+    width: calc(100% + 0.5em);
+  }
+  #albums :global(img) {
+    margin-top: 0.5em;
+    flex: 1;
+    height: min(300px, 80vw) !important;
+  }
+</style>

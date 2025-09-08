@@ -1,0 +1,64 @@
+---
+import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
+
+const imagePath = "/og/thumb.jpg";
+---
+
+<CommonHead title="Distortion" noindex>
+  <h1>Lens Distortion Correction Tool</h1>
+
+  <div class="tool-container">
+    <div class="canvas-container">
+      <canvas id="distortionCanvas"></canvas>
+      <div id="opticalCenter"></div>
+    </div>
+
+    <div class="controls">
+      <label for="k">Distortion k:</label>
+      <input type="range" id="k" min="-0.9" max="2" step="0.01" value="0" />
+      <span id="kVal">0.00</span>
+    </div>
+  </div>
+</CommonHead>
+
+<style>
+  .tool-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 800px;
+  }
+  canvas {
+    max-width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  .canvas-container {
+    position: relative;
+    display: inline-block; /* shrink to canvas size */
+  }
+
+  #distortionCanvas {
+    display: block;
+  }
+
+  #opticalCenter {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: red;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+</style>
+
+<script src="./script.ts"></script>

@@ -1,0 +1,2361 @@
+---
+// @ts-nocheck
+import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
+import Toggle from "../../components/Toggle/index.astro";
+import { Img } from "astro-imagetools/components";
+import exifr from "exifr";
+import { Icon } from "astro-icon/components";
+import { imageSizeFromFile } from "image-size/fromFile";
+import { renderImg } from "astro-imagetools/api";
+import { writeFileSync } from "fs";
+import Substack from "../../components/Substack.astro";
+import { propsToFilename } from "astro/dist/assets/utils";
+import { readdirSync, statSync } from "fs";
+import { join, relative, dirname } from "path";
+import { ACTION_ERROR_CODES } from "astro:actions";
+
+export interface Props {
+  path: string;
+  image?: string;
+  title?: string;
+  description?: string;
+  imageName?: string;
+  initialMode?: string;
+  allowFullscreen?: boolean;
+  allowMap?: boolean;
+  allowMetadata?: boolean;
+  allowClip?: boolean;
+  randomize?: boolean;
+  heading?: string;
+  subheading?: string;
+  allowDownload?: boolean;
+  allowFilename?: boolean;
+  allowBlog?: boolean;
+  alphabetical?: boolean;
+  allowUniqueUrls?: boolean;
+}
+
+const initialMode = Astro.props.initialMode || "gallery";
+const allowMap = Astro.props.allowMap || false;
+const allowFullscreen = allowMap || Astro.props.allowFullscreen || false;
+const allowMetadata = Astro.props.allowMetadata || false;
+const allowClip = Astro.props.allowClip || false;
+const allowDownload = Astro.props.allowDownload || false;
+const allowFilename = Astro.props.allowFilename || false;
+const allowBlog = Astro.props.allowBlog || false;
+const alphabetical = Astro.props.alphabetical || false;
+const allowUniqueUrls = Astro.props.allowUniqueUrls || false;
+
+function removeEmpty(obj) {
+  return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
+}
+
+const cameraRenamings = {
+  "SONY ILCE-7": "Sony a7",
+  "NIKON CORPORATION NIKON D3200": "Nikon D3200",
+  "DJI FC3682": "DJI Mini 3",
+};
+
+const lensRenamings = {
+  "FE 28-70mm F3.5-5.6 OSS": "Sony FE 28-70mm",
+  "18.0-105.0 mm f/3.5-5.6": "Nikkor 18-105mm DX",
+  "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED": "Nikkor 18-105mm DX",
+  "SAMYANG AF 24mm F2.8": "Rokinon 24mm f/2.8",
+  "AF-S DX Nikkor 35mm f/1.8G": "Nikkor 35mm f/1.8G DX",
+  "----": "Helios 44/2",
+  "E 20-40mm F2.8 A062": "Tamron 20-40mm f/2.8",
+};
+
+function applyRenamings(str, renamings) {
+  if (!str) {
+    return str;
+  }
+  for (const [key, value] of Object.entries(renamings)) {
+    if (!value) {
+      return undefined;
+    }
+    str = str.replace(key, value);
+  }
+  return str;
+}
+
+function fsGlob(basePath: string): string[] {
+  const dirPath = basePath;
+  const results: string[] = [];
+
+  function walk(currentDir: string) {
+    const entries = readdirSync(currentDir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const fullPath = join(currentDir, entry.name);
+
+      if (entry.isDirectory()) {
+        walk(fullPath); // recurse
+      } else {
+        results.push(fullPath);
+      }
+    }
+  }
+
+  walk(dirPath);
+  return results;
+}
+console.log("props", Astro.props, Astro.url);
+const glob = fsGlob(Astro.props.path);
+
+function loadJson(path) {
+  const raw = fs.readFileSync(path, "utf-8");
+  if (!raw) {
+    throw new Error("No JSON found at " + path);
+  }
+  return JSON.parse(raw);
+}
+
+const exifToolJson = loadJson(Astro.props.path + "/metadata.json");
+
+// const ocrJson = loadJson(Astro.props.path + "/ocr.json");
+const embeddingsPath = Astro.props.path + "/embeddings.json";
+const embeddingsJson = allowClip ? loadJson(embeddingsPath) : {};
+
+let embeddingsPublicPath = join(
+  "public",
+  "albums",
+  embeddingsPath.replace("./", "/")
+);
+
+if (allowClip) {
+  fs.mkdirSync(dirname(embeddingsPublicPath), { recursive: true });
+  fs.writeFileSync(embeddingsPublicPath, JSON.stringify(embeddingsJson));
+  embeddingsPublicPath = embeddingsPublicPath.replace("public", "");
+}
+
+const imagesArr: any[] = [];
+const icons = {};
+const downloads1080 = {};
+const downloadsLarge = {};
+let minLat = Infinity;
+let maxLat = -Infinity;
+let minLng = Infinity;
+let maxLng = -Infinity;
+
+await Promise.all(
+  glob.map(async (path) => {
+    if (!path.match(/\.(jpe?g|png|webp|tiff?)$/i)) {
+      return;
+    }
+    const filename = path.split("/").pop();
+    const name = removeFileExtension(filename); // filename.split(".")[0] as string;
+    if (!exifToolJson[name]) {
+      throw new Error("No exif data for " + name);
+    }
+    if (allowClip && !embeddingsJson[name]) {
+      throw new Error("No embedding data for " + name);
+    }
+    const { width, height } = await imageSizeFromFile("./" + path);
+    const exif = await exifr.parse("./" + path, {
+      makerNote: true,
+      userComment: true,
+      xmp: true,
+      icc: true,
+      jfif: true,
+    });
+    if (Astro.props.allowMap) {
+      let im2 = await renderImg({
+        src: path,
+        breakpoints: [250],
+        format: "webp",
+        alt: "",
+        quality: 50,
+      });
+      icons[name] = im2.img.split('srcset="')[1].split('"')[0];
+    }
+    const extracted = {
+      path,
+      name,
+      title: exifToolJson[name]["File Name"]
+        .split(".")
+        .slice(0, -1)
+        .join(".")
+        .replaceAll("_", " "),
+      width,
+      height,
+      ...(Astro.props.allowMap
+        ? removeEmpty({
+            latitude: exif.latitude,
+            longitude: exif.longitude,
+          })
+        : {}),
+      ...(allowMetadata
+        ? removeEmpty(
+            exif
+              ? {
+                  aperture: exif.ApertureValue || exif.FNumber,
+                  shutter: exif.ExposureTime,
+                  iso: exif.ISO,
+                  focalLength: exif.FocalLengthIn35mmFormat || exif.FocalLength,
+                  camera:
+                    exif.Make &&
+                    exif.Model &&
+                    applyRenamings(
+                      exif.Make + " " + exif.Model,
+                      cameraRenamings
+                    ),
+                  lens: applyRenamings(
+                    exif.LensModel ||
+                      exif.Lens ||
+                      (exifToolJson[name] &&
+                        (exifToolJson[name]["Lens ID"] ||
+                          exifToolJson[name]["Lens Spec"])),
+                    lensRenamings
+                  ),
+                  date: exif.DateTimeOriginal || exif.CreateDate,
+                  decoded:
+                    exif.makerNode &&
+                    String.fromCharCode.apply(null, exif.makerNote),
+                }
+              : {}
+          )
+        : {}),
+    };
+    if (allowDownload) {
+      let im2 = await renderImg({
+        src: path,
+        breakpoints: [1080],
+        format: "jpg",
+        alt: "",
+        quality: 80,
+      });
+      downloads1080[name] = im2.img.split('srcset="')[1].split('"')[0];
+      if (allowFullscreen) {
+        let len = 2000;
+        if (height > width) {
+          len *= width / height;
+        }
+        let im2 = await renderImg({
+          src: path,
+          breakpoints: [len],
+          format: "jpg",
+          alt: "",
+          quality: 80,
+        });
+        extracted.dl = im2.img.split('srcset="')[1].split('"')[0];
+      }
+    }
+    imagesArr.push(extracted);
+  })
+);
+
+if (alphabetical) {
+  imagesArr.sort((a, b) => a.name - b.name);
+}
+
+function removeFileExtension(filename) {
+  return filename.split(".").slice(0, -1).join(".");
+}
+
+// keep both if you need object lookups too
+const images = imagesArr.reduce((obj, item) => {
+  obj[item.name] = item;
+  return obj;
+}, {});
+
+if (Astro.props.allowMap) {
+  for (let [name, image] of Object.entries(images) as [string, Object][]) {
+    if ("latitude" in image && "longitude" in image) {
+      if (image.latitude) {
+        minLat = Math.min(minLat, image.latitude);
+        maxLat = Math.max(maxLat, image.latitude);
+        minLng = Math.min(minLng, image.longitude);
+        maxLng = Math.max(maxLng, image.longitude);
+        for (const [name2, image2] of Object.entries(images)) {
+          if ("latitude" in image2 && "longitude" in image2) {
+            if (name != name2) {
+              const dx = image2.longitude - image.longitude;
+              const dy = image2.latitude - image.latitude;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+const gutter = 10;
+let title = Astro.props.title ? Astro.props.title + " | Photo" : "Photography";
+if (Astro.props.imageName) {
+  title = Astro.props.imageName + " | " + title;
+}
+const description =
+  Astro.props.description ||
+  "My highly-interactive portfolio of artistic photographs captured and developed since 2014.";
+---
+
+<HeaderAndFooter
+  allowMainStyles
+  mainClass={initialMode}
+  color="#eeeeeed0"
+  colorOpaque="rgb(241, 241, 241)"
+  themeColor="#f0f0f0"
+  darkText
+  hoverZoneBehind
+  title={title}
+  description={description}
+  image={Astro.props.image}
+>
+  {Astro.props.heading && <h1>{Astro.props.heading}</h1>}
+  {Astro.props.subheading && <p>{Astro.props.subheading}</p>}
+  {
+    (allowFilename || allowClip || Astro.props.allowMap) && (
+      <div id="search">
+        {Astro.props.allowMap && (
+          <Toggle
+            actions={[
+              {
+                id: "galleryButton",
+                label: "Gallery",
+              },
+              {
+                id: "mapButton",
+                label: "Map",
+              },
+            ]}
+            defaultAction={
+              initialMode == "gallery" ? "galleryButton" : "mapButton"
+            }
+            id="photoToggle"
+          />
+        )}
+        {allowClip && (
+          <div class="textInput">
+            <div class="inputLabel">AI Image Search</div>
+            <input
+              type="text"
+              placeholder="Model still mounting..."
+              disabled="disabled"
+              id="clip"
+            />
+          </div>
+        )}
+        {allowFilename && (
+          <div class="textInput">
+            <div class="inputLabel">Filename</div>
+            <input type="text" placeholder="DSC012345.jpg" id="filename" />
+          </div>
+        )}
+      </div>
+    )
+  }
+  <div
+    id="photoContent"
+    class={`${Astro.props.allowMap ? "" : "noMap"} ${allowFullscreen ? "" : "noFullscreen"}`}
+  >
+    <div id="gallery">
+      {
+        imagesArr.map((image) => {
+          return (
+            <div class="galleryImage" name={image.name}>
+              <Img
+                src={image.path}
+                alt=""
+                breakpoints={[600]}
+                quality={50}
+                format="webp"
+                placeholder="dominantColor"
+                loading="lazy"
+              />
+              {Astro.props.allowMap && image.latitude && (
+                <Icon name="mdi:map-marker" color="white" size="25px" />
+              )}
+              {allowDownload && (
+                <a class="tileDl" href={downloads1080[image.name]} download>
+                  {image.path.split("/").pop()}
+                  <Icon
+                    name="mi:cloud-download"
+                    color="black"
+                    size="20px"
+                    class="dl"
+                  />
+                  <Icon
+                    name="material-symbols:download-done-rounded"
+                    color="black"
+                    size="20px"
+                    class="dlDone"
+                    style="display: none;"
+                  />
+                </a>
+              )}
+            </div>
+          );
+        })
+      }
+    </div>
+    {
+      Astro.props.allowMap && (
+        <div id="map">
+          <div id="exploreMap" />
+        </div>
+      )
+    }
+    {
+      allowFullscreen && (
+        <div class="fullScreenReserves">
+          {Object.entries(images).map(([name, image]) => (
+            <div id={`fullScreen-${name}`} class="full">
+              <Img
+                src={image.path}
+                alt=""
+                breakpoints={[400, 800, 1200, 1600, 2000]}
+                quality={60}
+                format="webp"
+                placeholder="blurred"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      )
+    }
+  </div>
+  {
+    allowFullscreen && (
+      <div id="fullScreen" slot="topLevel">
+        <div class="section" id="photoFullScreen">
+          <div id="imageInfo">
+            <a id="imageName">
+              image name
+              <Icon
+                name="mi:cloud-download"
+                color="black"
+                size="20px"
+                class="dl"
+              />
+              <Icon
+                name="material-symbols:download-done-rounded"
+                color="black"
+                size="20px"
+                class="dlDone"
+                style="display: none;"
+              />
+            </a>
+            <div id="metaData">
+              <div>10s</div>
+              <div>f2.8</div>
+            </div>
+            <div id="fullScreenActions">
+              <div id="prev">Prev</div>
+              <div id="next">Next</div>
+              <div id="exit">Exit</div>
+            </div>
+          </div>
+        </div>
+        <div class="section" id="mapFullScreen">
+          <div id="selectedMap" />
+        </div>
+      </div>
+    )
+  }
+
+  {
+    initialMode == "map" ? (
+      <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp"
+        id="mapsScript"
+      />
+    ) : (
+      <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&v=3.exp"
+        id="mapsScript"
+        defer
+      />
+    )
+  }
+
+  {
+    initialMode == "gallery" ? (
+      <script
+        src="https://masonry.desandro.com/masonry.pkgd.js"
+        id="masonryScript"
+      />
+    ) : (
+      <script
+        src="https://masonry.desandro.com/masonry.pkgd.js"
+        id="masonryScript"
+        defer
+      />
+    )
+  }
+
+  <style
+    define:vars={{
+      gutter: gutter + "px",
+    }}
+  >
+    #search {
+      position: relative;
+      width: 100%;
+      padding-bottom: 1em;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .textInput {
+      position: relative;
+      flex: 1;
+      min-width: 250px;
+      max-width: 400px;
+    }
+
+    #search > * {
+      margin: 0.5em;
+    }
+
+    .inputLabel {
+      font-size: 0.8em;
+      position: absolute;
+      top: -0.5em;
+      left: 0.8rem;
+      /* opacity: 0.3; */
+      color: #bbb;
+      font-style: italic;
+      padding: 0 0.4em;
+      background-color: white;
+      line-height: 1em;
+      /* z-index: 3; */
+    }
+
+    .invalid,
+    .invalid * {
+      color: red;
+    }
+
+    #search input {
+      padding: 0.5em 1em;
+      width: 100%;
+      font-size: 1em;
+      border: 1px solid #eee;
+      outline: none;
+      border-radius: 8px;
+    }
+
+    #search input[disabled] {
+      background-color: white; /* or whatever color you prefer */
+      color: black; /* text color */
+    }
+
+    #search input::placeholder {
+      color: #bbb;
+    }
+
+    #photoContent > div {
+      display: none;
+      width: 100%;
+    }
+
+    /* img {
+      color: transparent !important;
+      text-indent: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+    } */
+
+    /* img:first {
+      postition: absolute;
+      left: -9999px;
+      top: -9999px;
+      z-index: -100;
+    } */
+    /* :global(main.gallery) #photoContent > #gallery {
+      display: block;
+    } */
+
+    #photoContent {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      position: relative;
+      max-width: none;
+    }
+
+    .galleryImage {
+      position: relative;
+      /* width: calc(50% - var(--gutter) / 2); */
+      margin-bottom: var(--gutter);
+      cursor: pointer;
+      filter: contrast(1.05);
+    }
+
+    .noFullScreen .galleryImage {
+      cursor: default;
+    }
+
+    .galleryImage > svg {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      width: 25px;
+      opacity: 0.7;
+    }
+
+    .tileDl {
+      position: absolute;
+      display: none; /* inline so it flows like text */
+      text-align: right;
+      align-items: center; /* vertical centering */
+      right: 0;
+      top: 0;
+      background-color: rgba(255, 255, 255, 0.5);
+      padding: 4px 8px;
+      max-width: 100%;
+      border-bottom-left-radius: 8px;
+      cursor: pointer;
+      /* display: none; */
+      backdrop-filter: blur(4px);
+      transition: background-color 0.2s ease;
+    }
+
+    .tileDl:hover {
+      background-color: white;
+    }
+
+    .tileDl svg {
+      width: 1em;
+      min-width: 1em;
+      flex: 0 0 auto; /* don’t stretch icon */
+      margin-left: 5px;
+      transform: translateY(9%);
+    }
+
+    .galleryImage:hover .tileDl {
+      display: inline-flex;
+    }
+
+    #exploreMap {
+      width: 100%;
+      height: calc(100vh - 70px);
+      /* background-color: pink; */
+    }
+
+    .thumb {
+      width: 192px;
+      border: 8px solid white;
+      /* height: 100px; */
+    }
+
+    :global(div[role="dialog"], div[role="dialog"] *) {
+      padding: 0 !important;
+      overflow: hidden !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+
+    :global(.gm-ui-hover-effect) {
+      display: none !important;
+    }
+
+    #fullScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      max-width: none;
+      height: 100dvh;
+      background-color: white;
+      z-index: -9999;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.1s ease;
+    }
+    #fullScreen.active {
+      opacity: 1;
+      z-index: 9999999;
+      pointer-events: all;
+    }
+
+    #fullScreen .section {
+      height: 100vh;
+      height: 100dvh;
+      width: 100%;
+      /* border: 10px solid yellow; */
+      padding: var(--gutter);
+    }
+
+    #photoFullScreen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #imageInfo {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* flex: 1; */
+    }
+
+    #imageName {
+      font-size: 1.2em;
+      margin-bottom: 0.2em;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #imageName > * {
+      margin-left: 0.3em;
+      opacity: 0.3;
+      width: 1em;
+      min-width: 1em;
+      transform: translateY(9%);
+      transition: opacity 0.2s ease;
+    }
+
+    #imageName:hover > * {
+      opacity: 1;
+    }
+
+    #metaData,
+    #fullScreenActions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    :global(#map div[role="button"] > img) {
+      /* border: 2px solid white !important; */
+    }
+
+    :global(#metaData > div) {
+      margin: 0.3em;
+      font-size: 0.9em;
+      padding: 0.2em 0.5em;
+      background-color: rgba(0, 0, 0, 0.04);
+      color: #888;
+      border-radius: 0.3em;
+      white-space: nowrap;
+    }
+
+    #fullScreenActions > div {
+      padding: 0.2em 0.5em;
+      opacity: 0.4;
+      transition: opacity 0.2s ease;
+      cursor: pointer;
+    }
+
+    #fullScreenActions > div:hover {
+      opacity: 1;
+    }
+
+    #photoFullScreen .full {
+      filter: contrast(1.05);
+    }
+
+    #selectedMap {
+      height: 100%;
+      width: 100%;
+    }
+
+    :global(.stop-scrolling) {
+      height: 100%;
+      overflow: hidden;
+    }
+    :global(.navHoverZone) {
+      backdrop-filter: none;
+      background-color: white;
+      z-index: -1;
+    }
+
+    @media screen and (max-width: 600px) {
+      #photoContent {
+        width: calc(100vw - var(--gutter) * 2);
+      }
+    }
+
+    :global(.mapThumb) {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.2);
+      background-color: white;
+      border-radius: 3px;
+    }
+
+    :global(.mapThumb p) {
+      position: absolute;
+      background-color: rgb(255, 255, 255);
+      text-indent: 0 !important;
+      padding: 0em 0.3em !important;
+      /* transform: translate(-6px, -6px); */
+      border-bottom-right-radius: 0.4em;
+      border-top-left-radius: 3px;
+      color: black !important;
+      font-size: 0.8rem !important;
+      font-weight: 1000;
+    }
+
+    :global(.mapThumb.visible) {
+      opacity: 1 !important;
+      pointer-events: all !important;
+    }
+
+    :global(.mapThumb img) {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 3px solid white;
+      border-radius: 3px;
+    }
+
+    :global(.mapThumb svg) {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      bottom: 0;
+      left: 50%;
+      transform-origin: bottom center;
+      transform: translateX(-50%) scale(0.4) translateY(10px);
+      overflow: visible;
+    }
+    :global(.mapThumb svg path) {
+      stroke-width: 10;
+      stroke: white;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+  </style>
+
+  <script
+    define:vars={{
+      initialMode: initialMode,
+      gutter: gutter,
+      images: images,
+      minLat: minLat,
+      maxLat: maxLat,
+      minLng: minLng,
+      maxLng: maxLng,
+      allowMap: Astro.props.allowMap,
+      icons: icons,
+      allowFullscreen: allowFullscreen,
+      randomize: Astro.props.randomize,
+      allowClip: allowClip,
+      embeddingsPublicPath: embeddingsPublicPath,
+      allowUniqueUrls: allowUniqueUrls,
+      allowDownload: allowDownload,
+      // ogWidth: ogWidth,
+      // defaultOGInfo: defaultOGInfo,
+      // title: title + " | Blake Sanie",
+      // description: description,
+    }}
+  >
+    let fullScreenElement;
+    let photoFullScreenElement;
+    let mapFullScreenElement;
+    let imageInfoElement;
+    let imageNameElement;
+    let metaDataElement;
+    let prevElement;
+    let nextElement;
+    let fullScreenOpen = false;
+    let openFileName;
+    let selectedMapElement;
+
+    let currentImageElement;
+
+    //  __                            __
+    // /  |                          /  |
+    // $$ |  ______    ______    ____$$ |        ______   __    __   ______    ______   __    __
+    // $$ | /      \  /      \  /    $$ |       /      \ /  |  /  | /      \  /      \ /  |  /  |
+    // $$ |/$$$$$$  | $$$$$$  |/$$$$$$$ |      /$$$$$$  |$$ |  $$ |/$$$$$$  |/$$$$$$  |$$ |  $$ |
+    // $$ |$$ |  $$ | /    $$ |$$ |  $$ |      $$ |  $$ |$$ |  $$ |$$    $$ |$$ |  $$/ $$ |  $$ |
+    // $$ |$$ \__$$ |/$$$$$$$ |$$ \__$$ |      $$ \__$$ |$$ \__$$ |$$$$$$$$/ $$ |      $$ \__$$ |
+    // $$ |$$    $$/ $$    $$ |$$    $$ |      $$    $$ |$$    $$/ $$       |$$ |      $$    $$ |
+    // $$/  $$$$$$/   $$$$$$$/  $$$$$$$/        $$$$$$$ | $$$$$$/   $$$$$$$/ $$/        $$$$$$$ |
+    //                                               $$ |                              /  \__$$ |
+    //                                               $$ |                              $$    $$/
+    //                                               $$/                                $$$$$$/
+
+    if (allowFullscreen) {
+      function getUrlQuery() {
+        var search = location.search.substring(1);
+        if (!search) {
+          return {};
+        }
+        return JSON.parse(
+          '{"' +
+            search
+              .replace(/"/g, '\\"')
+              .replace(/&/g, '","')
+              .replace(/=/g, '":"') +
+            '"}'
+        );
+      }
+
+      function getInitialFilename() {
+        if (location.search) return getUrlQuery().im;
+        const a = "/albums/";
+        const albumsIndex = location.pathname.indexOf(a);
+        if (albumsIndex >= 0) {
+          const afterAlbum = location.pathname.substring(
+            albumsIndex + a.length
+          );
+
+          const parts = afterAlbum.split("/");
+          if (parts.length > 1) {
+            return parts[1];
+          }
+          return "";
+        }
+        const afterBase = location.pathname
+          .replace("/photo/map", "")
+          .replace("/photo", "")
+          .replaceAll("/", "");
+        return afterBase;
+      }
+
+      const initialUrlQuery = getInitialFilename();
+
+      if (initialUrlQuery) {
+        let initialQueryInterval;
+        const initialFilename = initialUrlQuery;
+        // console.log("initialFilename", initialFilename);
+        function initialFullScreen() {
+          try {
+            activateFullScreen(initialFilename);
+            clearInterval(initialQueryInterval);
+          } catch {}
+        }
+        initialQueryInterval = setInterval(initialFullScreen, 10);
+        initialFullScreen();
+      }
+    }
+
+    let titleParts = document.title.split(" | ");
+    let baseTitle;
+    if (location.pathname.includes("/albums/")) {
+      baseTitle = titleParts.slice(titleParts.length - 3, titleParts.length);
+    } else {
+      baseTitle = titleParts.slice(titleParts.length - 2, titleParts.length);
+    }
+    baseTitle = baseTitle.join(" | ");
+
+    //  __
+    // /  |
+    // $$/  _____  ____    ______          ______    ______    _______
+    // /  |/     \/    \  /      \        /      \  /      \  /       |
+    // $$ |$$$$$$ $$$$  |/$$$$$$  |      /$$$$$$  |/$$$$$$  |/$$$$$$$/
+    // $$ |$$ | $$ | $$ |$$ |  $$ |      $$ |  $$ |$$ |  $$ |$$      \
+    // $$ |$$ | $$ | $$ |$$ \__$$ |      $$ \__$$ |$$ |__$$ | $$$$$$  |
+    // $$ |$$ | $$ | $$ |$$    $$ |      $$    $$/ $$    $$/ /     $$/
+    // $$/ $$/  $$/  $$/  $$$$$$$ |       $$$$$$/  $$$$$$$/  $$$$$$$/
+    //                   /  \__$$ |                $$ |
+    //                   $$    $$/                 $$ |
+    //                    $$$$$$/                  $$/
+
+    const galleryContainer = document.getElementById("gallery");
+    const namesToImageElements = {};
+    let initialImageOrder = [];
+    for (var i = 0; i < galleryContainer.children.length; i++) {
+      const name = galleryContainer.children[i].getAttribute("name");
+      initialImageOrder.push(name);
+      namesToImageElements[name] = galleryContainer.children[i];
+      if (allowFullscreen) {
+        galleryContainer.children[i].addEventListener("click", () => {
+          //
+          activateFullScreen(name);
+        });
+      }
+    }
+
+    const filenameFilter = document.getElementById("filename");
+    if (filenameFilter) {
+      filenameFilter.addEventListener("blur", activateGallery);
+      filenameFilter.addEventListener("change", activateGallery);
+      filenameFilter.addEventListener("focusout", activateGallery);
+      filenameFilter.addEventListener("keydown", async (e) => {
+        if (e.key === "Enter") {
+          activateGallery();
+        }
+      });
+      filenameFilter.addEventListener("input", () => {
+        const passing = filterImages();
+        if (passing.length) {
+          filenameFilter.parentElement.classList.remove("invalid");
+          filenameFilter.parentElement.querySelector(".inputLabel").innerHTML =
+            "Filename";
+        } else {
+          filenameFilter.parentElement.classList.add("invalid");
+          filenameFilter.parentElement.querySelector(".inputLabel").innerHTML =
+            "No images with that prefix";
+        }
+      });
+    }
+
+    const AITextField = document.querySelector("#clip");
+
+    const memo = {};
+
+    function filterImages() {
+      if (!filenameFilter) {
+        return [...initialImageOrder];
+      }
+      const val = filenameFilter.value.trim().toLowerCase();
+      const out = [];
+      Object.entries(images).forEach(([id, image]) => {
+        const filename = image.path.split("/").pop().toLowerCase();
+        if (filename.startsWith(val)) {
+          out.push(id);
+        }
+      });
+      return out;
+    }
+
+    // do the shuffling regardless
+    let imageChanges = {};
+
+    function setImageOrder() {
+      let imageOrder = [];
+
+      for (var i = 0; i < galleryContainer.children.length; i++) {
+        const name = galleryContainer.children[i].getAttribute("name");
+        imageOrder.push(name);
+      }
+
+      imageChanges = {};
+      let prev = undefined;
+      for (let i = 0; i < imageOrder.length; i++) {
+        const curr = imageOrder[i];
+        if (prev) {
+          imageChanges[prev]["next"] = curr;
+        }
+        imageChanges[curr] = {
+          prev: prev,
+        };
+        prev = curr;
+      }
+    }
+
+    function shuffled(array) {
+      const copy = array.slice(); // or [...array]
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    // function shuffleImgElements() {
+    //   for (var i = galleryContainer.children.length; i >= 0; i--) {
+    //     const index = Math.random() * i;
+    //     galleryContainer.appendChild(galleryContainer.children[index | 0]);
+    //   }
+
+    //   setImageOrder();
+    // }
+    if (randomize) {
+      initialImageOrder = shuffled(initialImageOrder);
+      for (const name of initialImageOrder) {
+        galleryContainer.appendChild(namesToImageElements[name]);
+      }
+    }
+    setImageOrder();
+
+    // console.log("image changes", imageChanges);
+
+    //                                __
+    //                               /  |
+    //  _____  ____    ______    ____$$ |  ______
+    // /     \/    \  /      \  /    $$ | /      \
+    // $$$$$$ $$$$  |/$$$$$$  |/$$$$$$$ |/$$$$$$  |
+    // $$ | $$ | $$ |$$ |  $$ |$$ |  $$ |$$    $$ |
+    // $$ | $$ | $$ |$$ \__$$ |$$ \__$$ |$$$$$$$$/
+    // $$ | $$ | $$ |$$    $$/ $$    $$ |$$       |
+    // $$/  $$/  $$/  $$$$$$/   $$$$$$$/  $$$$$$$/
+
+    let mode = initialMode;
+    let mapContainer = document.getElementById("map");
+
+    if (allowMap) {
+      const galleryButton = document.getElementById("galleryButton");
+      const mapButton = document.getElementById("mapButton");
+
+      galleryButton?.addEventListener("click", () => {
+        if (mode != "gallery") {
+          mode = "gallery";
+          activateGallery();
+          document.getElementById("photoNavLink").click();
+        }
+      });
+      mapButton?.addEventListener("click", () => {
+        if (mode != "map") {
+          mode = "map";
+          activateMap();
+          document.getElementById("mapNavLink").click();
+        }
+      });
+    }
+
+    let msnry;
+
+    let resizedSinceSwitchedToMap = false;
+
+    let lastImageOrder = "";
+
+    function showGallery() {
+      if (mapContainer) mapContainer.style.display = "none";
+      galleryContainer.style.display = "block";
+    }
+    function getImageWidth() {
+      const usableWidth = galleryContainer.clientWidth;
+      let numCols = Math.floor(Math.pow(usableWidth, 0.6) / 18);
+      return usableWidth / numCols - (gutter * (numCols - 1)) / numCols - 0.5;
+    }
+    function setGalleryImageWidths() {
+      if (mode == "map") {
+        resizedSinceSwitchedToMap = true;
+        return;
+      }
+      const width = getImageWidth();
+      // console.log("new image width", width);
+      const images = document.getElementsByClassName("galleryImage");
+      for (let i = 0; i < images.length; i++) {
+        images[i].style.width = width + "px";
+      }
+    }
+    window.addEventListener("resize", setGalleryImageWidths);
+
+    function activateGallery() {
+      document.querySelector("body").classList.add("modeGallery");
+      document.querySelector("body").classList.remove("modeMap");
+      history.replaceState(
+        {},
+        null,
+        window.location.pathname.replace("/map", "")
+      );
+
+      const afterFilter = filterImages();
+      if (!afterFilter.length) {
+        return;
+      }
+      const AIText = AITextField.value.trim().toLowerCase();
+      let storedIndices;
+      if (AIText) {
+        storedIndices = clipMemo[AIText];
+        afterFilter.sort((a, b) => storedIndices[a] - storedIndices[b]);
+      }
+      const imageOrder = afterFilter.join(",");
+      const reset = imageOrder != lastImageOrder && lastImageOrder !== "";
+      if (imageOrder != lastImageOrder) {
+        lastImageOrder = imageOrder;
+        const imagesToInclude = new Set(afterFilter);
+        for (const name of initialImageOrder) {
+          const el = namesToImageElements[name];
+          if (imagesToInclude.has(name)) {
+            el.style.display = "block";
+            el.classList.remove("hide");
+          } else {
+            el.style.display = "none";
+            el.classList.add("hide");
+          }
+        }
+
+        for (const name of afterFilter) {
+          galleryContainer.appendChild(namesToImageElements[name]);
+        }
+        setImageOrder();
+      }
+
+      if (!msnry || reset) {
+        showGallery();
+        setGalleryImageWidths();
+
+        // gallery.style.opacity = 0;
+        if (msnry) {
+          // msnry.destroy();
+          msnry.reloadItems();
+          msnry.layout();
+        } else {
+          msnry = new Masonry("#gallery", {
+            columnWidth: ".galleryImage",
+            itemSelector: ".galleryImage:not(.hide)",
+            gutter: gutter,
+            transitionDuration: 200,
+          });
+          msnry.on("layoutComplete", function () {
+            galleryContainer.style.opacity = 1;
+            // console.log("layout complete");
+          });
+        }
+        // console.log("masonry", msnry);
+      } else {
+        if (resizedSinceSwitchedToMap) {
+          galleryContainer.style.opacity = 0;
+        }
+        if (resizedSinceSwitchedToMap) {
+          // console.log("RESIZE AFTER SWITCH");
+          setGalleryImageWidths();
+          msnry.layout();
+          resizedSinceSwitchedToMap = false;
+        }
+        showGallery();
+      }
+    }
+
+    let map;
+    let blurInterval;
+
+    let drawReady = false;
+
+    function activateMap() {
+      resizedSinceSwitchedToMap = false;
+      document.querySelector("body").classList.remove("modeGallery");
+      document.querySelector("body").classList.add("modeMap");
+      function showMap() {
+        galleryContainer.style.display = "none";
+        mapContainer.style.display = "block";
+        const { pathname } = window.location;
+        if (!pathname.includes("/photo/map")) {
+          history.replaceState(
+            {},
+            null,
+            window.location.pathname.replace("/photo", "/photo/map")
+          );
+        }
+      }
+
+      showMap();
+
+      class Popup extends google.maps.OverlayView {
+        position;
+        name;
+        image;
+        containerDiv;
+        map;
+        width;
+        height;
+        covering;
+        constructor(name, image, map) {
+          super();
+          this.position = new google.maps.LatLng(
+            image.latitude,
+            image.longitude
+          );
+          this.name = name;
+          this.image = image;
+          // This zero-height div is positioned at the bottom of the bubble.
+          const img = document.createElement("img");
+          img.src = icons[name];
+          img.classList.add("mapImg");
+          // This zero-height div is positioned at the bottom of the tip.
+          this.containerDiv = document.createElement("div");
+          this.containerDiv.classList.add("mapThumb");
+          const area = 7000;
+          const fullArea = image.width * image.height;
+          const scalar = 1 / Math.sqrt(fullArea / area);
+          this.width = image.width * scalar;
+          this.height = image.height * scalar;
+          this.containerDiv.style.width = this.width + "px";
+          this.containerDiv.style.height = this.height + "px";
+
+          const label = document.createElement("p");
+
+          const svg = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+          );
+          svg.setAttribute("viewbox", "0 0 20 20");
+          svg.setAttribute("width", "20px");
+          svg.setAttribute("height", "20px");
+          const path = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path"
+          );
+          path.setAttribute("d", "M 10,18 2,5 18,5 z");
+          svg.appendChild(path);
+
+          this.containerDiv.appendChild(svg);
+          this.containerDiv.appendChild(img);
+          this.containerDiv.appendChild(label);
+          // Optionally stop clicks, etc., from bubbling up to the map.
+          Popup.preventMapHitsAndGesturesFrom(this.containerDiv);
+          this.map = map;
+          this.setMap(map);
+          this.count = 1;
+        }
+        /** Called when the popup is added to the map. */
+        onAdd() {
+          this.getPanes().floatPane.appendChild(this.containerDiv);
+        }
+        /** Called when the popup is removed from the map. */
+        onRemove() {
+          if (this.containerDiv.parentElement) {
+            this.containerDiv.parentElement.removeChild(this.containerDiv);
+          }
+        }
+
+        getBox() {
+          const divPosition = this.getProjection().fromLatLngToDivPixel(
+            this.position
+          );
+          return [
+            divPosition.x - this.width / 2,
+            divPosition.y - this.height,
+            divPosition.x + this.width / 2,
+            divPosition.y,
+          ];
+        }
+        setVisibility(visible) {
+          if (visible) {
+            this.containerDiv.classList.add("visible");
+          } else {
+            this.containerDiv.classList.remove("visible");
+          }
+        }
+        /** Called each frame when the popup needs to draw itself. */
+        draw() {
+          const divPosition = this.getProjection().fromLatLngToDivPixel(
+            this.position
+          );
+          // if (!drawReady) {
+          //   drawReady = true;
+          //   if (this.visibilityFunc) {
+          //     console.log("DRAW READY");
+          //     this.visibilityFunc();
+          //   }
+          // }
+          // Hide the popup when it is far out of view.
+          // const display =
+          //   Math.abs(divPosition.x) < window.innerWidth / 2 + 100 &&
+          //   Math.abs(divPosition.y) < window.innerHeight / 2 + 100
+          //     ? "block"
+          //     : "none";
+
+          // if (display === "block") {
+          this.containerDiv.style.left = divPosition.x + "px";
+          this.containerDiv.style.top = divPosition.y + "px";
+          // }
+
+          // if (this.containerDiv.style.display !== display) {
+          //   this.containerDiv.style.display = display;
+          // }
+        }
+      }
+
+      const width = mapContainer.clientWidth;
+      const zoom = Math.floor(1.73 * Math.log(width) - 9.26);
+
+      if (!map) {
+        map = new google.maps.Map(document.getElementById("exploreMap"), {
+          center: {
+            lat: (maxLat + minLat) / 2,
+            lng: (maxLng + minLng) / 2,
+          },
+          zoom: zoom,
+          zoomControl: true,
+          zoomControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+          streetViewControl: true,
+          streetViewControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+          fullscreenControl: true,
+          fullscreenControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+          rotateControl: true,
+          rotateControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+          styles: [
+            {
+              elementType: "geometry",
+              stylers: [
+                {
+                  color: "#ffffff",
+                },
+              ],
+            },
+            {
+              elementType: "labels.icon",
+              stylers: [
+                {
+                  visibility: "off",
+                },
+              ],
+            },
+            {
+              elementType: "labels.text.fill",
+              stylers: [
+                {
+                  color: "#616161",
+                },
+              ],
+            },
+            {
+              elementType: "labels.text.stroke",
+              stylers: [
+                {
+                  color: "#f5f5f5",
+                },
+              ],
+            },
+            {
+              featureType: "administrative.land_parcel",
+              elementType: "labels.text.fill",
+              stylers: [
+                {
+                  color: "#bdbdbd",
+                },
+              ],
+            },
+            {
+              featureType: "administrative.province",
+              elementType: "geometry.stroke",
+              stylers: [
+                {
+                  color: "#9e9e9e",
+                },
+              ],
+            },
+            {
+              featureType: "landscape.natural.terrain",
+              stylers: [
+                {
+                  color: "#c9c9c9",
+                },
+              ],
+            },
+            {
+              featureType: "poi",
+              elementType: "geometry",
+              stylers: [
+                {
+                  color: "#f5f5f5",
+                },
+              ],
+            },
+            {
+              featureType: "poi",
+              elementType: "labels.text.fill",
+              stylers: [
+                {
+                  color: "#757575",
+                },
+              ],
+            },
+            {
+              featureType: "poi.park",
+              elementType: "geometry",
+              stylers: [
+                {
+                  color: "#ededed",
+                },
+              ],
+            },
+            {
+              featureType: "poi.park",
+              elementType: "labels.text.fill",
+              stylers: [
+                {
+                  color: "#b0b0b0",
+                },
+              ],
+            },
+            {
+              featureType: "road",
+              elementType: "geometry",
+              stylers: [
+                {
+                  visibility: "simplified",
+                },
+              ],
+            },
+            {
+              featureType: "road",
+              elementType: "geometry.stroke",
+              stylers: [
+                {
+                  color: "#f2f2f2",
+                },
+                {
+                  visibility: "on",
+                },
+              ],
+            },
+            {
+              featureType: "road.arterial",
+              elementType: "labels.text.fill",
+              stylers: [
+                {
+                  color: "#757575",
+                },
+              ],
+            },
+            {
+              featureType: "road.highway",
+              elementType: "geometry",
+              stylers: [
+                {
+                  color: "#e6e6e6",
+                },
+              ],
+            },
+            {
+              featureType: "road.highway",
+              elementType: "geometry.stroke",
+              stylers: [
+                {
+                  visibility: "simplified",
+                },
+              ],
+            },
+            {
+              featureType: "road.highway",
+              elementType: "labels.text.fill",
+              stylers: [
+                {
+                  color: "#616161",
+                },
+              ],
+            },
+            {
+              featureType: "road.local",
+              elementType: "labels.text.fill",
+              stylers: [
+                {
+                  color: "#9e9e9e",
+                },
+              ],
+            },
+            {
+              featureType: "transit.line",
+              elementType: "geometry",
+              stylers: [
+                {
+                  color: "#e5e5e5",
+                },
+              ],
+            },
+            {
+              featureType: "transit.station",
+              elementType: "geometry",
+              stylers: [
+                {
+                  color: "#eeeeee",
+                },
+              ],
+            },
+            {
+              featureType: "water",
+              elementType: "geometry",
+              stylers: [
+                {
+                  color: "#c9c9c9",
+                },
+              ],
+            },
+            {
+              featureType: "water",
+              elementType: "geometry.fill",
+              stylers: [
+                {
+                  color: "#c7e9ff",
+                },
+              ],
+            },
+            {
+              featureType: "water",
+              elementType: "labels.text.fill",
+              stylers: [
+                {
+                  color: "#9e9e9e",
+                },
+              ],
+            },
+          ],
+        });
+        const infoWindow = new google.maps.InfoWindow();
+
+        // let i = 1;
+        const markers = [];
+        for (const [name, image] of Object.entries(images)) {
+          if (!image.latitude) {
+            continue;
+          }
+          // const area = 3000;
+          // const fullArea = image.width * image.height;
+          // const scalar = 1 / Math.sqrt(fullArea / area);
+
+          // const marker = new google.maps.Marker({
+          //   position: { lat: lat, lng: lng },
+          //   map: map,
+          //   zIndex: 1,
+          //   icon: {
+          //     url: icons[name],
+          //     // size: new google.maps.Size(40, 40),
+          //     scaledSize: new google.maps.Size(
+          //       image.width * scalar,
+          //       image.height * scalar
+          //     ),
+          //   },
+          // });
+          const marker = new Popup(name, image, map);
+          markers.push(marker);
+
+          // const borderWidth = 2;
+
+          // const bgWidth = image.width * scalar + borderWidth * 2;
+          // const bgHeight = image.height * scalar + borderWidth * 2;
+
+          // const markerBg = new google.maps.Marker({
+          //   position: { lat: lat, lng: lng },
+          //   map: map,
+          //   zIndex: i,
+          //   icon: {
+          //     url:
+          //       "data:image/svg+xml," +
+          //       encodeURIComponent(
+          //         `<svg xmlns="http://www.w3.org/2000/svg" width="${bgWidth}" height="${bgHeight}" viewBox="0 0 ${bgWidth} ${bgHeight}">` +
+          //           `<rect x="0" y="0" width="${bgWidth}" height="${bgHeight}" fill="white" stroke="white" stroke-width="2"/>` +
+          //           "</svg>"
+          //       ),
+          //     // size: new google.maps.Size(40, 40),
+          //     scaledSize: new google.maps.Size(bgWidth, bgHeight),
+          //   },
+          // });
+
+          // function showPreview() {
+          //   const element = document
+          //     .getElementById("thumbnail-" + name)
+          //     .cloneNode(true);
+          //   console.log("cloned thumb", element);
+          //   infoWindow.setContent(element);
+          //   infoWindow.open(marker.getMap(), marker);
+          // }
+
+          // marker.addListener("mouseover", function (e) {
+          //   marker.setOptions({ zIndex: 99999 });
+          //   showPreview();
+          // });
+          // marker.addListener("mouseout", function () {
+          //   marker.setOptions({ zIndex: 1 });
+          //   infoWindow.close();
+          // });
+          // marker.addListener("click", (e) => {
+          //   if (image.neighbor) {
+          //     const zoom = map.zoom;
+          //     const idealZoom = Math.round(
+          //       -Math.log10(image.neighbor) / 0.3 + 7
+          //     );
+          //     console.log("zooms", zoom, idealZoom);
+          //     if (zoom < idealZoom) {
+          //       map.setCenter({
+          //         lat: lat,
+          //         lng: lng,
+          //       });
+          //       map.setZoom(Math.max(1 + zoom, zoom * 0.25 + 0.75 * idealZoom));
+          //       return;
+          //     }
+          //   }
+          //   blurInterval = setInterval(() => {
+          //     document.activeElement.blur();
+          //   }, 100);
+          //   activateFullScreen(name);
+          //   e.domEvent.stopPropagation();
+          //   e.domEvent.preventDefault();
+          //   console.log("active before", document.activeElement);
+          //   document.activeElement.blur();
+          //   console.log("active after", document.activeElement);
+          //   // console.log("click event", e.domEvent);
+          // });
+          // i += 2;
+        }
+        // const projection = map.getProjection();
+        // console.log("projection", projection);
+        google.maps.event.addListener(map, "idle", function () {
+          updateVisibilities();
+        });
+        google.maps.event.addListener(map, "zoom_changed", function () {
+          // console.log("zoom", map.zoom);
+          updateVisibilities();
+        });
+
+        const zoomVisibilities = {};
+
+        function applyVisibilities(covers) {
+          for (let i = 0; i < markers.length; i++) {
+            const covered = covers[i];
+            markers[i].setVisibility(covered);
+            if (covered && covered.length > 0) {
+              markers[i].containerDiv.querySelector("p").textContent =
+                covered.length + 1;
+            } else {
+              markers[i].containerDiv.querySelector("p").textContent = "";
+            }
+          }
+        }
+
+        function boxToZoom(latRange, lngRange) {
+          function toZoom(range, size) {
+            // console.log("lng range", range);
+            //
+            // 400 -1 adjustment
+            // 700 perfect
+            const base = -Math.log10(range) / 0.35 + 8.9;
+            const adjustment = Math.min(0, (-1 / 300) * (700 - size));
+            return base + adjustment;
+          }
+          // return toZoom(lngRange, mapContainer.clientWidth);
+          return Math.max(
+            map.zoom + 1,
+            Math.min(
+              toZoom(latRange, mapContainer.clientHeight),
+              toZoom(lngRange, mapContainer.clientWidth)
+            )
+          );
+        }
+
+        let i = 0;
+        for (const marker of markers) {
+          const index = i;
+          marker.containerDiv.id = "mapThumb-" + i;
+          marker.containerDiv.addEventListener("click", function () {
+            // Handle click event here
+            const covered = zoomVisibilities[map.zoom][index];
+            if (covered) {
+              if (covered.length == 0) {
+                activateFullScreen(marker.name);
+                return;
+              }
+              let minLat = marker.position.lat();
+              let maxLat = minLat;
+              let minLng = marker.position.lng();
+              let maxLng = minLng;
+              for (const j of covered) {
+                const pos = markers[j].position;
+                const lat = pos.lat();
+                const lng = pos.lng();
+                minLat = Math.min(minLat, lat);
+                maxLat = Math.max(maxLat, lat);
+                minLng = Math.min(minLng, lng);
+                maxLng = Math.max(maxLng, lng);
+              }
+              map.setCenter({
+                lat: (maxLat + minLat) / 2,
+                lng: (maxLng + minLng) / 2,
+              });
+              map.setZoom(boxToZoom(maxLat - minLat, maxLng - minLng));
+              updateVisibilities();
+            }
+
+            // covering;
+          });
+          i++;
+        }
+
+        let prevZoom = map.zoom;
+
+        function updateVisibilities() {
+          //
+          // let covers = zoomVisibilities[map.zoom];
+          // if (covers) {
+          //   applyVisibilities(covers);
+          //   return;
+          // }
+          //
+          let visibleIndices = [];
+          // for (let i = map.zoom - 1; i >= 0; i--) {
+          //   if (zoomVisibilities[i]) {
+          //     visibleIndices = Object.keys(zoomVisibilities[i]);
+          //     break;
+          //   }
+          // }
+
+          const coveredBoxes = [];
+          const indexOfCovering = [];
+          covers = {};
+          for (const index of visibleIndices) {
+            const marker = markers[index];
+            const rect = marker.containerDiv.getBoundingClientRect();
+            const left = rect.x;
+            const top = rect.y;
+            const right = left + rect.width;
+            const bottom = top + rect.height;
+            coveredBoxes.push([left, top, right, bottom]);
+            indexOfCovering.push(index);
+            covers[index] = [];
+          }
+          let i = -1;
+          for (const marker of markers) {
+            i++;
+            if (covers[i]) continue;
+            const rect = marker.containerDiv.getBoundingClientRect();
+            const left = rect.x;
+            const top = rect.y;
+            const right = left + rect.width;
+            const bottom = top + rect.height;
+            let j = 0;
+            let covered = false;
+            for (const [l2, t2, r2, b2] of coveredBoxes) {
+              if (left > r2 || right < l2 || top > b2 || bottom < t2) {
+                // not touching
+              } else {
+                covered = true;
+                covers[indexOfCovering[j]].push(i);
+                break;
+              }
+              j++;
+            }
+            if (!covered) {
+              coveredBoxes.push([left, top, right, bottom]);
+              indexOfCovering.push(i);
+              covers[i] = [];
+            }
+          }
+          zoomVisibilities[map.zoom] = covers;
+          applyVisibilities(covers);
+          prevZoom = map.zoom;
+        }
+
+        const visibilityInterval = setInterval(() => {
+          if (markers[0].containerDiv.getBoundingClientRect().width > 0) {
+            clearInterval(visibilityInterval);
+            updateVisibilities();
+          }
+        }, 10);
+      }
+    }
+
+    if (initialMode === "gallery") {
+      activateGallery();
+    } else if (initialMode === "map") {
+      activateMap();
+    }
+
+    //  __                                                    __                        __      __
+    // /  |                                                  /  |                      /  |    /  |
+    // $$/  _____  ____    ______          _______   ______  $$ |  ______    _______  _$$ |_   $$/   ______   _______
+    // /  |/     \/    \  /      \        /       | /      \ $$ | /      \  /       |/ $$   |  /  | /      \ /       \
+    // $$ |$$$$$$ $$$$  |/$$$$$$  |      /$$$$$$$/ /$$$$$$  |$$ |/$$$$$$  |/$$$$$$$/ $$$$$$/   $$ |/$$$$$$  |$$$$$$$  |
+    // $$ |$$ | $$ | $$ |$$ |  $$ |      $$      \ $$    $$ |$$ |$$    $$ |$$ |        $$ | __ $$ |$$ |  $$ |$$ |  $$ |
+    // $$ |$$ | $$ | $$ |$$ \__$$ |       $$$$$$  |$$$$$$$$/ $$ |$$$$$$$$/ $$ \_____   $$ |/  |$$ |$$ \__$$ |$$ |  $$ |
+    // $$ |$$ | $$ | $$ |$$    $$ |      /     $$/ $$       |$$ |$$       |$$       |  $$  $$/ $$ |$$    $$/ $$ |  $$ |
+    // $$/ $$/  $$/  $$/  $$$$$$$ |      $$$$$$$/   $$$$$$$/ $$/  $$$$$$$/  $$$$$$$/    $$$$/  $$/  $$$$$$/  $$/   $$/
+    //                   /  \__$$ |
+    //                   $$    $$/
+    //                    $$$$$$/
+
+    function prevImage() {
+      if (!openFileName) return;
+      const newFilename = imageChanges[openFileName]["prev"];
+      if (!newFilename) return;
+      activateFullScreen(newFilename);
+    }
+
+    function nextImage() {
+      if (!openFileName) return;
+      const newFilename = imageChanges[openFileName]["next"];
+      if (!newFilename) return;
+      activateFullScreen(newFilename);
+    }
+
+    const minCardWidth = 160;
+    const minCardHeight = 132;
+
+    function maxWidthThatFits(spaceWidth, spaceHeight, width, height) {
+      // assume full width
+      const spaceAspect = spaceWidth / spaceHeight;
+      const aspect = width / height;
+      if (aspect > spaceAspect) {
+        return spaceWidth;
+      }
+      return spaceHeight * aspect;
+    }
+
+    function bestImgWidth(filename) {
+      const usableWidth = window.innerWidth - gutter * 2;
+      const usableHeight = window.innerHeight - gutter * 2;
+      const { width, height } = images[filename];
+      // assume horizontal layout
+      let widthIfHorizontal = maxWidthThatFits(
+        usableWidth - minCardWidth,
+        usableHeight,
+        width,
+        height
+      );
+      //asume vertical layout
+      let widthIfVertical = maxWidthThatFits(
+        usableWidth,
+        usableHeight - minCardHeight,
+        width,
+        height
+      );
+
+      return [
+        Math.max(widthIfHorizontal, widthIfVertical),
+        widthIfHorizontal > widthIfVertical,
+      ]; // is horizontal layout
+    }
+
+    function setCurrentImageWidthAndLayout() {
+      const [bestWidth, isHorizontal] = bestImgWidth(openFileName);
+      currentImageElement.style.width = bestWidth + "px";
+      if (isHorizontal) {
+        photoFullScreenElement.style.flexDirection = "row";
+        imageInfoElement.style.maxWidth =
+          window.innerWidth - gutter * 2 - bestWidth + "px";
+      } else {
+        photoFullScreenElement.style.flexDirection = "column";
+        imageInfoElement.style.maxWidth = "none";
+      }
+    }
+
+    function setImUrlQuery(filename) {
+      if (!allowUniqueUrls) {
+        return;
+      }
+      let parts = location.pathname.substring(1).split("/");
+      if (parts[1] == "albums") {
+        parts = parts.slice(0, 3);
+      } else {
+        parts = ["photo"];
+      }
+      if (filename) {
+        parts.push(filename);
+      }
+      const newUrl =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        "/" +
+        parts.join("/");
+      window.history.replaceState({}, null, newUrl);
+      document.title = filename
+        ? images[filename].title + " | " + baseTitle
+        : baseTitle;
+    }
+
+    function activateFullScreen(filename) {
+      // setOGImage(filename);
+      if (!filename || !images[filename]) {
+        setImUrlQuery();
+        fullScreenOpen = false;
+        fullScreenElement.classList.remove("active");
+        document.body.classList.remove("stop-scrolling");
+        return;
+      }
+      const captured = images[filename];
+      openFileName = filename;
+      setImUrlQuery(filename);
+      if (!fullScreenOpen) {
+        if (!fullScreenElement) {
+          fullScreenElement = document.getElementById("fullScreen");
+          photoFullScreenElement = document.getElementById("photoFullScreen");
+          mapFullScreenElement = document.getElementById("mapFullScreen");
+          selectedMapElement = document.getElementById("selectedMap");
+          imageInfoElement = document.getElementById("imageInfo");
+          prevElement = document.getElementById("prev");
+          prevElement.addEventListener("click", prevImage);
+          nextElement = document.getElementById("next");
+          nextElement.addEventListener("click", nextImage);
+          document
+            .getElementById("exit")
+            .addEventListener("click", activateFullScreen);
+          imageNameElement = document.getElementById("imageName");
+          if (allowDownload) {
+            enableDownload(imageNameElement);
+          }
+          imageDownloadIcon = imageNameElement.querySelector(".dl");
+          imageDownloadDoneIcon = imageNameElement.querySelector(".dlDone");
+          metaDataElement = document.getElementById("metaData");
+        }
+        fullScreenOpen = true;
+      }
+      buildSelectedMap(filename);
+      document.body.classList.add("stop-scrolling");
+
+      // set prev and next blocks
+      const { prev, next } = imageChanges[filename];
+      // console.log("prev", prev, "next", next);
+      const cleanName = images[filename].title;
+      const textNode = Array.from(imageNameElement.childNodes).find(
+        (node) => node.nodeType === Node.TEXT_NODE
+      );
+      textNode.nodeValue = cleanName;
+
+      imageDownloadIcon.style.display = "none";
+      imageDownloadDoneIcon.style.display = "none";
+      if (allowDownload) {
+        const downloadUrl = captured.dl;
+        imageNameElement.href = downloadUrl;
+        imageNameElement.download = true;
+        if (downloadedMap[downloadUrl]) {
+          imageDownloadDoneIcon.style.display = "block";
+        } else {
+          imageDownloadIcon.style.display = "block";
+        }
+      }
+      prevElement.style.display = prev ? "block" : "none";
+      nextElement.style.display = next ? "block" : "none";
+
+      // set full screen image
+      if (currentImageElement) {
+        currentImageElement.remove();
+      }
+      currentImageElement = document
+        .getElementById(`fullScreen-${filename}`)
+        .cloneNode(true);
+      setCurrentImageWidthAndLayout();
+      photoFullScreenElement.appendChild(currentImageElement);
+
+      // set meta data
+      metaDataElement.innerHTML = "";
+      // console.log("showcase image", filename, images[filename]);
+      if (captured.shutter) {
+        if (captured.shutter < 0) {
+        }
+        metaDataElement.innerHTML += `<div>${
+          captured.shutter < 1
+            ? `1/${Math.round(1 / captured.shutter)}`
+            : captured.shutter
+        }s</div>`;
+      }
+      if (captured.aperture) {
+        metaDataElement.innerHTML += `<div>f/${
+          Math.round(captured.aperture * 10) / 10
+        }</div>`;
+      }
+      if (captured.iso) {
+        metaDataElement.innerHTML += `<div>ISO ${captured.iso}</div>`;
+      }
+      if (captured.focalLength) {
+        metaDataElement.innerHTML += `<div>${Math.round(
+          captured.focalLength
+        )}mm</div>`;
+      }
+      if (captured.camera) {
+        let cam = captured.camera;
+        // cam = cam.replace("SONY ILCE-7", "Sony A7");
+
+        metaDataElement.innerHTML += `<div>${cam}</div>`;
+      }
+      if (captured.lens && !captured.lens.endsWith("mm")) {
+        metaDataElement.innerHTML += `<div>${captured.lens}</div>`;
+      }
+      if (captured.latitude) {
+        metaDataElement.innerHTML += `<div>GPS Below</div>`;
+      }
+      mapFullScreenElement.style.display = captured.latitude ? "block" : "none";
+      fullScreenElement.classList.add("active");
+    }
+
+    window.addEventListener("resize", () => {
+      if (fullScreenOpen) {
+        setCurrentImageWidthAndLayout();
+      }
+    });
+
+    //  __                            __                                            __
+    // /  |                          /  |                                          /  |
+    // $$ |   __   ______   __    __ $$ |____    ______    ______    ______    ____$$ |
+    // $$ |  /  | /      \ /  |  /  |$$      \  /      \  /      \  /      \  /    $$ |
+    // $$ |_/$$/ /$$$$$$  |$$ |  $$ |$$$$$$$  |/$$$$$$  | $$$$$$  |/$$$$$$  |/$$$$$$$ |
+    // $$   $$<  $$    $$ |$$ |  $$ |$$ |  $$ |$$ |  $$ | /    $$ |$$ |  $$/ $$ |  $$ |
+    // $$$$$$  \ $$$$$$$$/ $$ \__$$ |$$ |__$$ |$$ \__$$ |/$$$$$$$ |$$ |      $$ \__$$ |
+    // $$ | $$  |$$       |$$    $$ |$$    $$/ $$    $$/ $$    $$ |$$ |      $$    $$ |
+    // $$/   $$/  $$$$$$$/  $$$$$$$ |$$$$$$$/   $$$$$$/   $$$$$$$/ $$/        $$$$$$$/
+    //                     /  \__$$ |
+    //                     $$    $$/
+    //                      $$$$$$/
+
+    function setKeyDown() {
+      document.onkeydown = function (evt) {
+        evt = evt || window.event;
+        if (fullScreenOpen) {
+          if (evt.key === "Escape" || evt.key === "Esc") {
+            document.getElementById("exit").click();
+          } else if (evt.key === "ArrowLeft") {
+            prevImage();
+          } else if (evt.key === "ArrowRight") {
+            nextImage();
+          } else if (evt.key === "ArrowDown") {
+            fullScreenElement.scroll({
+              top: fullScreenElement.scrollHeight,
+              behavior: "smooth",
+            });
+          } else if (evt.key === "ArrowUp") {
+            fullScreenElement.scroll({
+              top: 0,
+              behavior: "smooth",
+            });
+          }
+        }
+      };
+    }
+
+    setKeyDown();
+
+    //                      __                        __                      __
+    //                     /  |                      /  |                    /  |
+    //   _______   ______  $$ |  ______    _______  _$$ |_     ______    ____$$ |       _____  ____    ______    ______
+    //  /       | /      \ $$ | /      \  /       |/ $$   |   /      \  /    $$ |      /     \/    \  /      \  /      \
+    // /$$$$$$$/ /$$$$$$  |$$ |/$$$$$$  |/$$$$$$$/ $$$$$$/   /$$$$$$  |/$$$$$$$ |      $$$$$$ $$$$  | $$$$$$  |/$$$$$$  |
+    // $$      \ $$    $$ |$$ |$$    $$ |$$ |        $$ | __ $$    $$ |$$ |  $$ |      $$ | $$ | $$ | /    $$ |$$ |  $$ |
+    //  $$$$$$  |$$$$$$$$/ $$ |$$$$$$$$/ $$ \_____   $$ |/  |$$$$$$$$/ $$ \__$$ |      $$ | $$ | $$ |/$$$$$$$ |$$ |__$$ |
+    // /     $$/ $$       |$$ |$$       |$$       |  $$  $$/ $$       |$$    $$ |      $$ | $$ | $$ |$$    $$ |$$    $$/
+    // $$$$$$$/   $$$$$$$/ $$/  $$$$$$$/  $$$$$$$/    $$$$/   $$$$$$$/  $$$$$$$/       $$/  $$/  $$/  $$$$$$$/ $$$$$$$/
+    //                                                                                                         $$ |
+    //                                                                                                         $$ |
+    //                                                                                                         $$/
+
+    let selectedMap;
+
+    function buildSelectedMap(filename) {
+      // if
+      const { longitude, latitude } = images[filename];
+      if (!longitude) {
+        mapFullScreenElement.style.display = "none";
+        return;
+      } else {
+        mapFullScreenElement.style.display = "block";
+      }
+      selectedMap = new google.maps.Map(selectedMapElement, {
+        center: {
+          lat: latitude,
+          lng: longitude,
+        },
+        zoom: 16,
+        zoomControl: true,
+        zoomControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_CENTER,
+        },
+        streetViewControl: true,
+        streetViewControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_CENTER,
+        },
+        fullscreenControl: true,
+        fullscreenControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_CENTER,
+        },
+        rotateControl: true,
+        rotateControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_CENTER,
+        },
+      });
+      const marker = new google.maps.Marker({
+        position: { lat: latitude, lng: longitude },
+        map: selectedMap,
+      });
+    }
+
+    //  _______    ______   __     __
+    // /       \  /      \ /  \   /  |
+    // $$$$$$$  | $$$$$$  |$$  \ /$$/
+    // $$ |  $$ | /    $$ | $$  /$$/
+    // $$ |  $$ |/$$$$$$$ |  $$ $$/
+    // $$ |  $$ |$$    $$ |   $$$/
+    // $$/   $$/  $$$$$$$/     $/
+
+    document.getElementById("mapNavLink").addEventListener("click", (e) => {
+      if (allowMap && !window.location.pathname.includes("album")) {
+        e.preventDefault();
+        document.getElementById("mapButton").click();
+      }
+    });
+
+    document.getElementById("photoNavLink").addEventListener("click", (e) => {
+      if (allowMap && !window.location.pathname.includes("album")) {
+        e.preventDefault();
+        document.getElementById("galleryButton").click();
+      }
+    });
+
+    //   ______   ______
+    // /      \ /      |
+    // /$$$$$$  |$$$$$$/
+    // $$ |__$$ |  $$ |
+    // $$    $$ |  $$ |
+    // $$$$$$$$ |  $$ |
+    // $$ |  $$ | _$$ |_
+    // $$ |  $$ |/ $$   |
+    // $$/   $$/ $$$$$$/
+
+    const script = document.createElement("script");
+    script.addEventListener("load", loadModel);
+    script.src =
+      "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/ort.js";
+    document.head.appendChild(script);
+
+    let modelSession;
+    let tokenizer;
+    let imageEmbeddings;
+
+    let textLastSearched;
+
+    async function loadModel() {
+      const modelPath =
+        "https://huggingface.co/rocca/openai-clip-js/resolve/main/clip-text-vit-32-uint8.onnx";
+      const [session, Tokenizer, imageEmb] = await Promise.all([
+        ort.InferenceSession.create(modelPath, {
+          executionProviders: ["wasm"],
+        }),
+        import("https://deno.land/x/clip_bpe@v0.0.6/mod.js"),
+        fetch(embeddingsPublicPath),
+      ]);
+      modelSession = session;
+      tokenizer = new Tokenizer.default();
+      imageEmbeddings = await imageEmb.json();
+      // console.log("CLIP Model Loaded", modelSession, tokenizer);
+      AITextField.removeAttribute("disabled");
+      AITextField.setAttribute(
+        "placeholder",
+        'Any semantic query, ex. "New York City Sunset"'
+      );
+    }
+
+    async function getTextEmbedding(text) {
+      let textTokens = tokenizer.encodeForCLIP(text);
+      textTokens = Int32Array.from(textTokens);
+      const feeds = { input: new ort.Tensor("int32", textTokens, [1, 77]) };
+      const results = await modelSession.run(feeds);
+      return results["output"].data;
+    }
+
+    const clipMemo = {};
+
+    async function rankAISearch(text) {
+      const textEmbedding = await getTextEmbedding(text);
+      const norm = Math.sqrt(
+        textEmbedding.reduce((acc, curr) => {
+          return acc + curr * curr;
+        }, 0)
+      );
+      for (let i = 0; i < textEmbedding.length; i++) {
+        textEmbedding[i] /= norm;
+      }
+      // console.log("text embedding", textEmbedding);
+      const similarities = {};
+      for (const [name, embedding] of Object.entries(imageEmbeddings)) {
+        if (!images[name]) {
+          continue;
+        }
+        const similarity = embedding.reduce((acc, curr, i) => {
+          return acc + curr * textEmbedding[i];
+        }, 0);
+        similarities[name] = similarity;
+      }
+      const ranking = Object.entries(similarities).sort(
+        function (first, second) {
+          return second[1] - first[1];
+        }
+      );
+      const indices = {};
+      for (let i = 0; i < ranking.length; i++) {
+        const name = ranking[i][0];
+        indices[name] = i;
+      }
+      clipMemo[text] = indices;
+      if (mode == "gallery") {
+        activateGallery();
+      }
+    }
+
+    async function beginSearchByText() {
+      const text = AITextField.value.trim().toLowerCase();
+
+      if (!clipMemo[text]) {
+        textLastSearched = text;
+        await rankAISearch(textLastSearched);
+      }
+    }
+
+    AITextField.addEventListener("blur", beginSearchByText);
+    AITextField.addEventListener("change", beginSearchByText);
+    AITextField.addEventListener("focusout", beginSearchByText);
+    AITextField.addEventListener("keydown", async (e) => {
+      if (e.key === "Enter") {
+        await beginSearchByText();
+      }
+    });
+
+    // function swapElements(nodeA, nodeB) {
+    //   const parentA = nodeA.parentNode;
+    //   const siblingA = nodeA.nextSibling === nodeB ? nodeA : nodeA.nextSibling;
+    //   // Move `nodeA` to before the `nodeB`
+    //   nodeB.parentNode.insertBefore(nodeA, nodeB);
+    //   // Move `nodeB` to before the sibling of `nodeA`
+    //   parentA.insertBefore(nodeB, siblingA);
+    // }
+
+    // function orderImageElementsByRanking(indices) {
+    //   // console.log("indices", indices);
+    //   for (var i = 0; i < galleryContainer.children.length; i++) {
+    //     const child = galleryContainer.children[i];
+    //     const name = child.getAttribute("name");
+    //     const index = indices[name];
+    //     if (i == index) {
+    //       // child.style.top = ''
+    //       // child.style.left = ''
+    //       // child.removeAttribute("style");
+    //       continue;
+    //     }
+    //     const target = galleryContainer.children[index];
+    //     if (!target) {
+    //       // console.log(
+    //       //   "want to swap with element",
+    //       //   index,
+    //       //   name,
+    //       //   "but len is",
+    //       //   galleryContainer.children.length
+    //       // );
+    //     }
+    //     swapElements(child, target);
+    //     i--;
+    //   }
+    // }
+
+    // download
+
+    function enableDownload(el) {
+      el.addEventListener("click", async (e) => {
+        if (!el.href) return;
+        if (navigator.canShare && navigator.canShare({ files: [] })) {
+          const response = await fetch(el.href);
+          const blob = await response.blob();
+          const file = new File([blob], el.text, { type: blob.type });
+          try {
+            await navigator.share({
+              files: [file],
+              title: el.text,
+              text: el.text,
+            });
+            return;
+          } catch (err) {}
+        }
+        const parsedUrl = new URL(el.href);
+        const key = parsedUrl.pathname;
+        if (downloadedMap[key]) {
+          e.preventDefault();
+        }
+        downloadedMap[key] = true;
+        el.querySelector(".dlDone").style.display = "block";
+        el.querySelector(".dl").style.display = "none";
+        e.stopPropagation();
+      });
+    }
+
+    const downloadedMap = {};
+    for (const el of document.querySelectorAll("a[download]")) {
+      enableDownload(el);
+    }
+  </script>
+  {allowBlog && <Substack />}
+</HeaderAndFooter>
