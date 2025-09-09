@@ -4,130 +4,169 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
 const imagePath = "/og/thumb.jpg";
 ---
 
-<CommonHead title="Distortion" noindex>
-  <h1>Lens Distortion Correction Tool</h1>
+<CommonHead
+  title="Distortion"
+  description="Easy and maximum quality correction against Barrel and Pincushion Distortion, even after crop. Leverages the Brown-Conrady model radial distortion model under the hood."
+>
+  <h1>Free Online Lens Distortion Correction Correction Tool</h1>
+  <p>
+    Easy and maximum quality correction against Barrel and Pincushion
+    Distortion, even after crop. Leverages the Brown-Conrady model radial
+    distortion model under the hood.
+  </p>
 
-  <div class="tool-container">
-    <div class="canvas-container">
-      <canvas id="distortionCanvas"></canvas>
-      <canvas id="gridCanvas"></canvas>
+  <div id="images" class="col">
+    <div id="undistorted">
+      <canvas id="afterImage"></canvas>
+      <canvas id="afterGrid"></canvas>
+    </div>
+    <div id="distorted">
+      <img src={imagePath} id="sourceImage" />
+      <canvas id="beforeGrid"></canvas>
+    </div>
+  </div>
+  <div id="controls">
+    <div id="buttons">
+      <input type="file" accept="image/*" />
+      <button id="export">Export</button>
+    </div>
+    <div id="plane">
+      <div id="circle"></div>
+      <img id="lensImg" />
       <div id="opticalCenter"></div>
     </div>
-    <div id="reverse-projection">
-      <img id="sourceImage" src={imagePath} />
-      <canvas id="reverseGridCanvas"></canvas>
-    </div>
+    <div id="params">
+      <div class="slider">
+        <!-- Radial distortion -->
+        <label for="k1">k1:</label>
+        <input type="range" id="k1" min="-1" max="1" step="0.001" value="0" />
+        <span id="k1Val">0.000</span>
+      </div>
 
-    <div class="controls">
-      <!-- Radial distortion -->
-      <label for="k1">k1:</label>
-      <input type="range" id="k1" min="-1" max="1" step="0.001" value="0" />
-      <span id="k1Val">0.000</span>
-    </div>
+      <div class="slider">
+        <label for="k2">k2:</label>
+        <input type="range" id="k2" min="-1" max="1" step="0.001" value="0" />
+        <span id="k2Val">0.000</span>
+      </div>
 
-    <div class="controls">
-      <label for="k2">k2:</label>
-      <input type="range" id="k2" min="-1" max="1" step="0.001" value="0" />
-      <span id="k2Val">0.000</span>
-    </div>
+      <div class="slider">
+        <label for="k3">k3:</label>
+        <input type="range" id="k3" min="-1" max="1" step="0.001" value="0" />
+        <span id="k3Val">0.000</span>
+      </div>
 
-    <div class="controls">
-      <label for="k3">k3:</label>
-      <input type="range" id="k3" min="-1" max="1" step="0.001" value="0" />
-      <span id="k3Val">0.000</span>
-    </div>
+      <div class="slider">
+        <label for="opticalWidth">optical width:</label>
+        <input
+          type="range"
+          id="opticalWidth"
+          min="1"
+          max="100"
+          step="0.1"
+          value="100"
+        />
+        <span id="opticalWidthVal">100%</span>
+      </div>
 
-    <!-- Tangential distortion -->
-    <div class="controls">
-      <label for="p1">p1:</label>
-      <input type="range" id="p1" min="-0.5" max="0.5" step="0.001" value="0" />
-      <span id="p1Val">0.000</span>
-    </div>
-
-    <div class="controls">
-      <label for="p2">p2:</label>
-      <input type="range" id="p2" min="-0.5" max="0.5" step="0.001" value="0" />
-      <span id="p2Val">0.000</span>
-    </div>
-
-    <div class="controls">
-      <label>
-        <input type="checkbox" id="toggleGrid" checked />
-        Show Grid
-      </label>
+      <div class="slider">
+        <label>
+          <input type="checkbox" id="toggleGrid" checked />
+          Show Grid
+        </label>
+      </div>
     </div>
   </div>
 </CommonHead>
 
 <style>
-  .tool-container {
+  :global(*) {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  :global(body) {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    max-width: 800px;
-  }
-  canvas {
-    max-width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-  }
-  .canvas-container {
-    position: relative;
-    display: inline-block; /* shrink to canvas size */
+    align-items: center;
   }
 
-  #distortionCanvas,
-  #gridCanvas {
+  h1 {
+    font-size: 2em;
+    padding: 1em 2em;
+  }
+
+  p {
+    font-size: 1em;
+    padding: 1em 2em;
+  }
+
+  img,
+  canvas {
     display: block;
   }
 
-  #gridCanvas {
+  #images {
+    display: flex;
+  }
+  #images > div {
+    flex: 1;
+    position: relative;
+  }
+  #images * {
+    width: 100%;
+  }
+  #afterGrid,
+  #beforeGrid {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 1;
-    pointer-events: none; /* allow clicks to pass through */
+  }
+  .col {
+    flex-direction: column;
   }
 
-  #opticalCenter {
+  #controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  #buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  #plane {
+    width: 260px;
+    height: 260px;
+    position: relative;
+  }
+  #circle {
     position: absolute;
-    width: 16px;
-    height: 16px;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
     border-radius: 50%;
-    background: red;
+    border: 2px solid #00000020;
+    background: #00000010;
+  }
+  #lensImg {
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    cursor: grab;
+    width: 0;
+    cursor: pointer;
   }
-
-  .controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .controls label {
-    width: 2.5rem;
-  }
-  .controls input {
-    flex: 1;
-  }
-  #reverse-projection {
-    position: relative;
-    display: inline-block;
-  }
-
-  #reverse-projection img {
-    display: block;
-    max-width: 100%;
-  }
-
-  #reverseGridCanvas {
+  #opticalCenter {
     position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    pointer-events: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background-color: red;
   }
 </style>
 
