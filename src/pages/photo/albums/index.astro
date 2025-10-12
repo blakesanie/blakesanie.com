@@ -25,8 +25,8 @@ function enforcePeriod(str: string) {
 >
   <h1>Albums</h1>
   <p>
-    Images in bulk, refined by event or series. Available for open preview and
-    download - Enjoy!
+    Images in bulk, refined by event or series. Download available for personal
+    use - Enjoy!
   </p>
   <div id="albums">
     {
@@ -66,11 +66,12 @@ function enforcePeriod(str: string) {
     flex-direction: column;
     flex: 1;
     /* border: 1px solid red; */
-    padding: 1.5em;
+    padding: 1em;
     border-radius: 1em;
     min-width: min(100%, 350px);
     max-width: 500px;
-    padding-left: 2em;
+    max-height: 400px;
+    /* padding-left: 2em; */
   }
   #albums > a * {
     text-indent: 0 !important;
@@ -81,6 +82,5 @@ function enforcePeriod(str: string) {
   #albums :global(img) {
     margin-top: 0.5em;
     flex: 1;
-    height: min(300px, 80vw) !important;
   }
 </style>

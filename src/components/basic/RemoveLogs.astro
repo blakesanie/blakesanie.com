@@ -1,19 +1,11 @@
 ---
-const prod = import.meta.env.MODE === 'production';
+const mode = import.meta.env.MODE;
 ---
-{prod ? (
-<script>
-    window.originalConsoleLog = console.log;
-    console.log = function () {};
-</script>
-    )
 
-    :
-    (<script>
-    window.originalConsoleLog = console.log;
-    console.log = function (...args) {
-        window.originalConsoleLog('dev log:')
-        window.originalConsoleLog(...args);
-        };
-        </script>)
-        }
+!{
+  import.meta.env.DEV ? (
+    <script>
+      window.originalConsoleLog = console.log; console.log = function () {};
+    </script>
+  ) : null
+}

@@ -4,6 +4,42 @@ import Gallery from "../_Gallery.astro";
 export async function getStaticPaths() {
   return [
     {
+      params: { slug: "chi-marathon-2025" },
+      props: {
+        path: "./photo-portfolio/temp/chi-marathon-2025",
+        title: "Chciago Marathon 2025",
+        description: "October 12, 2025. Chicago Marathon in Old Town.",
+        heading: "Chicago Marathon 2025",
+        allowDownload: true,
+        allowFilename: true,
+        allowClip: true,
+        alphabetical: true,
+        allowFullscreen: true,
+        allowMetadata: true,
+        image: "./photo-portfolio/temp/chi-marathon-2025/DSC02413.jpg",
+        subheading:
+          'October 12, 2025. Chicago Marathon along LaSalle (mile 4) and Wells (mile 12). Download available for personal use. <a href="https://www.instagram.com/blakesanie.jpg/" target="_blank">@blakesanie.jpg</a>',
+      },
+    },
+    {
+      params: { slug: "xxx-relay-cross-2025" },
+      props: {
+        path: "./photo-portfolio/temp/relay-cross-2025",
+        title: "XXX Relay Cross 2025",
+        description: "September 14, 2025. Cyclocross Relay Bike Race Images",
+        heading: "XXX Relay Cross 2025",
+        allowDownload: true,
+        allowFilename: true,
+        allowClip: true,
+        alphabetical: true,
+        allowFullscreen: true,
+        allowMetadata: true,
+        image: "./photo-portfolio/temp/relay-cross-2025/DSC01406.jpg",
+        subheading:
+          'September 14, 2025, at Jackson Park, Chicago. Download available for personal use. Attribution <a href="https://www.instagram.com/blakesanie.jpg/" target="_blank">@blakesanie.jpg</a>',
+      },
+    },
+    {
       params: { slug: "mnr-labor-day-2025" },
       props: {
         path: "./photo-portfolio/temp/mnr-labor-day-2025",

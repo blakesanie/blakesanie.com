@@ -131,8 +131,8 @@ if (allowClip) {
 
 const imagesArr: any[] = [];
 const icons = {};
-const downloads1080 = {};
-const downloadsLarge = {};
+// const downloads1080 = {};
+// const downloadsLarge = {};
 let minLat = Infinity;
 let maxLat = -Infinity;
 let minLng = Infinity;
@@ -218,28 +218,27 @@ await Promise.all(
         : {}),
     };
     if (allowDownload) {
+      // let im2 = await renderImg({
+      //   src: path,
+      //   breakpoints: [1080],
+      //   format: "jpg",
+      //   alt: "",
+      //   quality: 80,
+      // });
+      // downloads1080[name] = im2.img.split('srcset="')[1].split('"')[0];
+      // if (allowFullscreen) {
+      let len = 2000;
+      if (height > width) {
+        len *= width / height;
+      }
       let im2 = await renderImg({
         src: path,
-        breakpoints: [1080],
+        breakpoints: [len],
         format: "jpg",
         alt: "",
-        quality: 80,
+        quality: 70,
       });
-      downloads1080[name] = im2.img.split('srcset="')[1].split('"')[0];
-      if (allowFullscreen) {
-        let len = 2000;
-        if (height > width) {
-          len *= width / height;
-        }
-        let im2 = await renderImg({
-          src: path,
-          breakpoints: [len],
-          format: "jpg",
-          alt: "",
-          quality: 80,
-        });
-        extracted.dl = im2.img.split('srcset="')[1].split('"')[0];
-      }
+      extracted.dl = im2.img.split('srcset="')[1].split('"')[0];
     }
     imagesArr.push(extracted);
   })
@@ -304,7 +303,7 @@ const description =
   image={Astro.props.image}
 >
   {Astro.props.heading && <h1>{Astro.props.heading}</h1>}
-  {Astro.props.subheading && <p>{Astro.props.subheading}</p>}
+  {Astro.props.subheading && <p set:html={Astro.props.subheading} />}
   {
     (allowFilename || allowClip || Astro.props.allowMap) && (
       <div id="search">
@@ -368,7 +367,7 @@ const description =
                 <Icon name="mdi:map-marker" color="white" size="25px" />
               )}
               {allowDownload && (
-                <a class="tileDl" href={downloads1080[image.name]} download>
+                <a class="tileDl" href={image.dl} download>
                   {image.path.split("/").pop()}
                   <Icon
                     name="mi:cloud-download"
@@ -400,19 +399,29 @@ const description =
     {
       allowFullscreen && (
         <div class="fullScreenReserves">
-          {Object.entries(images).map(([name, image]) => (
-            <div id={`fullScreen-${name}`} class="full">
-              <Img
-                src={image.path}
-                alt=""
-                breakpoints={[400, 800, 1200, 1600, 2000]}
-                quality={60}
-                format="webp"
-                placeholder="blurred"
-                loading="lazy"
-              />
-            </div>
-          ))}
+          {Object.entries(images).map(([name, image]) => {
+            const maxWidth =
+              image.width > image.height
+                ? 2000
+                : Math.round((2000 / image.height) * image.width);
+            let breakpoints = [];
+            for (let i = maxWidth; i >= 800; i -= 400) {
+              breakpoints = [i, ...breakpoints];
+            }
+            return (
+              <div id={`fullScreen-${name}`} class="full">
+                <Img
+                  src={image.path}
+                  alt=""
+                  breakpoints={breakpoints}
+                  quality={60}
+                  format="webp"
+                  placeholder="blurred"
+                  loading="lazy"
+                />
+              </div>
+            );
+          })}
         </div>
       )
     }
@@ -2327,34 +2336,59 @@ const description =
     function enableDownload(el) {
       el.addEventListener("click", async (e) => {
         if (!el.href) return;
-        if (navigator.canShare && navigator.canShare({ files: [] })) {
+        const parsedUrl = new URL(el.href);
+        const key = parsedUrl.pathname;
+        if (
+          getDeviceType() === "mobile" &&
+          navigator &&
+          navigator.canShare({
+            files: [new File([], "x.jpg", { type: "image/jpeg" })],
+          })
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
           const response = await fetch(el.href);
           const blob = await response.blob();
-          const file = new File([blob], el.text, { type: blob.type });
+          const file = new File([blob], el.text.trim(), { type: blob.type });
           try {
             await navigator.share({
               files: [file],
-              title: el.text,
-              text: el.text,
             });
+
+            downloadedMap[key] = true;
+            return onDownloadSuccess(el);
+          } catch (err) {
+            debugger;
+            console.log(err);
             return;
-          } catch (err) {}
+          }
         }
-        const parsedUrl = new URL(el.href);
-        const key = parsedUrl.pathname;
         if (downloadedMap[key]) {
           e.preventDefault();
         }
+        onDownloadSuccess(el, e);
         downloadedMap[key] = true;
-        el.querySelector(".dlDone").style.display = "block";
-        el.querySelector(".dl").style.display = "none";
-        e.stopPropagation();
       });
+    }
+
+    function onDownloadSuccess(el, e) {
+      el.querySelector(".dlDone").style.display = "block";
+      el.querySelector(".dl").style.display = "none";
+      e.stopPropagation();
     }
 
     const downloadedMap = {};
     for (const el of document.querySelectorAll("a[download]")) {
       enableDownload(el);
+    }
+
+    function getDeviceType() {
+      const isTouch = window.matchMedia("(pointer: coarse)").matches;
+      const ua = navigator.userAgent;
+      const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
+
+      if (isTouch || isMobileUA) return "mobile";
+      return "desktop";
     }
   </script>
   {allowBlog && <Substack />}
