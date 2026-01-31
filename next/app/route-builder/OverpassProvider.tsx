@@ -17,7 +17,7 @@ import osmtogeojson from "osmtogeojson";
 
 type OverpassDataType = Map<string, GeoJSON.FeatureCollection | null>;
 type callOverpassType = (
-  geohash: any
+  geohash: any,
 ) => Promise<GeoJSON.FeatureCollection | null>;
 
 interface OverpassContextType {

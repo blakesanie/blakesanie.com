@@ -39,7 +39,7 @@ export function useOverpass() {
   const callOverpass = useCallback(
     async (
       query: string,
-      bounds: Bounds
+      bounds: Bounds,
     ): Promise<GeoJSON.FeatureCollection | null> => {
       const bbox = `${bounds.south},${bounds.west},${bounds.north},${bounds.east}`;
       const formattedQuery = query.replace(/{{bbox}}/g, bbox);
@@ -56,17 +56,17 @@ export function useOverpass() {
 
       return geojson;
     },
-    []
+    [],
   );
 
   const fetchCycleways = useCallback(
     async (bounds: Bounds) => callOverpass(cyclewayQuery, bounds),
-    [callOverpass]
+    [callOverpass],
   );
 
   const fetchOneways = useCallback(
     async (bounds: Bounds) => callOverpass(onewayQuery, bounds),
-    [callOverpass]
+    [callOverpass],
   );
 
   return { fetchCycleways, fetchOneways };

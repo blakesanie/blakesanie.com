@@ -38,7 +38,7 @@ const getPreviousTrack = async () => {
       headers: {
         Authorization: `Bearer ${ACCESS_TOKEN}`,
       },
-    }
+    },
   );
   const json = await response.json();
   return processTrack(json.items[0].track, false);
@@ -51,7 +51,7 @@ const getLastSong = async (recursion = true) => {
       headers: {
         Authorization: `Bearer ${ACCESS_TOKEN}`,
       },
-    }
+    },
   );
   if (response.status == 204) {
     // console.log("USE PREVIOUS TRACK");

@@ -69,7 +69,7 @@ export default function Heatmap({
 
         console.log(
           "y ticks",
-          getTicks(minY, maxY, yBins, 10).map((val) => yBins - val)
+          getTicks(minY, maxY, yBins, 10).map((val) => yBins - val),
         );
 
         return (
@@ -94,7 +94,7 @@ export default function Heatmap({
                         height={cell.height}
                         fill={colorScale(cell.count || 0)}
                       />
-                    ))
+                    )),
                   )
                 }
               </HeatmapRect>
@@ -145,7 +145,7 @@ function getTicks(
   min: number,
   max: number,
   binCount: number,
-  step: number = 10
+  step: number = 10,
 ): number[] {
   const start = Math.ceil(min / step) * step;
   const end = Math.floor(max / step) * step;
@@ -161,7 +161,7 @@ function clamp(
   oldMin: number,
   oldMax: number,
   newMin: number,
-  newMax: number
+  newMax: number,
 ): number {
   return ((oldVal - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
 }
@@ -203,10 +203,10 @@ export function binPoints({
 
   // Initialize accumulators
   const binSums: number[][] = Array.from({ length: yBins }, () =>
-    Array(xBins).fill(0)
+    Array(xBins).fill(0),
   );
   const binCounts: number[][] = Array.from({ length: yBins }, () =>
-    Array(xBins).fill(0)
+    Array(xBins).fill(0),
   );
 
   for (let i = 0; i < xSeries.length; i++) {

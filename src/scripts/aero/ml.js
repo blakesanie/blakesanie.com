@@ -73,7 +73,7 @@ async function captureIteration() {
     "SHOULD INVERT TENSOR",
     shouldInvertX,
     window.facingUser,
-    !window.facingUser && !(window.facingUser === undefined)
+    !window.facingUser && !(window.facingUser === undefined),
   );
   let box = shouldInvertX ? [y1, 1, 1 - y1, 0] : [y1, 0, 1 - y1, 1];
   const cropped = tf.image.cropAndResize(expanded, [box], [0], [720, 1280]);
@@ -117,7 +117,7 @@ async function captureIteration() {
     subjects,
     [box],
     [0],
-    [window.ydim - 2, window.xdim - 2]
+    [window.ydim - 2, window.xdim - 2],
   );
   tf.dispose(subjects);
   const croppedSqueezed1 = croppedSubjects.squeeze();

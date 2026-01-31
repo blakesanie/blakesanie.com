@@ -12,7 +12,7 @@ export default function buildLayers(
   geojson: FeatureCollection<Geometry, GeoJsonProperties>,
   layerCatalog: Set<string>,
   entitiesByGeohash: Map<string, string[]>,
-  geohash: string
+  geohash: string,
 ): Layer[] {
   console.log("Building layers for geojson:", geojson);
   const out: Layer[] = [];
@@ -63,7 +63,7 @@ export default function buildLayers(
 
 function buildGeojsonLayer(
   features: Feature<Geometry, GeoJsonProperties>[] | undefined,
-  config: any
+  config: any,
 ): GeoJsonLayer<GeoJsonProperties> | null {
   if (!features || features.length === 0) {
     console.warn("No features provided for GeoJsonLayer");

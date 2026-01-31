@@ -1,26 +1,26 @@
 .app {
-    /*background: green;*/
-    max-width: 100%;
+  /*background: green;*/
+  max-width: 100%;
 }
 
 .app h2 {
-    font-size: 1.6em;
-    text-align: center;
-    padding-bottom: 0.2em;
+  font-size: 1.6em;
+  text-align: center;
+  padding-bottom: 0.2em;
 }
 
 .paramSection {
-    box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.1);
-    border-radius: 0.4em;
+  box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.1);
+  border-radius: 0.4em;
 }
 
 .paramSection tr {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 .paramGroup > td {
-    /*padding-bottom: 2em;*/
-    /*border-bottom: 1px solid black;*/
+  /*padding-bottom: 2em;*/
+  /*border-bottom: 1px solid black;*/
 }
 
 /*.paramGroup:last-of-type > td {*/
@@ -34,26 +34,25 @@
 /*}*/
 
 .paramSectionName {
-    text-align: right;
-    font-size: 1.3em;
-    font-weight: 500;
-    /*border-right: 1px solid rgba(0, 0, 0, 0.3);*/
-    padding: 0.6em;
+  text-align: right;
+  font-size: 1.3em;
+  font-weight: 500;
+  /*border-right: 1px solid rgba(0, 0, 0, 0.3);*/
+  padding: 0.6em;
 }
 
-
 .paramSection {
-    width: 100%;
+  width: 100%;
 }
 
 .inputGroup {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 0.6em;
-    align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.6em;
+  align-items: center;
 }
 
 .inputGroup > * {
-    /*justify-content: center;*/
-    margin-right: 0.8em;
+  /*justify-content: center;*/
+  margin-right: 0.8em;
 }

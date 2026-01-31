@@ -217,7 +217,6 @@ window.addEventListener("scroll", () => {
   prevScrollTimestamp = timestamp;
 });
 
-
 //  __       __                                      ________                                                    __
 // /  \     /  |                                    /        |                                                  /  |
 // $$  \   /$$ |  ______   _______   __    __       $$$$$$$$/  __    __   ______    ______   _______    _______ $$/   ______   _______
@@ -330,7 +329,7 @@ if (header && nav) {
   const navWidth = nav.offsetWidth;
   const delta = headerWidth - navWidth;
   if (delta > 0) {
-    const newHeaderWidth = headerWidth + delta + 'px';
-    header.style.setProperty('--headerWidth', newHeaderWidth)
+    const newHeaderWidth = headerWidth + delta + "px";
+    header.style.setProperty("--headerWidth", newHeaderWidth);
   }
 }

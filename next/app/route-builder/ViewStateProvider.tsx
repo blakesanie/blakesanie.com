@@ -61,7 +61,7 @@ export default function ViewStateProvider({
       sw.lat,
       ne.lng,
       ne.lat,
-      GEOHASH_PRECISION
+      GEOHASH_PRECISION,
     );
     if (out.join(",") === prevGeohashesInScopeRef.current.join(",")) {
       return prevGeohashesInScopeRef.current;
@@ -73,7 +73,7 @@ export default function ViewStateProvider({
   const [geohashesAdded, geoHashesRemoved] = useMemo((): string[][] => {
     if (geohashesInScope.length > 14) {
       console.warn(
-        "Too many geohashes in scope, skipping geohash change detection."
+        "Too many geohashes in scope, skipping geohash change detection.",
       );
       return [prevGeohashesAddedRef.current, prevGeoHashesRemovedRef.current];
     }

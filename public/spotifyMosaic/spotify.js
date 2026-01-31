@@ -76,7 +76,7 @@ if (access_token && (state == null || state !== storedState)) {
             var i = 1;
             for (var playlist of res.items) {
               setLoadingMessage(
-                "Analyzing " + i + " / " + res.items.length + " playlists"
+                "Analyzing " + i + " / " + res.items.length + " playlists",
               );
               data.playlists = data.playlists.concat([
                 {

@@ -1,0 +1,12 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+
+if [ "$branch" = "master" ] || [ "$branch" = "main" ]; then
+  echo "🚫 Stop! Commits to $branch are not allowed directly."
+  echo "   Please create a new branch and use a Pull Request."
+  exit 1
+fi
+
+npx lint-staged

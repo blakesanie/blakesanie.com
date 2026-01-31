@@ -49,7 +49,7 @@ function createShader(gl: WebGLRenderingContext, type: number, source: string) {
 function createProgram(
   gl: WebGLRenderingContext,
   vsSrc: string,
-  fsSrc: string
+  fsSrc: string,
 ) {
   const vs = createShader(gl, gl.VERTEX_SHADER, vsSrc);
   const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSrc);
@@ -80,7 +80,7 @@ gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(
   gl.ARRAY_BUFFER,
   new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-  gl.STATIC_DRAW
+  gl.STATIC_DRAW,
 );
 
 const texCoordBuffer = gl.createBuffer();
@@ -88,7 +88,7 @@ gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
 gl.bufferData(
   gl.ARRAY_BUFFER,
   new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]),
-  gl.STATIC_DRAW
+  gl.STATIC_DRAW,
 );
 
 // Uniforms
@@ -231,7 +231,7 @@ window.addEventListener("resize", resizeGrid);
 // --- REVERSE GRID ---
 const sourceImg = document.getElementById("sourceImage") as HTMLImageElement;
 const reverseGridCanvas = document.getElementById(
-  "beforeGrid"
+  "beforeGrid",
 ) as HTMLCanvasElement;
 const rctx = reverseGridCanvas.getContext("2d")!;
 
@@ -320,11 +320,11 @@ function resizeStage() {
   // const workingAspectRatio = workingWidth / workingHeight
   const bestImageWidthWhenStacked = Math.min(
     workingWidth,
-    (workingHeight / 2) * aspectRatio
+    (workingHeight / 2) * aspectRatio,
   );
   const bestImageWidthWhenFlat = Math.min(
     workingWidth / 2,
-    workingHeight * aspectRatio
+    workingHeight * aspectRatio,
   );
   const stacked = bestImageWidthWhenStacked > bestImageWidthWhenFlat;
   if (stacked) {
@@ -391,7 +391,7 @@ function exportFullRes() {
   tmpGl.bufferData(
     tmpGl.ARRAY_BUFFER,
     new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-    tmpGl.STATIC_DRAW
+    tmpGl.STATIC_DRAW,
   );
 
   const texBuf = tmpGl.createBuffer();
@@ -399,7 +399,7 @@ function exportFullRes() {
   tmpGl.bufferData(
     tmpGl.ARRAY_BUFFER,
     new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]),
-    tmpGl.STATIC_DRAW
+    tmpGl.STATIC_DRAW,
   );
 
   // Upload original image as texture
@@ -411,17 +411,17 @@ function exportFullRes() {
     tmpGl.RGBA,
     tmpGl.RGBA,
     tmpGl.UNSIGNED_BYTE,
-    originalImage
+    originalImage,
   );
   tmpGl.texParameteri(
     tmpGl.TEXTURE_2D,
     tmpGl.TEXTURE_WRAP_S,
-    tmpGl.CLAMP_TO_EDGE
+    tmpGl.CLAMP_TO_EDGE,
   );
   tmpGl.texParameteri(
     tmpGl.TEXTURE_2D,
     tmpGl.TEXTURE_WRAP_T,
-    tmpGl.CLAMP_TO_EDGE
+    tmpGl.CLAMP_TO_EDGE,
   );
   tmpGl.texParameteri(tmpGl.TEXTURE_2D, tmpGl.TEXTURE_MIN_FILTER, tmpGl.LINEAR);
 
@@ -491,7 +491,7 @@ function renderLensImg() {
 }
 
 const opticalWidthSlider = document.getElementById(
-  "opticalWidth"
+  "opticalWidth",
 ) as HTMLInputElement;
 const opticalWidthVal = document.getElementById("opticalWidthVal");
 
@@ -540,7 +540,7 @@ function loadImg(src: string) {
       gl.RGBA,
       gl.RGBA,
       gl.UNSIGNED_BYTE,
-      offscreen
+      offscreen,
     );
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);

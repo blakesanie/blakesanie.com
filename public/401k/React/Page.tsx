@@ -12,18 +12,18 @@ import ResultTable from "./ResultTable";
 // import MenuItem from '@mui/material/MenuItem';
 
 function dateToNumber(date: Date): number {
-    return (
-      (date.getMonth() + 1) * 10000 +
-      date.getDate() * 1000 +
-      (date.getFullYear() % 100)
-    );
+  return (
+    (date.getMonth() + 1) * 10000 +
+    date.getDate() * 1000 +
+    (date.getFullYear() % 100)
+  );
 }
 
 function dateNumberToElements(num: number) {
-    const month = Math.floor(num / 10000);
-    const day = Math.floor(num / 1000);
-    const year = Math.floor(num % 100);
-    return [month, day, year];
+  const month = Math.floor(num / 10000);
+  const day = Math.floor(num / 1000);
+  const year = Math.floor(num % 100);
+  return [month, day, year];
 }
 
 // interface DateInputProps {

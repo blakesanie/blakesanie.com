@@ -74,17 +74,17 @@ export default function MapComponent() {
     Promise.all(
       geohashesAdded.map((geohash) => {
         return callOverpass(geohash);
-      })
+      }),
     ).then((geojsons) => {
       let i = 0;
       for (const geohash of geohashesAdded) {
         assert(
           !layers.has(geohash),
-          "Layer already exists for geohash: " + geohash
+          "Layer already exists for geohash: " + geohash,
         );
         assert(
           !entityCatalog.has(geohash),
-          "Layer catalog already has geohash: " + geohash
+          "Layer catalog already has geohash: " + geohash,
         );
         const geojsonBlob = geojsons[i];
         if (geojsonBlob) {
@@ -92,7 +92,7 @@ export default function MapComponent() {
             geojsonBlob,
             entityCatalog,
             entitiesByGeohash,
-            geohash
+            geohash,
           );
           if (newLayers.length === 0) {
             console.warn("No layers built for geohash:", geohash);

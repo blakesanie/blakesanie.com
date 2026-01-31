@@ -83,7 +83,7 @@ const forceSavedElement = document.querySelector("#forceSaving .val");
 
 let expandedControlI = 0;
 const moreControlsList = document.querySelectorAll(
-  "#controlsHolder .moreControls"
+  "#controlsHolder .moreControls",
 );
 const controlButtons = document.querySelectorAll("#controlsBar > button");
 controlButtons.forEach((element, i) => {
@@ -394,7 +394,7 @@ function setBoundaries() {
   for (let y = lastBarrierY - 2; y >= 0; y--) {
     eqStartPerRow[y] = Math.min(
       eqStartPerRow[y] || Infinity,
-      eqStartPerRow[y + 1]
+      eqStartPerRow[y + 1],
     );
   }
 

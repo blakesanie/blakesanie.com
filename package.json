@@ -9,7 +9,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "dev-vercel": "vercel dev"
+    "dev-vercel": "vercel dev",
+    "format": "prettier --write .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.2.6",
@@ -99,9 +101,17 @@
     "@iconify-json/humbleicons": "^1.2.10",
     "@types/node": "^22.15.21",
     "autoprefixer": "^10.4.21",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "prettier-plugin-astro": "^0.14.1",
     "tailwindcss": "^4.1.7"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown",
+    "next/**/*.{js,jsx,ts,tsx}": [
+      "cd next && npm run lint"
+    ]
   }
 }

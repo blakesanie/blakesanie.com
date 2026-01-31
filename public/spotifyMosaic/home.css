@@ -62,7 +62,9 @@ h2 {
   margin-top: 5vmin;
   color: white !important;
   border: 1px solid #148f46;
-  transition: color 0.2s ease, background-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 #try:hover {

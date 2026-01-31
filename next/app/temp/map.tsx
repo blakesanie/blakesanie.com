@@ -23,7 +23,7 @@ type ArrowPoint = {
 
 function extractArrowPointsAtIntervals(
   geojson: GeoJSON.FeatureCollection,
-  intervalMeters = 10
+  intervalMeters = 10,
 ): ArrowPoint[] {
   const arrows: ArrowPoint[] = [];
 
@@ -131,7 +131,7 @@ export default function BikeMap({
     (
       geojson: GeoJSON.FeatureCollection,
       geojsonLayerConfig: any,
-      iconLayerConfig: any
+      iconLayerConfig: any,
     ) => {
       const newLayers: (GeoJsonLayer<any> | IconLayer<any>)[] = [];
 
@@ -151,7 +151,7 @@ export default function BikeMap({
 
       setLayers((layers) => [...layers, ...newLayers]);
     },
-    [setLayers]
+    [setLayers],
   );
 
   const load = useCallback(async () => {
@@ -203,7 +203,7 @@ export default function BikeMap({
               },
             },
             getIcon: () => "arrow",
-          }
+          },
         );
       }),
       fetchOneways(queryBounds).then((geojson) => {
@@ -239,7 +239,7 @@ export default function BikeMap({
               },
             },
             getIcon: () => "arrow",
-          }
+          },
         );
       }),
     ];
@@ -258,7 +258,7 @@ export default function BikeMap({
         onLoad={load}
       />
     ),
-    [load]
+    [load],
   );
 
   return (

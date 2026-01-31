@@ -23,12 +23,12 @@ export function daysInMonth(month: number) {
 }
 
 export type SimulationResult = {
-    contribution: number;
-    YTDContribution: number;
-    match: number;
-    YTDMatch: number;
-    growth: number;
-    worth: number;
+  contribution: number;
+  YTDContribution: number;
+  match: number;
+  YTDMatch: number;
+  growth: number;
+  worth: number;
 };
 
 export type SimulationResults = {
@@ -186,14 +186,14 @@ export default function simulate(appState: AppState) {
   const keys = Object.keys(results);
   const vals = Object.values(results);
   const [bestX, bestY, bestR] = searchForMaxPoint(
-      parseFloat(keys[0]),
-      vals[0][vals[0].length - 1].worth,
-      vals[0],
-      parseFloat(keys[keys.length - 1]),
-      vals[vals.length - 1][vals[vals.length - 1].length - 1].worth,
-      vals[vals.length - 1],
+    parseFloat(keys[0]),
+    vals[0][vals[0].length - 1].worth,
+    vals[0],
+    parseFloat(keys[keys.length - 1]),
+    vals[vals.length - 1][vals[vals.length - 1].length - 1].worth,
+    vals[vals.length - 1],
   );
-  results[bestX] = bestR
+  results[bestX] = bestR;
 
   return results;
 }
