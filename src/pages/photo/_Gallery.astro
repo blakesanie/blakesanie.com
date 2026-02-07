@@ -64,6 +64,7 @@ const lensRenamings = {
   "AF-S DX Nikkor 35mm f/1.8G": "Nikkor 35mm f/1.8G DX",
   "----": "Helios 44/2",
   "E 20-40mm F2.8 A062": "Tamron 20-40mm f/2.8",
+  "E 70-300mm F4.5-6.3 A047": "Tamron 70-300mm f/4.5-6.3",
 };
 
 function applyRenamings(str, renamings) {
@@ -120,7 +121,7 @@ const embeddingsJson = allowClip ? loadJson(embeddingsPath) : {};
 let embeddingsPublicPath = join(
   "public",
   "albums",
-  embeddingsPath.replace("./", "/")
+  embeddingsPath.replace("./", "/"),
 );
 
 if (allowClip) {
@@ -198,7 +199,7 @@ await Promise.all(
                     exif.Model &&
                     applyRenamings(
                       exif.Make + " " + exif.Model,
-                      cameraRenamings
+                      cameraRenamings,
                     ),
                   lens: applyRenamings(
                     exif.LensModel ||
@@ -206,14 +207,14 @@ await Promise.all(
                       (exifToolJson[name] &&
                         (exifToolJson[name]["Lens ID"] ||
                           exifToolJson[name]["Lens Spec"])),
-                    lensRenamings
+                    lensRenamings,
                   ),
                   date: exif.DateTimeOriginal || exif.CreateDate,
                   decoded:
                     exif.makerNode &&
                     String.fromCharCode.apply(null, exif.makerNote),
                 }
-              : {}
+              : {},
           )
         : {}),
     };
@@ -241,7 +242,7 @@ await Promise.all(
       extracted.dl = im2.img.split('srcset="')[1].split('"')[0];
     }
     imagesArr.push(extracted);
-  })
+  }),
 );
 
 if (alphabetical) {
@@ -903,7 +904,7 @@ const description =
               .replace(/"/g, '\\"')
               .replace(/&/g, '","')
               .replace(/=/g, '":"') +
-            '"}'
+            '"}',
         );
       }
 
@@ -913,7 +914,7 @@ const description =
         const albumsIndex = location.pathname.indexOf(a);
         if (albumsIndex >= 0) {
           const afterAlbum = location.pathname.substring(
-            albumsIndex + a.length
+            albumsIndex + a.length,
           );
 
           const parts = afterAlbum.split("/");
@@ -1146,7 +1147,7 @@ const description =
       history.replaceState(
         {},
         null,
-        window.location.pathname.replace("/map", "")
+        window.location.pathname.replace("/map", ""),
       );
 
       const afterFilter = filterImages();
@@ -1234,7 +1235,7 @@ const description =
           history.replaceState(
             {},
             null,
-            window.location.pathname.replace("/photo", "/photo/map")
+            window.location.pathname.replace("/photo", "/photo/map"),
           );
         }
       }
@@ -1254,7 +1255,7 @@ const description =
           super();
           this.position = new google.maps.LatLng(
             image.latitude,
-            image.longitude
+            image.longitude,
           );
           this.name = name;
           this.image = image;
@@ -1277,14 +1278,14 @@ const description =
 
           const svg = document.createElementNS(
             "http://www.w3.org/2000/svg",
-            "svg"
+            "svg",
           );
           svg.setAttribute("viewbox", "0 0 20 20");
           svg.setAttribute("width", "20px");
           svg.setAttribute("height", "20px");
           const path = document.createElementNS(
             "http://www.w3.org/2000/svg",
-            "path"
+            "path",
           );
           path.setAttribute("d", "M 10,18 2,5 18,5 z");
           svg.appendChild(path);
@@ -1311,7 +1312,7 @@ const description =
 
         getBox() {
           const divPosition = this.getProjection().fromLatLngToDivPixel(
-            this.position
+            this.position,
           );
           return [
             divPosition.x - this.width / 2,
@@ -1330,7 +1331,7 @@ const description =
         /** Called each frame when the popup needs to draw itself. */
         draw() {
           const divPosition = this.getProjection().fromLatLngToDivPixel(
-            this.position
+            this.position,
           );
           // if (!drawReady) {
           //   drawReady = true;
@@ -1727,8 +1728,8 @@ const description =
             map.zoom + 1,
             Math.min(
               toZoom(latRange, mapContainer.clientHeight),
-              toZoom(lngRange, mapContainer.clientWidth)
-            )
+              toZoom(lngRange, mapContainer.clientWidth),
+            ),
           );
         }
 
@@ -1898,14 +1899,14 @@ const description =
         usableWidth - minCardWidth,
         usableHeight,
         width,
-        height
+        height,
       );
       //asume vertical layout
       let widthIfVertical = maxWidthThatFits(
         usableWidth,
         usableHeight - minCardHeight,
         width,
-        height
+        height,
       );
 
       return [
@@ -1996,7 +1997,7 @@ const description =
       // console.log("prev", prev, "next", next);
       const cleanName = images[filename].title;
       const textNode = Array.from(imageNameElement.childNodes).find(
-        (node) => node.nodeType === Node.TEXT_NODE
+        (node) => node.nodeType === Node.TEXT_NODE,
       );
       textNode.nodeValue = cleanName;
 
@@ -2047,7 +2048,7 @@ const description =
       }
       if (captured.focalLength) {
         metaDataElement.innerHTML += `<div>${Math.round(
-          captured.focalLength
+          captured.focalLength,
         )}mm</div>`;
       }
       if (captured.camera) {
@@ -2226,7 +2227,7 @@ const description =
       AITextField.removeAttribute("disabled");
       AITextField.setAttribute(
         "placeholder",
-        'Any semantic query, ex. "New York City Sunset"'
+        'Any semantic query, ex. "New York City Sunset"',
       );
     }
 
@@ -2245,7 +2246,7 @@ const description =
       const norm = Math.sqrt(
         textEmbedding.reduce((acc, curr) => {
           return acc + curr * curr;
-        }, 0)
+        }, 0),
       );
       for (let i = 0; i < textEmbedding.length; i++) {
         textEmbedding[i] /= norm;
@@ -2264,7 +2265,7 @@ const description =
       const ranking = Object.entries(similarities).sort(
         function (first, second) {
           return second[1] - first[1];
-        }
+        },
       );
       const indices = {};
       for (let i = 0; i < ranking.length; i++) {
