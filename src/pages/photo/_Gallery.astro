@@ -80,6 +80,8 @@ const gutter = "12px";
   themeColor="#f0f0f0"
   darkText
   hoverZoneBehind
+  noBackdropFilter
+  flangeColor="white"
   title={title}
   description={description}
   image={Astro.props.image}
@@ -229,7 +231,7 @@ const gutter = "12px";
   .astro-native-img-wrapper img.thumb-img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
     cursor: pointer;
     will-change: transform;
     transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
@@ -538,30 +540,36 @@ const gutter = "12px";
 
       zoomedParent.classList.remove("swapped");
       
+      // Start overlay fade and image animation simultaneously
+      wrapper.classList.remove("overlay-active");
+      document.body.classList.remove("stop-scrolling");
+      
+      // Animate back to original position
+      // The element is still positioned fixed at originalRect.left/top
+      // We just need to animate the transform back to identity
+      zoomedImg.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+      fullResImg.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease-out';
+      
       zoomedImg.style.transform = 'translate(0, 0) scale(1)';
       fullResImg.style.transform = 'translate(0, 0) scale(1)';
       fullResImg.style.opacity = '0';
       
-      wrapper.classList.remove("overlay-active");
-      document.body.classList.remove("stop-scrolling");
+      // After animation completes, clean up
+      setTimeout(() => {
+        if (!zoomedImg || !zoomedParent || !fullResImg) return;
+        
+        zoomedParent.classList.remove("zoomed");
 
-      const handleTransitionEnd = (e: TransitionEvent) => {
-        if (e.propertyName === "transform" && zoomedParent && zoomedImg && fullResImg) {
-          zoomedParent.classList.remove("zoomed");
+        const resetStyleCSS = {
+          position: '', width: '', height: '', left: '', top: '', margin: '', transform: '', transition: '', opacity: ''
+        };
+        Object.assign(zoomedImg.style, resetStyleCSS);
+        Object.assign(fullResImg.style, resetStyleCSS);
 
-          const resetStyleCSS = {
-            position: '', width: '', height: '', left: '', top: '', margin: '', transform: '', transition: '', opacity: ''
-          };
-          Object.assign(zoomedImg.style, resetStyleCSS);
-          Object.assign(fullResImg.style, resetStyleCSS);
-
-          zoomedImg.removeEventListener("transitionend", handleTransitionEnd);
-          zoomedImg = null;
-          zoomedParent = null;
-          fullResImg = null;
-        }
-      };
-      zoomedImg.addEventListener("transitionend", handleTransitionEnd);
+        zoomedImg = null;
+        zoomedParent = null;
+        fullResImg = null;
+      }, 300);
     };
 
     closeBtn.addEventListener("click", closeFullscreen);
@@ -576,6 +584,10 @@ const gutter = "12px";
     // Handle window resize to keep image centered and properly scaled
     window.addEventListener("resize", () => {
       if (!wrapper.classList.contains("overlay-active") || !zoomedImg || !fullResImg) return;
+
+      // Don't update originalRect during resize - the thumb-img is positioned fixed when zoomed
+      // so getBoundingClientRect would return the wrong position
+      // Use the stored originalRect from when zoom started
 
       const viewWidth = window.innerWidth;
       const viewHeight = window.innerHeight;

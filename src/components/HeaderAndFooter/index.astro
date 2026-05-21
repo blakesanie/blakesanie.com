@@ -24,8 +24,8 @@ const textColor = Astro.props.darkText ? "black" : "white";
 const navPadding = 0.5; // was 0.6 em
 const isHome = Astro.props.isHome;
 const noTab = isHome || Astro.props.noTab;
-const { allowMainStyles, noContentPadding, hideSpotify } = Astro.props;
-const hoverZoneBehind = isHome; // || Astro.props.hoverZoneBehind;
+const { allowMainStyles, noContentPadding, hideSpotify, noBackdropFilter, flangeColor } = Astro.props;
+const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
 
 // console.log("title, desc", title, description, "props", Astro.props)
 const headerVars: HeaderVars = {
@@ -70,6 +70,7 @@ const headerVars: HeaderVars = {
               zIndex: Astro.props.pageNotInNav ? 1 : 0,
             }}
             class="active"
+            textColor={textColor}
           />
         )
       }
@@ -81,6 +82,8 @@ const headerVars: HeaderVars = {
             icon="majesticons:newspaper-line"
             href="/press"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Press
           </NavLink>
@@ -90,6 +93,8 @@ const headerVars: HeaderVars = {
             href="/blog"
             textColor={textColor}
             chip="Newsletter"
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Blog
           </NavLink>
@@ -101,6 +106,8 @@ const headerVars: HeaderVars = {
             icon="majesticons:applications-add-line"
             href="/projects"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Projects
           </NavLink>
@@ -111,6 +118,8 @@ const headerVars: HeaderVars = {
             chip="M.S."
             chipIcon="majesticons:academic-cap-line"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Résumé
           </NavLink>
@@ -119,6 +128,8 @@ const headerVars: HeaderVars = {
             icon="uil:github-alt"
             href="/github"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             GitHub
           </NavLink>
@@ -131,6 +142,8 @@ const headerVars: HeaderVars = {
             href="/photo"
             id="photoNavLink"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Gallery
           </NavLink>
@@ -140,6 +153,8 @@ const headerVars: HeaderVars = {
             href="/photo/map"
             id="mapNavLink"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             GPS Map
           </NavLink>
@@ -149,6 +164,8 @@ const headerVars: HeaderVars = {
             href="/photo/albums"
             id="photoNavLink"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Albums
           </NavLink>
@@ -161,6 +178,8 @@ const headerVars: HeaderVars = {
             href="/strava"
             chip="Lake Placid"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Strava
           </NavLink>
@@ -170,6 +189,8 @@ const headerVars: HeaderVars = {
             icon="majesticons:mail-line"
             href="/email"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Email
           </NavLink>
@@ -179,6 +200,8 @@ const headerVars: HeaderVars = {
             icon="ic:outline-person-pin"
             href="/contact.vcf"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Contact
           </NavLink>
@@ -188,6 +211,8 @@ const headerVars: HeaderVars = {
             icon="lucide:linkedin"
             href="/linkedin"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             LinkedIn
           </NavLink>
@@ -196,6 +221,8 @@ const headerVars: HeaderVars = {
             icon="lucide:instagram"
             href="/instagram"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Instagram
           </NavLink>

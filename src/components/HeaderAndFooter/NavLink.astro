@@ -2,7 +2,7 @@
 import { Icon } from "astro-icon/components";
 import HoverZone from "./HoverZone.astro";
 import SmartHref from "./SmartHref.astro";
-const { icon, chip, chipIcon, chipColor, href, id, hoverZoneBehind } =
+const { icon, chip, chipIcon, chipColor, href, id, hoverZoneBehind, noBackdropFilter, flangeColor } =
   Astro.props;
 let [iconPack, iconName] = icon.split(":");
 let [chipPack, chipName] = chipIcon ? chipIcon.split(":") : [0, 0];
@@ -31,7 +31,7 @@ const { textColor } = Astro.props;
 <li class:list={[{ active: active }, Astro.props.class]}>
   <SmartHref href={href} id={id}>
     <!-- <Icon icon={icon} class="icon" /> -->
-    {active && hoverZoneBehind && <HoverZone />}
+    {active && hoverZoneBehind && <HoverZone textColor={textColor} noBackdropFilter={noBackdropFilter} flangeColor={flangeColor} />}
     <Icon name={iconPack + ":" + iconName} size="1.2em" />
 
     <span class="navLinkText">
@@ -52,7 +52,7 @@ const { textColor } = Astro.props;
         </div>
       )
     }
-    {active && !hoverZoneBehind && <HoverZone />}
+    {active && !hoverZoneBehind && <HoverZone textColor={textColor} noBackdropFilter={noBackdropFilter} flangeColor={flangeColor} />}
   </SmartHref>
 
   <style define:vars={{ chipColor: chipColor, textColor }}>
