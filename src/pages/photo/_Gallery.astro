@@ -540,13 +540,112 @@ const gutter = "12px";
 
       zoomedParent.classList.remove("swapped");
       
-      // Start overlay fade and image animation simultaneously
+      // Get current position of the gallery image element
+      const currentRect = zoomedParent.getBoundingClientRect();
+      
+      // Check if the image is significantly offscreen (more than 2 viewport heights away)
+      const isFarOffscreen = currentRect.top > window.innerHeight * 2 || currentRect.bottom < -window.innerHeight;
+      
+      if (isFarOffscreen) {
+        // If image is far offscreen, skip animation and just reset immediately
+        wrapper.classList.remove("overlay-active");
+        document.body.classList.remove("stop-scrolling");
+        
+        zoomedParent.classList.remove("zoomed");
+        
+        const resetStyleCSS = {
+          position: '', width: '', height: '', left: '', top: '', margin: '', transform: '', transition: '', opacity: ''
+        };
+        Object.assign(zoomedImg.style, resetStyleCSS);
+        Object.assign(fullResImg.style, resetStyleCSS);
+        
+        zoomedImg = null;
+        zoomedParent = null;
+        fullResImg = null;
+        
+        // Scroll to the image after reset, centering it in the viewport
+        const viewportCenter = window.innerHeight / 2;
+        const imageCenter = currentRect.height / 2;
+        const targetScrollY = currentRect.top + window.scrollY - viewportCenter + imageCenter;
+        
+        // Clamp scroll position to valid bounds
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const clampedScrollY = Math.max(0, Math.min(targetScrollY, maxScroll));
+        
+        window.scrollTo({ top: clampedScrollY, behavior: 'auto' });
+        return;
+      }
+      
+      // Check if the image is visible in the viewport
+      const isVisible = currentRect.top >= 0 && currentRect.bottom <= window.innerHeight;
+      
+      let rectForPositioning = currentRect;
+      
+      // Only scroll if not visible
+      if (!isVisible) {
+        // Calculate scroll position to center the image in the viewport
+        const viewportCenter = window.innerHeight / 2;
+        const imageCenter = currentRect.height / 2;
+        const targetScrollY = currentRect.top + window.scrollY - viewportCenter + imageCenter;
+        
+        // Clamp scroll position to valid bounds
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const clampedScrollY = Math.max(0, Math.min(targetScrollY, maxScroll));
+        
+        window.scrollTo({ top: clampedScrollY, behavior: 'auto' });
+        
+        // Recalculate position after scroll
+        const scrolledRect = zoomedParent.getBoundingClientRect();
+        rectForPositioning = scrolledRect;
+        originalRect = { top: scrolledRect.top, left: scrolledRect.left, width: scrolledRect.width, height: scrolledRect.height };
+      } else {
+        // Update originalRect to current position for animation calculation
+        originalRect = { top: currentRect.top, left: currentRect.left, width: currentRect.width, height: currentRect.height };
+      }
+      
+      // Temporarily disable transitions
+      zoomedImg.style.transition = 'none';
+      fullResImg.style.transition = 'none';
+      
+      // Update the zoomed images' CSS positioning to match current coordinates
+      zoomedImg.style.left = `${rectForPositioning.left}px`;
+      zoomedImg.style.top = `${rectForPositioning.top}px`;
+      zoomedImg.style.width = `${rectForPositioning.width}px`;
+      zoomedImg.style.height = `${rectForPositioning.height}px`;
+      
+      fullResImg.style.left = `${rectForPositioning.left}px`;
+      fullResImg.style.top = `${rectForPositioning.top}px`;
+      fullResImg.style.width = `${rectForPositioning.width}px`;
+      fullResImg.style.height = `${rectForPositioning.height}px`;
+      
+      // Recalculate the fullscreen transform based on the new position
+      const viewWidth = window.innerWidth;
+      const viewHeight = window.innerHeight;
+      const metadataPanelHeight = viewWidth < 800 ? 120 : 150;
+      const availableHeight = viewHeight - metadataPanelHeight;
+      const maxViewBoundsWidth = Math.min(viewWidth * 0.95, 2000);
+      const maxViewBoundsHeight = availableHeight * 0.95;
+      const scaleX = maxViewBoundsWidth / rectForPositioning.width;
+      const scaleY = maxViewBoundsHeight / rectForPositioning.height;
+      const finalScale = Math.min(scaleX, scaleY);
+      const targetWidth = rectForPositioning.width * finalScale;
+      const targetHeight = rectForPositioning.height * finalScale;
+      const translateX = (viewWidth - targetWidth) / 2;
+      const translateY = (availableHeight - targetHeight) / 2;
+      const animationTransformStr = `translate(${translateX - rectForPositioning.left}px, ${translateY - rectForPositioning.top}px) scale(${finalScale})`;
+      
+      // Apply the calculated transform to get back to fullscreen position
+      zoomedImg.style.transform = animationTransformStr;
+      fullResImg.style.transform = animationTransformStr;
+      
+      // Force a reflow to ensure the position update takes effect
+      zoomedImg.offsetHeight;
+      
+      // Start overlay fade
       wrapper.classList.remove("overlay-active");
       document.body.classList.remove("stop-scrolling");
       
-      // Animate back to original position
-      // The element is still positioned fixed at originalRect.left/top
-      // We just need to animate the transform back to identity
+      // Animate back to current position (transform to identity)
       zoomedImg.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
       fullResImg.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease-out';
       
