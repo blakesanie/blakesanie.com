@@ -766,6 +766,17 @@ const description =
       filter: contrast(1.05);
     }
 
+    :global(#photoFullScreen .full *) {
+      max-width: none !important;
+      max-height: none !important;
+    }
+
+    :global(#photoFullScreen .full picture),
+    :global(#photoFullScreen .full img) {
+      width: 100% !important;
+      height: auto !important;
+    }
+
     #selectedMap {
       height: 100%;
       width: 100%;
