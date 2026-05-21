@@ -39,9 +39,7 @@ const imagesArr = await Promise.all(
       width,
       height,
       filename,
-      exif,
-      exifToolData: exifToolJson[name] || {},
-      embeddingData: embeddingsJson[name] || null
+      exif
     };
   })
 );

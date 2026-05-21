@@ -40,12 +40,7 @@ const galleryImages = imagesData.map((img) => {
     path: imageAsset, 
     width, 
     height,
-    camera = "Unknown Camera",
-    lens = "Unknown Lens",
-    focalLength = "—",
-    aperture = "—",
-    shutterSpeed = "—",
-    iso = "—"
+    exif
   } = img;
   
   const aspectRatioNum = width && height ? width / height : 1;
@@ -56,12 +51,12 @@ const galleryImages = imagesData.map((img) => {
     flexGrow: aspectRatioNum,
     aspectRatio: width && height ? `${width} / ${height}` : "auto",
     metadata: {
-      camera,
-      lens,
-      focalLength,
-      aperture,
-      shutterSpeed,
-      iso
+      camera: exif.model,
+      lens: exif.Lens,
+      focalLength: exif.FocalLength,
+      aperture: exif.FNumber,
+      shutterSpeed: exif.ExposureTime < 0 ? `1/${Math.round(1/exif.ExposureTime)}` : exif.ExposureTime,
+      iso: exif.ISO
     }
   };
 });
@@ -475,8 +470,12 @@ const gutter = "12px";
       const viewWidth = window.innerWidth;
       const viewHeight = window.innerHeight;
       
-      const maxViewBoundsWidth = Math.min(viewWidth * 0.92, 2000);
-      const maxViewBoundsHeight = viewHeight * 0.72; 
+      // Account for metadata panel height (approximately 150px on desktop, 120px on mobile)
+      const metadataPanelHeight = viewWidth < 800 ? 120 : 150;
+      const availableHeight = viewHeight - metadataPanelHeight;
+      
+      const maxViewBoundsWidth = Math.min(viewWidth * 0.95, 2000);
+      const maxViewBoundsHeight = availableHeight * 0.95;
       
       const scaleX = maxViewBoundsWidth / originalRect.width;
       const scaleY = maxViewBoundsHeight / originalRect.height;
@@ -485,8 +484,9 @@ const gutter = "12px";
       const targetWidth = originalRect.width * finalScale;
       const targetHeight = originalRect.height * finalScale;
 
+      // Center image in available space
       const translateX = (viewWidth - targetWidth) / 2;
-      const translateY = (viewHeight * 0.44) - (targetHeight / 2);
+      const translateY = (availableHeight - targetHeight) / 2;
 
       const stylePinnedCSS = {
         position: 'fixed',
@@ -567,6 +567,35 @@ const gutter = "12px";
       if (e.key === "Escape" && wrapper.classList.contains("overlay-active")) {
         closeFullscreen();
       }
+    });
+
+    // Handle window resize to keep image centered and properly scaled
+    window.addEventListener("resize", () => {
+      if (!wrapper.classList.contains("overlay-active") || !zoomedImg || !fullResImg) return;
+
+      const viewWidth = window.innerWidth;
+      const viewHeight = window.innerHeight;
+      
+      const metadataPanelHeight = viewWidth < 800 ? 120 : 150;
+      const availableHeight = viewHeight - metadataPanelHeight;
+      
+      const maxViewBoundsWidth = Math.min(viewWidth * 0.95, 2000);
+      const maxViewBoundsHeight = availableHeight * 0.95;
+      
+      const scaleX = maxViewBoundsWidth / originalRect.width;
+      const scaleY = maxViewBoundsHeight / originalRect.height;
+      const finalScale = Math.min(scaleX, scaleY);
+
+      const targetWidth = originalRect.width * finalScale;
+      const targetHeight = originalRect.height * finalScale;
+
+      const translateX = (viewWidth - targetWidth) / 2;
+      const translateY = (availableHeight - targetHeight) / 2;
+
+      const animationTransformStr = `translate(${translateX - originalRect.left}px, ${translateY - originalRect.top}px) scale(${finalScale})`;
+      
+      zoomedImg.style.transform = animationTransformStr;
+      fullResImg.style.transform = animationTransformStr;
     });
   }
 </script>
