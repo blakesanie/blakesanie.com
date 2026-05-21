@@ -1,7 +1,6 @@
 ---
 import { GoogleFontsOptimizer } from "astro-google-fonts-optimizer";
 import { SEO } from "astro-seo";
-import { renderImg } from "astro-imagetools/api";
 import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
 import fs from "fs";
@@ -17,7 +16,7 @@ const font2 = fs.readFileSync(
   "src/assets/fonts/Assistant/static/Assistant-SemiBold.ttf"
 );
 
-const ogBg = fs.readFileSync("photo-portfolio/portfolio2k/ManhattanBridge.jpg");
+const ogBg = fs.readFileSync("src/assets/photo-portfolio/portfolio2k/ManhattanBridge.jpg");
 const b64 = ogBg.toString("base64");
 
 // const fontBuffer = await font.arrayBuffer();
@@ -199,19 +198,20 @@ if (!Astro.props.image) {
 
 const { noIndex } = Astro.props;
 
-const { link, style, img } = await renderImg({
-  src: Astro.props.image,
-  breakpoints: [1200],
-  format: "webp",
-  alt: "",
-  quality: 50,
-});
+// const { link, style, img } = await renderImg({
+//   src: Astro.props.image,
+//   breakpoints: [1200],
+//   format: "webp",
+//   alt: "",
+//   quality: 50,
+// });
 
-const ogThumb = img.split('srcset="')[1].split('"')[0];
+// const ogThumb = img.split('srcset="')[1].split('"')[0];
 
-const image = `${
-  import.meta.env.DEV ? "" : "https://blakesanie.com"
-}${ogThumb}`;
+// const image = `${
+//   import.meta.env.DEV ? "" : "https://blakesanie.com"
+// }${ogThumb}`;
+const image = "test"
 const imageAlt =
   Astro.props?.imageAlt || "Open Graph Thumbnail Image for blakesanie.com";
 const description =

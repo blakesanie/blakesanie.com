@@ -1,5 +1,4 @@
 import { defineConfig } from "astro/config";
-import { astroImageTools } from "astro-imagetools";
 import compress from "astro-compress";
 import sitemap from "astro-sitemap";
 import mdx from "@astrojs/mdx";
@@ -41,7 +40,6 @@ export default defineConfig({
       rehypePlugins: [rehypeKatex],
       gfm: true,
     }),
-    astroImageTools,
     sitemap({
       filter(page) {
         let parts = page.split("/");

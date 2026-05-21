@@ -2,9 +2,12 @@
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import { Icon } from "astro-icon/components";
 //@ts-ignore
-import { Img } from "astro-imagetools/components";
 import Button from "../../components/basic/Button.astro";
 import Substack from "../../components/Substack.astro";
+import { Image } from "astro:assets";
+
+// Dynamically grab all local images from your assets directory at build time
+const imagesGlob = import.meta.glob<{ default: any }>("/src/assets/images/**/*.{png,jpg,jpeg}");
 
 interface ProjectInterface {
   title: string;
@@ -62,12 +65,6 @@ const projects: ProjectInterface[] = [
       "My personalized financial management platform surrounding the research, implementation, and deployment of AI trading strategies, portfolio optimization measures, and risk management considerations. Initially founded as a Reinforcement Learning framework with industry-standard technical analysis, the platform has evolved to leverage adaptive quantitative methods, intuitive UI, and realtime integrations.",
     image: "/src/assets/images/projects/fund_chart.png",
     id: "quant",
-    // links: [
-    //   {
-    //     label: "Learn More",
-    //     href: "/quant",
-    //   },
-    // ],
     tech: [
       {
         icon: "logos:chrome",
@@ -167,23 +164,6 @@ const projects: ProjectInterface[] = [
       },
     ],
   },
-  // {
-  //   title: "Learned Early Exit Network (LeeNet)",
-  //   image: "/src/assets/images/projects/leenet.png",
-  //   description: "",
-  //   links: [
-  //     {
-  //       label: "Presentation",
-  //       href: "/droid.pdf",
-  //     },
-  //     {
-  //       label: "GitHub",
-  //       href: "",
-  //       icon: "uil:github-alt",
-  //     },
-  //   ],
-  //   tech: [],
-  // },
   {
     title: "Knowledge-Based AI for Image Composition",
     image: "/src/assets/images/projects/kbai.png",
@@ -536,6 +516,12 @@ function toFragrment(str: string) {
       projects.map(({ title, id, description, tech, ...project }) => {
         const defaultLink =
           project.links && project.links[0] && project.links[0].href;
+        
+        // Resolve target image module dynamically from global build manifest
+        const imageSrc = project.image && imagesGlob[project.image] 
+          ? imagesGlob[project.image]() 
+          : null;
+
         return (
           <div class="project" id={id || toFragrment(title)}>
             <div class="info">
@@ -567,17 +553,14 @@ function toFragrment(str: string) {
               )}
             </div>
             <a class="demo" href={defaultLink} target="_blank">
-              {project.image ? (
-                <Img
-                  src={project.image}
-                  alt=""
+              {imageSrc ? (
+                <Image
+                  src={imageSrc}
+                  alt={`Screenshot visualization of ${title}`}
                   loading="lazy"
-                  placeholder="blurred"
+                  width={450}
+                  quality={60}
                   format="webp"
-                  breakpoints={[900]}
-                  format="webp"
-                  quality={50}
-                  attributes={{}}
                 />
               ) : project.youtube ? (
                 <iframe
@@ -615,25 +598,17 @@ function toFragrment(str: string) {
     display: flex;
     flex: 1;
     min-width: min(100%, 400px);
-    /* padding-right: 1.5em; */
-  }
-  .project:nth-of-type(2n) .info {
-    /* padding-right: 0;
-    padding-left: 1.5em; */
   }
   .demo {
     flex: 1;
-    /* padding: 1em 0; */
-    /* border: 1px solid red; */
     min-width: min(100%, 300px);
     max-width: min(100%, 450px);
-    /* overflow: visible; */
   }
-  .demo :global(img),
-  .demo iframe.youtube {
-    /* object-fit: contain; */
-    background-repeat: no-repeat;
-    //border-radius: 12px;
+  .demo :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
   }
   .demo iframe.youtube {
     aspect-ratio: calc(16 / 9);
@@ -650,17 +625,14 @@ function toFragrment(str: string) {
   .title {
     display: flex;
     align-items: center;
-    /* margin-bottom: 0.6em; */
   }
   .desc {
     font-size: 1em;
-    /* opacity: 0.7; */
   }
   .tech {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    /* margin-top: 0.8em; */
   }
 
   .title [data-icon] {
@@ -680,7 +652,6 @@ function toFragrment(str: string) {
   }
 
   .tech [data-icon] {
-    /* width: 40px; */
     border-radius: 0.2em;
     margin: 0.4em;
     transition: all 0.1s ease;
@@ -704,16 +675,9 @@ function toFragrment(str: string) {
     line-height: 1em;
     height: 1em;
     margin-top: 0.3em;
-    /* background-color: green; */
     text-align: center;
     z-index: 10;
-    /* opacity: 0; */
-    /* transition: all 0.3s ease; */
   }
-
-  /* .tech:hover .selectedTech {
-    opacity: 1;
-  } */
 
   .link {
     margin: 0.5em;
@@ -758,7 +722,9 @@ function toFragrment(str: string) {
   const titleIcons = document.querySelectorAll("h2 svg");
   for (let i = 0; i < titleIcons.length; i++) {
     const titleIcon = titleIcons[i] as HTMLElement;
-    const id = titleIcon.parentElement.parentElement.parentElement.id;
+    const id = titleIcon.parentElement?.parentElement?.parentElement?.id;
+    if (!id) continue;
+    
     if (titleIcon.classList.contains("check")) {
       checkIcons[id] = titleIcon;
     } else {
@@ -777,8 +743,6 @@ function toFragrment(str: string) {
           checkIcons[id2].style.display = "none";
         }
       }
-      // checkIcons[id].style.display = 'block'
-      // titleIcon.style.display = 'none'
     });
   }
 </script>
