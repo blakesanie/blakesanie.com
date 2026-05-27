@@ -50,6 +50,8 @@ const galleryImages = imagesData.map((img) => {
     path: imageAsset,
     flexGrow: aspectRatioNum,
     aspectRatio: width && height ? `${width} / ${height}` : "auto",
+    width,
+    height,
     metadata: {
       camera: exif.model,
       lens: exif.Lens,
@@ -107,6 +109,8 @@ const gutter = "12px";
                 data-aperture={image.metadata.aperture}
                 data-shutter={image.metadata.shutterSpeed}
                 data-iso={image.metadata.iso}
+                data-width={image.width}
+                data-height={image.height}
                 style={{ 
                   flexGrow: image.flexGrow,
                   aspectRatio: image.aspectRatio,
@@ -139,21 +143,18 @@ const gutter = "12px";
             );
           })
         }
-        <div class="gallery-fluff" style="flex-grow: 100;"></div>
-        <div class="gallery-fluff" style="flex-grow: 100;"></div>
-        <div class="gallery-fluff" style="flex-grow: 100;"></div>
       </div>
     </div>
 
     {allowFullscreen && (
       <div id="fullscreenOverlay" role="dialog" aria-modal="true">
-        <button id="closeOverlay" aria-label="Close fullscreen view">&times;</button>
+      <img id="fullscreenPlaceholder" class="fullscreen-placeholder" alt="" />
         
-        <div class="metadata-panel" id="metadataPanel">
-          <h2 class="metadata-title" id="metaTitle">Image Title</h2>
-          <div class="metadata-chips-row" id="metaChipsRow"></div>
+          <div class="metadata-panel" id="metadataPanel">
+            <h2 class="metadata-title" id="metaTitle">Image Title</h2>
+            <div class="metadata-chips-row" id="metaChipsRow"></div>
+          </div>
         </div>
-      </div>
     )}
   </div>
 </HeaderAndFooter>
@@ -207,15 +208,8 @@ const gutter = "12px";
     border-radius: 6px;
   }
 
-  .gallery-fluff {
-    height: 0;
-    margin: 0;
-    padding: 0;
-  }
-
-  .galleryImage:not(.zoomed):hover {
+  .galleryImage:hover {
     transform: translateY(-2px);
-    transition: transform 0.2s ease-in-out;
   }
 
   .astro-native-img-wrapper {
@@ -225,7 +219,6 @@ const gutter = "12px";
     position: relative;
     background-color: #f1f1f1;
     overflow: hidden;
-    border-radius: 6px;
   }
 
   .astro-native-img-wrapper img.thumb-img {
@@ -234,7 +227,6 @@ const gutter = "12px";
     height: 100%;
     cursor: pointer;
     will-change: transform;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     z-index: 1;
   }
 
@@ -244,43 +236,13 @@ const gutter = "12px";
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0;
     visibility: hidden;
     pointer-events: none;
     z-index: 2;
-    will-change: transform;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease-in-out;
   }
 
   .noFullscreen .astro-native-img-wrapper img.thumb-img {
     cursor: default;
-  }
-
-  .galleryImage.zoomed img.thumb-img,
-  .galleryImage.zoomed img.fullres-img {
-    position: fixed !important;
-    pointer-events: auto;
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
-    border-radius: 4px;
-    transform-origin: top left !important;
-  }
-
-  .galleryImage.zoomed img.thumb-img {
-    z-index: 99993 !important;
-    opacity: 1;
-  }
-
-  .galleryImage.zoomed img.fullres-img {
-    z-index: 99994 !important;
-  }
-
-  .galleryImage.zoomed.swapped img.thumb-img {
-    opacity: 1; 
-  }
-
-  .galleryImage.zoomed.swapped img.fullres-img {
-    opacity: 1;
-    visibility: visible;
   }
 
   #fullscreenOverlay {
@@ -290,96 +252,50 @@ const gutter = "12px";
     width: 100vw;
     height: 100dvh;
     background-color: #ffffff; 
-    z-index: 99990; 
-    opacity: 0;
+    z-index: 99990;
     pointer-events: none;
-    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    display: flex;
+    opacity: 0;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
   }
 
-  .overlay-active #fullscreenOverlay {
-    opacity: 1;
-    pointer-events: auto;
+  #fullscreenOverlay.layout-row {
+    flex-direction: row;
   }
 
-  #closeOverlay {
-    position: absolute;
-    top: 1.5rem;
-    right: 2rem;
-    background: none;
-    border: none;
-    font-size: 2.5rem;
-    cursor: pointer;
-    color: #111;
-    z-index: 999995; 
-    transition: transform 0.2s ease;
+  #fullscreenOverlay.layout-column {
+    flex-direction: column;
   }
 
-  #closeOverlay:hover {
-    transform: scale(1.1);
+  /* #fullscreenOverlay.layout-row img {
+    max-height: 100%;
+    width: auto;
   }
 
-  /* --- Minimalist Metadata Panel & Chips --- */
-  .metadata-panel {
-    position: absolute;
-    bottom: 0;
-    left: 0;
+  #fullscreenOverlay.layout-column img {
+    max-width: 100%;
+    height: auto;
+  } */
+
+  #fullscreenPlaceholder {
     width: 100%;
-    background: linear-gradient(to top, rgba(255,255,255,1) 80%, rgba(255,255,255,0) 0%);
-    padding: 2rem 3rem 2.5rem 3rem;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .metadata-panel {
+    position: relative;
+    border: 2px solid black;
     box-sizing: border-box;
     z-index: 999994;
-    transform: translateY(20px);
-    opacity: 0;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
-    border-top: 1px solid #f0f0f0;
+    flex-shrink: 0;
   }
 
-  .overlay-active .metadata-panel {
-    transform: translateY(0);
+  #fullscreenOverlay.active {
     opacity: 1;
-    transition-delay: 0.1s;
-  }
-
-  .metadata-title {
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin: 0 0 1.2rem 0;
-    color: #111;
-    letter-spacing: -0.02em;
-  }
-
-  .metadata-chips-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    align-items: center;
-  }
-
-  /* Structural Chip Layout styling rules matching portfolio aesthetics */
-  :global(.meta-chip) {
-    display: inline-flex;
-    align-items: center;
-    background-color: #f5f5f5;
-    border: 1px solid #eaeaea;
-    color: #444;
-    padding: 0.35rem 0.8rem;
-    border-radius: 100px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    line-height: 1;
-  }
-
-  /* Secondary contrast color context rule for category tags inside chips */
-  :global(.meta-chip .chip-label) {
-    color: #888;
-    margin-right: 0.35rem;
-    font-weight: 400;
-  }
-
-  :global(.stop-scrolling) {
-    overflow: hidden;
-    height: 100dvh;
   }
 
   @media screen and (max-width: 800px) { 
@@ -400,317 +316,80 @@ const gutter = "12px";
 </style>
 
 <script>
+
+  const fullScreenEl = document.querySelector("#fullscreenOverlay");
+  const metadataTitle = document.querySelector("#metaTitle");
+  const fullScreenImage = document.querySelector("#fullscreenPlaceholder");
+
   document.addEventListener("DOMContentLoaded", () => {
-    const fullResImages = document.querySelectorAll(".fullres-img") as NodeListOf<HTMLImageElement>;
-    fullResImages.forEach(img => {
-      if (img.src) {
-        img.setAttribute("data-src", img.src);
-        img.removeAttribute("src");
-        img.removeAttribute("srcset");
-      }
+  const galleryImages = document.querySelectorAll(".galleryImage");
+  galleryImages.forEach((image) => {
+    image.addEventListener("click", () => {
+      console.log("Image clicked");
+      enterFullscreen(image as HTMLImageElement);
     });
   });
 
-  const wrapper = document.getElementById("galleryWrapper");
-  const gallery = document.getElementById("gallery");
-  const overlay = document.getElementById("fullscreenOverlay");
-  const closeBtn = document.getElementById("closeOverlay");
-
-  const metaTitle = document.getElementById("metaTitle");
-  const metaChipsRow = document.getElementById("metaChipsRow");
-
-  if (wrapper && gallery && overlay && closeBtn) {
-    let zoomedImg: HTMLImageElement | null = null;
-    let zoomedParent: HTMLElement | null = null;
-    let fullResImg: HTMLImageElement | null = null;
-
-    let originalRect = { top: 0, left: 0, width: 0, height: 0 };
-
-    gallery.addEventListener("click", (e) => {
-      const clickedImg = e.target as HTMLImageElement;
-      if (!clickedImg.classList.contains("thumb-img") || wrapper.classList.contains("noFullscreen") || wrapper.classList.contains("overlay-active")) return;
-
-      zoomedParent = clickedImg.closest(".galleryImage");
-      zoomedImg = clickedImg;
-      fullResImg = zoomedParent?.querySelector(".fullres-img") as HTMLImageElement;
-
-      if (!zoomedParent || !fullResImg) return;
-
-      if (metaTitle) metaTitle.textContent = zoomedParent.getAttribute("data-name") || "Untitled Photograph";
-      
-      // Re-populate metadata row dynamically using raw source tags mapped to display schemas
-      if (metaChipsRow) {
-        metaChipsRow.innerHTML = ""; // Wipe past node fragments safely
-        
-        const specs = [
-          { label: "", value: zoomedParent.getAttribute("data-camera") },
-          { label: "", value: zoomedParent.getAttribute("data-lens") },
-          { label: "Focal", value: zoomedParent.getAttribute("data-focal") },
-          { label: "Aperture", value: zoomedParent.getAttribute("data-aperture") },
-          { label: "Shutter", value: zoomedParent.getAttribute("data-shutter") },
-          { label: "ISO", value: zoomedParent.getAttribute("data-iso") }
-        ];
-
-        specs.forEach(spec => {
-          // Drop metadata fields carrying null tags or placeholders cleanly
-          if (spec.value && spec.value !== "—" && spec.value !== "Unknown Camera" && spec.value !== "Unknown Lens") {
-            const chip = document.createElement("div");
-            chip.className = "meta-chip";
-            
-            if (spec.label) {
-              chip.innerHTML = `<span class="chip-label">${spec.label}</span>${spec.value}`;
-            } else {
-              chip.textContent = spec.value;
-            }
-            metaChipsRow.appendChild(chip);
-          }
-        });
-      }
-
-      const trueSrc = fullResImg.getAttribute("data-src");
-      if (trueSrc) fullResImg.src = trueSrc;
-
-      const rect = zoomedImg.getBoundingClientRect();
-      originalRect = { top: rect.top, left: rect.left, width: rect.width, height: rect.height };
-
-      const viewWidth = window.innerWidth;
-      const viewHeight = window.innerHeight;
-      
-      // Account for metadata panel height (approximately 150px on desktop, 120px on mobile)
-      const metadataPanelHeight = viewWidth < 800 ? 120 : 150;
-      const availableHeight = viewHeight - metadataPanelHeight;
-      
-      const maxViewBoundsWidth = Math.min(viewWidth * 0.95, 2000);
-      const maxViewBoundsHeight = availableHeight * 0.95;
-      
-      const scaleX = maxViewBoundsWidth / originalRect.width;
-      const scaleY = maxViewBoundsHeight / originalRect.height;
-      const finalScale = Math.min(scaleX, scaleY);
-
-      const targetWidth = originalRect.width * finalScale;
-      const targetHeight = originalRect.height * finalScale;
-
-      // Center image in available space
-      const translateX = (viewWidth - targetWidth) / 2;
-      const translateY = (availableHeight - targetHeight) / 2;
-
-      const stylePinnedCSS = {
-        position: 'fixed',
-        width: `${originalRect.width}px`,
-        height: `${originalRect.height}px`,
-        left: `${originalRect.left}px`,
-        top: `${originalRect.top}px`,
-        margin: '0',
-        transform: 'translate(0, 0) scale(1)',
-        transition: 'none'
-      };
-
-      Object.assign(zoomedImg.style, stylePinnedCSS);
-      Object.assign(fullResImg.style, stylePinnedCSS);
-
-      zoomedParent.classList.add("zoomed");
-      wrapper.classList.add("overlay-active");
-      document.body.classList.add("stop-scrolling");
-
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (!zoomedImg || !fullResImg) return;
-          
-          const animationTransformStr = `translate(${translateX - originalRect.left}px, ${translateY - originalRect.top}px) scale(${finalScale})`;
-          
-          zoomedImg.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
-          fullResImg.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease-in-out';
-          
-          zoomedImg.style.transform = animationTransformStr;
-          fullResImg.style.transform = animationTransformStr;
-        });
-      });
-
-      const handleZoomEnd = (e: TransitionEvent) => {
-        if (e.propertyName === "transform" && zoomedParent) {
-          zoomedParent.classList.add("swapped");
-          zoomedImg?.removeEventListener("transitionend", handleZoomEnd);
-        }
-      };
-      zoomedImg.addEventListener("transitionend", handleZoomEnd);
-    });
-
-    const closeFullscreen = () => {
-      if (!zoomedImg || !zoomedParent || !fullResImg) return;
-
-      zoomedParent.classList.remove("swapped");
-      
-      // Get current position of the gallery image element
-      const currentRect = zoomedParent.getBoundingClientRect();
-      
-      // Check if the image is significantly offscreen (more than 2 viewport heights away)
-      const isFarOffscreen = currentRect.top > window.innerHeight * 2 || currentRect.bottom < -window.innerHeight;
-      
-      if (isFarOffscreen) {
-        // If image is far offscreen, skip animation and just reset immediately
-        wrapper.classList.remove("overlay-active");
-        document.body.classList.remove("stop-scrolling");
-        
-        zoomedParent.classList.remove("zoomed");
-        
-        const resetStyleCSS = {
-          position: '', width: '', height: '', left: '', top: '', margin: '', transform: '', transition: '', opacity: ''
-        };
-        Object.assign(zoomedImg.style, resetStyleCSS);
-        Object.assign(fullResImg.style, resetStyleCSS);
-        
-        zoomedImg = null;
-        zoomedParent = null;
-        fullResImg = null;
-        
-        // Scroll to the image after reset, centering it in the viewport
-        const viewportCenter = window.innerHeight / 2;
-        const imageCenter = currentRect.height / 2;
-        const targetScrollY = currentRect.top + window.scrollY - viewportCenter + imageCenter;
-        
-        // Clamp scroll position to valid bounds
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        const clampedScrollY = Math.max(0, Math.min(targetScrollY, maxScroll));
-        
-        window.scrollTo({ top: clampedScrollY, behavior: 'auto' });
-        return;
-      }
-      
-      // Check if the image is visible in the viewport
-      const isVisible = currentRect.top >= 0 && currentRect.bottom <= window.innerHeight;
-      
-      let rectForPositioning = currentRect;
-      
-      // Only scroll if not visible
-      if (!isVisible) {
-        // Calculate scroll position to center the image in the viewport
-        const viewportCenter = window.innerHeight / 2;
-        const imageCenter = currentRect.height / 2;
-        const targetScrollY = currentRect.top + window.scrollY - viewportCenter + imageCenter;
-        
-        // Clamp scroll position to valid bounds
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        const clampedScrollY = Math.max(0, Math.min(targetScrollY, maxScroll));
-        
-        window.scrollTo({ top: clampedScrollY, behavior: 'auto' });
-        
-        // Recalculate position after scroll
-        const scrolledRect = zoomedParent.getBoundingClientRect();
-        rectForPositioning = scrolledRect;
-        originalRect = { top: scrolledRect.top, left: scrolledRect.left, width: scrolledRect.width, height: scrolledRect.height };
-      } else {
-        // Update originalRect to current position for animation calculation
-        originalRect = { top: currentRect.top, left: currentRect.left, width: currentRect.width, height: currentRect.height };
-      }
-      
-      // Temporarily disable transitions
-      zoomedImg.style.transition = 'none';
-      fullResImg.style.transition = 'none';
-      
-      // Update the zoomed images' CSS positioning to match current coordinates
-      zoomedImg.style.left = `${rectForPositioning.left}px`;
-      zoomedImg.style.top = `${rectForPositioning.top}px`;
-      zoomedImg.style.width = `${rectForPositioning.width}px`;
-      zoomedImg.style.height = `${rectForPositioning.height}px`;
-      
-      fullResImg.style.left = `${rectForPositioning.left}px`;
-      fullResImg.style.top = `${rectForPositioning.top}px`;
-      fullResImg.style.width = `${rectForPositioning.width}px`;
-      fullResImg.style.height = `${rectForPositioning.height}px`;
-      
-      // Recalculate the fullscreen transform based on the new position
-      const viewWidth = window.innerWidth;
-      const viewHeight = window.innerHeight;
-      const metadataPanelHeight = viewWidth < 800 ? 120 : 150;
-      const availableHeight = viewHeight - metadataPanelHeight;
-      const maxViewBoundsWidth = Math.min(viewWidth * 0.95, 2000);
-      const maxViewBoundsHeight = availableHeight * 0.95;
-      const scaleX = maxViewBoundsWidth / rectForPositioning.width;
-      const scaleY = maxViewBoundsHeight / rectForPositioning.height;
-      const finalScale = Math.min(scaleX, scaleY);
-      const targetWidth = rectForPositioning.width * finalScale;
-      const targetHeight = rectForPositioning.height * finalScale;
-      const translateX = (viewWidth - targetWidth) / 2;
-      const translateY = (availableHeight - targetHeight) / 2;
-      const animationTransformStr = `translate(${translateX - rectForPositioning.left}px, ${translateY - rectForPositioning.top}px) scale(${finalScale})`;
-      
-      // Apply the calculated transform to get back to fullscreen position
-      zoomedImg.style.transform = animationTransformStr;
-      fullResImg.style.transform = animationTransformStr;
-      
-      // Force a reflow to ensure the position update takes effect
-      zoomedImg.offsetHeight;
-      
-      // Start overlay fade
-      wrapper.classList.remove("overlay-active");
-      document.body.classList.remove("stop-scrolling");
-      
-      // Animate back to current position (transform to identity)
-      zoomedImg.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
-      fullResImg.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease-out';
-      
-      zoomedImg.style.transform = 'translate(0, 0) scale(1)';
-      fullResImg.style.transform = 'translate(0, 0) scale(1)';
-      fullResImg.style.opacity = '0';
-      
-      // After animation completes, clean up
-      setTimeout(() => {
-        if (!zoomedImg || !zoomedParent || !fullResImg) return;
-        
-        zoomedParent.classList.remove("zoomed");
-
-        const resetStyleCSS = {
-          position: '', width: '', height: '', left: '', top: '', margin: '', transform: '', transition: '', opacity: ''
-        };
-        Object.assign(zoomedImg.style, resetStyleCSS);
-        Object.assign(fullResImg.style, resetStyleCSS);
-
-        zoomedImg = null;
-        zoomedParent = null;
-        fullResImg = null;
-      }, 300);
-    };
-
-    closeBtn.addEventListener("click", closeFullscreen);
-    overlay.addEventListener("click", closeFullscreen);
-    
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && wrapper.classList.contains("overlay-active")) {
-        closeFullscreen();
-      }
-    });
-
-    // Handle window resize to keep image centered and properly scaled
-    window.addEventListener("resize", () => {
-      if (!wrapper.classList.contains("overlay-active") || !zoomedImg || !fullResImg) return;
-
-      // Don't update originalRect during resize - the thumb-img is positioned fixed when zoomed
-      // so getBoundingClientRect would return the wrong position
-      // Use the stored originalRect from when zoom started
-
-      const viewWidth = window.innerWidth;
-      const viewHeight = window.innerHeight;
-      
-      const metadataPanelHeight = viewWidth < 800 ? 120 : 150;
-      const availableHeight = viewHeight - metadataPanelHeight;
-      
-      const maxViewBoundsWidth = Math.min(viewWidth * 0.95, 2000);
-      const maxViewBoundsHeight = availableHeight * 0.95;
-      
-      const scaleX = maxViewBoundsWidth / originalRect.width;
-      const scaleY = maxViewBoundsHeight / originalRect.height;
-      const finalScale = Math.min(scaleX, scaleY);
-
-      const targetWidth = originalRect.width * finalScale;
-      const targetHeight = originalRect.height * finalScale;
-
-      const translateX = (viewWidth - targetWidth) / 2;
-      const translateY = (availableHeight - targetHeight) / 2;
-
-      const animationTransformStr = `translate(${translateX - originalRect.left}px, ${translateY - originalRect.top}px) scale(${finalScale})`;
-      
-      zoomedImg.style.transform = animationTransformStr;
-      fullResImg.style.transform = animationTransformStr;
-    });
+  function enterFullscreen(image: HTMLImageElement) {
+    const dataName = image.getAttribute("data-name");
+    const dataCamera = image.getAttribute("data-camera");
+    const dataLens = image.getAttribute("data-lens");
+    const dataShutter = image.getAttribute("data-shutter");
+    const dataAperture = image.getAttribute("data-aperture");
+    const dataIso = image.getAttribute("data-iso");
+    console.log(dataName, dataCamera, dataLens, dataShutter, dataAperture, dataIso);
+    if (metadataTitle) {
+      metadataTitle.textContent = dataName || "";
+    }
+    if (fullScreenImage) {
+      const src = image.querySelector("img")?.getAttribute("src");
+      console.log(fullScreenImage, src);
+      fullScreenImage.setAttribute("src", src || "");
+      fullScreenImage.setAttribute("data-width", image.getAttribute("data-width") || "");
+      fullScreenImage.setAttribute("data-height", image.getAttribute("data-height") || "");
+    }
+    updateFullscreenOrientation();
+    fullScreenEl?.classList.add("active");
   }
+
+  function exitFullscreen() {
+    fullScreenEl?.classList.remove("active");
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      exitFullscreen();
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    updateFullscreenOrientation();
+  });
+
+  const metaMinHeight = 100;
+  const metaMinWidth = 300;
+  const gutter = 20;
+  function fullScreenOrrientationHorizontal(width: number, height: number) : boolean {
+    let W = window.innerWidth - gutter * 2;
+    let H = window.innerHeight - gutter * 2;
+    // assume horizontal
+    let w = W - metaMinWidth;
+    const scaleH = Math.min(w / width, H / height);
+    // assume vertical
+    let h = H - metaMinHeight;
+    const scaleV = Math.min(h / height, W / width);
+    return scaleH > scaleV;
+  }
+
+  function updateFullscreenOrientation() {
+    const fullScreenImage = document.querySelector("#fullscreenPlaceholder");
+    if (fullScreenImage) {
+      const width = fullScreenImage.getAttribute("data-width");
+      const height = fullScreenImage.getAttribute("data-height");
+      const isHorizontal = fullScreenOrrientationHorizontal(parseInt(width || "0"), parseInt(height || "0"));
+      fullScreenEl?.classList.toggle("layout-row", isHorizontal);
+      fullScreenEl?.classList.toggle("layout-column", !isHorizontal);
+    }
+  }
+});
 </script>
