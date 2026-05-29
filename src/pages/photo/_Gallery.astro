@@ -193,16 +193,15 @@ const gutter = "12px";
     {
       allowFullscreen && (
         <div id="fullscreenOverlay" role="dialog" aria-modal="true">
+          <div class="metadata-panel" id="metadataPanel">
+            <div class="metadata-title" id="metaTitle" />
+            <div class="metadata-chips-row" id="metaChipsRow" />
+          </div>
           <img
             id="fullscreenPlaceholder"
             class="fullscreen-placeholder"
             alt=""
           />
-
-          <div class="metadata-panel" id="metadataPanel">
-            <div class="metadata-title" id="metaTitle" />
-            <div class="metadata-chips-row" id="metaChipsRow" />
-          </div>
         </div>
       )
     }
@@ -321,18 +320,14 @@ const gutter = "12px";
   }
 
   #fullscreenOverlay.layout-row #fullscreenPlaceholder {
-    max-width: calc(100% - 340px);
+    max-width: 100%;
     max-height: 100%;
-    width: auto;
-    height: auto;
     object-fit: contain;
   }
 
   #fullscreenOverlay.layout-column #fullscreenPlaceholder {
     max-width: 100%;
-    max-height: calc(100% - 120px);
-    width: auto;
-    height: auto;
+    max-height: 100%;
     object-fit: contain;
   }
 
@@ -348,9 +343,13 @@ const gutter = "12px";
     align-items: center;
     border: none;
     width: fit-content;
-    max-width: 300px;
+    max-width: 100%;
     text-align: center;
     gap: 0.5em;
+  }
+
+  #fullscreenOverlay.layout-row .metadata-panel {
+    max-width: 300px;
   }
 
   .metadata-title {
@@ -365,6 +364,10 @@ const gutter = "12px";
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.3rem;
+    width: 100%;
+  }
+
+  #fullscreenOverlay.layout-row .metadata-chips-row {
     width: 0;
     min-width: 100%;
   }
@@ -393,12 +396,7 @@ const gutter = "12px";
       padding: 16px;
       gap: 16px;
     }
-    #fullscreenOverlay.layout-row #fullscreenPlaceholder {
-      max-width: calc(100% - 256px);
-    }
-    #fullscreenOverlay.layout-column #fullscreenPlaceholder {
-      max-height: calc(100% - 96px);
-    }
+
     #fullscreenOverlay.layout-row .metadata-panel {
       width: 240px;
     }
@@ -535,10 +533,17 @@ const gutter = "12px";
       }
       updateFullscreenOrientation();
       fullScreenEl?.classList.add("active");
+      requestAnimationFrame(() => {
+        updateFullscreenOrientation();
+      });
     }
 
     function exitFullscreen() {
       fullScreenEl?.classList.remove("active");
+      if (fullScreenImage) {
+        (fullScreenImage as HTMLElement).style.width = "";
+        (fullScreenImage as HTMLElement).style.height = "";
+      }
     }
 
     window.addEventListener("keydown", (e) => {
@@ -584,6 +589,39 @@ const gutter = "12px";
         );
         fullScreenEl.classList.toggle("layout-row", isHorizontal);
         fullScreenEl.classList.toggle("layout-column", !isHorizontal);
+
+        const imgWidth = parseInt(width || "0");
+        const imgHeight = parseInt(height || "0");
+        if (imgWidth > 0 && imgHeight > 0) {
+          const isMobile = window.innerWidth <= 800;
+          const currentGutter = isMobile ? 16 : 20;
+          const currentGap = isMobile ? 16 : 20;
+          const metadataPanel = document.querySelector("#metadataPanel") as HTMLElement;
+
+          let targetWidth = 0;
+          let targetHeight = 0;
+
+          if (isHorizontal) {
+            const metadataWidth = metadataPanel ? metadataPanel.offsetWidth : 300;
+            const wAvail = window.innerWidth - metadataWidth - currentGutter * 2 - currentGap;
+            const hAvail = window.innerHeight - currentGutter * 2;
+
+            const scale = Math.min(wAvail / imgWidth, hAvail / imgHeight);
+            targetWidth = imgWidth * scale;
+            targetHeight = imgHeight * scale;
+          } else {
+            const metadataHeight = metadataPanel ? metadataPanel.offsetHeight : 100;
+            const wAvail = window.innerWidth - currentGutter * 2;
+            const hAvail = window.innerHeight - metadataHeight - currentGutter * 2 - currentGap;
+
+            const scale = Math.min(wAvail / imgWidth, hAvail / imgHeight);
+            targetWidth = imgWidth * scale;
+            targetHeight = imgHeight * scale;
+          }
+
+          (fullScreenImage as HTMLElement).style.width = `${targetWidth}px`;
+          (fullScreenImage as HTMLElement).style.height = `${targetHeight}px`;
+        }
       }
     }
   });
