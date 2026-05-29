@@ -1,6 +1,6 @@
 ---
 import PortfolioPage from "./index.astro";
-import exiftoolJson from "../../../photo-portfolio/temp/blake/metadata.json";
+import exiftoolJson from "../../assets/photo-portfolio/temp/blake/metadata.json";
 
 export async function getStaticPaths() {
   const glob = await import.meta.glob("/photo-portfolio/temp/blake/*");

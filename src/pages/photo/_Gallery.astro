@@ -1,4 +1,5 @@
 ---
+import { execFile } from "child_process";
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import { Image } from "astro:assets";
 
@@ -23,28 +24,68 @@ export interface Props {
   description?: string;
 }
 
-const { 
-  imagesData = [], 
-  heading = "Photography", 
+const {
+  imagesData = [],
+  heading = "Photography",
   subheading,
   initialMode = "gallery",
   allowMap = false,
   allowFullscreen = false,
 } = Astro.props;
 
+const lensReplacements: Record<string, string> = {
+  "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED":
+    "Nikon 18-105mm f/3.5-5.6G DX",
+  "Tamron 20-40mm F2.8 Di III VXD": "Tamron 20-40mm F2.8",
+  "FE 28-70mm F3.5-5.6 OSS": "Sony 28-70mm F3.5-5.6",
+  "AF-S DX Nikkor 35mm f/1.8G": "Nikon 35mm f/1.8G DX",
+  "SAMYANG AF 24mm F2.8": "Rokinon 24mm F2.8",
+  "Tamron 70-300mm F4.5-6.3 Di III RXD": "Tamron 70-300mm F4.5-6.3",
+  "----": "Helios 44/2",
+};
+
+const cameraReplacements: Record<string, string> = {
+  "ILCE-7C": "Sony a7C",
+  "NIKON D3200": "Nikon D3200",
+  "ILCE-7": "Sony a7",
+  FC3682: "DJI Mini 3",
+};
+
+function resolveCamera(exif: Record<string, string>) {
+  for (const x of ["model", "Camera Model Name", "Model"]) {
+    if (exif[x] && cameraReplacements[exif[x]])
+      return cameraReplacements[exif[x]];
+  }
+}
+
+function resolveLens(exif: Record<string, string>) {
+  for (const x of ["Lens ID", "Lens Model", "Lens Spec"]) {
+    if (exif[x] && lensReplacements[exif[x]]) return lensReplacements[exif[x]];
+  }
+}
+
+function resolveShutter(exif: Record<string, string>) {
+  let x = exif["Exposure Time"];
+  if (x) return x;
+}
+
+function resolveAperture(exif: Record<string, string>) {
+  const x = exif["F Number"];
+  if (x) {
+    const n = parseFloat(x);
+    if (Math.round(n) === n) {
+      return Math.round(n);
+    }
+    return x;
+  }
+}
+
 // Process the image items mapping dimensions and metadata dynamically
 const galleryImages = imagesData.map((img) => {
-  console.log('img', img)
-  const { 
-    name, 
-    path: imageAsset, 
-    width, 
-    height,
-    exif
-  } = img;
-  
+  const { name, path: imageAsset, width, height, exif } = img;
+
   const aspectRatioNum = width && height ? width / height : 1;
-  
+
   return {
     name,
     path: imageAsset,
@@ -53,22 +94,25 @@ const galleryImages = imagesData.map((img) => {
     width,
     height,
     metadata: {
-      camera: exif.model,
-      lens: exif.Lens,
-      focalLength: exif.FocalLength,
-      aperture: exif.FNumber,
-      shutterSpeed: exif.ExposureTime < 0 ? `1/${Math.round(1/exif.ExposureTime)}` : exif.ExposureTime,
-      iso: exif.ISO
-    }
+      camera: resolveCamera(exif),
+      lens: resolveLens(exif),
+      focalLength: exif["Focal Length In 35mm Format"],
+      aperture: resolveAperture(exif),
+      shutterSpeed: resolveShutter(exif),
+      iso: exif.ISO,
+    },
   };
 });
+
+console.log(galleryImages);
 
 let title = Astro.props.title ? Astro.props.title + " | Photo" : "Photography";
 if (Astro.props.imageName) {
   title = Astro.props.imageName + " | " + title;
 }
 
-const description = Astro.props.description || "My portfolio of artistic photographs.";
+const description =
+  Astro.props.description || "My portfolio of artistic photographs.";
 const gutter = "12px";
 
 // console.log(JSON.stringify(galleryImages, null, 2))
@@ -92,16 +136,16 @@ const gutter = "12px";
     {heading && <h1>{heading}</h1>}
     {subheading && <p class="gallery-subheading" set:html={subheading} />}
 
-    <div 
-      id="photoContent" 
+    <div
+      id="photoContent"
       class={`${allowMap ? "" : "noMap"} ${allowFullscreen ? "" : "noFullscreen"}`}
     >
       <div id="gallery">
         {
           galleryImages.map((image) => {
             return (
-              <div 
-                class="galleryImage" 
+              <div
+                class="galleryImage"
                 data-name={image.name}
                 data-camera={image.metadata.camera}
                 data-lens={image.metadata.lens}
@@ -111,10 +155,10 @@ const gutter = "12px";
                 data-iso={image.metadata.iso}
                 data-width={image.width}
                 data-height={image.height}
-                style={{ 
+                style={{
                   flexGrow: image.flexGrow,
                   aspectRatio: image.aspectRatio,
-                  flexBasis: `calc(220px * (${image.flexGrow}))`
+                  flexBasis: `calc(220px * (${image.flexGrow}))`,
                 }}
               >
                 <div class="astro-native-img-wrapper">
@@ -128,7 +172,7 @@ const gutter = "12px";
                     loading="lazy"
                     class="thumb-img"
                   />
-                  
+
                   {/* High-Res Viewport Asset Node */}
                   <Image
                     src={image.path}
@@ -146,16 +190,22 @@ const gutter = "12px";
       </div>
     </div>
 
-    {allowFullscreen && (
-      <div id="fullscreenOverlay" role="dialog" aria-modal="true">
-      <img id="fullscreenPlaceholder" class="fullscreen-placeholder" alt="" />
-        
+    {
+      allowFullscreen && (
+        <div id="fullscreenOverlay" role="dialog" aria-modal="true">
+          <img
+            id="fullscreenPlaceholder"
+            class="fullscreen-placeholder"
+            alt=""
+          />
+
           <div class="metadata-panel" id="metadataPanel">
-            <h2 class="metadata-title" id="metaTitle">Image Title</h2>
-            <div class="metadata-chips-row" id="metaChipsRow"></div>
+            <div class="metadata-title" id="metaTitle" />
+            <div class="metadata-chips-row" id="metaChipsRow" />
           </div>
         </div>
-    )}
+      )
+    }
   </div>
 </HeaderAndFooter>
 
@@ -198,14 +248,6 @@ const gutter = "12px";
     flex-wrap: wrap;
     gap: var(--gutter);
     width: 100%;
-  }
-
-  .galleryImage {
-    position: relative;
-    min-width: 100px;
-    background-color: #fcfcfc;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-    border-radius: 6px;
   }
 
   .galleryImage:hover {
@@ -251,7 +293,7 @@ const gutter = "12px";
     left: 0;
     width: 100vw;
     height: 100dvh;
-    background-color: #ffffff; 
+    background-color: #ffffff;
     z-index: 99990;
     pointer-events: none;
     display: flex;
@@ -259,6 +301,14 @@ const gutter = "12px";
     padding: 20px;
     justify-content: center;
     align-items: center;
+    box-sizing: border-box;
+    gap: 20px;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  #fullscreenOverlay.active {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   #fullscreenOverlay.layout-row {
@@ -267,129 +317,274 @@ const gutter = "12px";
 
   #fullscreenOverlay.layout-column {
     flex-direction: column;
+    gap: 20px;
   }
 
-  /* #fullscreenOverlay.layout-row img {
+  #fullscreenOverlay.layout-row #fullscreenPlaceholder {
+    max-width: calc(100% - 340px);
     max-height: 100%;
     width: auto;
+    height: auto;
+    object-fit: contain;
   }
 
-  #fullscreenOverlay.layout-column img {
+  #fullscreenOverlay.layout-column #fullscreenPlaceholder {
     max-width: 100%;
+    max-height: calc(100% - 120px);
+    width: auto;
     height: auto;
-  } */
-
-  #fullscreenPlaceholder {
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
+    object-fit: contain;
   }
 
   .metadata-panel {
     position: relative;
-    border: 2px solid black;
     box-sizing: border-box;
     z-index: 999994;
     flex-shrink: 0;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    width: fit-content;
+    max-width: 300px;
+    text-align: center;
+    gap: 0.5em;
   }
 
-  #fullscreenOverlay.active {
-    opacity: 1;
+  .metadata-title {
+    font-size: 1.3rem;
+    font-weight: 500;
+    width: 100%;
+    word-wrap: break-word;
   }
 
-  @media screen and (max-width: 800px) { 
+  .metadata-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.3rem;
+    width: 0;
+    min-width: 100%;
+  }
+
+  :global(.meta-chip) {
+    font-size: 0.82rem;
+    padding: 0.3em 0.6em;
+    background-color: #eee;
+    border-radius: 1.1em;
+    transition: all 0.2s ease;
+  }
+
+  @media screen and (max-width: 800px) {
     #gallery {
       flex-direction: column;
     }
-    .galleryImage { 
+    .galleryImage {
       width: 100%;
       flex-basis: auto !important;
       flex-grow: 1 !important;
     }
-    h1 { font-size: 2rem; }
-    .metadata-panel { padding: 1.5rem; }
-    .metadata-chips-row { gap: 0.4rem; }
-    .metadata-title { font-size: 1.2rem; margin-bottom: 0.85rem; }
-    :global(.meta-chip) { font-size: 0.78rem; padding: 0.3rem 0.65rem; }
+    h1 {
+      font-size: 2rem;
+    }
+    #fullscreenOverlay {
+      padding: 16px;
+      gap: 16px;
+    }
+    #fullscreenOverlay.layout-row #fullscreenPlaceholder {
+      max-width: calc(100% - 256px);
+    }
+    #fullscreenOverlay.layout-column #fullscreenPlaceholder {
+      max-height: calc(100% - 96px);
+    }
+    #fullscreenOverlay.layout-row .metadata-panel {
+      width: 240px;
+    }
+    #fullscreenOverlay.layout-column .metadata-panel {
+      height: 80px;
+    }
+    .metadata-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.35rem;
+    }
+    :global(.meta-chip) {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.55rem;
+    }
   }
 </style>
 
 <script>
-
-  const fullScreenEl = document.querySelector("#fullscreenOverlay");
-  const metadataTitle = document.querySelector("#metaTitle");
-  const fullScreenImage = document.querySelector("#fullscreenPlaceholder");
-
   document.addEventListener("DOMContentLoaded", () => {
-  const galleryImages = document.querySelectorAll(".galleryImage");
-  galleryImages.forEach((image) => {
-    image.addEventListener("click", () => {
-      console.log("Image clicked");
-      enterFullscreen(image as HTMLImageElement);
-    });
-  });
-
-  function enterFullscreen(image: HTMLImageElement) {
-    const dataName = image.getAttribute("data-name");
-    const dataCamera = image.getAttribute("data-camera");
-    const dataLens = image.getAttribute("data-lens");
-    const dataShutter = image.getAttribute("data-shutter");
-    const dataAperture = image.getAttribute("data-aperture");
-    const dataIso = image.getAttribute("data-iso");
-    console.log(dataName, dataCamera, dataLens, dataShutter, dataAperture, dataIso);
-    if (metadataTitle) {
-      metadataTitle.textContent = dataName || "";
-    }
-    if (fullScreenImage) {
-      const src = image.querySelector("img")?.getAttribute("src");
-      console.log(fullScreenImage, src);
-      fullScreenImage.setAttribute("src", src || "");
-      fullScreenImage.setAttribute("data-width", image.getAttribute("data-width") || "");
-      fullScreenImage.setAttribute("data-height", image.getAttribute("data-height") || "");
-    }
-    updateFullscreenOrientation();
-    fullScreenEl?.classList.add("active");
-  }
-
-  function exitFullscreen() {
-    fullScreenEl?.classList.remove("active");
-  }
-
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      exitFullscreen();
-    }
-  });
-
-  window.addEventListener("resize", () => {
-    updateFullscreenOrientation();
-  });
-
-  const metaMinHeight = 100;
-  const metaMinWidth = 300;
-  const gutter = 20;
-  function fullScreenOrrientationHorizontal(width: number, height: number) : boolean {
-    let W = window.innerWidth - gutter * 2;
-    let H = window.innerHeight - gutter * 2;
-    // assume horizontal
-    let w = W - metaMinWidth;
-    const scaleH = Math.min(w / width, H / height);
-    // assume vertical
-    let h = H - metaMinHeight;
-    const scaleV = Math.min(h / height, W / width);
-    return scaleH > scaleV;
-  }
-
-  function updateFullscreenOrientation() {
+    const fullScreenEl = document.querySelector("#fullscreenOverlay");
+    const metadataTitle = document.querySelector("#metaTitle");
     const fullScreenImage = document.querySelector("#fullscreenPlaceholder");
-    if (fullScreenImage) {
-      const width = fullScreenImage.getAttribute("data-width");
-      const height = fullScreenImage.getAttribute("data-height");
-      const isHorizontal = fullScreenOrrientationHorizontal(parseInt(width || "0"), parseInt(height || "0"));
-      fullScreenEl?.classList.toggle("layout-row", isHorizontal);
-      fullScreenEl?.classList.toggle("layout-column", !isHorizontal);
+    const metaChipsRow = document.querySelector("#metaChipsRow") as HTMLElement;
+
+    const galleryImages = document.querySelectorAll(".galleryImage");
+    galleryImages.forEach((image) => {
+      image.addEventListener("click", () => {
+        console.log("Image clicked");
+        enterFullscreen(image as HTMLImageElement);
+      });
+    });
+
+    // Close overlay on background click
+    fullScreenEl?.addEventListener("click", (e) => {
+      if (!(e.target as HTMLElement).closest("#metadataPanel")) {
+        exitFullscreen();
+      }
+    });
+
+    function enterFullscreen(image: HTMLImageElement) {
+      const dataName = image.getAttribute("data-name");
+      const dataCamera = image.getAttribute("data-camera");
+      const dataLens = image.getAttribute("data-lens");
+      const dataShutter = image.getAttribute("data-shutter");
+      const dataAperture = image.getAttribute("data-aperture");
+      const dataIso = image.getAttribute("data-iso");
+      const dataFocal = image.getAttribute("data-focal");
+      console.log(
+        dataName,
+        dataCamera,
+        dataLens,
+        dataShutter,
+        dataAperture,
+        dataIso,
+        dataFocal,
+      );
+
+      if (metadataTitle) {
+        metadataTitle.textContent = dataName || "";
+      }
+
+      if (metaChipsRow) {
+        if (
+          !dataCamera &&
+          !dataLens &&
+          !dataAperture &&
+          !dataShutter &&
+          !dataIso &&
+          !dataFocal
+        ) {
+          metaChipsRow.style.display = "none";
+        } else {
+          metaChipsRow.style.display = "flex";
+
+          metaChipsRow.innerHTML = "";
+          const specs = [
+            { value: dataCamera, label: "" },
+            { value: dataLens, label: "" },
+            { value: dataFocal, label: "" },
+            { value: dataShutter, label: "s" },
+            { value: dataAperture, prefix: "f/" },
+            { value: dataIso, prefix: "ISO " },
+          ];
+
+          specs.forEach((spec) => {
+            if (
+              spec.value &&
+              spec.value !== "undefined" &&
+              spec.value !== "null"
+            ) {
+              const chip = document.createElement("span");
+              chip.className = "meta-chip";
+              let text = spec.value;
+              if (spec.prefix) text = spec.prefix + text;
+              if (spec.label && !text.endsWith(spec.label))
+                text = text + spec.label;
+              chip.textContent = text;
+              metaChipsRow.appendChild(chip);
+            }
+          });
+        }
+      }
+
+      if (fullScreenImage) {
+        // Try multiple selectors to find the 2000px high-res image
+        const fullResEl =
+          image.querySelector(".fullres-img") ||
+          image.querySelector("img[alt*='fullscreen']") ||
+          image.querySelector("img:last-of-type");
+
+        const thumbEl =
+          image.querySelector(".thumb-img") || image.querySelector("img");
+
+        // Prefer fullres src (absolute or relative)
+        const src =
+          fullResEl?.getAttribute("src") ||
+          (fullResEl as HTMLImageElement)?.src ||
+          thumbEl?.getAttribute("src") ||
+          (thumbEl as HTMLImageElement)?.src;
+
+        console.log("Full Screen Image element:", fullScreenImage);
+        console.log("Found High-Res Image Element:", fullResEl);
+        console.log("Resolved Image source URL:", src);
+
+        fullScreenImage.setAttribute("src", src || "");
+        fullScreenImage.setAttribute(
+          "data-width",
+          image.getAttribute("data-width") || "",
+        );
+        fullScreenImage.setAttribute(
+          "data-height",
+          image.getAttribute("data-height") || "",
+        );
+      }
+      updateFullscreenOrientation();
+      fullScreenEl?.classList.add("active");
     }
-  }
-});
+
+    function exitFullscreen() {
+      fullScreenEl?.classList.remove("active");
+    }
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        exitFullscreen();
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      updateFullscreenOrientation();
+    });
+
+    function fullScreenOrrientationHorizontal(
+      width: number,
+      height: number,
+    ): boolean {
+      const isMobile = window.innerWidth <= 800;
+      const currentMetaMinWidth = isMobile ? 240 : 300;
+      const currentMetaMinHeight = isMobile ? 80 : 100;
+      const currentGutter = isMobile ? 16 : 20;
+
+      let W = window.innerWidth - currentGutter * 2;
+      let H = window.innerHeight - currentGutter * 2;
+
+      // assume horizontal
+      let w = W - currentMetaMinWidth;
+      const scaleH = Math.min(w / width, H / height);
+
+      // assume vertical
+      let h = H - currentMetaMinHeight;
+      const scaleV = Math.min(h / height, W / width);
+
+      return scaleH > scaleV;
+    }
+
+    function updateFullscreenOrientation() {
+      if (fullScreenImage && fullScreenEl) {
+        const width = fullScreenImage.getAttribute("data-width");
+        const height = fullScreenImage.getAttribute("data-height");
+        const isHorizontal = fullScreenOrrientationHorizontal(
+          parseInt(width || "0"),
+          parseInt(height || "0"),
+        );
+        fullScreenEl.classList.toggle("layout-row", isHorizontal);
+        fullScreenEl.classList.toggle("layout-column", !isHorizontal);
+      }
+    }
+  });
 </script>

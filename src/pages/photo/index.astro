@@ -1,49 +1,47 @@
 ---
 import Gallery from "./_Gallery.astro";
-import { imageSizeFromFile } from "image-size/fromFile";
+// import { imageSizeFromFile } from "image-size/fromFile";
 import exifr from "exifr";
 import fs from "fs";
 import { join } from "path";
 
 // 1. Statically track the assets so Vite can optimize them
-const assetGlob = import.meta.glob("/src/assets/photo-portfolio/temp/blake/*.{jpg,jpeg,png,webp}", { eager: true });
+const assetGlob = import.meta.glob(
+  "/src/assets/photo-portfolio/temp/blake/*.{jpg,jpeg,png,webp}",
+  { eager: true },
+);
 
 // 2. Read sidecar JSON descriptors from disk
-const rawMetadata = fs.readFileSync("src/assets/photo-portfolio/temp/blake/metadata.json", "utf-8");
+const rawMetadata = fs.readFileSync(
+  "src/assets/photo-portfolio/temp/blake/metadata.json",
+  "utf-8",
+);
 const exifToolJson = JSON.parse(rawMetadata);
 
 const embeddingsPath = "src/assets/photo-portfolio/temp/blake/embeddings.json";
-const embeddingsJson = fs.existsSync(embeddingsPath) ? JSON.parse(fs.readFileSync(embeddingsPath, "utf-8")) : {};
+const embeddingsJson = fs.existsSync(embeddingsPath)
+  ? JSON.parse(fs.readFileSync(embeddingsPath, "utf-8"))
+  : {};
 
 // 3. Build the comprehensive image array at build time
 const imagesArr = await Promise.all(
   Object.keys(assetGlob).map(async (vitePath) => {
     const filename = vitePath.split("/").pop();
+    if (!filename) {
+      return;
+    }
     const name = filename.split(".").slice(0, -1).join(".");
-    
-    // Construct exact filesystem location for EXIF/Size extraction
-    const fsPath = join(process.cwd(), "src/assets/photo-portfolio/temp/blake", filename);
-
-    const { width, height } = await imageSizeFromFile(fsPath);
-    const exif = await exifr.parse(fsPath, {
-      makerNote: true,
-      userComment: true,
-      xmp: true,
-      icc: true,
-      jfif: true,
-    }) || {};
-
     return {
       name,
-      path: assetGlob[vitePath].default, // Tracked Astro Image object
-      width,
-      height,
+      path: assetGlob[vitePath].default as string, // Tracked Astro Image object
+      width: parseInt(exifToolJson[filename]["Image Width"]),
+      height: parseInt(exifToolJson[filename]["Image Height"]),
       filename,
-      exif
+      exif: exifToolJson[filename],
     };
-  })
+  }),
 );
-console.log('Show Gallery with images:', imagesArr.length);
+console.log("Show Gallery with images:", imagesArr.length);
 ---
 
 <Gallery
