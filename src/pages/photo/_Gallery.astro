@@ -132,99 +132,81 @@ const gutter = "12px";
   description={description}
   image={Astro.props.image}
 >
-  <div class="gallery-wrapper" id="galleryWrapper">
-    {heading && <h1>{heading}</h1>}
-    {subheading && <p class="gallery-subheading" set:html={subheading} />}
+  {heading && <h1>{heading}</h1>}
+  {subheading && <p class="gallery-subheading" set:html={subheading} />}
 
-    <div
-      id="photoContent"
-      class={`${allowMap ? "" : "noMap"} ${allowFullscreen ? "" : "noFullscreen"}`}
-    >
-      <div id="gallery">
-        {
-          galleryImages.map((image) => {
-            return (
-              <div
-                class="galleryImage"
-                data-name={image.name}
-                data-camera={image.metadata.camera}
-                data-lens={image.metadata.lens}
-                data-focal={image.metadata.focalLength}
-                data-aperture={image.metadata.aperture}
-                data-shutter={image.metadata.shutterSpeed}
-                data-iso={image.metadata.iso}
-                data-width={image.width}
-                data-height={image.height}
-                style={{
-                  flexGrow: image.flexGrow,
-                  aspectRatio: image.aspectRatio,
-                  flexBasis: `calc(220px * (${image.flexGrow}))`,
-                }}
-              >
-                <div class="astro-native-img-wrapper">
-                  {/* Thumbnail */}
-                  <Image
-                    src={image.path}
-                    alt={image.name || "Portfolio photograph"}
-                    width={800}
-                    quality={75}
-                    format="webp"
-                    loading="lazy"
-                    class="thumb-img"
-                  />
+  <div
+    id="photoContent"
+    class={`${allowMap ? "" : "noMap"} ${allowFullscreen ? "" : "noFullscreen"}`}
+  >
+    <div id="gallery">
+      {
+        galleryImages.map((image) => {
+          return (
+            <div
+              class="galleryImage"
+              data-name={image.name}
+              data-camera={image.metadata.camera}
+              data-lens={image.metadata.lens}
+              data-focal={image.metadata.focalLength}
+              data-aperture={image.metadata.aperture}
+              data-shutter={image.metadata.shutterSpeed}
+              data-iso={image.metadata.iso}
+              data-width={image.width}
+              data-height={image.height}
+              style={{
+                flexGrow: image.flexGrow,
+                aspectRatio: image.aspectRatio,
+                flexBasis: `calc(var(--base-height) * (${image.flexGrow}))`,
+              }}
+            >
+              <div class="astro-native-img-wrapper">
+                {/* Thumbnail */}
+                <Image
+                  src={image.path}
+                  alt={image.name || "Portfolio photograph"}
+                  width={Math.round((400 / image.height) * image.width)}
+                  quality={75}
+                  format="webp"
+                  loading="lazy"
+                  class="thumb-img"
+                />
 
-                  {/* High-Res Viewport Asset Node */}
-                  <Image
-                    src={image.path}
-                    alt={image.name || "Portfolio photograph fullscreen"}
-                    width={2000}
-                    quality={85}
-                    format="webp"
-                    class="fullres-img"
-                  />
-                </div>
+                {/* High-Res Viewport Asset Node */}
+                <Image
+                  src={image.path}
+                  alt={image.name || "Portfolio photograph fullscreen"}
+                  width={
+                    image.width > image.height
+                      ? 2000
+                      : Math.round((2000 / image.height) * image.width)
+                  }
+                  quality={85}
+                  format="webp"
+                  class="fullres-img"
+                />
               </div>
-            );
-          })
-        }
-      </div>
+            </div>
+          );
+        })
+      }
     </div>
-
-    {
-      allowFullscreen && (
-        <div id="fullscreenOverlay" role="dialog" aria-modal="true">
-          <div class="metadata-panel" id="metadataPanel">
-            <div class="metadata-title" id="metaTitle" />
-            <div class="metadata-chips-row" id="metaChipsRow" />
-          </div>
-          <img
-            id="fullscreenPlaceholder"
-            class="fullscreen-placeholder"
-            alt=""
-          />
-        </div>
-      )
-    }
   </div>
+
+  {
+    allowFullscreen && (
+      <div id="fullscreenOverlay" role="dialog" aria-modal="true">
+        <div class="metadata-panel" id="metadataPanel">
+          <div class="metadata-title" id="metaTitle" />
+          <div class="metadata-chips-row" id="metaChipsRow" />
+        </div>
+        <img id="fullscreenPlaceholder" class="fullscreen-placeholder" alt="" />
+      </div>
+    )
+  }
 </HeaderAndFooter>
 
 <style define:vars={{ gutter }}>
-  .gallery-wrapper {
-    width: 100%;
-    max-width: 1800px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-    box-sizing: border-box;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 0.5rem;
-    color: #111;
-  }
-
   .gallery-subheading {
     font-size: 1.1rem;
     max-width: 800px;
@@ -239,6 +221,7 @@ const gutter = "12px";
     flex-direction: column;
     align-items: center;
     width: 100%;
+    max-width: 100% !important;
     position: relative;
   }
 
@@ -247,6 +230,7 @@ const gutter = "12px";
     flex-wrap: wrap;
     gap: var(--gutter);
     width: 100%;
+    --base-height: 260px;
   }
 
   .galleryImage:hover {
@@ -290,8 +274,8 @@ const gutter = "12px";
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100dvh;
+    min-width: 100vw;
+    min-height: 100dvh;
     background-color: #ffffff;
     z-index: 99990;
     pointer-events: none;
@@ -316,7 +300,6 @@ const gutter = "12px";
 
   #fullscreenOverlay.layout-column {
     flex-direction: column;
-    gap: 20px;
   }
 
   #fullscreenOverlay.layout-row #fullscreenPlaceholder {
@@ -352,6 +335,10 @@ const gutter = "12px";
     max-width: 300px;
   }
 
+  #fullscreenOverlay.layout-column .metadata-panel {
+    max-width: none;
+  }
+
   .metadata-title {
     font-size: 1.3rem;
     font-weight: 500;
@@ -382,34 +369,32 @@ const gutter = "12px";
 
   @media screen and (max-width: 800px) {
     #gallery {
+      --base-height: 190px;
+    }
+    #fullscreenOverlay {
+      padding: 12px;
+      gap: 12px;
+    }
+    :global(.pageContent) {
+      padding-left: 12px !important;
+      padding-right: 12px !important;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    #gallery {
+      --base-height: 190px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    #gallery {
       flex-direction: column;
     }
     .galleryImage {
       width: 100%;
       flex-basis: auto !important;
       flex-grow: 1 !important;
-    }
-    h1 {
-      font-size: 2rem;
-    }
-    #fullscreenOverlay {
-      padding: 16px;
-      gap: 16px;
-    }
-
-    #fullscreenOverlay.layout-row .metadata-panel {
-      width: 240px;
-    }
-    #fullscreenOverlay.layout-column .metadata-panel {
-      height: 80px;
-    }
-    .metadata-title {
-      font-size: 1.1rem;
-      margin-bottom: 0.35rem;
-    }
-    :global(.meta-chip) {
-      font-size: 0.75rem;
-      padding: 0.25rem 0.55rem;
     }
   }
 </style>
@@ -541,8 +526,12 @@ const gutter = "12px";
     function exitFullscreen() {
       fullScreenEl?.classList.remove("active");
       if (fullScreenImage) {
-        (fullScreenImage as HTMLElement).style.width = "";
-        (fullScreenImage as HTMLElement).style.height = "";
+        setTimeout(() => {
+          if (!fullScreenEl?.classList.contains("active")) {
+            (fullScreenImage as HTMLElement).style.width = "";
+            (fullScreenImage as HTMLElement).style.height = "";
+          }
+        }, 300);
       }
     }
 
@@ -596,23 +585,37 @@ const gutter = "12px";
           const isMobile = window.innerWidth <= 800;
           const currentGutter = isMobile ? 16 : 20;
           const currentGap = isMobile ? 16 : 20;
-          const metadataPanel = document.querySelector("#metadataPanel") as HTMLElement;
+          const metadataPanel = document.querySelector(
+            "#metadataPanel",
+          ) as HTMLElement;
 
           let targetWidth = 0;
           let targetHeight = 0;
 
           if (isHorizontal) {
-            const metadataWidth = metadataPanel ? metadataPanel.offsetWidth : 300;
-            const wAvail = window.innerWidth - metadataWidth - currentGutter * 2 - currentGap;
+            const metadataWidth = metadataPanel
+              ? metadataPanel.offsetWidth
+              : 300;
+            const wAvail =
+              window.innerWidth -
+              metadataWidth -
+              currentGutter * 2 -
+              currentGap;
             const hAvail = window.innerHeight - currentGutter * 2;
 
             const scale = Math.min(wAvail / imgWidth, hAvail / imgHeight);
             targetWidth = imgWidth * scale;
             targetHeight = imgHeight * scale;
           } else {
-            const metadataHeight = metadataPanel ? metadataPanel.offsetHeight : 100;
+            const metadataHeight = metadataPanel
+              ? metadataPanel.offsetHeight
+              : 100;
             const wAvail = window.innerWidth - currentGutter * 2;
-            const hAvail = window.innerHeight - metadataHeight - currentGutter * 2 - currentGap;
+            const hAvail =
+              window.innerHeight -
+              metadataHeight -
+              currentGutter * 2 -
+              currentGap;
 
             const scale = Math.min(wAvail / imgWidth, hAvail / imgHeight);
             targetWidth = imgWidth * scale;
