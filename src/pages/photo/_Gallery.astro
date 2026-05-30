@@ -1,6 +1,6 @@
 ---
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
 import MapGallery from "./_MapGallery.astro";
 
 export interface Props {
@@ -122,14 +122,24 @@ const galleryImages = imagesData.map((img) => {
   };
 });
 
-const mapImages = galleryImages
-  .filter((img) => img.metadata.lat !== null && img.metadata.lon !== null)
-  .map((img) => ({
-    name: img.name,
-    path: typeof img.path === 'string' ? img.path : img.path.src,
-    lat: img.metadata.lat,
-    lon: img.metadata.lon,
-  }));
+const mapImages = await Promise.all(
+  galleryImages
+    .filter((img) => img.metadata.lat !== null && img.metadata.lon !== null)
+    .map(async (img) => {
+      const optimized = await getImage({
+        src: img.path,
+        width: 100,
+        height: 100,
+        format: "webp",
+      });
+      return {
+        name: img.name,
+        path: optimized.src,
+        lat: img.metadata.lat,
+        lon: img.metadata.lon,
+      };
+    }),
+);
 
 let title = Astro.props.title ? Astro.props.title + " | Photo" : "Photography";
 if (Astro.props.imageName) {
@@ -238,7 +248,7 @@ const gutter = "12px";
 
   {
     allowFullscreen && (
-      <div id="fullscreenOverlay" role="dialog" aria-modal="true">
+      <div id="fullscreenOverlay" role="dialog" aria-modal="true" tabindex="-1">
         <div id="imageViewport">
           <div class="metadata-panel" id="metadataPanel">
             <div class="metadata-title" id="metaTitle" />
@@ -563,17 +573,27 @@ const gutter = "12px";
 
   function enterFullscreen(image: HTMLImageElement) {
     document.querySelector(".galleryImage.active")?.classList.remove("active");
-    image.classList.add("active");
+    
+    // If 'image' is not a .galleryImage (e.g. it was triggered by map click), 
+    // find the corresponding gallery image by name.
+    let targetImage = image;
+    if (!image.classList.contains('galleryImage')) {
+        const name = image.getAttribute('data-name');
+        const found = Array.from(galleryImages).find(el => el.getAttribute('data-name') === name);
+        if (found) targetImage = found as HTMLImageElement;
+    }
+    
+    targetImage.classList.add("active");
 
-    const dataName = image.getAttribute("data-name");
-    const dataCamera = image.getAttribute("data-camera");
-    const dataLens = image.getAttribute("data-lens");
-    const dataShutter = image.getAttribute("data-shutter");
-    const dataAperture = image.getAttribute("data-aperture");
-    const dataIso = image.getAttribute("data-iso");
-    const dataFocal = image.getAttribute("data-focal");
-    const dataLon = image.getAttribute("data-lon");
-    const dataLat = image.getAttribute("data-lat");
+    const dataName = targetImage.getAttribute("data-name");
+    const dataCamera = targetImage.getAttribute("data-camera");
+    const dataLens = targetImage.getAttribute("data-lens");
+    const dataShutter = targetImage.getAttribute("data-shutter");
+    const dataAperture = targetImage.getAttribute("data-aperture");
+    const dataIso = targetImage.getAttribute("data-iso");
+    const dataFocal = targetImage.getAttribute("data-focal");
+    const dataLon = targetImage.getAttribute("data-lon");
+    const dataLat = targetImage.getAttribute("data-lat");
 
     if (dataLon && dataLat && viewportBelow) {
       viewportBelow.style.display = "flex";
@@ -655,8 +675,10 @@ const gutter = "12px";
     }
     updateFullscreenOrientation();
     fullScreenEl?.classList.add("active");
+    (fullScreenEl as HTMLElement)?.focus();
     requestAnimationFrame(() => {
       updateFullscreenOrientation();
+      (fullScreenEl as HTMLElement)?.focus();
     });
   }
 
@@ -673,23 +695,34 @@ const gutter = "12px";
     }
   }
 
-  window.addEventListener("keydown", (e) => {
+  // Use a named function for the keydown listener to avoid potential issues if it were somehow added multiple times, 
+  // though it's at top level here. Also ensures we only handle Escape if the overlay is actually active.
+  function handleKeyDown(e: KeyboardEvent) {
+    if (!fullScreenEl?.classList.contains("active")) return;
+
     if (e.key === "Escape") {
+      e.preventDefault();
       exitFullscreen();
     }
     if (e.key === "ArrowRight") {
+      e.preventDefault();
       nextButton.click();
     }
     if (e.key === "ArrowLeft") {
+      e.preventDefault();
       prevButton.click();
     }
     if (e.key === "ArrowDown") {
+      e.preventDefault();
       scrollToMap();
     }
     if (e.key === "ArrowUp") {
+      e.preventDefault();
       scrollToImage();
     }
-  });
+  }
+
+  window.addEventListener("keydown", handleKeyDown);
 
   function scrollToMap() {
     if (fullScreenEl?.classList.contains("active") && viewportBelow) {

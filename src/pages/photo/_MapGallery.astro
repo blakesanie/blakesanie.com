@@ -120,7 +120,7 @@ const { mapImages } = Astro.props;
 
       const imgDiv = document.createElement("div");
       imgDiv.className = "photo-marker";
-      imgDiv.style.backgroundImage = `url(${photo.path})`;
+      imgDiv.style.backgroundImage = `url("${photo.path}")`;
       
       const marker = new AdvancedMarkerElement({
         position,
@@ -151,7 +151,7 @@ const { mapImages } = Astro.props;
         
         if (count > 1) {
           div.className = "cluster-marker";
-          div.style.backgroundImage = `url(${photo.path})`;
+          div.style.backgroundImage = `url("${photo.path}")`;
           const countDiv = document.createElement("div");
           countDiv.className = "cluster-count";
           countDiv.textContent = count;
@@ -164,7 +164,7 @@ const { mapImages } = Astro.props;
           });
         } else {
           div.className = "photo-marker";
-          div.style.backgroundImage = `url(${photo.path})`;
+          div.style.backgroundImage = `url("${photo.path}")`;
           div.addEventListener('click', () => {
              window.dispatchEvent(new CustomEvent('photo-map-click', { detail: { name: photo.name } }));
           });
