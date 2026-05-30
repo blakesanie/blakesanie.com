@@ -5,6 +5,8 @@ export interface Props {
     path: string;
     lat: number;
     lon: number;
+    width: number;
+    height: number;
   }[];
 }
 
@@ -35,15 +37,13 @@ const { mapImages } = Astro.props;
   }
 
   :global(.photo-marker) {
-    width: 50px;
-    height: 50px;
     border: 3px solid white;
     border-radius: 8px;
     background-size: cover;
     background-position: center;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.1s;
   }
 
   :global(.photo-marker:hover) {
@@ -52,8 +52,6 @@ const { mapImages } = Astro.props;
   }
 
   :global(.cluster-marker) {
-    width: 60px;
-    height: 60px;
     border: 4px solid white;
     border-radius: 12px;
     background-size: cover;
@@ -64,23 +62,30 @@ const { mapImages } = Astro.props;
     align-items: center;
     justify-content: center;
     position: relative;
+    transition: transform 0.1s;
+  }
+
+  :global(.cluster-marker:hover) {
+    transform: scale(1.05);
+    z-index: 1000;
   }
 
   :global(.cluster-count) {
     position: absolute;
-    top: -10px;
-    right: -10px;
+    top: -8px;
+    right: -8px;
     background: #007aff;
     color: white;
     border-radius: 50%;
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: bold;
-    border: 2px solid white;
+    border: 1.5px solid white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   }
 </style>
 
@@ -96,15 +101,139 @@ const { mapImages } = Astro.props;
     mapInitialized = true;
 
     const { Map } = await google.maps.importLibrary("maps");
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
     const mapOptions = {
       center: { lat: 0, lng: 0 },
       zoom: 2,
-      mapId: "PHOTO_MAP_MAIN",
       mapTypeControl: false,
-      streetViewControl: false,
+      streetViewControl: true,
+      streetViewControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
+      zoomControl: true,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
       fullscreenControl: true,
+      fullscreenControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
+      rotateControl: true,
+      rotateControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
+      styles: [
+        {
+          elementType: "geometry",
+          stylers: [{ color: "#ffffff" }],
+        },
+        {
+          elementType: "labels.icon",
+          stylers: [{ visibility: "off" }],
+        },
+        {
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#616161" }],
+        },
+        {
+          elementType: "labels.text.stroke",
+          stylers: [{ color: "#f5f5f5" }],
+        },
+        {
+          featureType: "administrative.land_parcel",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#bdbdbd" }],
+        },
+        {
+          featureType: "administrative.province",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#9e9e9e" }],
+        },
+        {
+          featureType: "landscape.natural.terrain",
+          stylers: [{ color: "#c9c9c9" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "geometry",
+          stylers: [{ color: "#f5f5f5" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#757575" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "geometry",
+          stylers: [{ color: "#ededed" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#b0b0b0" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry",
+          stylers: [{ visibility: "simplified" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#f2f2f2" }, { visibility: "on" }],
+        },
+        {
+          featureType: "road.arterial",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#757575" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry",
+          stylers: [{ color: "#e6e6e6" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry.stroke",
+          stylers: [{ visibility: "simplified" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#616161" }],
+        },
+        {
+          featureType: "road.local",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#9e9e9e" }],
+        },
+        {
+          featureType: "transit.line",
+          elementType: "geometry",
+          stylers: [{ color: "#e5e5e5" }],
+        },
+        {
+          featureType: "transit.station",
+          elementType: "geometry",
+          stylers: [{ color: "#eeeeee" }],
+        },
+        {
+          featureType: "water",
+          elementType: "geometry",
+          stylers: [{ color: "#c9c9c9" }],
+        },
+        {
+          featureType: "water",
+          elementType: "geometry.fill",
+          stylers: [{ color: "#c7e9ff" }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#9e9e9e" }],
+        },
+      ],
     };
 
     const mapCanvas = document.getElementById("map-canvas");
@@ -112,25 +241,23 @@ const { mapImages } = Astro.props;
     const bounds = new google.maps.LatLngBounds();
     const markers = [];
 
-    const galleryImages = document.querySelectorAll(".galleryImage");
-
     mapImages.forEach((photo) => {
       const position = { lat: photo.lat, lng: photo.lon };
       bounds.extend(position);
 
-      const imgDiv = document.createElement("div");
-      imgDiv.className = "photo-marker";
-      imgDiv.style.backgroundImage = `url("${photo.path}")`;
-      
-      const marker = new AdvancedMarkerElement({
+      const marker = new google.maps.Marker({
         position,
         map: mainMap,
-        content: imgDiv,
         title: photo.name,
+        icon: {
+            url: photo.path,
+            scaledSize: new google.maps.Size(photo.width, photo.height),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(photo.width / 2, photo.height / 2),
+        }
       });
 
-      imgDiv.addEventListener('click', () => {
-         // Custom event to trigger fullscreen from _Gallery script
+      marker.addListener('click', () => {
          window.dispatchEvent(new CustomEvent('photo-map-click', { detail: { name: photo.name } }));
       });
 
@@ -147,34 +274,35 @@ const { mapImages } = Astro.props;
     const renderer = {
       render: ({ count, position, markers: clusterMarkers }) => {
         const photo = clusterMarkers[0].photoData;
-        const div = document.createElement("div");
         
-        if (count > 1) {
-          div.className = "cluster-marker";
-          div.style.backgroundImage = `url("${photo.path}")`;
-          const countDiv = document.createElement("div");
-          countDiv.className = "cluster-count";
-          countDiv.textContent = count;
-          div.appendChild(countDiv);
-
-          div.addEventListener('click', () => {
-             const clusterBounds = new google.maps.LatLngBounds();
-             clusterMarkers.forEach((m) => clusterBounds.extend(m.position));
-             mainMap.fitBounds(clusterBounds);
-          });
-        } else {
-          div.className = "photo-marker";
-          div.style.backgroundImage = `url("${photo.path}")`;
-          div.addEventListener('click', () => {
-             window.dispatchEvent(new CustomEvent('photo-map-click', { detail: { name: photo.name } }));
-          });
-        }
-
-        return new AdvancedMarkerElement({
+        const marker = new google.maps.Marker({
           position,
-          content: div,
           zIndex: count,
+          label: count > 1 ? {
+            text: String(count),
+            color: "white",
+            fontSize: "10px",
+            fontWeight: "bold",
+          } : null,
+          icon: {
+            url: photo.path,
+            scaledSize: new google.maps.Size(photo.width * 1.2, photo.height * 1.2),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point((photo.width * 1.2) / 2, (photo.height * 1.2) / 2),
+          }
         });
+
+        marker.addListener('click', (e) => {
+            if (count > 1) {
+                const clusterBounds = new google.maps.LatLngBounds();
+                clusterMarkers.forEach((m) => clusterBounds.extend(m.getPosition()));
+                mainMap.fitBounds(clusterBounds);
+            } else {
+                window.dispatchEvent(new CustomEvent('photo-map-click', { detail: { name: photo.name } }));
+            }
+        });
+
+        return marker;
       }
     };
 
@@ -185,14 +313,12 @@ const { mapImages } = Astro.props;
     });
   }
 
-  // Listen for view change
   window.addEventListener('photo-view-change', (e) => {
     if (e.detail.view === 'map') {
       initMainMap();
     }
   });
 
-  // Check initial state
   const photoContent = document.getElementById('photoContent');
   if (photoContent && photoContent.classList.contains('view-map')) {
     initMainMap();
