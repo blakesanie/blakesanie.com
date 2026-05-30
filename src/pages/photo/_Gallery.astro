@@ -1,7 +1,7 @@
 ---
-import { execFile } from "child_process";
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import { Image } from "astro:assets";
+import MapGallery from "./_MapGallery.astro";
 
 export interface Props {
   imagesData: any[];
@@ -80,6 +80,22 @@ function resolveAperture(exif: Record<string, string>) {
   }
 }
 
+function dmsToDecimal(dmsStr: string) {
+  if (!dmsStr) return null;
+  const regex = /(\d+)\s*deg\s*(\d+)'\s*([\d.]+)"\s*([NSEW])/i;
+  const match = dmsStr.match(regex);
+  if (!match) return null;
+
+  const degrees = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  const seconds = parseFloat(match[3]);
+  const direction = match[4].toUpperCase();
+
+  let decimal = degrees + minutes / 60 + seconds / 3600;
+  if (direction === "S" || direction === "W") decimal = -decimal;
+  return parseFloat(decimal.toFixed(6));
+}
+
 // Process the image items mapping dimensions and metadata dynamically
 const galleryImages = imagesData.map((img) => {
   const { name, path: imageAsset, width, height, exif } = img;
@@ -100,11 +116,20 @@ const galleryImages = imagesData.map((img) => {
       aperture: resolveAperture(exif),
       shutterSpeed: resolveShutter(exif),
       iso: exif.ISO,
+      lon: dmsToDecimal(exif["GPS Longitude"]),
+      lat: dmsToDecimal(exif["GPS Latitude"]),
     },
   };
 });
 
-console.log(galleryImages);
+const mapImages = galleryImages
+  .filter((img) => img.metadata.lat !== null && img.metadata.lon !== null)
+  .map((img) => ({
+    name: img.name,
+    path: typeof img.path === 'string' ? img.path : img.path.src,
+    lat: img.metadata.lat,
+    lon: img.metadata.lon,
+  }));
 
 let title = Astro.props.title ? Astro.props.title + " | Photo" : "Photography";
 if (Astro.props.imageName) {
@@ -115,7 +140,6 @@ const description =
   Astro.props.description || "My portfolio of artistic photographs.";
 const gutter = "12px";
 
-// console.log(JSON.stringify(galleryImages, null, 2))
 ---
 
 <HeaderAndFooter
@@ -132,12 +156,22 @@ const gutter = "12px";
   description={description}
   image={Astro.props.image}
 >
-  {heading && <h1>{heading}</h1>}
-  {subheading && <p class="gallery-subheading" set:html={subheading} />}
+  <div class="gallery-header">
+    <div class="header-text">
+      {heading && <h1>{heading}</h1>}
+      {subheading && <p set:html={subheading} />}
+    </div>
+    {allowMap && (
+      <div class="view-toggle">
+        <button id="toggleGallery" class={initialMode !== 'map' ? 'active' : ''}>Grid</button>
+        <button id="toggleMap" class={initialMode === 'map' ? 'active' : ''}>Map</button>
+      </div>
+    )}
+  </div>
 
   <div
     id="photoContent"
-    class={`${allowMap ? "" : "noMap"} ${allowFullscreen ? "" : "noFullscreen"}`}
+    class={`${allowMap ? "" : "noMap"} ${allowFullscreen ? "" : "noFullscreen"} view-${initialMode}`}
   >
     <div id="gallery">
       {
@@ -154,10 +188,14 @@ const gutter = "12px";
               data-iso={image.metadata.iso}
               data-width={image.width}
               data-height={image.height}
+              data-lat={image.metadata.lat}
+              data-lon={image.metadata.lon}
               style={{
                 flexGrow: image.flexGrow,
                 aspectRatio: image.aspectRatio,
                 flexBasis: `calc(var(--base-height) * (${image.flexGrow}))`,
+                maxHeight: `calc(500px)`,
+                maxWidth: `calc(500px * ${image.flexGrow})`,
               }}
             >
               <div class="astro-native-img-wrapper">
@@ -165,7 +203,10 @@ const gutter = "12px";
                 <Image
                   src={image.path}
                   alt={image.name || "Portfolio photograph"}
-                  width={Math.round((400 / image.height) * image.width)}
+                  width={Math.max(
+                    600,
+                    Math.round((500 / image.height) * image.width),
+                  )}
                   quality={75}
                   format="webp"
                   loading="lazy"
@@ -191,29 +232,76 @@ const gutter = "12px";
         })
       }
     </div>
+
+    {allowMap && <MapGallery mapImages={mapImages} />}
   </div>
 
   {
     allowFullscreen && (
       <div id="fullscreenOverlay" role="dialog" aria-modal="true">
-        <div class="metadata-panel" id="metadataPanel">
-          <div class="metadata-title" id="metaTitle" />
-          <div class="metadata-chips-row" id="metaChipsRow" />
+        <div id="imageViewport">
+          <div class="metadata-panel" id="metadataPanel">
+            <div class="metadata-title" id="metaTitle" />
+            <div class="metadata-chips-row" id="metaChipsRow" />
+            <div class="metadata-actions">
+              <div id="exitButton">Exit</div>
+              <div id="prevButton">Prev</div>
+              <div id="nextButton">Next</div>
+            </div>
+          </div>
+          <img
+            id="fullscreenPlaceholder"
+            class="fullscreen-placeholder"
+            alt=""
+          />
         </div>
-        <img id="fullscreenPlaceholder" class="fullscreen-placeholder" alt="" />
+        <div id="viewportBelow">
+          <div id="selectedMap" />
+        </div>
       </div>
     )
   }
 </HeaderAndFooter>
 
 <style define:vars={{ gutter }}>
-  .gallery-subheading {
-    font-size: 1.1rem;
-    max-width: 800px;
-    margin: 0 auto 2.5rem auto;
-    text-align: center;
-    line-height: 1.6;
-    color: #555;
+  .gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .view-toggle {
+    display: flex;
+    background: #eee;
+    padding: 4px;
+    border-radius: 8px;
+    gap: 4px;
+    position: sticky;
+    top: 20px;
+    z-index: 100;
+  }
+
+  .view-toggle button {
+    border: none;
+    background: transparent;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .view-toggle button.active {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
 
   #photoContent {
@@ -226,11 +314,22 @@ const gutter = "12px";
   }
 
   #gallery {
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     gap: var(--gutter);
     width: 100%;
-    --base-height: 260px;
+    --base-height: 300px;
+    justify-content: center;
+  }
+
+  #photoContent.view-gallery #gallery {
+    display: flex;
+  }
+
+  @media screen and (max-width: 1050px) {
+    #gallery {
+      --base-height: 220px;
+    }
   }
 
   .galleryImage:hover {
@@ -276,17 +375,40 @@ const gutter = "12px";
     left: 0;
     min-width: 100vw;
     min-height: 100dvh;
+    max-height: 100dvh;
     background-color: #ffffff;
     z-index: 99990;
     pointer-events: none;
-    display: flex;
+    transition: opacity 0.3s ease-in-out;
     opacity: 0;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #imageViewport {
+    min-width: 100vw;
+    min-height: 100dvh;
+    display: flex;
     padding: 20px;
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
     gap: 20px;
-    transition: opacity 0.3s ease-in-out;
+  }
+
+  #viewportBelow {
+    min-width: 100vw;
+    max-width: 100vw;
+    min-height: 100dvh;
+    max-height: 100dvh;
+    padding: 20px;
+    box-sizing: border-box;
+    display: none;
+  }
+
+  #selectedMap {
+    flex: 1;
   }
 
   #fullscreenOverlay.active {
@@ -294,11 +416,11 @@ const gutter = "12px";
     pointer-events: auto;
   }
 
-  #fullscreenOverlay.layout-row {
+  #imageViewport.layout-row {
     flex-direction: row;
   }
 
-  #fullscreenOverlay.layout-column {
+  #imageViewport.layout-column {
     flex-direction: column;
   }
 
@@ -331,11 +453,11 @@ const gutter = "12px";
     gap: 0.5em;
   }
 
-  #fullscreenOverlay.layout-row .metadata-panel {
+  .layout-row .metadata-panel {
     max-width: 300px;
   }
 
-  #fullscreenOverlay.layout-column .metadata-panel {
+  .layout-column .metadata-panel {
     max-width: none;
   }
 
@@ -367,11 +489,27 @@ const gutter = "12px";
     transition: all 0.2s ease;
   }
 
+  .metadata-actions {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .metadata-actions div {
+    width: 3em;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+  }
+
+  .metadata-actions div:hover {
+    opacity: 1;
+  }
+
   @media screen and (max-width: 800px) {
     #gallery {
       --base-height: 190px;
     }
-    #fullscreenOverlay {
+    #imageViewport {
       padding: 12px;
       gap: 12px;
     }
@@ -379,11 +517,14 @@ const gutter = "12px";
       padding-left: 12px !important;
       padding-right: 12px !important;
     }
-  }
-
-  @media screen and (max-width: 600px) {
-    #gallery {
-      --base-height: 190px;
+    .gallery-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .view-toggle {
+      position: static;
+      margin-bottom: 1rem;
     }
   }
 
@@ -400,232 +541,331 @@ const gutter = "12px";
 </style>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const fullScreenEl = document.querySelector("#fullscreenOverlay");
-    const metadataTitle = document.querySelector("#metaTitle");
-    const fullScreenImage = document.querySelector("#fullscreenPlaceholder");
-    const metaChipsRow = document.querySelector("#metaChipsRow") as HTMLElement;
+  const fullScreenEl = document.querySelector("#fullscreenOverlay");
+  const metadataTitle = document.querySelector("#metaTitle");
+  const fullScreenImage = document.querySelector("#fullscreenPlaceholder");
+  const imageViewport = document.querySelector("#imageViewport") as HTMLElement;
+  const metaChipsRow = document.querySelector("#metaChipsRow") as HTMLElement;
 
-    const galleryImages = document.querySelectorAll(".galleryImage");
-    galleryImages.forEach((image) => {
-      image.addEventListener("click", () => {
-        console.log("Image clicked");
-        enterFullscreen(image as HTMLImageElement);
-      });
+  const viewportBelow = document.querySelector("#viewportBelow") as HTMLElement;
+  const selectedMapEl = document.querySelector("#selectedMap") as HTMLElement;
+
+  const exitButton = document.querySelector("#exitButton") as HTMLElement;
+  const nextButton = document.querySelector("#nextButton") as HTMLElement;
+  const prevButton = document.querySelector("#prevButton") as HTMLElement;
+
+  const galleryImages = document.querySelectorAll(".galleryImage");
+  galleryImages.forEach((image) => {
+    image.addEventListener("click", () => {
+      enterFullscreen(image as HTMLImageElement);
     });
+  });
 
-    // Close overlay on background click
-    fullScreenEl?.addEventListener("click", (e) => {
-      if (!(e.target as HTMLElement).closest("#metadataPanel")) {
-        exitFullscreen();
+  function enterFullscreen(image: HTMLImageElement) {
+    document.querySelector(".galleryImage.active")?.classList.remove("active");
+    image.classList.add("active");
+
+    const dataName = image.getAttribute("data-name");
+    const dataCamera = image.getAttribute("data-camera");
+    const dataLens = image.getAttribute("data-lens");
+    const dataShutter = image.getAttribute("data-shutter");
+    const dataAperture = image.getAttribute("data-aperture");
+    const dataIso = image.getAttribute("data-iso");
+    const dataFocal = image.getAttribute("data-focal");
+    const dataLon = image.getAttribute("data-lon");
+    const dataLat = image.getAttribute("data-lat");
+
+    if (dataLon && dataLat && viewportBelow) {
+      viewportBelow.style.display = "flex";
+      buildSelectedMap(parseFloat(dataLon), parseFloat(dataLat));
+    } else if (viewportBelow) {
+      viewportBelow.style.display = "none";
+    }
+
+    if (metadataTitle) {
+      metadataTitle.textContent = dataName || "";
+    }
+
+    if (metaChipsRow) {
+      if (
+        !dataCamera &&
+        !dataLens &&
+        !dataAperture &&
+        !dataShutter &&
+        !dataIso &&
+        !dataFocal
+      ) {
+        metaChipsRow.style.display = "none";
+      } else {
+        metaChipsRow.style.display = "flex";
+
+        metaChipsRow.innerHTML = "";
+        const specs = [
+          { value: dataCamera, label: "" },
+          { value: dataLens, label: "" },
+          { value: dataFocal, label: "" },
+          { value: dataShutter, label: "s" },
+          { value: dataAperture, prefix: "f/" },
+          { value: dataIso, prefix: "ISO " },
+        ];
+
+        specs.forEach((spec) => {
+          if (
+            spec.value &&
+            spec.value !== "undefined" &&
+            spec.value !== "null"
+          ) {
+            const chip = document.createElement("span");
+            chip.className = "meta-chip";
+            let text = spec.value;
+            if (spec.prefix) text = spec.prefix + text;
+            if (spec.label && !text.endsWith(spec.label))
+              text = text + spec.label;
+            chip.textContent = text;
+            metaChipsRow.appendChild(chip);
+          }
+        });
       }
-    });
+    }
 
-    function enterFullscreen(image: HTMLImageElement) {
-      const dataName = image.getAttribute("data-name");
-      const dataCamera = image.getAttribute("data-camera");
-      const dataLens = image.getAttribute("data-lens");
-      const dataShutter = image.getAttribute("data-shutter");
-      const dataAperture = image.getAttribute("data-aperture");
-      const dataIso = image.getAttribute("data-iso");
-      const dataFocal = image.getAttribute("data-focal");
-      console.log(
-        dataName,
-        dataCamera,
-        dataLens,
-        dataShutter,
-        dataAperture,
-        dataIso,
-        dataFocal,
+    if (fullScreenImage) {
+      const fullResEl =
+        image.querySelector(".fullres-img") ||
+        image.querySelector("img[alt*='fullscreen']") ||
+        image.querySelector("img:last-of-type");
+
+      const thumbEl =
+        image.querySelector(".thumb-img") || image.querySelector("img");
+
+      const src =
+        fullResEl?.getAttribute("src") ||
+        (fullResEl as HTMLImageElement)?.src ||
+        thumbEl?.getAttribute("src") ||
+        (thumbEl as HTMLImageElement)?.src;
+
+      fullScreenImage.setAttribute("src", src || "");
+      fullScreenImage.setAttribute(
+        "data-width",
+        image.getAttribute("data-width") || "",
       );
-
-      if (metadataTitle) {
-        metadataTitle.textContent = dataName || "";
-      }
-
-      if (metaChipsRow) {
-        if (
-          !dataCamera &&
-          !dataLens &&
-          !dataAperture &&
-          !dataShutter &&
-          !dataIso &&
-          !dataFocal
-        ) {
-          metaChipsRow.style.display = "none";
-        } else {
-          metaChipsRow.style.display = "flex";
-
-          metaChipsRow.innerHTML = "";
-          const specs = [
-            { value: dataCamera, label: "" },
-            { value: dataLens, label: "" },
-            { value: dataFocal, label: "" },
-            { value: dataShutter, label: "s" },
-            { value: dataAperture, prefix: "f/" },
-            { value: dataIso, prefix: "ISO " },
-          ];
-
-          specs.forEach((spec) => {
-            if (
-              spec.value &&
-              spec.value !== "undefined" &&
-              spec.value !== "null"
-            ) {
-              const chip = document.createElement("span");
-              chip.className = "meta-chip";
-              let text = spec.value;
-              if (spec.prefix) text = spec.prefix + text;
-              if (spec.label && !text.endsWith(spec.label))
-                text = text + spec.label;
-              chip.textContent = text;
-              metaChipsRow.appendChild(chip);
-            }
-          });
-        }
-      }
-
-      if (fullScreenImage) {
-        // Try multiple selectors to find the 2000px high-res image
-        const fullResEl =
-          image.querySelector(".fullres-img") ||
-          image.querySelector("img[alt*='fullscreen']") ||
-          image.querySelector("img:last-of-type");
-
-        const thumbEl =
-          image.querySelector(".thumb-img") || image.querySelector("img");
-
-        // Prefer fullres src (absolute or relative)
-        const src =
-          fullResEl?.getAttribute("src") ||
-          (fullResEl as HTMLImageElement)?.src ||
-          thumbEl?.getAttribute("src") ||
-          (thumbEl as HTMLImageElement)?.src;
-
-        console.log("Full Screen Image element:", fullScreenImage);
-        console.log("Found High-Res Image Element:", fullResEl);
-        console.log("Resolved Image source URL:", src);
-
-        fullScreenImage.setAttribute("src", src || "");
-        fullScreenImage.setAttribute(
-          "data-width",
-          image.getAttribute("data-width") || "",
-        );
-        fullScreenImage.setAttribute(
-          "data-height",
-          image.getAttribute("data-height") || "",
-        );
-      }
+      fullScreenImage.setAttribute(
+        "data-height",
+        image.getAttribute("data-height") || "",
+      );
+    }
+    updateFullscreenOrientation();
+    fullScreenEl?.classList.add("active");
+    requestAnimationFrame(() => {
       updateFullscreenOrientation();
-      fullScreenEl?.classList.add("active");
-      requestAnimationFrame(() => {
-        updateFullscreenOrientation();
+    });
+  }
+
+  function exitFullscreen() {
+    fullScreenEl?.classList.remove("active");
+    document.querySelector(".galleryImage.active")?.classList.remove("active");
+    if (fullScreenImage) {
+      setTimeout(() => {
+        if (!fullScreenEl?.classList.contains("active")) {
+          (fullScreenImage as HTMLElement).style.width = "";
+          (fullScreenImage as HTMLElement).style.height = "";
+        }
+      }, 300);
+    }
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      exitFullscreen();
+    }
+    if (e.key === "ArrowRight") {
+      nextButton.click();
+    }
+    if (e.key === "ArrowLeft") {
+      prevButton.click();
+    }
+    if (e.key === "ArrowDown") {
+      scrollToMap();
+    }
+    if (e.key === "ArrowUp") {
+      scrollToImage();
+    }
+  });
+
+  function scrollToMap() {
+    if (fullScreenEl?.classList.contains("active") && viewportBelow) {
+      viewportBelow.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }
+
+  function scrollToImage() {
+    if (fullScreenEl?.classList.contains("active")) {
+      fullScreenEl.scrollTo({
+        top: 0,
+        behavior: "smooth",
       });
     }
+  }
 
-    function exitFullscreen() {
-      fullScreenEl?.classList.remove("active");
-      if (fullScreenImage) {
-        setTimeout(() => {
-          if (!fullScreenEl?.classList.contains("active")) {
-            (fullScreenImage as HTMLElement).style.width = "";
-            (fullScreenImage as HTMLElement).style.height = "";
-          }
-        }, 300);
-      }
+  exitButton.addEventListener("click", () => {
+    exitFullscreen();
+  });
+
+  nextButton.addEventListener("click", () => {
+    const currentImage = document.querySelector(
+      ".galleryImage.active",
+    ) as HTMLImageElement;
+    if (!currentImage) return;
+    const nextImage = currentImage.nextElementSibling as HTMLImageElement;
+    if (nextImage) {
+      enterFullscreen(nextImage);
     }
+  });
 
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        exitFullscreen();
-      }
-    });
-
-    window.addEventListener("resize", () => {
-      updateFullscreenOrientation();
-    });
-
-    function fullScreenOrrientationHorizontal(
-      width: number,
-      height: number,
-    ): boolean {
-      const isMobile = window.innerWidth <= 800;
-      const currentMetaMinWidth = isMobile ? 240 : 300;
-      const currentMetaMinHeight = isMobile ? 80 : 100;
-      const currentGutter = isMobile ? 16 : 20;
-
-      let W = window.innerWidth - currentGutter * 2;
-      let H = window.innerHeight - currentGutter * 2;
-
-      // assume horizontal
-      let w = W - currentMetaMinWidth;
-      const scaleH = Math.min(w / width, H / height);
-
-      // assume vertical
-      let h = H - currentMetaMinHeight;
-      const scaleV = Math.min(h / height, W / width);
-
-      return scaleH > scaleV;
+  prevButton.addEventListener("click", () => {
+    const currentImage = document.querySelector(
+      ".galleryImage.active",
+    ) as HTMLImageElement;
+    if (!currentImage) return;
+    const prevImage = currentImage.previousElementSibling as HTMLImageElement;
+    if (prevImage) {
+      enterFullscreen(prevImage);
     }
+  });
 
-    function updateFullscreenOrientation() {
-      if (fullScreenImage && fullScreenEl) {
-        const width = fullScreenImage.getAttribute("data-width");
-        const height = fullScreenImage.getAttribute("data-height");
-        const isHorizontal = fullScreenOrrientationHorizontal(
-          parseInt(width || "0"),
-          parseInt(height || "0"),
-        );
-        fullScreenEl.classList.toggle("layout-row", isHorizontal);
-        fullScreenEl.classList.toggle("layout-column", !isHorizontal);
+  window.addEventListener("resize", () => {
+    updateFullscreenOrientation();
+  });
 
-        const imgWidth = parseInt(width || "0");
-        const imgHeight = parseInt(height || "0");
-        if (imgWidth > 0 && imgHeight > 0) {
-          const isMobile = window.innerWidth <= 800;
-          const currentGutter = isMobile ? 16 : 20;
-          const currentGap = isMobile ? 16 : 20;
-          const metadataPanel = document.querySelector(
-            "#metadataPanel",
-          ) as HTMLElement;
+  function fullScreenOrrientationHorizontal(
+    width: number,
+    height: number,
+  ): boolean {
+    const isMobile = window.innerWidth <= 800;
+    const currentMetaMinWidth = isMobile ? 240 : 300;
+    const currentMetaMinHeight = isMobile ? 80 : 100;
+    const currentGutter = isMobile ? 16 : 20;
 
-          let targetWidth = 0;
-          let targetHeight = 0;
+    let W = window.innerWidth - currentGutter * 2;
+    let H = window.innerHeight - currentGutter * 2;
 
-          if (isHorizontal) {
-            const metadataWidth = metadataPanel
-              ? metadataPanel.offsetWidth
-              : 300;
-            const wAvail =
-              window.innerWidth -
-              metadataWidth -
-              currentGutter * 2 -
-              currentGap;
-            const hAvail = window.innerHeight - currentGutter * 2;
+    let w = W - currentMetaMinWidth;
+    const scaleH = Math.min(w / width, H / height);
 
-            const scale = Math.min(wAvail / imgWidth, hAvail / imgHeight);
-            targetWidth = imgWidth * scale;
-            targetHeight = imgHeight * scale;
-          } else {
-            const metadataHeight = metadataPanel
-              ? metadataPanel.offsetHeight
-              : 100;
-            const wAvail = window.innerWidth - currentGutter * 2;
-            const hAvail =
-              window.innerHeight -
-              metadataHeight -
-              currentGutter * 2 -
-              currentGap;
+    let h = H - currentMetaMinHeight;
+    const scaleV = Math.min(h / height, W / width);
 
-            const scale = Math.min(wAvail / imgWidth, hAvail / imgHeight);
-            targetWidth = imgWidth * scale;
-            targetHeight = imgHeight * scale;
-          }
+    return scaleH > scaleV;
+  }
 
-          (fullScreenImage as HTMLElement).style.width = `${targetWidth}px`;
-          (fullScreenImage as HTMLElement).style.height = `${targetHeight}px`;
+  function updateFullscreenOrientation() {
+    if (fullScreenImage && fullScreenEl) {
+      const width = fullScreenImage.getAttribute("data-width");
+      const height = fullScreenImage.getAttribute("data-height");
+      const isHorizontal = fullScreenOrrientationHorizontal(
+        parseInt(width || "0"),
+        parseInt(height || "0"),
+      );
+      imageViewport?.classList.toggle("layout-row", isHorizontal);
+      imageViewport?.classList.toggle("layout-column", !isHorizontal);
+
+      const imgWidth = parseInt(width || "0");
+      const imgHeight = parseInt(height || "0");
+      if (imgWidth > 0 && imgHeight > 0) {
+        const isMobile = window.innerWidth <= 800;
+        const currentGutter = isMobile ? 16 : 20;
+        const currentGap = isMobile ? 16 : 20;
+        const metadataPanel = document.querySelector(
+          "#metadataPanel",
+        ) as HTMLElement;
+
+        let targetWidth = 0;
+        let targetHeight = 0;
+
+        if (isHorizontal) {
+          const metadataWidth = metadataPanel ? metadataPanel.offsetWidth : 300;
+          const wAvail =
+            window.innerWidth - metadataWidth - currentGutter * 2 - currentGap;
+          const hAvail = window.innerHeight - currentGutter * 2;
+
+          const scale = Math.min(wAvail / imgWidth, hAvail / imgHeight);
+          targetWidth = imgWidth * scale;
+          targetHeight = imgHeight * scale;
+        } else {
+          const metadataHeight = metadataPanel
+            ? metadataPanel.offsetHeight
+            : 100;
+          const wAvail = window.innerWidth - currentGutter * 2;
+          const hAvail =
+            window.innerHeight -
+            metadataHeight -
+            currentGutter * 2 -
+            currentGap;
+
+          const scale = Math.min(wAvail / imgWidth, hAvail / imgHeight);
+          targetWidth = imgWidth * scale;
+          targetHeight = imgHeight * scale;
         }
+
+        (fullScreenImage as HTMLElement).style.width = `${targetWidth}px`;
+        (fullScreenImage as HTMLElement).style.height = `${targetHeight}px`;
       }
     }
+  }
+
+  function buildSelectedMap(lon: number, lat: number) {
+    const selectedMap = new google.maps.Map(selectedMapEl, {
+      center: {
+        lat: lat,
+        lng: lon,
+      },
+      zoom: 16,
+      zoomControl: true,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
+      streetViewControl: true,
+      streetViewControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
+      fullscreenControl: true,
+      fullscreenControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
+      rotateControl: true,
+      rotateControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
+    });
+    new google.maps.Marker({
+      position: { lat: lat, lng: lon },
+      map: selectedMap,
+    });
+  }
+
+  // Handle photo clicks from map
+  window.addEventListener('photo-map-click', (e: any) => {
+    const galleryImg = Array.from(galleryImages).find(el => el.getAttribute('data-name') === e.detail.name);
+    if (galleryImg) enterFullscreen(galleryImg as HTMLImageElement);
+  });
+
+  // Toggle View Logic
+  const photoContent = document.getElementById('photoContent');
+  const toggleGrid = document.getElementById('toggleGallery');
+  const toggleMap = document.getElementById('toggleMap');
+
+  toggleGrid?.addEventListener('click', () => {
+    photoContent?.classList.remove('view-map');
+    photoContent?.classList.add('view-gallery');
+    toggleGrid.classList.add('active');
+    toggleMap?.classList.remove('active');
+    window.dispatchEvent(new CustomEvent('photo-view-change', { detail: { view: 'gallery' } }));
+  });
+
+  toggleMap?.addEventListener('click', () => {
+    photoContent?.classList.remove('view-gallery');
+    photoContent?.classList.add('view-map');
+    toggleMap.classList.add('active');
+    toggleGrid?.classList.remove('active');
+    window.dispatchEvent(new CustomEvent('photo-view-change', { detail: { view: 'map' } }));
   });
 </script>
