@@ -1,37 +1,28 @@
 ---
 import PortfolioPage from "./index.astro";
 import exiftoolJson from "../../assets/photo-portfolio/temp/blake/metadata.json";
+import { cleanseName } from "./_utils";
 
 export async function getStaticPaths() {
-  const glob = await import.meta.glob("/photo-portfolio/temp/blake/*");
+  const glob = import.meta.glob("/src/assets/photo-portfolio/temp/blake/*.jpg", { eager: true });
   return (
     await Promise.all(
       Object.keys(glob)
-        .filter((path) => path.endsWith(".jpg"))
         .map(async (path) => {
           const filename = path.split("/").pop();
           const name = filename?.split(".").slice(0, -1).join(".");
-          if (!name) throw new Error(`No filename found for path: ${path}`);
-          console.log("name is", name);
-          const meta = exiftoolJson[name];
+          if (!name || !filename) throw new Error(`No filename found for path: ${path}`);
+          const meta = exiftoolJson[filename];
           if (!meta) throw new Error(`No metadata found for ${filename}`);
-
-          const title = decodeURIComponent(
-            meta["File Name"]
-              .split(".")
-              .slice(0, -1)
-              .join(".")
-              .replaceAll("_", " "),
-          );
 
           return [
             {
               params: {
-                slug: name,
+                slug: cleanseName(name),
               },
               props: {
-                image: path,
-                imageName: title,
+                image: `/og/photo/blake/${encodeURIComponent(name)}.webp`,
+                imageName: name,
               },
             },
           ];
