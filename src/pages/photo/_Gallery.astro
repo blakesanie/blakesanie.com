@@ -254,6 +254,7 @@ const gutter = "10px";
   {
     allowFullscreen && (
       <div id="fullscreenOverlay" role="dialog" aria-modal="true" tabindex="-1">
+        <div id="fullscreenScroll">
         <div id="imageViewport">
           <div class="metadata-panel" id="metadataPanel">
             <div class="metadata-title" id="metaTitle" />
@@ -273,6 +274,7 @@ const gutter = "10px";
         <div id="viewportBelow">
           <div id="selectedMap" />
         </div>
+      </div>
       </div>
     )
   }
@@ -385,7 +387,6 @@ const gutter = "10px";
     pointer-events: none;
     transition: opacity 0.15s ease-in-out;
     opacity: 0;
-    overflow-y: scroll;
     display: none;
     flex-direction: column;
   }
@@ -394,6 +395,13 @@ const gutter = "10px";
     opacity: 1;
     pointer-events: auto;
     display: flex;
+  }
+
+  #fullscreenScroll {
+    flex: 1;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
   }
 
   #imageViewport {
