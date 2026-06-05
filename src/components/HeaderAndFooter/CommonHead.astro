@@ -2,6 +2,12 @@
 import { GoogleFontsOptimizer } from "astro-google-fonts-optimizer";
 import { SEO } from "astro-seo";
 import RemoveLogs from "../basic/RemoveLogs.astro";
+import satori from "satori";
+import { Resvg } from "@resvg/resvg-js";
+import fs from "fs";
+import { getImage } from "astro:assets";
+import path from 'node:path';
+
 Astro.props.fontUrl =
   Astro.props.fontUrl ||
   "https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&display=swap";
@@ -10,33 +16,151 @@ const title = Astro.props.title
   ? Astro.props.title + " | Blake Sanie"
   : "Blake Sanie";
 
-const ogTitle = Astro.props.title || "Blake Sanie";
+let image = Astro.props.image;
 
-if (!Astro.props.image) {
-  Astro.props.image = `/og/${ogTitle}.png`;
+if (!image) {
+  const font = fs.readFileSync(
+    "src/assets/fonts/Assistant/static/Assistant-Regular.ttf"
+  );
+  const font2 = fs.readFileSync(
+    "src/assets/fonts/Assistant/static/Assistant-SemiBold.ttf"
+  );
+  const ogBg = fs.readFileSync("src/assets/photo-portfolio/portfolio2k/ManhattanBridge.jpg");
+  const b64 = ogBg.toString("base64");
+
+  const arrowSvg = Astro.props.redirect
+    ? {
+        type: "svg",
+        props: {
+          xmlns: "http://www.w3.org/2000/svg",
+          viewBox: "0 0 24 24",
+          children: {
+            type: "path",
+            props: {
+              fill: "white",
+              d: "M6.4 18L5 16.6L14.6 7H6V5h12v12h-2V8.4z",
+            },
+          },
+          width: 60,
+          height: 60,
+          style: { opacity: 0.5, marginTop: 30, marginLeft: -4 },
+        },
+      }
+    : "";
+
+    const width = 1200;
+  const height = 900;
+  const format = "webp";
+  const quality = 75;
+
+  const svg = await satori(
+    {
+      type: "div",
+      props: {
+        children: [
+          {
+            type: "img",
+            props: {
+              src: `data:image/jpeg;base64,${b64}`,
+              style: { transform: `scale(1.2) translate(8%,6%)` },
+            },
+          },
+          {
+            type: "div",
+            props: {
+              children: [
+                {
+                  type: "div",
+                  props: {
+                    children: [Astro.props.title || "Blake Sanie", arrowSvg],
+                    style: { display: "flex" },
+                  },
+                },
+                {
+                  type: "div",
+                  props: {
+                    children: Astro.props.title
+                      ? "Blake Sanie"
+                      : [
+                          "Software Engineer. Photographer.",
+                          { type: "div", props: { children: "Ironman. Lifelong Student." } },
+                        ],
+                    style: {
+                      display: "flex",
+                      flexDirection: "column",
+                      fontSize: Astro.props.title ? 60 : 40,
+                      opacity: 0.4,
+                      fontWeight: 400,
+                    },
+                  },
+                },
+              ],
+              style: {
+                display: "flex",
+                flexDirection: "column",
+                position: "absolute",
+                top: 50,
+                left: 70,
+                color: "white",
+                fontSize: 120,
+                maxWidth: 1200 - 50 * 2,
+                fontWeight: 700,
+                gap: -8,
+              },
+            },
+          },
+        ],
+        style: {
+          display: "flex",
+          background: "black",
+          width: "100%",
+          height: "100%",
+        },
+      },
+    },
+    {
+      width: width,
+      height: height,
+      fonts: [
+        { name: "Assistant", data: font, weight: 400, style: "normal" },
+        { name: "Assistant", data: font2, weight: 700, style: "normal" },
+      ],
+    }
+  );
+
+  const resvg = new Resvg(svg, { fitTo: { mode: "width", value: 1200 } });
+  const pngBuffer = resvg.render().asPng();
+
+  const cacheDir = path.join(process.cwd(), '.astro', 'satori-cache');
+  if (!fs.existsSync(cacheDir)) {
+    fs.mkdirSync(cacheDir, { recursive: true });
+  }
+
+  // 2. Write the raw PNG buffer to a temporary file named after your slug
+  // Sanitize title for filename
+  const safeTitle = (Astro.props.title || "default").replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  const tempPngPath = path.join(cacheDir, `${safeTitle}-og.png`);
+  fs.writeFileSync(tempPngPath, pngBuffer);
+
+  image = await getImage({
+    src: tempPngPath,
+    width: width,
+    height: height,
+    format: "webp",
+    quality: quality,
+  });
+
+  if (import.meta.env.DEV) {
+    // Generate dev URL dynamically using the configuration variables
+    image = `/_image?href=${encodeURIComponent('/@fs' + tempPngPath)}&w=${width}&h=${height}&f=${format}&q=${quality}`;
+  }
 }
 
 const { noIndex } = Astro.props;
 
-// const { link, style, img } = await renderImg({
-//   src: Astro.props.image,
-//   breakpoints: [1200],
-//   format: "webp",
-//   alt: "",
-//   quality: 50,
-// });
-
-// const ogThumb = img.split('srcset="')[1].split('"')[0];
-
-// const image = `${
-//   import.meta.env.DEV ? "" : "https://blakesanie.com"
-// }${ogThumb}`;
-let image = Astro.props.image
-  ? Astro.props.image.src || Astro.props.image
-  : "https://blakesanie.com/og/thumb.png";
-
-if (image.startsWith("/") && !image.startsWith("//")) {
-  image = (import.meta.env.DEV ? "http://localhost:4321" : "https://blakesanie.com") + image;
+let finalImage = image?.src || image;
+if (typeof finalImage === 'string' && finalImage.startsWith("/") && !finalImage.startsWith("//")) {
+  finalImage = (import.meta.env.DEV ? "http://localhost:4321" : "https://blakesanie.com") + finalImage;
 }
 
 const imageAlt =
@@ -44,8 +168,6 @@ const imageAlt =
 const description =
   Astro.props.description ||
   "Software Engineer. Photographer. Ironman. Lifelong Student.";
-
-// console.log("title, desc", title, description, "props", Astro.props)
 ---
 
 <html lang="en">
@@ -72,13 +194,13 @@ const description =
         basic: {
           title: title,
           type: "website",
-          image: image,
+          image: finalImage,
         },
         optional: {
           description: description,
         },
         image: {
-          type: "image/" + image.split(".").pop(),
+          type: "image/" + (typeof finalImage === 'string' ? finalImage.split(".").pop().split('?')[0] : 'png'),
           // width: width,
           // height: height,
           alt: imageAlt,
@@ -89,7 +211,7 @@ const description =
         card: "summary_large_image",
         site: "@blakesanie",
         title: title,
-        image: image,
+        image: finalImage,
         imageAlt: "Open Graph Thumbnail Image for page. " + description,
         description: description,
       }}
