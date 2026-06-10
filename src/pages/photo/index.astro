@@ -1,27 +1,27 @@
 ---
 import Gallery from "./_Gallery.astro";
 // import { imageSizeFromFile } from "image-size/fromFile";
-import exifr from "exifr";
 import fs from "fs";
 import { join } from "path";
 
 // 1. Statically track the assets so Vite can optimize them
 const assetGlob = import.meta.glob(
-  "/src/assets/photo-portfolio/temp/blake/*.{jpg,jpeg,png,webp}",
+  "/src/assets/portfolio_alias/*.{jpg,jpeg,png,webp}",
   { eager: true },
-);
+) as { [key: string]: any };
 
 // 2. Read sidecar JSON descriptors from disk
 const rawMetadata = fs.readFileSync(
-  "src/assets/photo-portfolio/temp/blake/metadata.json",
+  "src/assets/portfolio_alias/metadata.json",
   "utf-8",
 );
 const exifToolJson = JSON.parse(rawMetadata);
 
-const embeddingsPath = "src/assets/photo-portfolio/temp/blake/embeddings.json";
-const embeddingsJson = fs.existsSync(embeddingsPath)
-  ? JSON.parse(fs.readFileSync(embeddingsPath, "utf-8"))
-  : {};
+const embeddingsPath = "src/assets/portfolio_alias/embeddings.json";
+
+if (!fs.existsSync(embeddingsPath))
+  throw Error("no embeddings file at " + embeddingsPath);
+const embeddingsJson = JSON.parse(fs.readFileSync(embeddingsPath, "utf-8"));
 
 // 3. Build the comprehensive image array at build time
 const imagesArr = await Promise.all(
@@ -31,13 +31,22 @@ const imagesArr = await Promise.all(
       return;
     }
     const name = filename.split(".").slice(0, -1).join(".");
+    const exif = exifToolJson[filename];
+    if (!exif)
+      throw Error("no exif in " + embeddingsPath + " for image " + filename);
+    const embeddings = embeddingsJson[filename];
+    if (!embeddings)
+      throw Error(
+        "no embeddings in " + embeddingsPath + " for image " + filename,
+      );
     return {
       name,
       path: assetGlob[vitePath].default as string, // Tracked Astro Image object
-      width: parseInt(exifToolJson[filename]["Image Width"]),
-      height: parseInt(exifToolJson[filename]["Image Height"]),
+      width: parseInt(exif["Image Width"]),
+      height: parseInt(exif["Image Height"]),
       filename,
-      exif: exifToolJson[filename],
+      exif: exif,
+      embeddings,
     };
   }),
 );
@@ -53,8 +62,6 @@ console.log("Show Gallery with images:", imagesArr.length);
   allowMap={true}
   allowFullscreen={true}
   randomize={true}
-  allowMetadata={true}
-  allowClip={true}
   allowFilename={false}
   allowBlog={true}
   allowUniqueUrls={true}

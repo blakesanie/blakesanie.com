@@ -35,3 +35,5 @@ public/assets/imageEmbeddings*.json
 public/route-builder
 /public/_next/
 __pycache__/
+
+icloudImages

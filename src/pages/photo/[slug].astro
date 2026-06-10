@@ -1,43 +1,48 @@
 ---
 import PortfolioPage from "./index.astro";
-import exiftoolJson from "../../assets/photo-portfolio/temp/blake/metadata.json";
+import exiftoolJson from "../../assets/portfolio_alias/metadata.json";
 import { cleanseName } from "./_utils";
 import { getImage } from "astro:assets";
 
 export async function getStaticPaths() {
-  const glob = import.meta.glob("/src/assets/photo-portfolio/temp/blake/*.jpg", { eager: true });
+  const glob = import.meta.glob(
+    "/src/assets/portfolio_alias/*.{jpg,jpeg,png,webp}",
+    { eager: true },
+  );
   return (
     await Promise.all(
-      Object.keys(glob)
-        .map(async (path) => {
-          const filename = path.split("/").pop();
-          const name = filename?.split(".").slice(0, -1).join(".");
-          if (!name || !filename) throw new Error(`No filename found for path: ${path}`);
-          const meta = exiftoolJson[filename];
-          if (!meta) throw new Error(`No metadata found for ${filename}`);
+      Object.keys(glob).map(async (path) => {
+        const filename = path.split("/").pop();
+        const name = filename?.split(".").slice(0, -1).join(".");
+        if (!name || !filename)
+          throw new Error(`No filename found for path: ${path}`);
+        const meta = exiftoolJson[filename];
+        if (!meta) throw new Error(`No metadata found for ${filename}`);
 
-          const ogImage = await getImage({
-            src: (glob[path] as any).default,
-            width: 1200,
-            format: "webp",
-            quality: 75,
-          });
+        const ogImage = await getImage({
+          src: (glob[path] as any).default,
+          width: 1200,
+          format: "webp",
+          quality: 75,
+        });
 
-          const baseUrl = import.meta.env.DEV ? "http://localhost:4321" : "https://blakesanie.com";
-          const absoluteImageUrl = baseUrl + ogImage.src;
+        const baseUrl = import.meta.env.DEV
+          ? "http://localhost:4321"
+          : "https://blakesanie.com";
+        const absoluteImageUrl = baseUrl + ogImage.src;
 
-          return [
-            {
-              params: {
-                slug: cleanseName(name),
-              },
-              props: {
-                image: absoluteImageUrl,
-                imageName: name,
-              },
+        return [
+          {
+            params: {
+              slug: cleanseName(name),
             },
-          ];
-        }),
+            props: {
+              image: absoluteImageUrl,
+              imageName: name,
+            },
+          },
+        ];
+      }),
     )
   ).flat();
 }

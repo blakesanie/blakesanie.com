@@ -6,7 +6,7 @@ import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
 import fs from "fs";
 import { getImage } from "astro:assets";
-import path from 'node:path';
+import path from "node:path";
 
 Astro.props.fontUrl =
   Astro.props.fontUrl ||
@@ -20,12 +20,14 @@ let image = Astro.props.image;
 
 if (!image) {
   const font = fs.readFileSync(
-    "src/assets/fonts/Assistant/static/Assistant-Regular.ttf"
+    "src/assets/fonts/Assistant/static/Assistant-Regular.ttf",
   );
   const font2 = fs.readFileSync(
-    "src/assets/fonts/Assistant/static/Assistant-SemiBold.ttf"
+    "src/assets/fonts/Assistant/static/Assistant-SemiBold.ttf",
   );
-  const ogBg = fs.readFileSync("src/assets/photo-portfolio/portfolio2k/ManhattanBridge.jpg");
+  const ogBg = fs.readFileSync(
+    "src/assets/portfolio_alias/Manhattan Bridge.jpg",
+  );
   const b64 = ogBg.toString("base64");
 
   const arrowSvg = Astro.props.redirect
@@ -48,7 +50,7 @@ if (!image) {
       }
     : "";
 
-    const width = 1200;
+  const width = 1200;
   const height = 900;
   const format = "webp";
   const quality = 75;
@@ -83,7 +85,10 @@ if (!image) {
                       ? "Blake Sanie"
                       : [
                           "Software Engineer. Photographer.",
-                          { type: "div", props: { children: "Ironman. Lifelong Student." } },
+                          {
+                            type: "div",
+                            props: { children: "Ironman. Lifelong Student." },
+                          },
                         ],
                     style: {
                       display: "flex",
@@ -125,20 +130,22 @@ if (!image) {
         { name: "Assistant", data: font, weight: 400, style: "normal" },
         { name: "Assistant", data: font2, weight: 700, style: "normal" },
       ],
-    }
+    },
   );
 
   const resvg = new Resvg(svg, { fitTo: { mode: "width", value: 1200 } });
   const pngBuffer = resvg.render().asPng();
 
-  const cacheDir = path.join(process.cwd(), '.astro', 'satori-cache');
+  const cacheDir = path.join(process.cwd(), ".astro", "satori-cache");
   if (!fs.existsSync(cacheDir)) {
     fs.mkdirSync(cacheDir, { recursive: true });
   }
 
   // 2. Write the raw PNG buffer to a temporary file named after your slug
   // Sanitize title for filename
-  const safeTitle = (Astro.props.title || "default").replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  const safeTitle = (Astro.props.title || "default")
+    .replace(/[^a-z0-9]/gi, "_")
+    .toLowerCase();
   const tempPngPath = path.join(cacheDir, `${safeTitle}-og.png`);
   fs.writeFileSync(tempPngPath, pngBuffer);
 
@@ -152,15 +159,21 @@ if (!image) {
 
   if (import.meta.env.DEV) {
     // Generate dev URL dynamically using the configuration variables
-    image = `/_image?href=${encodeURIComponent('/@fs' + tempPngPath)}&w=${width}&h=${height}&f=${format}&q=${quality}`;
+    image = `/_image?href=${encodeURIComponent("/@fs" + tempPngPath)}&w=${width}&h=${height}&f=${format}&q=${quality}`;
   }
 }
 
 const { noIndex } = Astro.props;
 
 let finalImage = image?.src || image;
-if (typeof finalImage === 'string' && finalImage.startsWith("/") && !finalImage.startsWith("//")) {
-  finalImage = (import.meta.env.DEV ? "http://localhost:4321" : "https://blakesanie.com") + finalImage;
+if (
+  typeof finalImage === "string" &&
+  finalImage.startsWith("/") &&
+  !finalImage.startsWith("//")
+) {
+  finalImage =
+    (import.meta.env.DEV ? "http://localhost:4321" : "https://blakesanie.com") +
+    finalImage;
 }
 
 const imageAlt =
@@ -200,7 +213,11 @@ const description =
           description: description,
         },
         image: {
-          type: "image/" + (typeof finalImage === 'string' ? finalImage.split(".").pop().split('?')[0] : 'png'),
+          type:
+            "image/" +
+            (typeof finalImage === "string"
+              ? finalImage.split(".").pop().split("?")[0]
+              : "png"),
           // width: width,
           // height: height,
           alt: imageAlt,

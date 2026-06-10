@@ -1,0 +1,46 @@
+---
+const { label, ...props } = Astro.props;
+---
+
+<div class="textInput">
+    <label>{label}</label>
+    <input {...props} />
+</div>
+
+<style>
+    div {
+        /* box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1); */
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 0.25em;
+        position: relative;
+        width: 100%;
+    }
+    input {
+        font-size: 1em;
+        background: none;
+        border: none;
+        padding: 0.25em 0.55em;
+        cursor: pointer;
+        width: 100%;
+        cursor: text;
+    }
+    input[disabled] {
+        opacity: 0.5;
+        cursor: wait;
+    }
+    input:focus {
+        outline: none;
+    }
+    label {
+        position: absolute;
+        top: 0;
+        left: 0.72em;
+        transform: translateY(-50%);
+        background-color: white;
+        font-size: 0.8em;
+        padding: 0 0.3em;
+        color: #ccc;
+        font-weight: 400;
+    }
+</style>

@@ -2,6 +2,9 @@
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import { Image, getImage } from "astro:assets";
 import MapGallery from "./_MapGallery.astro";
+import { encodeEmbeddings } from "./_utils";
+import Toggle from "../../components/Toggle/index.astro";
+import TextInput from "../../components/TextInput/index.astro";
 
 export interface Props {
   imagesData: any[];
@@ -11,8 +14,6 @@ export interface Props {
   initialMode?: string;
   allowFullscreen?: boolean;
   allowMap?: boolean;
-  allowMetadata?: boolean;
-  allowClip?: boolean;
   randomize?: boolean;
   heading?: string;
   subheading?: string;
@@ -99,14 +100,14 @@ function dmsToDecimal(dmsStr: string) {
 // Process the image items mapping dimensions and metadata dynamically
 const galleryImages = await Promise.all(
   imagesData.map(async (img) => {
-    const { name, path: imageAsset, width, height, exif } = img;
+    const { name, path: imageAsset, width, height, exif, embeddings } = img;
 
     const aspectRatioNum = width && height ? width / height : 1;
 
     // Pre-calculate optimized high-res URL for deferred loading
     const highRes = await getImage({
       src: imageAsset,
-      width: width > height ? 2000 : Math.round((2000 / height) * width),
+      width: Math.round(Math.sqrt(2500000 / (height * width)) * width),
       quality: 85,
       format: "webp",
     });
@@ -119,6 +120,7 @@ const galleryImages = await Promise.all(
       aspectRatio: width && height ? `${width} / ${height}` : "auto",
       width,
       height,
+      embeddings,
       metadata: {
         camera: resolveCamera(exif),
         lens: resolveLens(exif),
@@ -130,7 +132,7 @@ const galleryImages = await Promise.all(
         lat: dmsToDecimal(exif["GPS Latitude"]),
       },
     };
-  })
+  }),
 );
 
 const mapImages = await Promise.all(
@@ -167,7 +169,6 @@ if (Astro.props.imageName) {
 const description =
   Astro.props.description || "My portfolio of artistic photographs.";
 const gutter = "10px";
-
 ---
 
 <HeaderAndFooter
@@ -184,17 +185,26 @@ const gutter = "10px";
   description={description}
   image={Astro.props.image}
 >
-  <div class="gallery-header">
-    <div class="header-text">
-      {heading && <h1>{heading}</h1>}
-      {subheading && <p set:html={subheading} />}
-    </div>
-    {allowMap && (
-      <div class="view-toggle">
-        <button id="toggleGallery" class={initialMode !== 'map' ? 'active' : ''}>Grid</button>
-        <button id="toggleMap" class={initialMode === 'map' ? 'active' : ''}>Map</button>
-      </div>
-    )}
+  {heading && <h1>{heading}</h1>}
+  {subheading && <p set:html={subheading} />}
+  <div id="controls">
+    {
+      allowMap && (
+        <Toggle
+          actions={[
+            { id: "toggleGallery", label: "Gallery" },
+            { id: "toggleMap", label: "Map" },
+          ]}
+          defaultAction={initialMode == "map" ? "toggleMap" : "toggleGallery"}
+        />
+      )
+    }
+    <TextInput
+      id="clip"
+      label="AI Image Search"
+      placeholder="Loading Model..."
+      disabled
+    />
   </div>
 
   <div
@@ -219,6 +229,7 @@ const gutter = "10px";
               data-height={image.height}
               data-lat={image.metadata.lat}
               data-lon={image.metadata.lon}
+              data-emb={encodeEmbeddings(image.embeddings)}
               style={{
                 flexGrow: image.flexGrow,
                 aspectRatio: image.aspectRatio,
@@ -255,70 +266,43 @@ const gutter = "10px";
     allowFullscreen && (
       <div id="fullscreenOverlay" role="dialog" aria-modal="true" tabindex="-1">
         <div id="fullscreenScroll">
-        <div id="imageViewport">
-          <div class="metadata-panel" id="metadataPanel">
-            <div class="metadata-title" id="metaTitle" />
-            <div class="metadata-chips-row" id="metaChipsRow" />
-            <div class="metadata-actions">
-              <div id="exitButton">Exit</div>
-              <div id="prevButton">Prev</div>
-              <div id="nextButton">Next</div>
+          <div id="imageViewport">
+            <div class="metadata-panel" id="metadataPanel">
+              <div class="metadata-title" id="metaTitle" />
+              <div class="metadata-chips-row" id="metaChipsRow" />
+              <div class="metadata-actions">
+                <div id="exitButton">Exit</div>
+                <div id="prevButton">Prev</div>
+                <div id="nextButton">Next</div>
+              </div>
             </div>
+            <img
+              id="fullscreenPlaceholder"
+              class="fullscreen-placeholder"
+              alt=""
+            />
           </div>
-          <img
-            id="fullscreenPlaceholder"
-            class="fullscreen-placeholder"
-            alt=""
-          />
+          <div id="viewportBelow">
+            <div id="selectedMap" />
+          </div>
         </div>
-        <div id="viewportBelow">
-          <div id="selectedMap" />
-        </div>
-      </div>
       </div>
     )
   }
 </HeaderAndFooter>
 
 <style define:vars={{ gutter }}>
-  .gallery-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
-    margin-bottom: 1rem;
+  #controls {
     width: 100%;
-  }
-
-  .header-text {
-    flex: 1;
-  }
-
-  .view-toggle {
     display: flex;
-    background: #eee;
-    padding: 4px;
-    border-radius: 8px;
-    gap: 4px;
-    position: sticky;
-    top: 20px;
-    z-index: 100;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
   }
 
-  .view-toggle button {
-    border: none;
-    background: transparent;
-    padding: 6px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.1s;
-  }
-
-  .view-toggle button.active {
-    background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  :global(.textInput) {
+    max-width: 420px;
   }
 
   #photoContent {
@@ -328,6 +312,7 @@ const gutter = "10px";
     width: 100%;
     max-width: 100% !important;
     position: relative;
+    margin-top: 30px;
   }
 
   #gallery {
@@ -556,9 +541,10 @@ const gutter = "10px";
 </style>
 
 <script>
-  import { cleanseName } from "./_utils";
+  import { cleanseName, dotProduct } from "./_utils";
 
   const fullScreenEl = document.querySelector("#fullscreenOverlay");
+  const fullScreenScroll = document.querySelector("#fullscreenScroll");
   const metadataTitle = document.querySelector("#metaTitle");
   const fullScreenImage = document.querySelector("#fullscreenPlaceholder");
   const imageViewport = document.querySelector("#imageViewport") as HTMLElement;
@@ -572,16 +558,21 @@ const gutter = "10px";
   const prevButton = document.querySelector("#prevButton") as HTMLElement;
 
   const galleryImages = document.querySelectorAll(".galleryImage");
-  const photoContent = document.getElementById('photoContent');
+  const photoContent = document.getElementById("photoContent");
 
   const initialTitle = document.title;
   let baseTitle = initialTitle;
   const currentPath = window.location.pathname;
 
-  if (currentPath.startsWith('/photo/') && currentPath !== '/photo/' && currentPath !== '/photo/map' && !currentPath.startsWith('/photo/albums/')) {
-    const parts = initialTitle.split(' | ');
+  if (
+    currentPath.startsWith("/photo/") &&
+    currentPath !== "/photo/" &&
+    currentPath !== "/photo/map" &&
+    !currentPath.startsWith("/photo/albums/")
+  ) {
+    const parts = initialTitle.split(" | ");
     if (parts.length >= 3) {
-      baseTitle = parts.slice(1).join(' | ');
+      baseTitle = parts.slice(1).join(" | ");
     }
   }
 
@@ -611,25 +602,100 @@ const gutter = "10px";
         { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
         { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
-        { featureType: "administrative.land_parcel", elementType: "labels.text.fill", stylers: [{ color: "#bdbdbd" }] },
-        { featureType: "administrative.province", elementType: "geometry.stroke", stylers: [{ color: "#9e9e9e" }] },
-        { featureType: "landscape.natural.terrain", stylers: [{ color: "#c9c9c9" }] },
-        { featureType: "poi", elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
-        { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
-        { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#ededed" }] },
-        { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#b0b0b0" }] },
-        { featureType: "road", elementType: "geometry", stylers: [{ visibility: "simplified" }] },
-        { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#f2f2f2" }, { visibility: "on" }] },
-        { featureType: "road.arterial", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
-        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#e6e6e6" }] },
-        { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ visibility: "simplified" }] },
-        { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
-        { featureType: "road.local", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
-        { featureType: "transit.line", elementType: "geometry", stylers: [{ color: "#e5e5e5" }] },
-        { featureType: "transit.station", elementType: "geometry", stylers: [{ color: "#eeeeee" }] },
-        { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9c9c9" }] },
-        { featureType: "water", elementType: "geometry.fill", stylers: [{ color: "#c7e9ff" }] },
-        { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
+        {
+          featureType: "administrative.land_parcel",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#bdbdbd" }],
+        },
+        {
+          featureType: "administrative.province",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#9e9e9e" }],
+        },
+        {
+          featureType: "landscape.natural.terrain",
+          stylers: [{ color: "#c9c9c9" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "geometry",
+          stylers: [{ color: "#f5f5f5" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#757575" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "geometry",
+          stylers: [{ color: "#ededed" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#b0b0b0" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry",
+          stylers: [{ visibility: "simplified" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#f2f2f2" }, { visibility: "on" }],
+        },
+        {
+          featureType: "road.arterial",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#757575" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry",
+          stylers: [{ color: "#e6e6e6" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry.stroke",
+          stylers: [{ visibility: "simplified" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#616161" }],
+        },
+        {
+          featureType: "road.local",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#9e9e9e" }],
+        },
+        {
+          featureType: "transit.line",
+          elementType: "geometry",
+          stylers: [{ color: "#e5e5e5" }],
+        },
+        {
+          featureType: "transit.station",
+          elementType: "geometry",
+          stylers: [{ color: "#eeeeee" }],
+        },
+        {
+          featureType: "water",
+          elementType: "geometry",
+          stylers: [{ color: "#c9c9c9" }],
+        },
+        {
+          featureType: "water",
+          elementType: "geometry.fill",
+          stylers: [{ color: "#c7e9ff" }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#9e9e9e" }],
+        },
       ],
     });
     // @ts-ignore
@@ -639,7 +705,10 @@ const gutter = "10px";
     });
   }
 
-  function fullScreenOrrientationHorizontal(width: number, height: number): boolean {
+  function fullScreenOrrientationHorizontal(
+    width: number,
+    height: number,
+  ): boolean {
     const isMobile = window.innerWidth <= 800;
     const currentMetaMinWidth = isMobile ? 240 : 300;
     const currentMetaMinHeight = isMobile ? 80 : 100;
@@ -674,22 +743,31 @@ const gutter = "10px";
         const isMobile = window.innerWidth <= 800;
         const currentGutter = isMobile ? 16 : 20;
         const currentGap = isMobile ? 16 : 20;
-        const metadataPanel = document.querySelector("#metadataPanel") as HTMLElement;
+        const metadataPanel = document.querySelector(
+          "#metadataPanel",
+        ) as HTMLElement;
 
         let targetWidth = 0;
         let targetHeight = 0;
 
         if (isHorizontal) {
           const metadataWidth = metadataPanel ? metadataPanel.offsetWidth : 300;
-          const wAvail = window.innerWidth - metadataWidth - currentGutter * 2 - currentGap;
+          const wAvail =
+            window.innerWidth - metadataWidth - currentGutter * 2 - currentGap;
           const hAvail = window.innerHeight - currentGutter * 2;
           const scale = Math.min(wAvail / imgWidth, hAvail / imgHeight);
           targetWidth = imgWidth * scale;
           targetHeight = imgHeight * scale;
         } else {
-          const metadataHeight = metadataPanel ? metadataPanel.offsetHeight : 100;
+          const metadataHeight = metadataPanel
+            ? metadataPanel.offsetHeight
+            : 100;
           const wAvail = window.innerWidth - currentGutter * 2;
-          const hAvail = window.innerHeight - metadataHeight - currentGutter * 2 - currentGap;
+          const hAvail =
+            window.innerHeight -
+            metadataHeight -
+            currentGutter * 2 -
+            currentGap;
           const scale = Math.min(wAvail / imgWidth, hAvail / imgHeight);
           targetWidth = imgWidth * scale;
           targetHeight = imgHeight * scale;
@@ -704,14 +782,16 @@ const gutter = "10px";
   function enterFullscreen(image: HTMLImageElement, pushState = true) {
     if (!fullScreenEl) return;
     document.querySelector(".galleryImage.active")?.classList.remove("active");
-    
+
     let targetImage = image;
-    if (!image.classList.contains('galleryImage')) {
-        const name = image.getAttribute('data-name');
-        const found = Array.from(galleryImages).find(el => el.getAttribute('data-name') === name);
-        if (found) targetImage = found as HTMLImageElement;
+    if (!image.classList.contains("galleryImage")) {
+      const name = image.getAttribute("data-name");
+      const found = Array.from(galleryImages).find(
+        (el) => el.getAttribute("data-name") === name,
+      );
+      if (found) targetImage = found as HTMLImageElement;
     }
-    
+
     targetImage.classList.add("active");
 
     const dataName = targetImage.getAttribute("data-name");
@@ -730,12 +810,24 @@ const gutter = "10px";
 
     if (pushState && dataName) {
       const path = window.location.pathname;
-      const isPhotoPage = path === "/photo" || path === "/photo/map" || (path.startsWith("/photo/") && !path.startsWith("/photo/albums/"));
+      const isPhotoPage =
+        path === "/photo" ||
+        path === "/photo/map" ||
+        (path.startsWith("/photo/") && !path.startsWith("/photo/albums/"));
       if (isPhotoPage) {
         const cleansed = cleanseName(dataName);
         const newPath = `/photo/${cleansed}`;
         if (window.location.pathname !== newPath) {
-          window.history.pushState({ view: photoContent?.classList.contains('view-map') ? 'map' : 'gallery', photo: dataName }, '', newPath);
+          window.history.pushState(
+            {
+              view: photoContent?.classList.contains("view-map")
+                ? "map"
+                : "gallery",
+              photo: dataName,
+            },
+            "",
+            newPath,
+          );
         }
       }
     }
@@ -752,7 +844,14 @@ const gutter = "10px";
     }
 
     if (metaChipsRow) {
-      if (!dataCamera && !dataLens && !dataAperture && !dataShutter && !dataIso && !dataFocal) {
+      if (
+        !dataCamera &&
+        !dataLens &&
+        !dataAperture &&
+        !dataShutter &&
+        !dataIso &&
+        !dataFocal
+      ) {
         metaChipsRow.style.display = "none";
       } else {
         metaChipsRow.style.display = "flex";
@@ -766,12 +865,17 @@ const gutter = "10px";
           { value: dataIso, prefix: "ISO " },
         ];
         specs.forEach((spec) => {
-          if (spec.value && spec.value !== "undefined" && spec.value !== "null") {
+          if (
+            spec.value &&
+            spec.value !== "undefined" &&
+            spec.value !== "null"
+          ) {
             const chip = document.createElement("span");
             chip.className = "meta-chip";
             let text = spec.value;
             if (spec.prefix) text = spec.prefix + text;
-            if (spec.label && !text.endsWith(spec.label)) text = text + spec.label;
+            if (spec.label && !text.endsWith(spec.label))
+              text = text + spec.label;
             chip.textContent = text;
             metaChipsRow.appendChild(chip);
           }
@@ -783,8 +887,14 @@ const gutter = "10px";
       const fullResSrc = targetImage.getAttribute("data-fullres");
       fullScreenImage.setAttribute("src", "");
       (fullScreenImage as HTMLElement).classList.add("loading");
-      fullScreenImage.setAttribute("data-width", targetImage.getAttribute("data-width") || "");
-      fullScreenImage.setAttribute("data-height", targetImage.getAttribute("data-height") || "");
+      fullScreenImage.setAttribute(
+        "data-width",
+        targetImage.getAttribute("data-width") || "",
+      );
+      fullScreenImage.setAttribute(
+        "data-height",
+        targetImage.getAttribute("data-height") || "",
+      );
       (fullScreenImage as HTMLImageElement).onload = () => {
         (fullScreenImage as HTMLElement).classList.remove("loading");
       };
@@ -806,12 +916,19 @@ const gutter = "10px";
 
     if (pushState) {
       const path = window.location.pathname;
-      const isPhotoDeepLink = path.startsWith("/photo/") && path !== "/photo/map" && !path.startsWith("/photo/albums/");
+      const isPhotoDeepLink =
+        path.startsWith("/photo/") &&
+        path !== "/photo/map" &&
+        !path.startsWith("/photo/albums/");
       if (isPhotoDeepLink) {
         const isMap = photoContent?.classList.contains("view-map");
         const basePath = isMap ? "/photo/map" : "/photo";
         if (window.location.pathname !== basePath) {
-          window.history.pushState({ view: isMap ? "map" : "gallery" }, "", basePath);
+          window.history.pushState(
+            { view: isMap ? "map" : "gallery" },
+            "",
+            basePath,
+          );
         }
       }
     }
@@ -826,71 +943,110 @@ const gutter = "10px";
     }
   }
 
-  function setView(view: 'gallery' | 'map', pushState = true) {
-    if (view === 'gallery') {
-      photoContent?.classList.remove('view-map');
-      photoContent?.classList.add('view-gallery');
-      document.getElementById('toggleGallery')?.classList.add('active');
-      document.getElementById('toggleMap')?.classList.remove('active');
-      window.dispatchEvent(new CustomEvent('photo-view-change', { detail: { view: 'gallery' } }));
-      if (pushState && window.location.pathname !== '/photo') {
-        window.history.pushState({ view: 'gallery' }, '', '/photo');
-        window.dispatchEvent(new CustomEvent('update-nav-active', { detail: { href: '/photo' } }));
+  function setView(view: "gallery" | "map", pushState = true) {
+    if (view === "gallery") {
+      photoContent?.classList.remove("view-map");
+      photoContent?.classList.add("view-gallery");
+      document.getElementById("toggleGallery")?.classList.add("active");
+      document.getElementById("toggleMap")?.classList.remove("active");
+      window.dispatchEvent(
+        new CustomEvent("photo-view-change", { detail: { view: "gallery" } }),
+      );
+      if (pushState && window.location.pathname !== "/photo") {
+        window.history.pushState({ view: "gallery" }, "", "/photo");
+        window.dispatchEvent(
+          new CustomEvent("update-nav-active", { detail: { href: "/photo" } }),
+        );
       }
     } else {
-      photoContent?.classList.remove('view-gallery');
-      photoContent?.classList.add('view-map');
-      document.getElementById('toggleMap')?.classList.add('active');
-      document.getElementById('toggleGallery')?.classList.remove('active');
-      window.dispatchEvent(new CustomEvent('photo-view-change', { detail: { view: 'map' } }));
-      if (pushState && window.location.pathname !== '/photo/map') {
-        window.history.pushState({ view: 'map' }, '', '/photo/map');
-        window.dispatchEvent(new CustomEvent('update-nav-active', { detail: { href: '/photo/map' } }));
+      photoContent?.classList.remove("view-gallery");
+      photoContent?.classList.add("view-map");
+      document.getElementById("toggleMap")?.classList.add("active");
+      document.getElementById("toggleGallery")?.classList.remove("active");
+      window.dispatchEvent(
+        new CustomEvent("photo-view-change", { detail: { view: "map" } }),
+      );
+      if (pushState && window.location.pathname !== "/photo/map") {
+        window.history.pushState({ view: "map" }, "", "/photo/map");
+        window.dispatchEvent(
+          new CustomEvent("update-nav-active", {
+            detail: { href: "/photo/map" },
+          }),
+        );
       }
     }
   }
 
   galleryImages.forEach((image) => {
-    image.addEventListener("click", () => enterFullscreen(image as HTMLImageElement));
+    image.addEventListener("click", () =>
+      enterFullscreen(image as HTMLImageElement),
+    );
   });
 
   exitButton?.addEventListener("click", () => exitFullscreen());
 
   nextButton?.addEventListener("click", () => {
-    const currentImage = document.querySelector(".galleryImage.active") as HTMLImageElement;
-    if (currentImage?.nextElementSibling) enterFullscreen(currentImage.nextElementSibling as HTMLImageElement);
+    const currentImage = document.querySelector(
+      ".galleryImage.active",
+    ) as HTMLImageElement;
+    if (currentImage?.nextElementSibling)
+      enterFullscreen(currentImage.nextElementSibling as HTMLImageElement);
   });
 
   prevButton?.addEventListener("click", () => {
-    const currentImage = document.querySelector(".galleryImage.active") as HTMLImageElement;
-    if (currentImage?.previousElementSibling) enterFullscreen(currentImage.previousElementSibling as HTMLImageElement);
+    const currentImage = document.querySelector(
+      ".galleryImage.active",
+    ) as HTMLImageElement;
+    if (currentImage?.previousElementSibling)
+      enterFullscreen(currentImage.previousElementSibling as HTMLImageElement);
   });
 
   window.addEventListener("keydown", (e) => {
     if (!fullScreenEl?.classList.contains("active")) return;
-    if (e.key === "Escape") { e.preventDefault(); exitFullscreen(); }
-    if (e.key === "ArrowRight") { e.preventDefault(); nextButton?.click(); }
-    if (e.key === "ArrowLeft") { e.preventDefault(); prevButton?.click(); }
-    if (e.key === "ArrowDown") { e.preventDefault(); viewportBelow?.scrollIntoView({ behavior: "smooth", block: "end" }); }
-    if (e.key === "ArrowUp") { e.preventDefault(); fullScreenEl?.scrollTo({ top: 0, behavior: "smooth" }); }
+    if (e.key === "Escape") {
+      e.preventDefault();
+      exitFullscreen();
+    }
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      nextButton?.click();
+    }
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      prevButton?.click();
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      viewportBelow?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      fullScreenScroll?.scrollTo({ top: 0, behavior: "smooth" });
+    }
   });
 
   window.addEventListener("resize", updateFullscreenOrientation);
 
-  document.getElementById('toggleGallery')?.addEventListener('click', () => setView('gallery'));
-  document.getElementById('toggleMap')?.addEventListener('click', () => setView('map'));
+  document
+    .getElementById("toggleGallery")
+    ?.addEventListener("click", () => setView("gallery"));
+  document
+    .getElementById("toggleMap")
+    ?.addEventListener("click", () => setView("map"));
 
-  ['galleryNavLink', 'mapNavLink'].forEach(id => {
-    document.getElementById(id)?.addEventListener('click', (e) => {
+  ["galleryNavLink", "mapNavLink"].forEach((id) => {
+    document.getElementById(id)?.addEventListener("click", (e) => {
       e.preventDefault();
-      const href = (e.currentTarget as HTMLElement).getAttribute('href');
-      setView(href === '/photo/map' ? 'map' : 'gallery');
+      const href = (e.currentTarget as HTMLElement).getAttribute("href");
+      setView(href === "/photo/map" ? "map" : "gallery");
     });
   });
 
-  window.addEventListener('popstate', (e) => {
+  window.addEventListener("popstate", (e) => {
     if (e.state?.photo) {
-      const found = Array.from(galleryImages).find(el => el.getAttribute('data-name') === e.state.photo);
+      const found = Array.from(galleryImages).find(
+        (el) => el.getAttribute("data-name") === e.state.photo,
+      );
       if (found) enterFullscreen(found as HTMLImageElement, false);
     } else {
       exitFullscreen(false);
@@ -898,19 +1054,188 @@ const gutter = "10px";
     if (e.state?.view) setView(e.state.view, false);
   });
 
-  window.addEventListener('photo-map-click', (e: any) => {
-    const found = Array.from(galleryImages).find(el => el.getAttribute('data-name') === e.detail.name);
+  window.addEventListener("photo-map-click", (e: any) => {
+    const found = Array.from(galleryImages).find(
+      (el) => el.getAttribute("data-name") === e.detail.name,
+    );
     if (found) enterFullscreen(found as HTMLImageElement);
   });
 
-  if (window.location.pathname === '/photo/map') {
-    window.dispatchEvent(new CustomEvent('update-nav-active', { detail: { href: '/photo/map' } }));
+  if (window.location.pathname === "/photo/map") {
+    window.dispatchEvent(
+      new CustomEvent("update-nav-active", { detail: { href: "/photo/map" } }),
+    );
   }
 
   const initialDeepLink = window.location.pathname;
-  if (initialDeepLink.startsWith('/photo/') && initialDeepLink !== '/photo/' && initialDeepLink !== '/photo/map' && !initialDeepLink.startsWith('/photo/albums/')) {
-    const slug = initialDeepLink.split('/').pop();
-    const found = Array.from(galleryImages).find(el => cleanseName(el.getAttribute('data-name') || '') === slug);
+  if (
+    initialDeepLink.startsWith("/photo/") &&
+    initialDeepLink !== "/photo/" &&
+    initialDeepLink !== "/photo/map" &&
+    !initialDeepLink.startsWith("/photo/albums/")
+  ) {
+    const slug = initialDeepLink.split("/").pop();
+    const found = Array.from(galleryImages).find(
+      (el) => cleanseName(el.getAttribute("data-name") || "") === slug,
+    );
     if (found) enterFullscreen(found as HTMLImageElement, false);
   }
+
+  const clipInput = document.querySelector("#clip") as HTMLInputElement;
+
+  // --- AI State Configurations ---
+  let modelSession: any = null;
+  let tokenizer: any = null;
+  let initializationPromise: Promise<any> | null = null;
+
+  function initCLIP(): Promise<any> {
+    if (modelSession && tokenizer) return Promise.resolve();
+    if (initializationPromise) return initializationPromise;
+
+    console.log("Injecting ONNX runtime and fetching CLIP components...");
+
+    initializationPromise = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src =
+        "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/ort.js";
+
+      script.addEventListener("load", async () => {
+        try {
+          const modelPath =
+            "https://huggingface.co/rocca/openai-clip-js/resolve/main/clip-text-vit-32-uint8.onnx";
+
+          // @ts-ignore (ort is globally declared when script loads)
+          const [session, TokenizerModule] = await Promise.all([
+            // @ts-ignore
+            ort.InferenceSession.create(modelPath, {
+              executionProviders: ["wasm"],
+            }),
+            import("https://deno.land/x/clip_bpe@v0.0.6/mod.js"),
+          ]);
+
+          modelSession = session;
+          tokenizer = new TokenizerModule.default();
+
+          console.log("CLIP Model Loaded successfully.");
+          if (clipInput) {
+            clipInput.removeAttribute("disabled");
+            clipInput.placeholder =
+              'Any semantic query, ex. "New York City Sunset"';
+          }
+          resolve({ modelSession, tokenizer });
+        } catch (err) {
+          initializationPromise = null;
+          if (clipInput) clipInput.placeholder = "Failed to load model layers.";
+          reject(err);
+        }
+      });
+
+      script.addEventListener("error", () => {
+        initializationPromise = null;
+        if (clipInput) clipInput.placeholder = "Failed to download runtime.";
+        reject(new Error("ONNX Runtime script failed to load."));
+      });
+
+      document.head.appendChild(script);
+    });
+
+    return initializationPromise;
+  }
+
+  /**
+   * Custom tokenization and inference logic using your loaded rocca engine
+   */
+  async function embedString(text: string): Promise<number[]> {
+    // Blocks safely if the user tries entering a search before the promise resolves
+    await initCLIP();
+
+    // 1. Convert text string into token arrays via the Deno module
+    const tokens = tokenizer.encode(text);
+
+    // 2. Pad or truncate array length to exactly 77 elements (CLIP sequence standard)
+    const sequenceLength = 77;
+    const inputIds = new Int32Array(sequenceLength).fill(49407); // 49407 is CLIP EOT token
+    inputIds[0] = 49406; // 49406 is CLIP SOT token
+
+    for (let i = 0; i < Math.min(tokens.length, sequenceLength - 2); i++) {
+      inputIds[i + 1] = tokens[i];
+    }
+
+    // 3. Construct ONNX input tensors
+    // @ts-ignore
+    const inputTensor = new ort.Tensor("int32", inputIds, [1, sequenceLength]);
+
+    // 4. Run model inference
+    const outputMap = await modelSession.run({ input: inputTensor });
+
+    // The key output name inside rocca's custom ONNX configuration is typically 'output' or 'unnormalized_text_features'
+    const outputTensor = outputMap[Object.keys(outputMap)[0]];
+    const rawData = Array.from(outputTensor.data) as number[];
+
+    // 5. Compute L2 Norm to output unit vector matching your Python image space
+    let squareSum = 0;
+    for (let i = 0; i < rawData.length; i++) {
+      squareSum += rawData[i] * rawData[i];
+    }
+    const l2Norm = Math.sqrt(squareSum);
+    return rawData.map((val) => val / (l2Norm || 1));
+  }
+
+  // --- Rest of your UI / Map / Gallery Logic code (From previous step) ---
+  // ...
+
+  // Kick off dynamic asset injections immediately on page mount
+  initCLIP().catch((err) => console.error("Eager load tracking failed:", err));
+
+  let debounceTimeout: number | undefined;
+
+  clipInput.addEventListener("input", (e) => {
+    clearTimeout(debounceTimeout);
+
+    const query = (e.target as HTMLInputElement).value.trim();
+
+    debounceTimeout = window.setTimeout(async () => {
+      // If the query is empty, you could optionally sort by a default property (e.g., date)
+      if (!query) return;
+
+      try {
+        console.log(`Embedding query: "${query}"`);
+        const textVector = await embedString(query);
+
+        // Locate the parent element holding your galleryImages list
+        const galleryContainer =
+          document.getElementById("gallery") ||
+          document.getElementById("photoContent");
+        if (!galleryContainer) return;
+
+        // 1. Map, calculate similarities using your optimized custom de-quantizer function
+        const scoredItems = Array.from(galleryImages).map((el) => {
+          const htmlEl = el as HTMLElement;
+          const encodedStr = htmlEl.getAttribute("data-emb") || "";
+
+          let score = -1;
+          if (encodedStr) {
+            // Your utility directly takes the float vector and the base64 string
+            score = dotProduct(textVector, encodedStr);
+          }
+
+          return { element: htmlEl, score };
+        });
+
+        // 2. Sort items descending by semantic proximity match
+        scoredItems.sort((a, b) => b.score - a.score);
+
+        // 3. Update DOM layout indexes using the low-overhead appendChild migration path
+        scoredItems.forEach((item) => {
+          galleryContainer.appendChild(item.element);
+        });
+
+        console.log(
+          "Grid layout reordered using 4-bit vector math space mapping.",
+        );
+      } catch (err) {
+        console.error("Semantic sort loop failure:", err);
+      }
+    }, 300);
+  });
 </script>
