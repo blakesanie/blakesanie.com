@@ -370,7 +370,7 @@ const gutter = "10px";
     background-color: #ffffff;
     z-index: 99990;
     pointer-events: none;
-    transition: opacity 0.4s ease-in-out;
+    transition: opacity 0.2s ease-in-out;
     opacity: 0;
     display: none;
     flex-direction: column;
@@ -441,11 +441,11 @@ const gutter = "10px";
     z-index: 999995;
     will-change: transform, top, left, width, height, opacity;
     transition:
-      top 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-      left 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-      width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-      height 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-      opacity 0.3s ease;
+      top 0.2s ease-in,
+      left 0.2s ease-in,
+      width 0.2s ease-in,
+      height 0.2s ease-in,
+      opacity 0.15s ease-in;
     object-fit: cover;
   }
 
@@ -910,7 +910,9 @@ const gutter = "10px";
 
     const isAlreadyFullscreen = fullScreenEl.classList.contains("active");
     const fullResSrc = targetImage.getAttribute("data-fullres") || "";
-    const thumbImg = targetImage.querySelector("img.thumb-img") as HTMLImageElement;
+    const thumbImg = targetImage.querySelector(
+      "img.thumb-img",
+    ) as HTMLImageElement;
 
     if (isAlreadyFullscreen) {
       // If we are already in fullscreen (e.g. Next/Prev navigation), update without enter transition animation
@@ -982,21 +984,25 @@ const gutter = "10px";
     updateFullscreenOrientation();
 
     // Get coordinates of layouted full screen image
-    const destRect = fullScreenImage ? fullScreenImage.getBoundingClientRect() : galleryRect;
+    const destRect = fullScreenImage
+      ? fullScreenImage.getBoundingClientRect()
+      : galleryRect;
 
     // Create floating transition image clone
     const transitionImg = document.createElement("img");
     transitionImg.src = thumbImg.src;
     transitionImg.className = "gallery-transition-clone";
-    
+
     // Set styles inline to bypass Astro component-scoped styles
     transitionImg.style.position = "fixed";
     transitionImg.style.pointerEvents = "none";
     transitionImg.style.zIndex = "999995";
     transitionImg.style.objectFit = "cover";
-    transitionImg.style.willChange = "transform, top, left, width, height, opacity";
-    transitionImg.style.transition = "top 0.4s cubic-bezier(0.25, 1, 0.5, 1), left 0.4s cubic-bezier(0.25, 1, 0.5, 1), width 0.4s cubic-bezier(0.25, 1, 0.5, 1), height 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease";
-    
+    transitionImg.style.willChange =
+      "transform, top, left, width, height, opacity";
+    transitionImg.style.transition =
+      "top 0.2s cubic-bezier(0.25, 1, 0.5, 1), left 0.2s cubic-bezier(0.25, 1, 0.5, 1), width 0.2s cubic-bezier(0.25, 1, 0.5, 1), height 0.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.15s ease";
+
     transitionImg.style.left = `${galleryRect.left}px`;
     transitionImg.style.top = `${galleryRect.top}px`;
     transitionImg.style.width = `${galleryRect.width}px`;
@@ -1033,7 +1039,7 @@ const gutter = "10px";
       tempImg.src = fullResSrc;
     }
 
-    // Immediately remove the clone once the enlargement animation finishes (400ms)
+    // Immediately remove the clone once the enlargement animation finishes (200ms)
     setTimeout(() => {
       if (transitionImg.parentNode) {
         transitionImg.parentNode.removeChild(transitionImg);
@@ -1043,7 +1049,7 @@ const gutter = "10px";
       }
       thumbImg.style.opacity = "";
       isEnterAnimating = false;
-    }, 400);
+    }, 200);
 
     (fullScreenEl as HTMLElement)?.focus();
     requestAnimationFrame(() => {
@@ -1059,34 +1065,38 @@ const gutter = "10px";
     isExitAnimating = true;
 
     // Find the currently active gallery image element
-    const activeGalleryImg = document.querySelector(".galleryImage.active") as HTMLElement;
+    const activeGalleryImg = document.querySelector(
+      ".galleryImage.active",
+    ) as HTMLElement;
     if (!activeGalleryImg) {
       // Fallback
       fullScreenEl.classList.remove("active");
       setTimeout(() => {
         fullScreenEl.style.display = "none";
-      }, 400);
+      }, 200);
       document.body.style.overflow = "";
       isExitAnimating = false;
       return;
     }
 
-    const thumbImg = activeGalleryImg.querySelector("img.thumb-img") as HTMLImageElement;
+    const thumbImg = activeGalleryImg.querySelector(
+      "img.thumb-img",
+    ) as HTMLImageElement;
 
     // Check if original gallery image is on screen (fully visible)
     const rect = thumbImg.getBoundingClientRect();
-    const isVisible = (
+    const isVisible =
       rect.top >= 0 &&
       rect.bottom <= window.innerHeight &&
       rect.left >= 0 &&
-      rect.right <= window.innerWidth
-    );
+      rect.right <= window.innerWidth;
 
     if (!isVisible) {
       // Calculate scroll positioning to center the image on the Y axis
       const absoluteTop = window.scrollY + rect.top;
       const elementHeight = rect.height;
-      const targetScrollY = absoluteTop + (elementHeight / 2) - (window.innerHeight / 2);
+      const targetScrollY =
+        absoluteTop + elementHeight / 2 - window.innerHeight / 2;
       window.scrollTo({ top: targetScrollY, behavior: "auto" });
     }
 
@@ -1094,7 +1104,9 @@ const gutter = "10px";
     const finalGalleryRect = thumbImg.getBoundingClientRect();
 
     // Get current fullscreen image dimensions
-    const finalOverlayRect = fullScreenImage ? fullScreenImage.getBoundingClientRect() : finalGalleryRect;
+    const finalOverlayRect = fullScreenImage
+      ? fullScreenImage.getBoundingClientRect()
+      : finalGalleryRect;
 
     // Create transition clone at current fullscreen placeholder coordinates
     const transitionImg = document.createElement("img");
@@ -1106,8 +1118,10 @@ const gutter = "10px";
     transitionImg.style.pointerEvents = "none";
     transitionImg.style.zIndex = "999995";
     transitionImg.style.objectFit = "cover";
-    transitionImg.style.willChange = "transform, top, left, width, height, opacity";
-    transitionImg.style.transition = "top 0.4s cubic-bezier(0.25, 1, 0.5, 1), left 0.4s cubic-bezier(0.25, 1, 0.5, 1), width 0.4s cubic-bezier(0.25, 1, 0.5, 1), height 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease";
+    transitionImg.style.willChange =
+      "transform, top, left, width, height, opacity";
+    transitionImg.style.transition =
+      "top 0.2s cubic-bezier(0.25, 1, 0.5, 1), left 0.2s cubic-bezier(0.25, 1, 0.5, 1), width 0.2s cubic-bezier(0.25, 1, 0.5, 1), height 0.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.15s ease";
 
     transitionImg.style.left = `${finalOverlayRect.left}px`;
     transitionImg.style.top = `${finalOverlayRect.top}px`;
@@ -1136,7 +1150,7 @@ const gutter = "10px";
       transitionImg.style.height = `${finalGalleryRect.height}px`;
     }, 20);
 
-    // Cleanup after transition finishes
+    // Cleanup after transition finishes (200ms)
     setTimeout(() => {
       if (transitionImg.parentNode) {
         transitionImg.parentNode.removeChild(transitionImg);
@@ -1153,11 +1167,13 @@ const gutter = "10px";
       }
 
       fullScreenEl.style.display = "none";
-      document.querySelector(".galleryImage.active")?.classList.remove("active");
+      document
+        .querySelector(".galleryImage.active")
+        ?.classList.remove("active");
       document.title = baseTitle;
       document.body.style.overflow = "";
       isExitAnimating = false;
-    }, 400);
+    }, 200);
 
     if (pushState) {
       const path = window.location.pathname;
