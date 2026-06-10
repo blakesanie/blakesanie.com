@@ -909,13 +909,15 @@ const gutter = "10px";
     }
 
     const isAlreadyFullscreen = fullScreenEl.classList.contains("active");
+    const fullResSrc = targetImage.getAttribute("data-fullres") || "";
+    const thumbImg = targetImage.querySelector("img.thumb-img") as HTMLImageElement;
 
     if (isAlreadyFullscreen) {
       // If we are already in fullscreen (e.g. Next/Prev navigation), update without enter transition animation
       if (fullScreenImage) {
-        const fullResSrc = targetImage.getAttribute("data-fullres");
-        fullScreenImage.setAttribute("src", "");
-        (fullScreenImage as HTMLElement).classList.remove("loaded");
+        // Show low-res thumbnail immediately
+        fullScreenImage.setAttribute("src", thumbImg.src);
+        (fullScreenImage as HTMLElement).classList.add("loaded");
         fullScreenImage.setAttribute(
           "data-width",
           targetImage.getAttribute("data-width") || "",
@@ -924,10 +926,16 @@ const gutter = "10px";
           "data-height",
           targetImage.getAttribute("data-height") || "",
         );
-        (fullScreenImage as HTMLImageElement).onload = () => {
-          (fullScreenImage as HTMLElement).classList.add("loaded");
+
+        // Preload high-res image in background
+        fullScreenImage.setAttribute("data-loading-src", fullResSrc);
+        const tempImg = new Image();
+        tempImg.onload = () => {
+          if (fullScreenImage.getAttribute("data-loading-src") === fullResSrc) {
+            fullScreenImage.setAttribute("src", fullResSrc);
+          }
         };
-        fullScreenImage.setAttribute("src", fullResSrc || "");
+        tempImg.src = fullResSrc;
       }
       updateFullscreenOrientation();
       requestAnimationFrame(() => {
@@ -950,19 +958,16 @@ const gutter = "10px";
     // Lock page scroll
     document.body.style.overflow = "hidden";
 
-    // Get thumbnail image
-    const thumbImg = targetImage.querySelector("img.thumb-img") as HTMLImageElement;
     const galleryRect = thumbImg.getBoundingClientRect();
 
     // Show the overlay layout container
     (fullScreenEl as HTMLElement).style.display = "flex";
     (fullScreenEl as HTMLElement).offsetHeight; // force reflow
 
-    // Setup fullscreen image dimensions (invisible for now)
-    const fullResSrc = targetImage.getAttribute("data-fullres");
+    // Setup fullscreen image dimensions and low-res thumbnail instantly
     if (fullScreenImage) {
-      fullScreenImage.setAttribute("src", "");
-      (fullScreenImage as HTMLElement).classList.remove("loaded");
+      fullScreenImage.setAttribute("src", thumbImg.src);
+      (fullScreenImage as HTMLElement).classList.add("loaded");
       fullScreenImage.setAttribute(
         "data-width",
         targetImage.getAttribute("data-width") || "",
@@ -976,26 +981,8 @@ const gutter = "10px";
     // Calculate layout coordinates for target fullscreen image using aspect ratio
     updateFullscreenOrientation();
 
-    // Force layout update on fullScreenImage so destRect has correct coordinates
-    if (fullScreenImage) {
-      (fullScreenImage as HTMLElement).offsetHeight;
-    }
-
-    // Get coordinates of layouted invisible full screen image
+    // Get coordinates of layouted full screen image
     const destRect = fullScreenImage ? fullScreenImage.getBoundingClientRect() : galleryRect;
-
-    console.log("enterFullscreen: galleryRect =", {
-      left: galleryRect.left,
-      top: galleryRect.top,
-      width: galleryRect.width,
-      height: galleryRect.height,
-    });
-    console.log("enterFullscreen: destRect =", {
-      left: destRect.left,
-      top: destRect.top,
-      width: destRect.width,
-      height: destRect.height,
-    });
 
     // Create floating transition image clone
     const transitionImg = document.createElement("img");
@@ -1034,44 +1021,29 @@ const gutter = "10px";
       transitionImg.style.height = `${destRect.height}px`;
     }, 20);
 
-    let enlargeFinished = false;
-    let highResLoaded = false;
-
-    const checkCompleteAndCrossfade = () => {
-      if (enlargeFinished && highResLoaded) {
-        if (fullScreenImage) {
-          (fullScreenImage as HTMLElement).classList.add("loaded");
-        }
-        
-        // Immediately remove the clone from the DOM with no transition
-        if (transitionImg.parentNode) {
-          transitionImg.parentNode.removeChild(transitionImg);
-        }
-        if (activeTransitionImg === transitionImg) {
-          activeTransitionImg = null;
-        }
-        thumbImg.style.opacity = "";
-        isEnterAnimating = false;
-      }
-    };
-
-    // Listen to enlarge animation end (400ms duration)
-    setTimeout(() => {
-      enlargeFinished = true;
-      checkCompleteAndCrossfade();
-    }, 400);
-
-    // Load high-resolution image
+    // Preload high-resolution image in background
     if (fullScreenImage) {
-      (fullScreenImage as HTMLImageElement).onload = () => {
-        highResLoaded = true;
-        checkCompleteAndCrossfade();
+      fullScreenImage.setAttribute("data-loading-src", fullResSrc);
+      const tempImg = new Image();
+      tempImg.onload = () => {
+        if (fullScreenImage.getAttribute("data-loading-src") === fullResSrc) {
+          fullScreenImage.setAttribute("src", fullResSrc);
+        }
       };
-      fullScreenImage.setAttribute("src", fullResSrc || "");
-    } else {
-      highResLoaded = true;
-      checkCompleteAndCrossfade();
+      tempImg.src = fullResSrc;
     }
+
+    // Immediately remove the clone once the enlargement animation finishes (400ms)
+    setTimeout(() => {
+      if (transitionImg.parentNode) {
+        transitionImg.parentNode.removeChild(transitionImg);
+      }
+      if (activeTransitionImg === transitionImg) {
+        activeTransitionImg = null;
+      }
+      thumbImg.style.opacity = "";
+      isEnterAnimating = false;
+    }, 400);
 
     (fullScreenEl as HTMLElement)?.focus();
     requestAnimationFrame(() => {
@@ -1124,19 +1096,6 @@ const gutter = "10px";
     // Get current fullscreen image dimensions
     const finalOverlayRect = fullScreenImage ? fullScreenImage.getBoundingClientRect() : finalGalleryRect;
 
-    console.log("exitFullscreen: finalOverlayRect =", {
-      left: finalOverlayRect.left,
-      top: finalOverlayRect.top,
-      width: finalOverlayRect.width,
-      height: finalOverlayRect.height,
-    });
-    console.log("exitFullscreen: finalGalleryRect =", {
-      left: finalGalleryRect.left,
-      top: finalGalleryRect.top,
-      width: finalGalleryRect.width,
-      height: finalGalleryRect.height,
-    });
-
     // Create transition clone at current fullscreen placeholder coordinates
     const transitionImg = document.createElement("img");
     transitionImg.src = thumbImg.src;
@@ -1163,6 +1122,7 @@ const gutter = "10px";
     // Hide original gallery image visually and hide the high-res image
     thumbImg.style.opacity = "0";
     if (fullScreenImage) {
+      fullScreenImage.setAttribute("data-loading-src", "");
       (fullScreenImage as HTMLElement).classList.remove("loaded");
     }
 
@@ -1189,6 +1149,7 @@ const gutter = "10px";
       if (fullScreenImage) {
         (fullScreenImage as HTMLElement).style.width = "";
         (fullScreenImage as HTMLElement).style.height = "";
+        fullScreenImage.setAttribute("src", "");
       }
 
       fullScreenEl.style.display = "none";
