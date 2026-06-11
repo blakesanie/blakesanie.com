@@ -1,6 +1,7 @@
 ---
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
-import { Image, getImage } from "astro:assets";
+import { getImage } from "astro:assets";
+import Image from "../../components/Image/index.astro";
 import MapGallery from "./_MapGallery.astro";
 import { encodeEmbeddings } from "./_utils";
 import Toggle from "../../components/Toggle/index.astro";
@@ -241,6 +242,7 @@ const gutter = "10px";
               <div class="astro-native-img-wrapper">
                 {/* Thumbnail */}
                 <Image
+                  placeholder="blur"
                   src={image.path}
                   alt={image.name || "Portfolio photograph"}
                   width={Math.max(

@@ -80,6 +80,7 @@
     "remark-math": "^6.0.0",
     "sass": "^1.89.0",
     "satori": "^0.13.1",
+    "sharp": "^0.35.1",
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
     "terser": "^5.39.2",

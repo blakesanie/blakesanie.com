@@ -1,0 +1,108 @@
+---
+import { Image } from "astro:assets";
+import sharp from "sharp";
+import fs from "node:fs/promises";
+import { pathToFileURL } from "node:url";
+
+interface Props {
+    src: any; // Accepts Astro image imports
+    alt: string;
+    width?: number;
+    height?: number;
+    placeholder?: "color" | "blur" | "none";
+    class?: string;
+    style?: string | Record<string, any>;
+    [key: string]: any;
+}
+
+const {
+    src,
+    alt,
+    placeholder = "none",
+    class: className,
+    style = {},
+    ...rest
+} = Astro.props;
+
+let placeholderStyle: Record<string, string> = {};
+
+if ((placeholder === "color" || placeholder === "blur") && src?.src) {
+    try {
+        // Resolve the absolute file path of the image
+        const fileUrl = pathToFileURL(src.fsPath || src.src);
+        const imageBuffer = await fs.readFile(fileUrl);
+        const sharpInstance = sharp(imageBuffer);
+
+        if (placeholder === "color") {
+            const { data } = await sharpInstance
+                .resize(1, 1)
+                .raw()
+                .toBuffer({ resolveWithObject: true });
+
+            const [r, g, b] = data;
+            placeholderStyle = { "background-color": `rgb(${r}, ${g}, ${b})` };
+        }
+
+        if (placeholder === "blur") {
+            // Downscale to a tiny 20px low-res placeholder (no sharp blur applied here)
+            const buffer = await sharpInstance.resize(20).toBuffer();
+
+            const base64 = buffer.toString("base64");
+            const mimeType = src.format ? `image/${src.format}` : "image/jpeg";
+
+            placeholderStyle = {
+                "background-image": `url(data:${mimeType};base64,${base64})`,
+                "background-size": "cover",
+                "background-position": "center",
+            };
+        }
+    } catch (error) {
+        console.error("Failed to generate image placeholder:", error);
+    }
+}
+
+// Safely merge incoming styles with our placeholder styles
+const combinedStyle = {
+    display: "block",
+    ...placeholderStyle,
+    ...(typeof style === "string" ? {} : style),
+};
+
+// If incoming style is a string, append it to our object-turned-string
+const styleString =
+    typeof style === "string"
+        ? Object.entries(combinedStyle)
+              .map(([k, v]) => `${k}:${v}`)
+              .join(";") +
+          ";" +
+          style
+        : combinedStyle;
+---
+
+<Image
+    src={src}
+    alt={alt}
+    class:list={[
+        "smart-image",
+        placeholder === "blur" && "smooth-blur",
+        className,
+    ]}
+    style={styleString}
+    {...rest}
+/>
+
+<style>
+    /* Ensure the background doesn't distort and transitions smoothly if needed */
+    .smart-image {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Browser handles the blur dynamically over the background image layer */
+    .smooth-blur {
+        backdrop-filter: blur(12px);
+        transform: translateZ(
+            0
+        ); /* Fixes jagged edges on some engine variations */
+    }
+</style>
