@@ -888,6 +888,7 @@ const gutter = "10px";
           { value: dataShutter, label: "s" },
           { value: dataAperture, prefix: "f/" },
           { value: dataIso, prefix: "ISO " },
+          { value: dataLon && dataLat ? "GPS Below" : "", label: "" },
         ];
         specs.forEach((spec) => {
           if (
