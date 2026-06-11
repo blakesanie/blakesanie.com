@@ -4,10 +4,12 @@ import { Icon } from "astro-icon/components";
 //@ts-ignore
 import Button from "../../components/basic/Button.astro";
 import Substack from "../../components/Substack.astro";
-import { Image } from "astro:assets";
+import Image from "../../components/Image/index.astro";
 
 // Dynamically grab all local images from your assets directory at build time
-const imagesGlob = import.meta.glob<{ default: any }>("/src/assets/images/**/*.{png,jpg,jpeg}");
+const imagesGlob = import.meta.glob<{ default: any }>(
+  "/src/assets/images/**/*.{png,jpg,jpeg}",
+);
 
 interface ProjectInterface {
   title: string;
@@ -516,11 +518,12 @@ function toFragrment(str: string) {
       projects.map(({ title, id, description, tech, ...project }) => {
         const defaultLink =
           project.links && project.links[0] && project.links[0].href;
-        
+
         // Resolve target image module dynamically from global build manifest
-        const imageSrc = project.image && imagesGlob[project.image] 
-          ? imagesGlob[project.image]() 
-          : null;
+        const imageSrc =
+          project.image && imagesGlob[project.image]
+            ? imagesGlob[project.image]()
+            : null;
 
         return (
           <div class="project" id={id || toFragrment(title)}>
@@ -555,6 +558,7 @@ function toFragrment(str: string) {
             <a class="demo" href={defaultLink} target="_blank">
               {imageSrc ? (
                 <Image
+                  placeholder="blur"
                   src={imageSrc}
                   alt={`Screenshot visualization of ${title}`}
                   loading="lazy"
@@ -724,7 +728,7 @@ function toFragrment(str: string) {
     const titleIcon = titleIcons[i] as HTMLElement;
     const id = titleIcon.parentElement?.parentElement?.parentElement?.id;
     if (!id) continue;
-    
+
     if (titleIcon.classList.contains("check")) {
       checkIcons[id] = titleIcon;
     } else {

@@ -28,8 +28,9 @@ const route = href
   .slice(1)
   .join("/")
   .split("?")[0];
-console.log("route path", route, path);
-const active = Astro.props.activePattern ? new RegExp(Astro.props.activePattern).test(path) : path.startsWith(route);
+const active = Astro.props.activePattern
+  ? new RegExp(Astro.props.activePattern).test(path)
+  : path.startsWith(route);
 
 const { textColor } = Astro.props;
 ---

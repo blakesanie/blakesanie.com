@@ -239,22 +239,22 @@ const gutter = "10px";
                 maxWidth: `calc(500px * ${image.flexGrow})`,
               }}
             >
-              <div class="astro-native-img-wrapper">
-                {/* Thumbnail */}
-                <Image
-                  placeholder="blur"
-                  src={image.path}
-                  alt={image.name || "Portfolio photograph"}
-                  width={Math.max(
-                    600,
-                    Math.round((500 / image.height) * image.width),
-                  )}
-                  quality={75}
-                  format="webp"
-                  loading="lazy"
-                  class="thumb-img"
-                />
-              </div>
+              {/* <div class="astro-native-img-wrapper"> */}
+              {/* Thumbnail */}
+              <Image
+                placeholder="color"
+                src={image.path}
+                alt={image.name || "Portfolio photograph"}
+                width={Math.max(
+                  600,
+                  Math.round((500 / image.height) * image.width),
+                )}
+                quality={75}
+                format="webp"
+                loading="lazy"
+                class="thumb-img"
+              />
+              {/* </div> */}
             </div>
           );
         })
@@ -340,16 +340,15 @@ const gutter = "10px";
     transform: translateY(-2px);
   }
 
-  .astro-native-img-wrapper {
+  /* .astro-native-img-wrapper {
     width: 100%;
     height: 100%;
     display: block;
     position: relative;
-    background-color: #f1f1f1;
     overflow: hidden;
-  }
+  } */
 
-  .astro-native-img-wrapper img.thumb-img {
+  img.thumb-img {
     display: block;
     width: 100%;
     height: 100%;
@@ -358,7 +357,7 @@ const gutter = "10px";
     z-index: 1;
   }
 
-  .noFullscreen .astro-native-img-wrapper img.thumb-img {
+  .noFullscreen img.thumb-img {
     cursor: default;
   }
 
@@ -501,7 +500,6 @@ const gutter = "10px";
     padding: 0.3em 0.6em;
     background-color: #eee;
     border-radius: 1.1em;
-    transition: all 0.1s ease;
   }
 
   .metadata-actions {
@@ -1020,6 +1018,7 @@ const gutter = "10px";
     transitionImg.offsetHeight;
 
     // Animate the floating clone and fade in overlay background
+    fullScreenImage.style.opacity = "0";
     setTimeout(() => {
       fullScreenEl.classList.add("active");
 
@@ -1044,6 +1043,7 @@ const gutter = "10px";
     // Immediately remove the clone once the enlargement animation finishes (200ms)
     setTimeout(() => {
       if (transitionImg.parentNode) {
+        fullScreenImage.style.opacity = "1";
         transitionImg.parentNode.removeChild(transitionImg);
       }
       if (activeTransitionImg === transitionImg) {
@@ -1131,6 +1131,8 @@ const gutter = "10px";
     transitionImg.style.height = `${finalOverlayRect.height}px`;
     document.body.appendChild(transitionImg);
     activeTransitionImg = transitionImg;
+
+    fullScreenImage.style.opacity = "0";
 
     // Force reflow on the newly added clone so the browser registers its initial state!
     transitionImg.offsetHeight;
