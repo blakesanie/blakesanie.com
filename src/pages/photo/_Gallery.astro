@@ -426,9 +426,8 @@ const gutter = "10px";
     position: relative;
     max-width: 100%;
     max-height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     z-index: 2;
-    background-color: #f1f1f1;
     opacity: 0;
   }
 
@@ -442,11 +441,11 @@ const gutter = "10px";
     z-index: 999995;
     will-change: transform, top, left, width, height, opacity;
     transition:
-      top 0.2s ease-in,
-      left 0.2s ease-in,
-      width 0.2s ease-in,
-      height 0.2s ease-in,
-      opacity 0.15s ease-in;
+      top 0.2s ease-out,
+      left 0.2s ease-out,
+      width 0.2s ease-out,
+      height 0.2s ease-out,
+      opacity 0.2s ease-out;
     object-fit: cover;
   }
 
@@ -994,16 +993,6 @@ const gutter = "10px";
     transitionImg.src = thumbImg.src;
     transitionImg.className = "gallery-transition-clone";
 
-    // Set styles inline to bypass Astro component-scoped styles
-    transitionImg.style.position = "fixed";
-    transitionImg.style.pointerEvents = "none";
-    transitionImg.style.zIndex = "999995";
-    transitionImg.style.objectFit = "cover";
-    transitionImg.style.willChange =
-      "transform, top, left, width, height, opacity";
-    transitionImg.style.transition =
-      "top 0.2s cubic-bezier(0.25, 1, 0.5, 1), left 0.2s cubic-bezier(0.25, 1, 0.5, 1), width 0.2s cubic-bezier(0.25, 1, 0.5, 1), height 0.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.15s ease";
-
     transitionImg.style.left = `${galleryRect.left}px`;
     transitionImg.style.top = `${galleryRect.top}px`;
     transitionImg.style.width = `${galleryRect.width}px`;
@@ -1041,7 +1030,7 @@ const gutter = "10px";
       tempImg.src = fullResSrc;
     }
 
-    // Immediately remove the clone once the enlargement animation finishes (200ms)
+    // Immediately remove the clone once the enlargement animation finishes (200ms + buffer)
     setTimeout(() => {
       if (transitionImg.parentNode) {
         fullScreenImage.style.opacity = "1";
@@ -1052,7 +1041,7 @@ const gutter = "10px";
       }
       thumbImg.style.opacity = "";
       isEnterAnimating = false;
-    }, 200);
+    }, 250);
 
     (fullScreenEl as HTMLElement)?.focus();
     requestAnimationFrame(() => {
@@ -1116,16 +1105,6 @@ const gutter = "10px";
     transitionImg.src = thumbImg.src;
     transitionImg.className = "gallery-transition-clone";
 
-    // Set styles inline to bypass Astro component-scoped styles
-    transitionImg.style.position = "fixed";
-    transitionImg.style.pointerEvents = "none";
-    transitionImg.style.zIndex = "999995";
-    transitionImg.style.objectFit = "cover";
-    transitionImg.style.willChange =
-      "transform, top, left, width, height, opacity";
-    transitionImg.style.transition =
-      "top 0.2s cubic-bezier(0.25, 1, 0.5, 1), left 0.2s cubic-bezier(0.25, 1, 0.5, 1), width 0.2s cubic-bezier(0.25, 1, 0.5, 1), height 0.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.15s ease";
-
     transitionImg.style.left = `${finalOverlayRect.left}px`;
     transitionImg.style.top = `${finalOverlayRect.top}px`;
     transitionImg.style.width = `${finalOverlayRect.width}px`;
@@ -1155,7 +1134,7 @@ const gutter = "10px";
       transitionImg.style.height = `${finalGalleryRect.height}px`;
     }, 20);
 
-    // Cleanup after transition finishes (200ms)
+    // Cleanup after transition finishes (200ms + buffer)
     setTimeout(() => {
       if (transitionImg.parentNode) {
         transitionImg.parentNode.removeChild(transitionImg);
@@ -1178,7 +1157,7 @@ const gutter = "10px";
       document.title = baseTitle;
       document.body.style.overflow = "";
       isExitAnimating = false;
-    }, 200);
+    }, 250);
 
     if (pushState) {
       const path = window.location.pathname;
