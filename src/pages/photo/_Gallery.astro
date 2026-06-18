@@ -73,38 +73,53 @@ const cameraReplacements: Record<string, string> = {
   FC3682: "DJI Mini 3",
 };
 
-function resolveCamera(exif: Record<string, string>) {
+function resolveCamera(exif: Record<string, any>) {
   for (const x of ["model", "CameraModelName", "Model"]) {
     if (exif[x] && cameraReplacements[exif[x]])
       return cameraReplacements[exif[x]];
   }
 }
 
-function resolveLens(exif: Record<string, string>) {
-  for (const x of ["LensID", "LensModel", "LensSpec"]) {
+function resolveLens(exif: Record<string, any>) {
+  for (const x of ["Lens", "LensModel", "LensSpec"]) {
     if (exif[x] && lensReplacements[exif[x]]) return lensReplacements[exif[x]];
   }
 }
 
-function resolveShutter(exif: Record<string, string>) {
+function resolveShutter(exif: Record<string, any>) {
   let x = exif["ExposureTime"];
   if (x) return x;
 }
 
-function resolveAperture(exif: Record<string, string>) {
+function resolveAperture(exif: Record<string, any>): number | undefined {
   const x = exif["FNumber"];
+  if (!x) return undefined;
   let n;
   if (typeof x == "string") {
     n = parseFloat(x);
   } else if (typeof x == "number") {
     n = x;
-  } else {
-    throw Error("FNumber is not numerical: " + x);
   }
+  if (n === undefined) {
+    console.log(exif);
+    console.log("FNumber is not numerical: " + x);
+    return undefined;
+  }
+
   if (Math.round(n) === n) {
     return Math.round(n);
   }
   return n;
+}
+
+function resolveFocalLength(exif: Record<string, any>): number | undefined {
+  const focal = exif["FocalLengthIn35mmFormat"];
+  if (focal) {
+    if (typeof focal == "number") {
+      return focal;
+    }
+    return parseFloat(focal);
+  }
 }
 
 // function dmsToDecimal(dmsStr: string) {
@@ -195,7 +210,7 @@ const imagesData: ImageData[] = await Promise.all(
       out.metadata = {
         camera: resolveCamera(exif),
         lens: resolveLens(exif),
-        focalLength: exif["Focal Length In 35mm Format"],
+        focalLength: resolveFocalLength(exif),
         aperture: resolveAperture(exif),
         shutterSpeed: resolveShutter(exif),
         iso: exif.ISO,
@@ -956,7 +971,7 @@ const gutter = "10px";
         const specs = [
           { value: dataCamera, label: "" },
           { value: dataLens, label: "" },
-          { value: dataFocal, label: "" },
+          { value: dataFocal, label: "mm" },
           { value: dataShutter, label: "s" },
           { value: dataAperture, prefix: "f/" },
           { value: dataIso, prefix: "ISO " },
