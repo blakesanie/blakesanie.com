@@ -37,6 +37,7 @@ const {
   allowFullscreen = false,
   allowMetadata = false,
   allowClip = false,
+  allowFilename = false,
 } = Astro.props;
 
 const filePaths = Object.keys(Astro.props.assetGlob).map((vitePath) =>
@@ -297,6 +298,15 @@ const gutter = "10px";
         />
       )
     }
+    {
+      allowFilename && (
+        <TextInput
+          id="nameSearch"
+          label="Search By Name"
+          placeholder="DSC0123"
+        />
+      )
+    }
   </div>
 
   <div
@@ -346,7 +356,7 @@ const gutter = "10px";
                 loading="lazy"
                 class="thumb-img"
               />
-              {/* </div> */}
+              {allowFilename && <div class="name-label">{image.name}</div>}
             </div>
           );
         })
@@ -451,6 +461,18 @@ const gutter = "10px";
 
   .noFullscreen img.thumb-img {
     cursor: default;
+  }
+
+  .name-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.2em 0.4em;
+    background-color: #ffffff80;
+    backdrop-filter: blur(5px);
+    border-bottom-left-radius: 0.5em;
+    font-size: 0.8rem;
+    z-index: 10;
   }
 
   #fullscreenOverlay {
@@ -1517,7 +1539,7 @@ const gutter = "10px";
 
   let debounceTimeout: number | undefined;
 
-  clipInput.addEventListener("input", (e) => {
+  clipInput?.addEventListener("input", (e) => {
     clearTimeout(debounceTimeout);
 
     const query = (e.target as HTMLInputElement).value.trim();
@@ -1565,5 +1587,32 @@ const gutter = "10px";
         console.error("Semantic sort loop failure:", err);
       }
     }, 300);
+  });
+
+  const nameSearchInput = document.querySelector("#nameSearch");
+  let nameDebounceTimeout: number | undefined;
+
+  nameSearchInput?.addEventListener("input", (e) => {
+    clearTimeout(nameDebounceTimeout);
+
+    const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
+
+    nameDebounceTimeout = window.setTimeout(() => {
+      console.log(`Filtering gallery by name query: "${query}"`);
+
+      galleryImages.forEach((image) => {
+        const htmlEl = image as HTMLElement;
+        const dataName = (htmlEl.getAttribute("data-name") || "").toLowerCase();
+
+        // If query is empty, show everything. Otherwise, look for a substring match.
+        if (!query || dataName.includes(query)) {
+          htmlEl.style.display = ""; // restores default layout style (e.g., block, inline-block, flex)
+          // htmlEl.classList.remove("hidden"); // Alternative if you prefer CSS utilities
+        } else {
+          htmlEl.style.display = "none";
+          // htmlEl.classList.add("hidden");
+        }
+      });
+    }, 250); // Snappy 250ms delay for text characters
   });
 </script>
