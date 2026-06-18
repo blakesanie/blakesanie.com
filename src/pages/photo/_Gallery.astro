@@ -6,15 +6,18 @@ import MapGallery from "./_MapGallery.astro";
 import { encodeEmbeddings } from "./_utils";
 import Toggle from "../../components/Toggle/index.astro";
 import TextInput from "../../components/TextInput/index.astro";
+import { getImageMetadata, getImageEmbeddings } from "astro-image-pipeline";
+import path from "path";
 
 export interface Props {
-  imagesData: any[];
-  embeddingsJson?: Record<string, any>;
+  assetGlob: Record<string, any>;
   image?: string;
   imageName?: string;
   initialMode?: string;
   allowFullscreen?: boolean;
+  allowMetadata?: boolean;
   allowMap?: boolean;
+  allowClip?: boolean;
   randomize?: boolean;
   heading?: string;
   subheading?: string;
@@ -27,13 +30,30 @@ export interface Props {
 }
 
 const {
-  imagesData = [],
   heading = "Photography",
   subheading,
   initialMode = "gallery",
   allowMap = false,
   allowFullscreen = false,
+  allowMetadata = false,
+  allowClip = false,
 } = Astro.props;
+
+const filePaths = Object.keys(Astro.props.assetGlob).map((vitePath) =>
+  path.resolve(path.join(process.cwd(), vitePath)),
+);
+console.log("filePaths", filePaths);
+
+let metadata: Record<string, Record<string, any>> | null = null;
+if (allowMetadata) {
+  metadata = await getImageMetadata(filePaths);
+}
+
+let embeddings: Record<string, number[]> | null = null;
+if (allowClip) {
+  embeddings = await getImageEmbeddings(filePaths);
+  console.log("emb", Object.keys(embeddings));
+}
 
 const lensReplacements: Record<string, string> = {
   "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED":
@@ -54,91 +74,143 @@ const cameraReplacements: Record<string, string> = {
 };
 
 function resolveCamera(exif: Record<string, string>) {
-  for (const x of ["model", "Camera Model Name", "Model"]) {
+  for (const x of ["model", "CameraModelName", "Model"]) {
     if (exif[x] && cameraReplacements[exif[x]])
       return cameraReplacements[exif[x]];
   }
 }
 
 function resolveLens(exif: Record<string, string>) {
-  for (const x of ["Lens ID", "Lens Model", "Lens Spec"]) {
+  for (const x of ["LensID", "LensModel", "LensSpec"]) {
     if (exif[x] && lensReplacements[exif[x]]) return lensReplacements[exif[x]];
   }
 }
 
 function resolveShutter(exif: Record<string, string>) {
-  let x = exif["Exposure Time"];
+  let x = exif["ExposureTime"];
   if (x) return x;
 }
 
 function resolveAperture(exif: Record<string, string>) {
-  const x = exif["F Number"];
-  if (x) {
-    const n = parseFloat(x);
-    if (Math.round(n) === n) {
-      return Math.round(n);
-    }
-    return x;
+  const x = exif["FNumber"];
+  let n;
+  if (typeof x == "string") {
+    n = parseFloat(x);
+  } else if (typeof x == "number") {
+    n = x;
+  } else {
+    throw Error("FNumber is not numerical: " + x);
   }
+  if (Math.round(n) === n) {
+    return Math.round(n);
+  }
+  return n;
 }
 
-function dmsToDecimal(dmsStr: string) {
-  if (!dmsStr) return null;
-  const regex = /(\d+)\s*deg\s*(\d+)'\s*([\d.]+)"\s*([NSEW])/i;
-  const match = dmsStr.match(regex);
-  if (!match) return null;
+// function dmsToDecimal(dmsStr: string) {
+//   if (!dmsStr) return null;
+//   const regex = /(\d+)\s*deg\s*(\d+)'\s*([\d.]+)"\s*([NSEW])/i;
+//   const match = dmsStr.match(regex);
+//   if (!match) return null;
 
-  const degrees = parseInt(match[1], 10);
-  const minutes = parseInt(match[2], 10);
-  const seconds = parseFloat(match[3]);
-  const direction = match[4].toUpperCase();
+//   const degrees = parseInt(match[1], 10);
+//   const minutes = parseInt(match[2], 10);
+//   const seconds = parseFloat(match[3]);
+//   const direction = match[4].toUpperCase();
 
-  let decimal = degrees + minutes / 60 + seconds / 3600;
-  if (direction === "S" || direction === "W") decimal = -decimal;
-  return parseFloat(decimal.toFixed(6));
+//   let decimal = degrees + minutes / 60 + seconds / 3600;
+//   if (direction === "S" || direction === "W") decimal = -decimal;
+//   return parseFloat(decimal.toFixed(6));
+// }
+
+interface ImageMetadata {
+  camera?: string;
+  lens?: string;
+  focalLength?: number;
+  aperture?: number;
+  shutterSpeed?: string;
+  iso?: number;
+  lon?: number;
+  lat?: number;
 }
 
-// Process the image items mapping dimensions and metadata dynamically
-const galleryImages = await Promise.all(
-  imagesData.map(async (img) => {
-    const { name, path: imageAsset, width, height, exif, embeddings } = img;
+interface ImageData {
+  file: string;
+  name: string;
+  src: any;
+  width: number;
+  height: number;
+  highRes: string;
+  aspectRatio: number;
+  embeddings?: string;
+  metadata?: ImageMetadata;
+}
 
+const imagesData: ImageData[] = await Promise.all(
+  Object.entries(Astro.props.assetGlob).map(async ([filePath, module]) => {
+    // Astro exposes the metadata on the .default property of the eager import
+    const filename = path.basename(filePath);
+    const absolutePath = path.resolve(path.join(process.cwd(), filePath));
+    const name = filename.split(".").slice(0, -1).join(".");
+    const width = module.default.width;
+    const height = module.default.height;
     const aspectRatioNum = width && height ? width / height : 1;
 
-    // Pre-calculate optimized high-res URL for deferred loading
     const highRes = await getImage({
-      src: imageAsset,
+      src: module.default,
       width: Math.round(Math.sqrt(2500000 / (height * width)) * width),
       quality: 85,
       format: "webp",
     });
 
-    return {
+    let out: ImageData = {
+      file: absolutePath, // e.g., "/src/assets/hero.png"
       name,
-      path: imageAsset,
-      fullResSrc: highRes.src,
-      flexGrow: aspectRatioNum,
-      aspectRatio: width && height ? `${width} / ${height}` : "auto",
+      src: module.default,
       width,
       height,
-      embeddings,
-      metadata: {
+      highRes: highRes.src,
+      aspectRatio: aspectRatioNum,
+    };
+
+    if (allowClip) {
+      if (!embeddings) {
+        throw Error("allowClip is true but no embeddings");
+      }
+      const emb = embeddings[absolutePath];
+      if (!emb) {
+        throw Error("no embeddings found for " + absolutePath);
+      }
+      out.embeddings = encodeEmbeddings(emb);
+    }
+
+    if (allowMetadata) {
+      if (!metadata) {
+        throw Error("allowMetadata is true but no metadata");
+      }
+      const exif = metadata[absolutePath];
+      if (!exif) {
+        throw Error("no metadata found for " + absolutePath);
+      }
+      out.metadata = {
         camera: resolveCamera(exif),
         lens: resolveLens(exif),
         focalLength: exif["Focal Length In 35mm Format"],
         aperture: resolveAperture(exif),
         shutterSpeed: resolveShutter(exif),
         iso: exif.ISO,
-        lon: dmsToDecimal(exif["GPS Longitude"]),
-        lat: dmsToDecimal(exif["GPS Latitude"]),
-      },
-    };
+        lon: exif.GPSLongitude,
+        lat: exif.GPSLatitude,
+      };
+    }
+
+    return out;
   }),
 );
 
 const mapImages = await Promise.all(
-  galleryImages
-    .filter((img) => img.metadata.lat !== null && img.metadata.lon !== null)
+  imagesData
+    .filter((img) => img.metadata?.lat !== null && img.metadata?.lon !== null)
     .map(async (img) => {
       const originalAR = img.width / img.height;
       const targetArea = 4000;
@@ -146,7 +218,7 @@ const mapImages = await Promise.all(
       const w = targetArea / h;
 
       const optimized = await getImage({
-        src: img.path,
+        src: img.src,
         width: Math.round(w),
         height: Math.round(h),
         format: "webp",
@@ -154,8 +226,8 @@ const mapImages = await Promise.all(
       return {
         name: img.name,
         path: optimized.src,
-        lat: img.metadata.lat,
-        lon: img.metadata.lon,
+        lat: img.metadata?.lat,
+        lon: img.metadata?.lon,
         width: Math.round(w),
         height: Math.round(h),
       };
@@ -214,36 +286,37 @@ const gutter = "10px";
   >
     <div id="gallery">
       {
-        galleryImages.map((image) => {
+        imagesData.map((image) => {
+          console.log(image);
           return (
             <div
               class="galleryImage"
               data-name={image.name}
-              data-fullres={image.fullResSrc}
-              data-camera={image.metadata.camera}
-              data-lens={image.metadata.lens}
-              data-focal={image.metadata.focalLength}
-              data-aperture={image.metadata.aperture}
-              data-shutter={image.metadata.shutterSpeed}
-              data-iso={image.metadata.iso}
+              data-fullres={image.highRes}
+              data-camera={image.metadata?.camera}
+              data-lens={image.metadata?.lens}
+              data-focal={image.metadata?.focalLength}
+              data-aperture={image.metadata?.aperture}
+              data-shutter={image.metadata?.shutterSpeed}
+              data-iso={image.metadata?.iso}
               data-width={image.width}
               data-height={image.height}
-              data-lat={image.metadata.lat}
-              data-lon={image.metadata.lon}
-              data-emb={encodeEmbeddings(image.embeddings)}
+              data-lat={image.metadata?.lat}
+              data-lon={image.metadata?.lon}
+              data-emb={image.embeddings}
               style={{
-                flexGrow: image.flexGrow,
+                flexGrow: image.aspectRatio,
                 aspectRatio: image.aspectRatio,
-                flexBasis: `calc(var(--base-height) * (${image.flexGrow}))`,
+                flexBasis: `calc(var(--base-height) * (${image.aspectRatio}))`,
                 maxHeight: `calc(500px)`,
-                maxWidth: `calc(500px * ${image.flexGrow})`,
+                maxWidth: `calc(500px * ${image.aspectRatio})`,
               }}
             >
               {/* <div class="astro-native-img-wrapper"> */}
               {/* Thumbnail */}
               <Image
                 placeholder="color"
-                src={image.path}
+                src={image.src}
                 alt={image.name || "Portfolio photograph"}
                 width={Math.max(
                   600,

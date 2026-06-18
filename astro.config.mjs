@@ -6,6 +6,8 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import redirects from "/src/redirects.json";
 import icon from "astro-icon";
+import imagePipeline from "astro-image-pipeline";
+
 const noSitemap = new Set(Object.keys(redirects));
 // so not in sitemap
 noSitemap.add("chicago");
@@ -35,6 +37,7 @@ export default defineConfig({
     },
   },
   integrations: [
+    imagePipeline(),
     mdx({
       remarkPlugins: [remarkMath],
       rehypePlugins: [rehypeKatex],

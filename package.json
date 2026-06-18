@@ -9,7 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "dev-vercel": "vercel dev"
+    "dev-vercel": "vercel dev",
+    "clean": "rm -rf .astro dist node_modules/.vite"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.2.6",
@@ -55,6 +56,7 @@
     "astro-compress": "^2.3.8",
     "astro-google-fonts-optimizer": "^0.2.2",
     "astro-icon": "^1.1.5",
+    "astro-image-pipeline": "file:plugins/astro-image-pipeline",
     "astro-imagetools": "^0.9.0",
     "astro-seo": "^0.8.4",
     "astro-sitemap": "^1.0.0",
