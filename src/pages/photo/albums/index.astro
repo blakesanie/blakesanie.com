@@ -1,5 +1,6 @@
 ---
 import { getStaticPaths } from "./[slug].astro";
+import Image from "../../../components/Image/index.astro";
 //@ts-ignore
 import HeaderAndFooter from "../../../components/HeaderAndFooter/index.astro";
 import Substack from "../../../components/Substack.astro";
@@ -19,6 +20,8 @@ function enforcePeriod(str: string) {
   themeColor="#f0f0f0"
   darkText
   hoverZoneBehind
+  noBackdropFilter
+  flangeColor="white"
   title="Albums"
   description="Image collections for preview and download"
 >
@@ -33,13 +36,13 @@ function enforcePeriod(str: string) {
         <a href={"/photo/albums/" + item.params.slug}>
           <h2>{item.props.title}</h2>
           <p>{enforcePeriod(item.props.description)}</p>
-          <Img
+          <Image
             src={item.props.image}
             alt=""
             breakpoints={[800]}
             quality={50}
             format="webp"
-            placeholder="dominantColor"
+            placeholder="color"
             loading="lazy"
           />
         </a>
@@ -78,8 +81,11 @@ function enforcePeriod(str: string) {
     padding: 0;
     width: calc(100% + 0.5em);
   }
-  #albums :global(img) {
-    margin-top: 0.5em;
-    flex: 1;
+  #albums img {
+    display: block;
+    width: 100%;
+    flex-grow: 1; /* 3. Tells the image to expand and fill all remaining vertical space */
+    min-height: 0; /* 4. Crucial Safari/Firefox fix: allows flex items to shrink/fit correctly */
+    object-fit: cover; /* 5. Crops and fills the space beautifully without stretching or squishing */
   }
 </style>

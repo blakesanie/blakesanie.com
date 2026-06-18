@@ -287,12 +287,16 @@ const gutter = "10px";
         />
       )
     }
-    <TextInput
-      id="clip"
-      label="AI Image Search"
-      placeholder="Loading Model..."
-      disabled
-    />
+    {
+      allowClip && (
+        <TextInput
+          id="clip"
+          label="AI Image Search"
+          placeholder="Loading Model..."
+          disabled
+        />
+      )
+    }
   </div>
 
   <div

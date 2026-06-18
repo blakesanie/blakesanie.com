@@ -1,22 +1,40 @@
 ---
 import Gallery from "../_Gallery.astro";
+import chiMarathonImage from "/src/assets/client_alias/chi-marathon-2025/DSC02413.jpg";
+import relayCrossImage from "/src/assets/client_alias/relay-cross-2025/DSC01406.jpg";
+import mnrImage from "/src/assets/client_alias/mnr-labor-day-2025/DSC00237.jpg";
+import type { Props } from "../_Gallery.astro";
 
+// 1. Let inference do the heavy lifting here to avoid complex JSX-breaking < > structures on the function signature
 export async function getStaticPaths() {
+  // 2. Safely type-cast the glob using brackets if you need explicit typing, or let it slide as Vite handles it
+  const marathonImages = import.meta.glob(
+    "/src/assets/client_alias/chi-marathon-2025/*.{jpg,jpeg,png,webp}",
+    { eager: true },
+  );
+
+  const XXXRelayCrossImages = import.meta.glob(
+    "/src/assets/client_alias/relay-cross-2025/*.{jpg,jpeg,png,webp}",
+    { eager: true },
+  );
+
+  const mnrImages = import.meta.glob(
+    "/src/assets/client_alias/mnr-labor-day-2025/*.{jpg,jpeg,png,webp}",
+    { eager: true },
+  );
+
   return [
     {
       params: { slug: "chi-marathon-2025" },
       props: {
-        path: "./photo-portfolio/temp/chi-marathon-2025",
+        assetGlob: marathonImages,
         title: "Chicago Marathon 2025",
         description: "October 12, 2025. Chicago Marathon in Old Town.",
         heading: "Chicago Marathon 2025",
         allowDownload: true,
         allowFilename: true,
-        allowClip: true,
-        alphabetical: true,
         allowFullscreen: true,
-        allowMetadata: true,
-        image: "./photo-portfolio/temp/chi-marathon-2025/DSC02413.jpg",
+        image: chiMarathonImage,
         subheading:
           'October 12, 2025. Chicago Marathon along LaSalle (mile 4) and Wells (mile 12). Download available for personal use. <a href="https://www.instagram.com/blakesanie.jpg/" target="_blank">@blakesanie.jpg</a>',
       },
@@ -24,17 +42,14 @@ export async function getStaticPaths() {
     {
       params: { slug: "xxx-relay-cross-2025" },
       props: {
-        path: "./photo-portfolio/temp/relay-cross-2025",
+        assetGlob: XXXRelayCrossImages,
         title: "XXX Relay Cross 2025",
         description: "September 14, 2025. Cyclocross Relay Bike Race Images",
         heading: "XXX Relay Cross 2025",
         allowDownload: true,
         allowFilename: true,
-        allowClip: true,
-        alphabetical: true,
         allowFullscreen: true,
-        allowMetadata: true,
-        image: "./photo-portfolio/temp/relay-cross-2025/DSC01406.jpg",
+        image: relayCrossImage,
         subheading:
           'September 14, 2025, at Jackson Park, Chicago. Download available for personal use. Attribution <a href="https://www.instagram.com/blakesanie.jpg/" target="_blank">@blakesanie.jpg</a>',
       },
@@ -42,17 +57,14 @@ export async function getStaticPaths() {
     {
       params: { slug: "mnr-labor-day-2025" },
       props: {
-        path: "./photo-portfolio/temp/mnr-labor-day-2025",
+        assetGlob: mnrImages,
         title: "MNR Labor Day 2025",
-        description: "Photographs from Monday Night Ride, September 1, 2025",
-        image: "./photo-portfolio/temp/mnr-labor-day-2025/DSC00237.jpg",
+        description: "September 1, 2025. Photographs from Monday Night Ride.",
         heading: "MNR Labor Day 2025",
         allowDownload: true,
-        allowClip: true,
         allowFilename: true,
-        alphabetical: true,
         allowFullscreen: true,
-        allowMetadata: true,
+        image: mnrImage,
       },
     },
   ];
