@@ -1,5 +1,8 @@
 ---
 import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
+import Image from "../../components/Image/index.astro";
+import AeroPng from "../../assets/images/aero/aero.png";
+import AeroBeforePng from "../../assets/images/aero_before.jpg";
 ---
 
 <CommonHead
@@ -10,28 +13,24 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
   themeColor="black"
 >
   <div id="cover">
-    <Img
-      src="/src/assets/images/aero/aero.png"
+    <Image
+      src={AeroPng}
       alt=""
       loading="lazy"
-      placeholder="blurred"
+      placeholder="blur"
       format="webp"
       breakpoints={[400, 800, 1200, 1600, 2000]}
       quality={50}
     />
-    <Img
-      src="/src/assets/images/aero_before.jpg"
+    <Image
+      src={AeroBeforePng}
       alt=""
       loading="lazy"
-      placeholder="blurred"
+      placeholder="blur"
       format="webp"
       breakpoints={[400, 800, 1200, 1600, 2000]}
       quality={50}
-      attributes={{
-        img: {
-          id: "topImage",
-        },
-      }}
+      id="topImage"
     />
     <div id="coverMain">
       <h1>Aero<br /><span id="byline">by Blake</span></h1>
@@ -73,7 +72,11 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
     key development victories, I am thrilled to share this tool with the cycling
     community.
   </p>
-  <a class="button" href="/blog/Aero/breakdown">Read Technical Breakdown</a>
+  <a
+    class="button"
+    href="https://blakesanie.substack.com/p/aero-virtual-cycling-wind-tunnel"
+    >Read Technical Breakdown</a
+  >
 </CommonHead>
 
 <!-- <html>

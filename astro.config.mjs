@@ -19,7 +19,7 @@ noSitemap.add("401k");
 
 // https://astro.build/config
 export default defineConfig({
-  // output: "static",
+  output: "static",
   // adapter: vercelStatic(),
   site: "https://blakesanie.com",
   markdown: {

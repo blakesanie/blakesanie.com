@@ -1,12 +1,11 @@
 ---
 import Gallery from "./_Gallery.astro";
+import type { ImageMetadata } from "astro";
 
 const assetGlob = import.meta.glob(
   "/src/assets/portfolio_alias/*.{jpg,jpeg,png,webp}",
-  {
-    eager: true,
-  },
-) as Record<string, any>;
+  { eager: true },
+) as Record<string, { default: ImageMetadata }>;
 ---
 
 <!-- <p>test</p> -->

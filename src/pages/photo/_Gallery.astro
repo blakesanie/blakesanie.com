@@ -8,9 +8,11 @@ import Toggle from "../../components/Toggle/index.astro";
 import TextInput from "../../components/TextInput/index.astro";
 import { getImageMetadata, getImageEmbeddings } from "astro-image-pipeline";
 import path from "path";
+import type { ImageMetadata as AstroImageMetadata } from "astro";
+import { getSharedProcessedImage, getSharedMapImage } from "./_galleryCache";
 
 export interface Props {
-  assetGlob: Record<string, any>;
+  assetGlob: Record<string, { default: AstroImageMetadata }>;
   image?: string;
   imageName?: string;
   initialMode?: string;
@@ -40,20 +42,20 @@ const {
   allowFilename = false,
 } = Astro.props;
 
-const filePaths = Object.keys(Astro.props.assetGlob).map((vitePath) =>
-  path.resolve(path.join(process.cwd(), vitePath)),
-);
-console.log("filePaths", filePaths);
+// const filePaths = Object.keys(Astro.props.assetGlob).map((vitePath) =>
+//   path.resolve(path.join(process.cwd(), vitePath)),
+// );
 
 let metadata: Record<string, Record<string, any>> | null = null;
 if (allowMetadata) {
-  metadata = await getImageMetadata(filePaths);
+  metadata = await getImageMetadata(Object.keys(Astro.props.assetGlob));
+  console.log("collected metadata");
 }
 
 let embeddings: Record<string, number[]> | null = null;
 if (allowClip) {
-  embeddings = await getImageEmbeddings(filePaths);
-  console.log("emb", Object.keys(embeddings));
+  embeddings = await getImageEmbeddings(Object.keys(Astro.props.assetGlob));
+  console.log("collected embeddings");
 }
 
 const lensReplacements: Record<string, string> = {
@@ -151,7 +153,7 @@ interface ImageMetadata {
 }
 
 interface ImageData {
-  file: string;
+  filePath: string;
   name: string;
   src: any;
   width: number;
@@ -162,92 +164,32 @@ interface ImageData {
   metadata?: ImageMetadata;
 }
 
-const imagesData: ImageData[] = await Promise.all(
+const imagesData = await Promise.all(
   Object.entries(Astro.props.assetGlob).map(async ([filePath, module]) => {
-    // Astro exposes the metadata on the .default property of the eager import
-    const filename = path.basename(filePath);
-    const absolutePath = path.resolve(path.join(process.cwd(), filePath));
-    const name = filename.split(".").slice(0, -1).join(".");
-    const width = module.default.width;
-    const height = module.default.height;
-    const aspectRatioNum = width && height ? width / height : 1;
-
-    const highRes = await getImage({
-      src: module.default,
-      width: Math.round(Math.sqrt(2500000 / (height * width)) * width),
-      quality: 85,
-      format: "webp",
+    return await getSharedProcessedImage({
+      filePath,
+      module,
+      allowClip,
+      allowMetadata,
+      embeddings,
+      metadata,
+      resolveCamera,
+      resolveLens,
+      resolveFocalLength,
+      resolveAperture,
+      resolveShutter,
     });
-
-    let out: ImageData = {
-      file: absolutePath, // e.g., "/src/assets/hero.png"
-      name,
-      src: module.default,
-      width,
-      height,
-      highRes: highRes.src,
-      aspectRatio: aspectRatioNum,
-    };
-
-    if (allowClip) {
-      if (!embeddings) {
-        throw Error("allowClip is true but no embeddings");
-      }
-      const emb = embeddings[absolutePath];
-      if (!emb) {
-        throw Error("no embeddings found for " + absolutePath);
-      }
-      out.embeddings = encodeEmbeddings(emb);
-    }
-
-    if (allowMetadata) {
-      if (!metadata) {
-        throw Error("allowMetadata is true but no metadata");
-      }
-      const exif = metadata[absolutePath];
-      if (!exif) {
-        throw Error("no metadata found for " + absolutePath);
-      }
-      out.metadata = {
-        camera: resolveCamera(exif),
-        lens: resolveLens(exif),
-        focalLength: resolveFocalLength(exif),
-        aperture: resolveAperture(exif),
-        shutterSpeed: resolveShutter(exif),
-        iso: exif.ISO,
-        lon: exif.GPSLongitude,
-        lat: exif.GPSLatitude,
-      };
-    }
-
-    return out;
   }),
 );
 
+// 🔥 MEMOIZED: Optimizes map thumbnails once
 const mapImages = await Promise.all(
   imagesData
-    .filter((img) => img.metadata?.lat !== null && img.metadata?.lon !== null)
-    .map(async (img) => {
-      const originalAR = img.width / img.height;
-      const targetArea = 4000;
-      const h = Math.sqrt(targetArea / originalAR);
-      const w = targetArea / h;
-
-      const optimized = await getImage({
-        src: img.src,
-        width: Math.round(w),
-        height: Math.round(h),
-        format: "webp",
-      });
-      return {
-        name: img.name,
-        path: optimized.src,
-        lat: img.metadata?.lat,
-        lon: img.metadata?.lon,
-        width: Math.round(w),
-        height: Math.round(h),
-      };
-    }),
+    .filter(
+      (img) =>
+        img.metadata?.lat !== undefined && img.metadata?.lon !== undefined,
+    )
+    .map(async (img) => await getSharedMapImage(img)),
 );
 
 let title = Astro.props.title ? Astro.props.title + " | Photo" : "Photography";
@@ -258,6 +200,7 @@ if (Astro.props.imageName) {
 const description =
   Astro.props.description || "My portfolio of artistic photographs.";
 const gutter = "10px";
+console.log("end of Gallery frontmatter");
 ---
 
 <HeaderAndFooter
@@ -316,7 +259,6 @@ const gutter = "10px";
     <div id="gallery">
       {
         imagesData.map((image) => {
-          console.log(image);
           return (
             <div
               class="galleryImage"
