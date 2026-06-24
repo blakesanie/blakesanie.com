@@ -36,61 +36,34 @@ const { mapImages } = Astro.props;
     height: 100%;
   }
 
-  :global(.photo-marker) {
-    border: 3px solid white;
-    border-radius: 8px;
-    background-size: cover;
-    background-position: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    transition: transform 0.1s;
+  /* Target the HTML content inside the Advanced Markers */
+  :global(.custom-image-marker) {
+    border: 5px solid white;
+    border-radius: 3px;
+    object-fit: cover;
   }
 
-  :global(.photo-marker:hover) {
-    transform: scale(1.1);
-    z-index: 1000;
-  }
-
-  :global(.cluster-marker) {
-    border: 4px solid white;
-    border-radius: 12px;
-    background-size: cover;
-    background-position: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    transition: transform 0.1s;
-  }
-
-  :global(.cluster-marker:hover) {
-    transform: scale(1.05);
-    z-index: 1000;
-  }
-
-  :global(.cluster-count) {
+  :global(.cluster-badge) {
     position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #007aff;
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: bold;
-    border: 1.5px solid white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    top: 0;
+    right: 0;
+    background-color: white;
+    color: black;
+    padding: 0.5em;
+    font-size: 1em;
+    font-weight: 500;
+    border-bottom-left-radius: 0.5em;
   }
 </style>
 
-<script is:inline src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&libraries=marker&v=weekly"></script>
-<script is:inline src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+<script
+  is:inline
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&libraries=marker&v=weekly"
+></script>
+<script
+  is:inline
+  src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"
+></script>
 
 <script define:vars={{ mapImages }}>
   let mainMap = null;
@@ -101,10 +74,12 @@ const { mapImages } = Astro.props;
     mapInitialized = true;
 
     const { Map } = await google.maps.importLibrary("maps");
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
     const mapOptions = {
       center: { lat: 0, lng: 0 },
       zoom: 2,
+      mapId: "DEMO_MAP_ID", // AdvancedMarkerElement requires a Map ID (use your own if you have one)
       mapTypeControl: false,
       streetViewControl: true,
       streetViewControlOptions: {
@@ -123,22 +98,10 @@ const { mapImages } = Astro.props;
         position: google.maps.ControlPosition.RIGHT_CENTER,
       },
       styles: [
-        {
-          elementType: "geometry",
-          stylers: [{ color: "#ffffff" }],
-        },
-        {
-          elementType: "labels.icon",
-          stylers: [{ visibility: "off" }],
-        },
-        {
-          elementType: "labels.text.fill",
-          stylers: [{ color: "#616161" }],
-        },
-        {
-          elementType: "labels.text.stroke",
-          stylers: [{ color: "#f5f5f5" }],
-        },
+        { elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+        { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
         {
           featureType: "administrative.land_parcel",
           elementType: "labels.text.fill",
@@ -245,22 +208,27 @@ const { mapImages } = Astro.props;
       const position = { lat: photo.lat, lng: photo.lon };
       bounds.extend(position);
 
-      const marker = new google.maps.Marker({
+      // Create raw HTML element for the marker image
+      const img = document.createElement("img");
+      img.src = photo.path;
+      img.className = "custom-image-marker";
+      img.style.width = `${photo.width}px`;
+      img.style.height = `${photo.height}px`;
+
+      const marker = new AdvancedMarkerElement({
         position,
         map: mainMap,
         title: photo.name,
-        icon: {
-            url: photo.path,
-            scaledSize: new google.maps.Size(photo.width, photo.height),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(photo.width / 2, photo.height / 2),
-        }
+        content: img,
       });
 
-      marker.addListener('click', () => {
-         window.dispatchEvent(new CustomEvent('photo-map-click', { detail: { name: photo.name } }));
+      marker.addListener("click", () => {
+        window.dispatchEvent(
+          new CustomEvent("photo-map-click", { detail: { name: photo.name } }),
+        );
       });
 
+      // Attach custom property to the DOM element container for the clusterer to reference
       marker.photoData = photo;
       markers.push(marker);
     });
@@ -270,57 +238,68 @@ const { mapImages } = Astro.props;
     }
 
     const { MarkerClusterer } = window.markerClusterer;
-    
+
     const renderer = {
       render: ({ count, position, markers: clusterMarkers }) => {
         const photo = clusterMarkers[0].photoData;
-        
-        const marker = new google.maps.Marker({
+
+        // Container element for handling the cluster image + badge count
+        const container = document.createElement("div");
+        container.className = "cluster-container";
+
+        const img = document.createElement("img");
+        img.src = photo.path;
+        img.className = "custom-image-marker";
+        img.style.width = `${photo.width * 1.2}px`;
+        img.style.height = `${photo.height * 1.2}px`;
+        container.appendChild(img);
+
+        if (count > 1) {
+          const badge = document.createElement("span");
+          badge.className = "cluster-badge";
+          badge.innerText = String(count);
+          container.appendChild(badge);
+        }
+
+        const marker = new AdvancedMarkerElement({
           position,
+          content: container,
           zIndex: count,
-          label: count > 1 ? {
-            text: String(count),
-            color: "white",
-            fontSize: "10px",
-            fontWeight: "bold",
-          } : null,
-          icon: {
-            url: photo.path,
-            scaledSize: new google.maps.Size(photo.width * 1.2, photo.height * 1.2),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point((photo.width * 1.2) / 2, (photo.height * 1.2) / 2),
+        });
+
+        marker.addListener("click", () => {
+          if (count > 1) {
+            const clusterBounds = new google.maps.LatLngBounds();
+            clusterMarkers.forEach((m) => clusterBounds.extend(m.position));
+            mainMap.fitBounds(clusterBounds);
+          } else {
+            window.dispatchEvent(
+              new CustomEvent("photo-map-click", {
+                detail: { name: photo.name },
+              }),
+            );
           }
         });
 
-        marker.addListener('click', (e) => {
-            if (count > 1) {
-                const clusterBounds = new google.maps.LatLngBounds();
-                clusterMarkers.forEach((m) => clusterBounds.extend(m.getPosition()));
-                mainMap.fitBounds(clusterBounds);
-            } else {
-                window.dispatchEvent(new CustomEvent('photo-map-click', { detail: { name: photo.name } }));
-            }
-        });
-
         return marker;
-      }
+      },
     };
 
-    new MarkerClusterer({ 
-      map: mainMap, 
+    new MarkerClusterer({
+      map: mainMap,
       markers,
-      renderer
+      renderer,
     });
   }
 
-  window.addEventListener('photo-view-change', (e) => {
-    if (e.detail.view === 'map') {
+  window.addEventListener("photo-view-change", (e) => {
+    if (e.detail.view === "map") {
       initMainMap();
     }
   });
 
-  const photoContent = document.getElementById('photoContent');
-  if (photoContent && photoContent.classList.contains('view-map')) {
+  const photoContent = document.getElementById("photoContent");
+  if (photoContent && photoContent.classList.contains("view-map")) {
     initMainMap();
   }
 </script>

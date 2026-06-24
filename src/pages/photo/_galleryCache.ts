@@ -152,7 +152,7 @@ export async function getSharedMapImage(img: any) {
     }
 
     const originalAR = img.width / img.height;
-    const targetArea = 4000;
+    const targetArea = 20000;
     const h = Math.sqrt(targetArea / originalAR);
     const w = targetArea / h;
 
@@ -169,8 +169,8 @@ export async function getSharedMapImage(img: any) {
         path: optimized.src,
         lat: img.metadata?.lat,
         lon: img.metadata?.lon,
-        width: Math.round(w),
-        height: Math.round(h),
+        width: Math.round(w) / 2,
+        height: Math.round(h) / 2,
     };
 
     optimizedMapImagesCache.set(img.filePath, result);

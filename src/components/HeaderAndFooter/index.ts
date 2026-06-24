@@ -42,26 +42,6 @@ if (activeAnchor) {
   positionHoverAtAnchor(activeAnchor);
 }
 
-function isMobileDevice() {
-  const userAgent = navigator.userAgent.toLowerCase();
-  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(
-    userAgent,
-  );
-}
-
-// function isPhone() {
-//   const userAgent = navigator.userAgent.toLowerCase();
-//   return /iphone|ipod|android.*mobile/.test(userAgent); // Matches phones
-// }
-//
-// function isTablet() {
-//   const userAgent = navigator.userAgent.toLowerCase();
-//   return /ipad|android(?!.*mobile)/.test(userAgent); // Matches tablets
-// }
-
-const isMobile = isMobileDevice();
-document.body.classList.add(isMobile ? "mobile" : "desktop");
-
 let menuExpanded = false;
 
 for (let i = 0; i < anchors.length; i++) {
