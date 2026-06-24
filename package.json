@@ -7,7 +7,7 @@
     "dev3000": "astro dev --host --port 3000",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "npx wrangler pages dev",
     "astro": "astro",
     "deploy": "npx wrangler pages deploy",
     "clean": "rm -rf .astro dist node_modules/.vite"

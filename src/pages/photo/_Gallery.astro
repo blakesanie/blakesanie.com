@@ -819,6 +819,9 @@ console.log("end of Gallery frontmatter");
     const dataLon = targetImage.getAttribute("data-lon");
     const dataLat = targetImage.getAttribute("data-lat");
 
+    // Check if we are currently in map view
+    const isMapView = photoContent?.classList.contains("view-map");
+
     if (dataName) {
       document.title = `${dataName} | Photography | Blake Sanie`;
     }
@@ -835,9 +838,7 @@ console.log("end of Gallery frontmatter");
         if (window.location.pathname !== newPath) {
           window.history.pushState(
             {
-              view: photoContent?.classList.contains("view-map")
-                ? "map"
-                : "gallery",
+              view: isMapView ? "map" : "gallery",
               photo: dataName,
             },
             "",
@@ -906,9 +907,7 @@ console.log("end of Gallery frontmatter");
     ) as HTMLImageElement;
 
     if (isAlreadyFullscreen) {
-      // If we are already in fullscreen (e.g. Next/Prev navigation), update without enter transition animation
       if (fullScreenImage) {
-        // Show low-res thumbnail immediately
         fullScreenImage.setAttribute("src", thumbImg.src);
         (fullScreenImage as HTMLElement).classList.add("loaded");
         fullScreenImage.setAttribute(
@@ -920,7 +919,6 @@ console.log("end of Gallery frontmatter");
           targetImage.getAttribute("data-height") || "",
         );
 
-        // Preload high-res image in background
         fullScreenImage.setAttribute("data-loading-src", fullResSrc);
         const tempImg = new Image();
         tempImg.onload = () => {
@@ -940,20 +938,13 @@ console.log("end of Gallery frontmatter");
       return;
     }
 
-    // Scroll to top of fullscreen view first
     if (fullScreenScroll) {
       fullScreenScroll.scrollTop = 0;
     }
 
-    // Entering fullscreen with animations
     isEnterAnimating = true;
-
-    // Lock page scroll
     document.body.style.overflow = "hidden";
 
-    const galleryRect = thumbImg.getBoundingClientRect();
-
-    // Show the overlay layout container
     (fullScreenEl as HTMLElement).style.display = "flex";
     (fullScreenEl as HTMLElement).offsetHeight; // force reflow
 
@@ -971,68 +962,82 @@ console.log("end of Gallery frontmatter");
       );
     }
 
-    // Calculate layout coordinates for target fullscreen image using aspect ratio
     updateFullscreenOrientation();
 
-    // Get coordinates of layouted full screen image
-    const destRect = fullScreenImage
-      ? fullScreenImage.getBoundingClientRect()
-      : galleryRect;
+    // Helper function to safely load high-resolution content without race conditions
+    const triggerHighResPreload = () => {
+      if (fullScreenImage) {
+        fullScreenImage.setAttribute("data-loading-src", fullResSrc);
+        const tempImg = new Image();
+        tempImg.onload = () => {
+          if (fullScreenImage.getAttribute("data-loading-src") === fullResSrc) {
+            fullScreenImage.setAttribute("src", fullResSrc);
+          }
+        };
+        tempImg.src = fullResSrc;
+      }
+    };
 
-    // Create floating transition image clone
-    const transitionImg = document.createElement("img");
-    transitionImg.src = thumbImg.src;
-    transitionImg.className = "gallery-transition-clone";
-
-    transitionImg.style.left = `${galleryRect.left}px`;
-    transitionImg.style.top = `${galleryRect.top}px`;
-    transitionImg.style.width = `${galleryRect.width}px`;
-    transitionImg.style.height = `${galleryRect.height}px`;
-
-    // Hide original gallery image visually during animation
-    thumbImg.style.opacity = "0";
-
-    document.body.appendChild(transitionImg);
-    activeTransitionImg = transitionImg;
-
-    // Force reflow on the newly added clone so the browser registers its initial state!
-    transitionImg.offsetHeight;
-
-    // Animate the floating clone and fade in overlay background
-    fullScreenImage.style.opacity = "0";
-    setTimeout(() => {
-      fullScreenEl.classList.add("active");
-
-      transitionImg.style.left = `${destRect.left}px`;
-      transitionImg.style.top = `${destRect.top}px`;
-      transitionImg.style.width = `${destRect.width}px`;
-      transitionImg.style.height = `${destRect.height}px`;
-    }, 20);
-
-    // Preload high-resolution image in background
-    if (fullScreenImage) {
-      fullScreenImage.setAttribute("data-loading-src", fullResSrc);
-      const tempImg = new Image();
-      tempImg.onload = () => {
-        if (fullScreenImage.getAttribute("data-loading-src") === fullResSrc) {
-          fullScreenImage.setAttribute("src", fullResSrc);
-        }
-      };
-      tempImg.src = fullResSrc;
-    }
-
-    // Immediately remove the clone once the enlargement animation finishes (200ms + buffer)
-    setTimeout(() => {
-      if (transitionImg.parentNode) {
+    if (isMapView) {
+      // --- STRICT FADE-IN FOR MAP VIEW ---
+      if (fullScreenImage) {
         fullScreenImage.style.opacity = "1";
-        transitionImg.parentNode.removeChild(transitionImg);
       }
-      if (activeTransitionImg === transitionImg) {
-        activeTransitionImg = null;
-      }
-      thumbImg.style.opacity = "";
-      isEnterAnimating = false;
-    }, 250);
+
+      setTimeout(() => {
+        fullScreenEl.classList.add("active");
+      }, 20);
+
+      setTimeout(() => {
+        isEnterAnimating = false;
+        triggerHighResPreload(); // Starts preloading the high-res image now that layout fade-in has finished
+      }, 250);
+    } else {
+      // --- STANDARD SHARED ELEMENT ANIMATION FOR GALLERY VIEW ---
+      const galleryRect = thumbImg.getBoundingClientRect();
+      const destRect = fullScreenImage
+        ? fullScreenImage.getBoundingClientRect()
+        : galleryRect;
+
+      const transitionImg = document.createElement("img");
+      transitionImg.src = thumbImg.src;
+      transitionImg.className = "gallery-transition-clone";
+
+      transitionImg.style.left = `${galleryRect.left}px`;
+      transitionImg.style.top = `${galleryRect.top}px`;
+      transitionImg.style.width = `${galleryRect.width}px`;
+      transitionImg.style.height = `${galleryRect.height}px`;
+
+      thumbImg.style.opacity = "0";
+
+      document.body.appendChild(transitionImg);
+      activeTransitionImg = transitionImg;
+
+      transitionImg.offsetHeight; // force reflow
+
+      fullScreenImage.style.opacity = "0";
+      setTimeout(() => {
+        fullScreenEl.classList.add("active");
+
+        transitionImg.style.left = `${destRect.left}px`;
+        transitionImg.style.top = `${destRect.top}px`;
+        transitionImg.style.width = `${destRect.width}px`;
+        transitionImg.style.height = `${destRect.height}px`;
+      }, 20);
+
+      setTimeout(() => {
+        if (transitionImg.parentNode) {
+          fullScreenImage.style.opacity = "1";
+          transitionImg.parentNode.removeChild(transitionImg);
+        }
+        if (activeTransitionImg === transitionImg) {
+          activeTransitionImg = null;
+        }
+        thumbImg.style.opacity = "";
+        isEnterAnimating = false;
+        triggerHighResPreload(); // Starts preloading the high-res image now that the zoom animation has completed
+      }, 250);
+    }
 
     (fullScreenEl as HTMLElement)?.focus();
     requestAnimationFrame(() => {
@@ -1046,6 +1051,9 @@ console.log("end of Gallery frontmatter");
     if (isEnterAnimating || isExitAnimating) return;
 
     isExitAnimating = true;
+
+    // Check if we are currently in map view
+    const isMapView = photoContent?.classList.contains("view-map");
 
     // Find the currently active gallery image element
     const activeGalleryImg = document.querySelector(
@@ -1066,89 +1074,117 @@ console.log("end of Gallery frontmatter");
       "img.thumb-img",
     ) as HTMLImageElement;
 
-    // Check if original gallery image is on screen (fully visible)
-    const rect = thumbImg.getBoundingClientRect();
-    const isVisible =
-      rect.top >= 0 &&
-      rect.bottom <= window.innerHeight &&
-      rect.left >= 0 &&
-      rect.right <= window.innerWidth;
-
-    if (!isVisible) {
-      // Calculate scroll positioning to center the image on the Y axis
-      const absoluteTop = window.scrollY + rect.top;
-      const elementHeight = rect.height;
-      const targetScrollY =
-        absoluteTop + elementHeight / 2 - window.innerHeight / 2;
-      window.scrollTo({ top: targetScrollY, behavior: "auto" });
-    }
-
-    // Get final gallery image coordinates after scrolling
-    const finalGalleryRect = thumbImg.getBoundingClientRect();
-
-    // Get current fullscreen image dimensions
-    const finalOverlayRect = fullScreenImage
-      ? fullScreenImage.getBoundingClientRect()
-      : finalGalleryRect;
-
-    // Create transition clone at current fullscreen placeholder coordinates
-    const transitionImg = document.createElement("img");
-    transitionImg.src = thumbImg.src;
-    transitionImg.className = "gallery-transition-clone";
-
-    transitionImg.style.left = `${finalOverlayRect.left}px`;
-    transitionImg.style.top = `${finalOverlayRect.top}px`;
-    transitionImg.style.width = `${finalOverlayRect.width}px`;
-    transitionImg.style.height = `${finalOverlayRect.height}px`;
-    document.body.appendChild(transitionImg);
-    activeTransitionImg = transitionImg;
-
-    fullScreenImage.style.opacity = "0";
-
-    // Force reflow on the newly added clone so the browser registers its initial state!
-    transitionImg.offsetHeight;
-
-    // Hide original gallery image visually and hide the high-res image
-    thumbImg.style.opacity = "0";
-    if (fullScreenImage) {
-      fullScreenImage.setAttribute("data-loading-src", "");
-      (fullScreenImage as HTMLElement).classList.remove("loaded");
-    }
-
-    // Shrink back to grid and fade out overlay
-    setTimeout(() => {
+    if (isMapView) {
+      // --- STRICT FADE-OUT FOR MAP VIEW ---
       fullScreenEl.classList.remove("active");
 
-      transitionImg.style.left = `${finalGalleryRect.left}px`;
-      transitionImg.style.top = `${finalGalleryRect.top}px`;
-      transitionImg.style.width = `${finalGalleryRect.width}px`;
-      transitionImg.style.height = `${finalGalleryRect.height}px`;
-    }, 20);
-
-    // Cleanup after transition finishes (200ms + buffer)
-    setTimeout(() => {
-      if (transitionImg.parentNode) {
-        transitionImg.parentNode.removeChild(transitionImg);
-      }
-      if (activeTransitionImg === transitionImg) {
-        activeTransitionImg = null;
-      }
-      thumbImg.style.opacity = "";
-
       if (fullScreenImage) {
-        (fullScreenImage as HTMLElement).style.width = "";
-        (fullScreenImage as HTMLElement).style.height = "";
-        fullScreenImage.setAttribute("src", "");
+        // fullScreenImage.style.opacity = "0";
+        fullScreenImage.setAttribute("data-loading-src", "");
+        (fullScreenImage as HTMLElement).classList.remove("loaded");
       }
 
-      fullScreenEl.style.display = "none";
-      document
-        .querySelector(".galleryImage.active")
-        ?.classList.remove("active");
-      document.title = baseTitle;
-      document.body.style.overflow = "";
-      isExitAnimating = false;
-    }, 250);
+      setTimeout(() => {
+        if (fullScreenImage) {
+          (fullScreenImage as HTMLElement).style.width = "";
+          (fullScreenImage as HTMLElement).style.height = "";
+          fullScreenImage.setAttribute("src", "");
+        }
+
+        fullScreenEl.style.display = "none";
+        document
+          .querySelector(".galleryImage.active")
+          ?.classList.remove("active");
+        document.title = baseTitle;
+        document.body.style.overflow = "";
+        isExitAnimating = false;
+      }, 250);
+    } else {
+      // --- STANDARD GALLERY GRID REVERT ANIMATION ---
+      // Check if original gallery image is on screen (fully visible)
+      const rect = thumbImg.getBoundingClientRect();
+      const isVisible =
+        rect.top >= 0 &&
+        rect.bottom <= window.innerHeight &&
+        rect.left >= 0 &&
+        rect.right <= window.innerWidth;
+
+      if (!isVisible) {
+        // Calculate scroll positioning to center the image on the Y axis
+        const absoluteTop = window.scrollY + rect.top;
+        const elementHeight = rect.height;
+        const targetScrollY =
+          absoluteTop + elementHeight / 2 - window.innerHeight / 2;
+        window.scrollTo({ top: targetScrollY, behavior: "auto" });
+      }
+
+      // Get final gallery image coordinates after scrolling
+      const finalGalleryRect = thumbImg.getBoundingClientRect();
+
+      // Get current fullscreen image dimensions
+      const finalOverlayRect = fullScreenImage
+        ? fullScreenImage.getBoundingClientRect()
+        : finalGalleryRect;
+
+      // Create transition clone at current fullscreen placeholder coordinates
+      const transitionImg = document.createElement("img");
+      transitionImg.src = thumbImg.src;
+      transitionImg.className = "gallery-transition-clone";
+
+      transitionImg.style.left = `${finalOverlayRect.left}px`;
+      transitionImg.style.top = `${finalOverlayRect.top}px`;
+      transitionImg.style.width = `${finalOverlayRect.width}px`;
+      transitionImg.style.height = `${finalOverlayRect.height}px`;
+      document.body.appendChild(transitionImg);
+      activeTransitionImg = transitionImg;
+
+      fullScreenImage.style.opacity = "0";
+
+      // Force reflow on the newly added clone so the browser registers its initial state!
+      transitionImg.offsetHeight;
+
+      // Hide original gallery image visually and hide the high-res image
+      thumbImg.style.opacity = "0";
+      if (fullScreenImage) {
+        fullScreenImage.setAttribute("data-loading-src", "");
+        (fullScreenImage as HTMLElement).classList.remove("loaded");
+      }
+
+      // Shrink back to grid and fade out overlay
+      setTimeout(() => {
+        fullScreenEl.classList.remove("active");
+
+        transitionImg.style.left = `${finalGalleryRect.left}px`;
+        transitionImg.style.top = `${finalGalleryRect.top}px`;
+        transitionImg.style.width = `${finalGalleryRect.width}px`;
+        transitionImg.style.height = `${finalGalleryRect.height}px`;
+      }, 20);
+
+      // Cleanup after transition finishes (200ms + buffer)
+      setTimeout(() => {
+        if (transitionImg.parentNode) {
+          transitionImg.parentNode.removeChild(transitionImg);
+        }
+        if (activeTransitionImg === transitionImg) {
+          activeTransitionImg = null;
+        }
+        thumbImg.style.opacity = "";
+
+        if (fullScreenImage) {
+          (fullScreenImage as HTMLElement).style.width = "";
+          (fullScreenImage as HTMLElement).style.height = "";
+          fullScreenImage.setAttribute("src", "");
+        }
+
+        fullScreenEl.style.display = "none";
+        document
+          .querySelector(".galleryImage.active")
+          ?.classList.remove("active");
+        document.title = baseTitle;
+        document.body.style.overflow = "";
+        isExitAnimating = false;
+      }, 250);
+    }
 
     if (pushState) {
       const path = window.location.pathname;
@@ -1157,11 +1193,10 @@ console.log("end of Gallery frontmatter");
         path !== "/photo/map" &&
         !path.startsWith("/photo/albums/");
       if (isPhotoDeepLink) {
-        const isMap = photoContent?.classList.contains("view-map");
-        const basePath = isMap ? "/photo/map" : "/photo";
+        const basePath = isMapView ? "/photo/map" : "/photo";
         if (window.location.pathname !== basePath) {
           window.history.pushState(
-            { view: isMap ? "map" : "gallery" },
+            { view: isMapView ? "map" : "gallery" },
             "",
             basePath,
           );
