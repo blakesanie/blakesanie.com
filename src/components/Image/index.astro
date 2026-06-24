@@ -1,8 +1,6 @@
 ---
 import { getImage } from "astro:assets";
-import sharp from "sharp";
-import fs from "node:fs/promises";
-import path from "path";
+import { getImageColors, getImageBlurPlaceholders } from "astro-image-pipeline"; // Adjust this import path to your setup
 
 interface Props {
   src: any; // Accepts Astro image imports or remote URLs
@@ -17,19 +15,11 @@ interface Props {
   [key: string]: any;
 }
 
-// Global cache to persist across component instances and survive Vite HMR reloads
-const assetCache = ((globalThis as any)._astroAssetCache ??= new Map<
-  string,
-  {
-    imageAttrs: any;
-    placeholderStyle: Record<string, string>;
-  }
->());
-
 const {
   src,
   alt,
   width,
+  widths,
   height,
   quality,
   format,
@@ -43,99 +33,73 @@ let placeholderStyle: Record<string, string> = {};
 let imageAttrs: any = {};
 
 try {
-  // 1. Resolve the underlying file path for Sharp processing
+  // 1. Resolve the underlying reference path
   let resolvedSrc = src;
   if (src instanceof Promise) {
     resolvedSrc = await src;
   }
 
-  let filepath =
+  const filepath =
     typeof resolvedSrc === "string"
       ? resolvedSrc
-      : resolvedSrc.fsPath || resolvedSrc.default.fsPath || resolvedSrc.src;
+      : resolvedSrc.fsPath || resolvedSrc.default?.fsPath || resolvedSrc.src;
 
-  // 2. Generate a highly specific cache key incorporating sizing, quality, and format configurations
-  const cacheKey = `${filepath}:${placeholder}:${width || "auto"}x${height || "auto"}:${quality || "default"}:${format || "default"}`;
+  // 2. Offload image asset processing to Astro's build engine
+  const optimizedImage = await getImage({
+    src,
+    width,
+    height,
+    quality,
+    format,
+    widths,
+  });
 
-  // 3. Cache Hit Strategy
-  let cached = assetCache.get(cacheKey);
-  if (cached) {
-    imageAttrs = cached.imageAttrs;
-    placeholderStyle = cached.placeholderStyle;
-  } else {
-    // Cache Miss: Run both operations and save the combined results
+  imageAttrs = {
+    src: optimizedImage.src,
+    srcSet: optimizedImage.srcSet.attribute,
+    ...optimizedImage.attributes,
+  };
 
-    // Pass config directly to Astro's underlying optimization engine
-    const optimizedImage = await getImage({
-      src,
-      width,
-      height,
-      quality,
-      format,
-      ...rest,
-    });
+  // 3. Delegate placeholder operations to the parallelized disk cache pipeline
+  if (placeholder === "color") {
+    const colorMap = await getImageColors([filepath]);
+    const dominant = colorMap[filepath];
 
-    imageAttrs = {
-      src: optimizedImage.src,
-      srcSet: optimizedImage.srcSet.attribute,
-      ...optimizedImage.attributes,
-    };
-
-    // Process placeholders via Sharp only if needed
-    if (placeholder === "color" || placeholder === "blur") {
-      // 1. Strip query strings if present (?origWidth=...)
-      let cleanPath = filepath.split("?")[0];
-
-      // 2. Clean up Vite filesystem prefix tokens
-      if (cleanPath.startsWith("/@fs")) {
-        cleanPath = cleanPath.replace("/@fs", "");
-      }
-
-      // 3. Determine if it is truly an absolute system path
-      // If it starts with /Users/ or passes path.isAbsolute, don't touch it!
-      const isProjectRelative = cleanPath.startsWith("/src/");
-
-      const isAbsolute =
-        !isProjectRelative &&
-        (cleanPath.startsWith("/Users/") || path.isAbsolute(cleanPath));
-
-      const absolutePath = isAbsolute
-        ? cleanPath
-        : path.resolve(path.join(process.cwd(), cleanPath));
-
-      // Debug check to verify paths look pristine in console logs
-      // console.log("Processing Sharp for absolute path:", absolutePath);
-
-      const imageBuffer = await fs.readFile(absolutePath);
-      const sharpInstance = sharp(imageBuffer);
-
-      if (placeholder === "color") {
-        const { dominant } = await sharpInstance.stats();
-        const { r, g, b } = dominant;
-        placeholderStyle = { "background-color": `rgb(${r}, ${g}, ${b})` };
-      } else if (placeholder === "blur") {
-        const buffer = await sharpInstance.resize(20).blur(1).toBuffer();
-        const base64 = buffer.toString("base64");
-        const mimeType = resolvedSrc.format
-          ? `image/${resolvedSrc.format}`
-          : "image/jpeg";
-
-        placeholderStyle = {
-          "background-image": `url(data:${mimeType};base64,${base64})`,
-          "background-size": "cover",
-          "background-position": "center",
-        };
-      }
+    if (dominant) {
+      placeholderStyle = {
+        "background-color": `rgb(${dominant.r}, ${dominant.g}, ${dominant.b})`,
+      };
+    } else {
+      console.error(
+        "[Image Component] Failed to get dominant color for",
+        filepath,
+      );
     }
+  } else if (placeholder === "blur") {
+    const blurMap = await getImageBlurPlaceholders([filepath]);
+    const base64Uri = blurMap[filepath];
 
-    // Save both the generated HTML attributes and placeholder styling to memory
-    assetCache.set(cacheKey, { imageAttrs, placeholderStyle });
+    if (base64Uri) {
+      placeholderStyle = {
+        "background-image": `url(${base64Uri})`,
+        "background-size": "cover",
+        "background-position": "center",
+      };
+    } else {
+      console.error(
+        "[Image Component] Failed to get blur placeholder for",
+        filepath,
+      );
+    }
   }
 } catch (error) {
-  console.error("Failed to process image and placeholder:", error);
+  console.error(
+    "[Image Component] Failed to seamlessly process image assets:",
+    error,
+  );
 }
 
-// Convert incoming style to object if it's passed as a string, then merge
+// Map string style declarations safely into explicit key-value pairings
 const incomingStyle =
   typeof style === "string"
     ? Object.fromEntries(
@@ -161,6 +125,7 @@ const combinedStyle = {
   ]}
   style={combinedStyle}
   {...imageAttrs}
+  {...rest}
 />
 
 <style>

@@ -11,16 +11,16 @@ interface LinkInterface {
 }
 
 const links: LinkInterface[] = Astro.props.links;
-let { text, imageUrl, style, class: className, ...props } = Astro.props;
+let { text, imageSrc, style, class: className, ...props } = Astro.props;
 const maxImageOpacity = 0.5;
 ---
 
 <div style={{ ...style }} class:list={["section", className]} {...props}>
   {
-    imageUrl && (
+    imageSrc && (
       <Image
         placeholder="blur"
-        src={imageUrl}
+        src={imageSrc}
         alt=""
         loading="lazy"
         widths={[400, 800, 1200, 1600, 2000]}

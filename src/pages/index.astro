@@ -4,6 +4,10 @@ import HomePageSection from "../components/HomePageSection.astro";
 
 const { message } = Astro.props;
 
+const images = import.meta.glob(
+  "/src/assets/images/**/*.{jpeg,jpg,png,tiff,webp,svg}",
+);
+
 const markupData = [
   {
     text: [
@@ -142,7 +146,7 @@ const markupData = [
   <HomePageSection
     id="firstSection"
     class="homePageSection sectionTransitionParent"
-    imageUrl="/src/assets/images/cover.jpg"
+    imageSrc={images["/src/assets/images/cover.jpg"]()}
   >
     <h1>Hi, I'm Blake</h1>
     <div id="typedContainer">
@@ -150,15 +154,21 @@ const markupData = [
     </div>
   </HomePageSection>
   {
-    markupData.map((data, i) => (
-      <HomePageSection
-        imageUrl={data.imageUrl}
-        text={data.text}
-        links={data.links}
-        class="homePageSection sectionTransitionParent"
-        style={data.style}
-      />
-    ))
+    markupData.map((data, i) => {
+      if (!images[data.imageUrl]) {
+        console.warn("missing image for", data.imageUrl);
+        return <Fragment />;
+      }
+      return (
+        <HomePageSection
+          imageSrc={images[data.imageUrl]()}
+          text={data.text}
+          links={data.links}
+          class="homePageSection sectionTransitionParent"
+          style={data.style}
+        />
+      );
+    })
   }
 </HeaderAndFooter>
 {
