@@ -10,7 +10,6 @@ import { getImageMetadata, getImageEmbeddings } from "astro-image-pipeline";
 import path from "path";
 import type { ImageMetadata as AstroImageMetadata } from "astro";
 import { experimental_AstroContainer } from "astro/container";
-import GalleryGrid from "./_GalleryGrid.astro";
 import {
   getSharedProcessedImage,
   getSharedMapImage,
@@ -19,7 +18,7 @@ import {
 
 export interface Props {
   assetGlob: Record<string, () => Promise<unknown>>;
-  image?: string;
+  image?: unknown;
   imageName?: string;
   initialMode?: string;
   allowFullscreen?: boolean;

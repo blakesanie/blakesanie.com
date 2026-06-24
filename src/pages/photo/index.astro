@@ -1,8 +1,18 @@
 ---
 import Gallery from "./_Gallery.astro";
-import { getCachedPortfolioAssetGlob } from "./_galleryCache";
+import {
+  getCachedPortfolioAssetGlob,
+  getCachedImageModule,
+} from "./_galleryCache";
 
 const assetGlob = getCachedPortfolioAssetGlob();
+let image: ImageMetadata | undefined = undefined;
+if (Astro.props.imageFilePath) {
+  image = await getCachedImageModule(
+    Astro.props.imageFilePath,
+    assetGlob[Astro.props.imageFilePath],
+  );
+}
 ---
 
 <!-- <p>test</p> -->
@@ -11,7 +21,7 @@ const assetGlob = getCachedPortfolioAssetGlob();
   assetGlob={assetGlob}
   allowMetadata={true}
   allowClip={true}
-  image={Astro.props.image}
+  image={image}
   imageName={Astro.props.imageName}
   allowMap={true}
   allowFullscreen={true}

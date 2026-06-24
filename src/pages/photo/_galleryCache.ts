@@ -1,6 +1,7 @@
 import { getImage } from "astro:assets";
 import path from "path";
 import { encodeEmbeddings } from "./_utils"; // adjust path as needed
+import type { ImageMetadata } from 'astro';
 
 const lensReplacements: Record<string, string> = {
     "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED":
@@ -98,13 +99,13 @@ export async function getSharedProcessedImage({
 
     const filename = path.basename(filePath);
     const name = filename.split(".").slice(0, -1).join(".");
-    const width = module.default.width;
-    const height = module.default.height;
+    const width = module.width;
+    const height = module.height;
     const aspectRatioNum = width && height ? width / height : 1;
 
     // ⚡ Heavy Operation: Resizing/compressing via Astro's image service
     const highRes = await getImage({
-        src: module.default,
+        src: module,
         width: Math.round(Math.sqrt(2500000 / (height * width)) * width),
         quality: 85,
         format: "webp",
@@ -113,7 +114,7 @@ export async function getSharedProcessedImage({
     let out: any = {
         filePath,
         name,
-        src: module.default,
+        src: module,
         width,
         height,
         highRes: highRes.src,
@@ -177,9 +178,9 @@ export async function getSharedMapImage(img: any) {
 }
 
 // A global-to-the-module map that stores the import promises
-const moduleCache = new Map<string, { default: ImageMetadata }>();
+const moduleCache = new Map<string, ImageMetadata>();
 
-export async function getCachedImageModule(filePath: string, modulePromise?: () => Promise<unknown>) {
+export async function getCachedImageModule(filePath: string, modulePromise?: () => Promise<ImageModule>) {
 
     const cached = moduleCache.get(filePath);
     if (cached) {
@@ -192,22 +193,28 @@ export async function getCachedImageModule(filePath: string, modulePromise?: () 
     }
     // console.log('image module cache miss');
 
-    const module = await modulePromise() as { default: ImageMetadata };
+    const module = (await modulePromise()).default;
 
     moduleCache.set(filePath, module);
 
     return module;
 }
 
-let portfolioAssetGlobCache: Record<string, () => Promise<unknown>> | null = null;
+type ImageModule = { default: ImageMetadata };
+type AssetGlob = Record<string, () => Promise<ImageModule>>;
 
-export function getCachedPortfolioAssetGlob() {
+let portfolioAssetGlobCache: AssetGlob | null = null;
+
+export function getCachedPortfolioAssetGlob(): AssetGlob {
     if (portfolioAssetGlobCache) {
         return portfolioAssetGlobCache;
     }
-    portfolioAssetGlobCache = import.meta.glob(
+
+    // 2. Pass the ImageModule type into the glob generic
+    portfolioAssetGlobCache = import.meta.glob<ImageModule>(
         "/src/assets/portfolio_alias/*.{jpg,jpeg,png,webp}"
     );
+
     return portfolioAssetGlobCache;
 }
 

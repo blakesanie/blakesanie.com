@@ -16,13 +16,13 @@ export function getStaticPaths() {
       },
       props: {
         imageName: name,
-        filename: fileName, // Pass down the raw filename instead of processing the image here
+        filePath: filePath, // Pass down the raw filename instead of processing the image here
       },
     };
   });
 }
 
-const { imageName, filename } = Astro.props;
+const { imageName, filePath } = Astro.props;
 ---
 
-<PortfolioPage image={filename} imageName={imageName} />
+<PortfolioPage imageFilePath={filePath} imageName={imageName} />

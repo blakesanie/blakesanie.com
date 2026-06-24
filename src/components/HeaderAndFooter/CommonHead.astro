@@ -7,6 +7,8 @@ import { Resvg } from "@resvg/resvg-js";
 import fs from "fs";
 import { getImage } from "astro:assets";
 import path from "node:path";
+import type { GetImageResult } from "astro";
+import sharp from "sharp";
 
 Astro.props.fontUrl =
   Astro.props.fontUrl ||
@@ -16,9 +18,16 @@ const title = Astro.props.title
   ? Astro.props.title + " | Blake Sanie"
   : "Blake Sanie";
 
-let image = Astro.props.image;
-
-if (!image) {
+let image: { src: string } | null = null;
+if (Astro.props.image) {
+  console.log("head got image", Astro.props.image);
+  image = await getImage({
+    src: Astro.props.image,
+    width: 1200,
+    format: "webp",
+    quality: 75,
+  });
+} else {
   const font = fs.readFileSync(
     "src/assets/fonts/Assistant/static/Assistant-Regular.ttf",
   );
@@ -136,45 +145,36 @@ if (!image) {
   const resvg = new Resvg(svg, { fitTo: { mode: "width", value: 1200 } });
   const pngBuffer = resvg.render().asPng();
 
-  const cacheDir = path.join(process.cwd(), ".astro", "satori-cache");
-  if (!fs.existsSync(cacheDir)) {
-    fs.mkdirSync(cacheDir, { recursive: true });
+  // 1. Sanitize the title for a safe URL filename
+  const safeTitle = Astro.props.title
+    ? Astro.props.title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")
+    : "default";
+  const filename = `${safeTitle}-og.webp`;
+
+  // 2. Compress the PNG buffer straight to WebP using Sharp
+  const webpBuffer = await sharp(pngBuffer)
+    .resize(width, height)
+    .webp({ quality: quality })
+    .toBuffer();
+
+  const isProd = import.meta.env.PROD;
+  const targetDir = isProd
+    ? path.join(process.cwd(), "dist", "og-images") // Production build output
+    : path.join(process.cwd(), "public", "og-images"); // Local development fallback
+
+  // 2. Ensure the directory exists and save the file
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir, { recursive: true });
   }
+  fs.writeFileSync(path.join(targetDir, filename), webpBuffer);
 
-  // 2. Write the raw PNG buffer to a temporary file named after your slug
-  // Sanitize title for filename
-  const safeTitle = (Astro.props.title || "default")
-    .replace(/[^a-z0-9]/gi, "_")
-    .toLowerCase();
-  const tempPngPath = path.join(cacheDir, `${safeTitle}-og.png`);
-  fs.writeFileSync(tempPngPath, pngBuffer);
-
-  image = await getImage({
-    src: tempPngPath,
-    width: width,
-    height: height,
-    format: "webp",
-    quality: quality,
-  });
-
-  if (import.meta.env.DEV) {
-    // Generate dev URL dynamically using the configuration variables
-    image = `/_image?href=${encodeURIComponent("/@fs" + tempPngPath)}&w=${width}&h=${height}&f=${format}&q=${quality}`;
-  }
+  // 3. Keep the browser image source path identical for both
+  image = {
+    src: `/og-images/${filename}`,
+  };
 }
 
 const { noIndex } = Astro.props;
-
-let finalImage = image?.src || image;
-if (
-  typeof finalImage === "string" &&
-  finalImage.startsWith("/") &&
-  !finalImage.startsWith("//")
-) {
-  finalImage =
-    (import.meta.env.DEV ? "http://localhost:4321" : "https://blakesanie.com") +
-    finalImage;
-}
 
 const imageAlt =
   Astro.props?.imageAlt || "Open Graph Thumbnail Image for blakesanie.com";
@@ -207,30 +207,15 @@ const description =
         basic: {
           title: title,
           type: "website",
-          image: finalImage,
+          image: image.src,
         },
         optional: {
           description: description,
         },
         image: {
-          type:
-            "image/" +
-            (typeof finalImage === "string"
-              ? finalImage.split(".").pop().split("?")[0]
-              : "png"),
-          // width: width,
-          // height: height,
+          type: "image/" + image?.src?.split(".").pop()?.split("?")[0],
           alt: imageAlt,
         },
-      }}
-      twitter={{
-        creator: "@blakesanie",
-        card: "summary_large_image",
-        site: "@blakesanie",
-        title: title,
-        image: finalImage,
-        imageAlt: "Open Graph Thumbnail Image for page. " + description,
-        description: description,
       }}
       extend={{}}
     />

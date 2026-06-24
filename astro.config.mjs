@@ -7,6 +7,9 @@ import rehypeKatex from "rehype-katex";
 import redirects from "/src/redirects.json";
 import icon from "astro-icon";
 import imagePipeline from "astro-image-pipeline";
+import path from "path"
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 const noSitemap = new Set(Object.keys(redirects));
 // so not in sitemap
@@ -16,6 +19,33 @@ noSitemap.add("public");
 noSitemap.add("music");
 noSitemap.add("resume-raw");
 noSitemap.add("401k");
+
+const deleteOriginalJpegs = () => ({
+  name: 'delete-original-jpegs',
+  hooks: {
+    'astro:build:done': async ({ dir }) => {
+      // dir is a URL object pointing to your /dist folder
+      const astroAssetsDir = path.join(fileURLToPath(dir), '_astro');
+
+      if (!fs.existsSync(astroAssetsDir)) return;
+
+      const files = fs.readdirSync(astroAssetsDir);
+      let count = 0;
+
+      for (const file of files) {
+        // Match both .jpg and .jpeg files
+        if (/\.(jpg|jpeg)$/i.test(file)) {
+          fs.unlinkSync(path.join(astroAssetsDir, file));
+          count++;
+        }
+      }
+
+      if (count > 0) {
+        console.log(`\x1b[36m[cleanup]\x1b[0m Successfully removed ${count} original high-res JPEG(s) from dist/_astro/`);
+      }
+    },
+  },
+});
 
 // https://astro.build/config
 export default defineConfig({
@@ -103,5 +133,6 @@ export default defineConfig({
       // },
     }),
     icon(),
+    deleteOriginalJpegs(),
   ],
 });

@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "dev-vercel": "vercel dev",
+    "deploy": "npx wrangler pages deploy",
     "clean": "rm -rf .astro dist node_modules/.vite"
   },
   "dependencies": {
@@ -90,6 +90,7 @@
     "typed.js": "^2.1.0",
     "vercel": "^42.1.1",
     "vite-plugin-windicss": "^1.9.4",
+    "wrangler": "^4.104.0",
     "yarn": "^1.22.22"
   },
   "devDependencies": {

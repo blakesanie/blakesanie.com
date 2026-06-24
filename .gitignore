@@ -37,3 +37,7 @@ public/route-builder
 __pycache__/
 
 icloudImages
+wrangler.toml
+.satori-cache
+public/og-images
+.wrangler
