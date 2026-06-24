@@ -1,23 +1,38 @@
 ---
-import { Image } from "astro:assets";
+import { getImage } from "astro:assets";
 import sharp from "sharp";
 import fs from "node:fs/promises";
-import { getColor } from "colorthief";
+import path from "path";
 
 interface Props {
-  src: any; // Accepts Astro image imports
+  src: any; // Accepts Astro image imports or remote URLs
   alt: string;
   width?: number;
   height?: number;
+  quality?: string | number;
+  format?: string;
   placeholder?: "color" | "blur" | "none";
   class?: string;
   style?: string | Record<string, any>;
   [key: string]: any;
 }
 
+// Global cache to persist across component instances and survive Vite HMR reloads
+const assetCache = ((globalThis as any)._astroAssetCache ??= new Map<
+  string,
+  {
+    imageAttrs: any;
+    placeholderStyle: Record<string, string>;
+  }
+>());
+
 const {
   src,
   alt,
+  width,
+  height,
+  quality,
+  format,
   placeholder = "none",
   class: className,
   style = {},
@@ -25,68 +40,119 @@ const {
 } = Astro.props;
 
 let placeholderStyle: Record<string, string> = {};
+let imageAttrs: any = {};
 
-if (placeholder === "color" || placeholder === "blur") {
-  try {
-    // Resolve the absolute file path of the image
-    let resolvedSrc = src;
-    if (src instanceof Promise) {
-      resolvedSrc = await src;
-    }
-    let path =
-      typeof resolvedSrc === "string"
-        ? resolvedSrc
-        : resolvedSrc.fsPath || resolvedSrc.default.fsPath || resolvedSrc.src;
-    if (path.startsWith("/src")) {
-      path = "." + path;
-    }
-    const imageBuffer = await fs.readFile(path);
-    const sharpInstance = sharp(imageBuffer);
-
-    if (placeholder === "color") {
-      const { dominant } = await sharpInstance.stats();
-      const { r, g, b } = dominant;
-
-      placeholderStyle = { "background-color": `rgb(${r}, ${g}, ${b})` };
-    }
-
-    if (placeholder === "blur") {
-      // Downscale to a tiny 20px low-res placeholder (no sharp blur applied here)
-      const buffer = await sharpInstance.resize(20).blur(1).toBuffer();
-
-      const base64 = buffer.toString("base64");
-      const mimeType = src.format ? `image/${src.format}` : "image/jpeg";
-
-      placeholderStyle = {
-        "background-image": `url(data:${mimeType};base64,${base64})`,
-        "background-size": "cover",
-        "background-position": "center",
-      };
-    }
-  } catch (error) {
-    console.error("Failed to generate image placeholder:", error);
+try {
+  // 1. Resolve the underlying file path for Sharp processing
+  let resolvedSrc = src;
+  if (src instanceof Promise) {
+    resolvedSrc = await src;
   }
-} else {
-  console.log("OUTSIDE");
+
+  let filepath =
+    typeof resolvedSrc === "string"
+      ? resolvedSrc
+      : resolvedSrc.fsPath || resolvedSrc.default.fsPath || resolvedSrc.src;
+
+  // 2. Generate a highly specific cache key incorporating sizing, quality, and format configurations
+  const cacheKey = `${filepath}:${placeholder}:${width || "auto"}x${height || "auto"}:${quality || "default"}:${format || "default"}`;
+
+  // 3. Cache Hit Strategy
+  let cached = assetCache.get(cacheKey);
+  if (cached) {
+    imageAttrs = cached.imageAttrs;
+    placeholderStyle = cached.placeholderStyle;
+  } else {
+    // Cache Miss: Run both operations and save the combined results
+
+    // Pass config directly to Astro's underlying optimization engine
+    const optimizedImage = await getImage({
+      src,
+      width,
+      height,
+      quality,
+      format,
+      ...rest,
+    });
+
+    imageAttrs = {
+      src: optimizedImage.src,
+      srcSet: optimizedImage.srcSet.attribute,
+      ...optimizedImage.attributes,
+    };
+
+    // Process placeholders via Sharp only if needed
+    if (placeholder === "color" || placeholder === "blur") {
+      // 1. Strip query strings if present (?origWidth=...)
+      let cleanPath = filepath.split("?")[0];
+
+      // 2. Clean up Vite filesystem prefix tokens
+      if (cleanPath.startsWith("/@fs")) {
+        cleanPath = cleanPath.replace("/@fs", "");
+      }
+
+      // 3. Determine if it is truly an absolute system path
+      // If it starts with /Users/ or passes path.isAbsolute, don't touch it!
+      const isProjectRelative = cleanPath.startsWith("/src/");
+
+      const isAbsolute =
+        !isProjectRelative &&
+        (cleanPath.startsWith("/Users/") || path.isAbsolute(cleanPath));
+
+      const absolutePath = isAbsolute
+        ? cleanPath
+        : path.resolve(path.join(process.cwd(), cleanPath));
+
+      // Debug check to verify paths look pristine in console logs
+      // console.log("Processing Sharp for absolute path:", absolutePath);
+
+      const imageBuffer = await fs.readFile(absolutePath);
+      const sharpInstance = sharp(imageBuffer);
+
+      if (placeholder === "color") {
+        const { dominant } = await sharpInstance.stats();
+        const { r, g, b } = dominant;
+        placeholderStyle = { "background-color": `rgb(${r}, ${g}, ${b})` };
+      } else if (placeholder === "blur") {
+        const buffer = await sharpInstance.resize(20).blur(1).toBuffer();
+        const base64 = buffer.toString("base64");
+        const mimeType = resolvedSrc.format
+          ? `image/${resolvedSrc.format}`
+          : "image/jpeg";
+
+        placeholderStyle = {
+          "background-image": `url(data:${mimeType};base64,${base64})`,
+          "background-size": "cover",
+          "background-position": "center",
+        };
+      }
+    }
+
+    // Save both the generated HTML attributes and placeholder styling to memory
+    assetCache.set(cacheKey, { imageAttrs, placeholderStyle });
+  }
+} catch (error) {
+  console.error("Failed to process image and placeholder:", error);
 }
 
-// Safely merge incoming styles with our placeholder styles
+// Convert incoming style to object if it's passed as a string, then merge
+const incomingStyle =
+  typeof style === "string"
+    ? Object.fromEntries(
+        style
+          .split(";")
+          .filter(Boolean)
+          .map((s) => s.split(":").map((str) => str.trim())),
+      )
+    : style;
+
 const combinedStyle = {
   ...placeholderStyle,
+  ...incomingStyle,
 };
-
-// If incoming style is a string, append it to our object-turned-string
-// const styleString =
-//     Object.entries(combinedStyle)
-//         .concat(Object.entries(style))
-//         .map(([k, v]) => `${k}:${v}`)
-//         .join(";") + ";";
-
-// console.log(styleString);
 ---
 
-<Image
-  src={src}
+<img
   alt={alt}
   class:list={[
     "smart-image",
@@ -94,19 +160,18 @@ const combinedStyle = {
     className,
   ]}
   style={combinedStyle}
-  {...rest}
+  {...imageAttrs}
 />
 
 <style>
-  /* Ensure the background doesn't distort and transitions smoothly if needed */
   .smart-image {
     max-width: 100%;
     height: auto;
+    display: block;
   }
 
-  /* Browser handles the blur dynamically over the background image layer */
   .smooth-blur {
     backdrop-filter: blur(12px);
-    transform: translateZ(0); /* Fixes jagged edges on some engine variations */
+    transform: translateZ(0);
   }
 </style>

@@ -37,12 +37,12 @@ export default defineConfig({
     },
   },
   integrations: [
-    imagePipeline(),
-    mdx({
-      remarkPlugins: [remarkMath],
-      rehypePlugins: [rehypeKatex],
-      gfm: true,
-    }),
+    // imagePipeline(),
+    // mdx({
+    //   remarkPlugins: [remarkMath],
+    //   rehypePlugins: [rehypeKatex],
+    //   gfm: true,
+    // }),
     sitemap({
       filter(page) {
         let parts = page.split("/");
@@ -68,54 +68,54 @@ export default defineConfig({
         return true;
       },
     }),
-    compress({
-      CSS: {
-        csso: {
-          comments: false,
-          restructure: true,
-        },
-      },
-      HTML: {
-        "html-minifier-terser": {
-          removeComments: true,
-          removeAttributeQuotes: true,
-          removeStyleQuotes: true,
-          removeScriptTypeAttributes: true,
-          removeStyleLinkTypeAttributes: true,
-          minifyCSS: true,
-          minifyJS: true,
-          continueOnParseError: true,
-          collapseWhitespace: true,
-          collapseBooleanAttributes: true,
-        },
-      },
-      JavaScript: {
-        terser: {
-          compress: true,
-          ie8: false,
-          keep_classnames: false,
-          keep_fnames: false,
-          mangle: true,
-          toplevel: true,
-        },
-      },
-      SVG: true,
-      Image: false,
-      // cssOptions: {
-      //   preset: "default", // CSS minification preset
-      // },
-      // htmlOptions: {
-      //   collapseWhitespace: true,
-      //   removeComments: true,
-      //   minifyCSS: true,
-      //   minifyJS: true,
-      //   removeAttributeQuotes: true,
-      // },
-      // jsOptions: {
-      //   compress: true,
-      //   mangle: true, // Shorten variable names
-      // },
-    }),
+    // compress({
+    //   CSS: {
+    //     csso: {
+    //       comments: false,
+    //       restructure: true,
+    //     },
+    //   },
+    //   HTML: {
+    //     "html-minifier-terser": {
+    //       removeComments: true,
+    //       removeAttributeQuotes: true,
+    //       removeStyleQuotes: true,
+    //       removeScriptTypeAttributes: true,
+    //       removeStyleLinkTypeAttributes: true,
+    //       minifyCSS: true,
+    //       minifyJS: true,
+    //       continueOnParseError: true,
+    //       collapseWhitespace: true,
+    //       collapseBooleanAttributes: true,
+    //     },
+    //   },
+    //   JavaScript: {
+    //     terser: {
+    //       compress: true,
+    //       ie8: false,
+    //       keep_classnames: false,
+    //       keep_fnames: false,
+    //       mangle: true,
+    //       toplevel: true,
+    //     },
+    //   },
+    //   SVG: true,
+    //   Image: false,
+    //   // cssOptions: {
+    //   //   preset: "default", // CSS minification preset
+    //   // },
+    //   // htmlOptions: {
+    //   //   collapseWhitespace: true,
+    //   //   removeComments: true,
+    //   //   minifyCSS: true,
+    //   //   minifyJS: true,
+    //   //   removeAttributeQuotes: true,
+    //   // },
+    //   // jsOptions: {
+    //   //   compress: true,
+    //   //   mangle: true, // Shorten variable names
+    //   // },
+    // }),
     icon(),
   ],
 });

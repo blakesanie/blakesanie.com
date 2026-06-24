@@ -2,6 +2,73 @@ import { getImage } from "astro:assets";
 import path from "path";
 import { encodeEmbeddings } from "./_utils"; // adjust path as needed
 
+const lensReplacements: Record<string, string> = {
+    "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED":
+        "Nikon 18-105mm f/3.5-5.6G DX",
+    "Tamron 20-40mm F2.8 Di III VXD": "Tamron 20-40mm F2.8",
+    "FE 28-70mm F3.5-5.6 OSS": "Sony 28-70mm F3.5-5.6",
+    "AF-S DX Nikkor 35mm f/1.8G": "Nikon 35mm f/1.8G DX",
+    "SAMYANG AF 24mm F2.8": "Rokinon 24mm F2.8",
+    "Tamron 70-300mm F4.5-6.3 Di III RXD": "Tamron 70-300mm F4.5-6.3",
+    "----": "Helios 44/2",
+};
+
+const cameraReplacements: Record<string, string> = {
+    "ILCE-7C": "Sony a7C",
+    "NIKON D3200": "Nikon D3200",
+    "ILCE-7": "Sony a7",
+    FC3682: "DJI Mini 3",
+};
+
+function resolveCamera(exif: Record<string, any>) {
+    for (const x of ["model", "CameraModelName", "Model"]) {
+        if (exif[x] && cameraReplacements[exif[x]])
+            return cameraReplacements[exif[x]];
+    }
+}
+
+function resolveLens(exif: Record<string, any>) {
+    for (const x of ["Lens", "LensModel", "LensSpec"]) {
+        if (exif[x] && lensReplacements[exif[x]]) return lensReplacements[exif[x]];
+    }
+}
+
+function resolveShutter(exif: Record<string, any>) {
+    let x = exif["ExposureTime"];
+    if (x) return x;
+}
+
+function resolveAperture(exif: Record<string, any>): number | undefined {
+    const x = exif["FNumber"];
+    if (!x) return undefined;
+    let n;
+    if (typeof x == "string") {
+        n = parseFloat(x);
+    } else if (typeof x == "number") {
+        n = x;
+    }
+    if (n === undefined) {
+        console.log(exif);
+        console.log("FNumber is not numerical: " + x);
+        return undefined;
+    }
+
+    if (Math.round(n) === n) {
+        return Math.round(n);
+    }
+    return n;
+}
+
+function resolveFocalLength(exif: Record<string, any>): number | undefined {
+    const focal = exif["FocalLengthIn35mmFormat"];
+    if (focal) {
+        if (typeof focal == "number") {
+            return focal;
+        }
+        return parseFloat(focal);
+    }
+}
+
 // Global memory stores that survive across Astro build iterations
 const processedImagesCache = new Map<string, any>();
 const optimizedMapImagesCache = new Map<string, any>();
@@ -13,11 +80,6 @@ interface ProcessImageParams {
     allowMetadata: boolean;
     embeddings: any;
     metadata: any;
-    resolveCamera: Function;
-    resolveLens: Function;
-    resolveFocalLength: Function;
-    resolveAperture: Function;
-    resolveShutter: Function;
 }
 
 export async function getSharedProcessedImage({
@@ -26,12 +88,7 @@ export async function getSharedProcessedImage({
     allowClip,
     allowMetadata,
     embeddings,
-    metadata,
-    resolveCamera,
-    resolveLens,
-    resolveFocalLength,
-    resolveAperture,
-    resolveShutter
+    metadata
 }: ProcessImageParams) {
     // Unique cache key based on configuration requirements
     const cacheKey = `${filePath}_clip:${allowClip}_meta:${allowMetadata}`;
@@ -118,3 +175,48 @@ export async function getSharedMapImage(img: any) {
     optimizedMapImagesCache.set(img.filePath, result);
     return result;
 }
+
+// A global-to-the-module map that stores the import promises
+const moduleCache = new Map<string, { default: ImageMetadata }>();
+
+export async function getCachedImageModule(filePath: string, modulePromise?: () => Promise<unknown>) {
+
+    const cached = moduleCache.get(filePath);
+    if (cached) {
+        // console.log('image module cache hit:', filePath);
+        return cached;
+    }
+
+    if (!modulePromise) {
+        throw new Error(`File path not found in glob: ${filePath}`);
+    }
+    // console.log('image module cache miss');
+
+    const module = await modulePromise() as { default: ImageMetadata };
+
+    moduleCache.set(filePath, module);
+
+    return module;
+}
+
+let portfolioAssetGlobCache: Record<string, () => Promise<unknown>> | null = null;
+
+export function getCachedPortfolioAssetGlob() {
+    if (portfolioAssetGlobCache) {
+        return portfolioAssetGlobCache;
+    }
+    portfolioAssetGlobCache = import.meta.glob(
+        "/src/assets/portfolio_alias/*.{jpg,jpeg,png,webp}"
+    );
+    return portfolioAssetGlobCache;
+}
+
+// let htmlCache: Record<string, string> = {};
+
+// export function getHtmlCacheEntry(key: string): string | undefined {
+//     return htmlCache[key];
+// }
+
+// export function setHtmlCacheEntry(key: string, value: string) {
+//     htmlCache[key] = value;
+// }

@@ -1,11 +1,8 @@
 ---
 import Gallery from "./_Gallery.astro";
-import type { ImageMetadata } from "astro";
+import { getCachedPortfolioAssetGlob } from "./_galleryCache";
 
-const assetGlob = import.meta.glob(
-  "/src/assets/portfolio_alias/*.{jpg,jpeg,png,webp}",
-  { eager: true },
-) as Record<string, { default: ImageMetadata }>;
+const assetGlob = getCachedPortfolioAssetGlob();
 ---
 
 <!-- <p>test</p> -->

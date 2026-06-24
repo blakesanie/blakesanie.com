@@ -10,17 +10,14 @@ export async function getStaticPaths() {
   // 2. Safely type-cast the glob using brackets if you need explicit typing, or let it slide as Vite handles it
   const marathonImages = import.meta.glob(
     "/src/assets/client_alias/chi-marathon-2025/*.{jpg,jpeg,png,webp}",
-    { eager: true },
   );
 
   const XXXRelayCrossImages = import.meta.glob(
     "/src/assets/client_alias/relay-cross-2025/*.{jpg,jpeg,png,webp}",
-    { eager: true },
   );
 
   const mnrImages = import.meta.glob(
     "/src/assets/client_alias/mnr-labor-day-2025/*.{jpg,jpeg,png,webp}",
-    { eager: true },
   );
 
   return [

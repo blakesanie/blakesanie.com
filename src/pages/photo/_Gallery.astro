@@ -9,10 +9,16 @@ import TextInput from "../../components/TextInput/index.astro";
 import { getImageMetadata, getImageEmbeddings } from "astro-image-pipeline";
 import path from "path";
 import type { ImageMetadata as AstroImageMetadata } from "astro";
-import { getSharedProcessedImage, getSharedMapImage } from "./_galleryCache";
+import { experimental_AstroContainer } from "astro/container";
+import GalleryGrid from "./_GalleryGrid.astro";
+import {
+  getSharedProcessedImage,
+  getSharedMapImage,
+  getCachedImageModule,
+} from "./_galleryCache";
 
 export interface Props {
-  assetGlob: Record<string, { default: AstroImageMetadata }>;
+  assetGlob: Record<string, () => Promise<unknown>>;
   image?: string;
   imageName?: string;
   initialMode?: string;
@@ -58,73 +64,6 @@ if (allowClip) {
   console.log("collected embeddings");
 }
 
-const lensReplacements: Record<string, string> = {
-  "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED":
-    "Nikon 18-105mm f/3.5-5.6G DX",
-  "Tamron 20-40mm F2.8 Di III VXD": "Tamron 20-40mm F2.8",
-  "FE 28-70mm F3.5-5.6 OSS": "Sony 28-70mm F3.5-5.6",
-  "AF-S DX Nikkor 35mm f/1.8G": "Nikon 35mm f/1.8G DX",
-  "SAMYANG AF 24mm F2.8": "Rokinon 24mm F2.8",
-  "Tamron 70-300mm F4.5-6.3 Di III RXD": "Tamron 70-300mm F4.5-6.3",
-  "----": "Helios 44/2",
-};
-
-const cameraReplacements: Record<string, string> = {
-  "ILCE-7C": "Sony a7C",
-  "NIKON D3200": "Nikon D3200",
-  "ILCE-7": "Sony a7",
-  FC3682: "DJI Mini 3",
-};
-
-function resolveCamera(exif: Record<string, any>) {
-  for (const x of ["model", "CameraModelName", "Model"]) {
-    if (exif[x] && cameraReplacements[exif[x]])
-      return cameraReplacements[exif[x]];
-  }
-}
-
-function resolveLens(exif: Record<string, any>) {
-  for (const x of ["Lens", "LensModel", "LensSpec"]) {
-    if (exif[x] && lensReplacements[exif[x]]) return lensReplacements[exif[x]];
-  }
-}
-
-function resolveShutter(exif: Record<string, any>) {
-  let x = exif["ExposureTime"];
-  if (x) return x;
-}
-
-function resolveAperture(exif: Record<string, any>): number | undefined {
-  const x = exif["FNumber"];
-  if (!x) return undefined;
-  let n;
-  if (typeof x == "string") {
-    n = parseFloat(x);
-  } else if (typeof x == "number") {
-    n = x;
-  }
-  if (n === undefined) {
-    console.log(exif);
-    console.log("FNumber is not numerical: " + x);
-    return undefined;
-  }
-
-  if (Math.round(n) === n) {
-    return Math.round(n);
-  }
-  return n;
-}
-
-function resolveFocalLength(exif: Record<string, any>): number | undefined {
-  const focal = exif["FocalLengthIn35mmFormat"];
-  if (focal) {
-    if (typeof focal == "number") {
-      return focal;
-    }
-    return parseFloat(focal);
-  }
-}
-
 // function dmsToDecimal(dmsStr: string) {
 //   if (!dmsStr) return null;
 //   const regex = /(\d+)\s*deg\s*(\d+)'\s*([\d.]+)"\s*([NSEW])/i;
@@ -165,21 +104,19 @@ interface ImageData {
 }
 
 const imagesData = await Promise.all(
-  Object.entries(Astro.props.assetGlob).map(async ([filePath, module]) => {
-    return await getSharedProcessedImage({
-      filePath,
-      module,
-      allowClip,
-      allowMetadata,
-      embeddings,
-      metadata,
-      resolveCamera,
-      resolveLens,
-      resolveFocalLength,
-      resolveAperture,
-      resolveShutter,
-    });
-  }),
+  Object.entries(Astro.props.assetGlob).map(
+    async ([filePath, modulePromise]) => {
+      const module = await getCachedImageModule(filePath, modulePromise);
+      return await getSharedProcessedImage({
+        filePath,
+        module,
+        allowClip,
+        allowMetadata,
+        embeddings,
+        metadata,
+      });
+    },
+  ),
 );
 
 // 🔥 MEMOIZED: Optimizes map thumbnails once
