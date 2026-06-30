@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "npx wrangler pages dev",
     "astro": "astro",
-    "deploy": "npx wrangler pages deploy",
+    "deploy": "npx wrangler pages deploy --branch=main",
     "clean": "rm -rf .astro dist node_modules/.vite"
   },
   "dependencies": {
@@ -56,7 +56,6 @@
     "astro-compress": "^2.3.8",
     "astro-google-fonts-optimizer": "^0.2.2",
     "astro-icon": "^1.1.5",
-    "astro-image-pipeline": "file:plugins/astro-image-pipeline",
     "astro-imagetools": "^0.9.0",
     "astro-seo": "^0.8.4",
     "astro-sitemap": "^1.0.0",
@@ -89,6 +88,7 @@
     "tsparticles": "^3.8.1",
     "typed.js": "^2.1.0",
     "vercel": "^42.1.1",
+    "vite-image-pipeline": "file:plugins/vite-image-pipeline",
     "vite-plugin-windicss": "^1.9.4",
     "wrangler": "^4.104.0",
     "yarn": "^1.22.22"
@@ -100,6 +100,7 @@
     "@babel/plugin-syntax-jsx": "^7.27.1",
     "@babel/preset-env": "^7.27.2",
     "@babel/register": "^7.27.1",
+    "@iconify-json/bi": "^1.2.7",
     "@iconify-json/humbleicons": "^1.2.10",
     "@types/node": "^22.15.21",
     "autoprefixer": "^10.4.21",

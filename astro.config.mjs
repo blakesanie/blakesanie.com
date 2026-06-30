@@ -1,12 +1,9 @@
 import { defineConfig } from "astro/config";
 import compress from "astro-compress";
 import sitemap from "astro-sitemap";
-import mdx from "@astrojs/mdx";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
 import redirects from "/src/redirects.json";
 import icon from "astro-icon";
-import imagePipeline from "astro-image-pipeline";
+import { astroImagePipelinePlugin } from "vite-image-pipeline";
 import path from "path"
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -53,7 +50,7 @@ export default defineConfig({
   // adapter: vercelStatic(),
   site: "https://blakesanie.com",
   integrations: [
-    imagePipeline(),
+    astroImagePipelinePlugin(),
     // mdx({
     //   remarkPlugins: [remarkMath],
     //   rehypePlugins: [rehypeKatex],

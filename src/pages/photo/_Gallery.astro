@@ -6,7 +6,11 @@ import MapGallery from "./_MapGallery.astro";
 import { encodeEmbeddings } from "./_utils";
 import Toggle from "../../components/Toggle/index.astro";
 import TextInput from "../../components/TextInput/index.astro";
-import { getImageMetadata, getImageEmbeddings } from "astro-image-pipeline";
+import {
+  getEmbeddings,
+  getMetadata,
+  uploadRemoteImages,
+} from "vite-image-pipeline";
 import path from "path";
 import type { ImageMetadata as AstroImageMetadata } from "astro";
 import { experimental_AstroContainer } from "astro/container";
@@ -15,7 +19,7 @@ import {
   getSharedMapImage,
   getCachedImageModule,
 } from "./_galleryCache";
-
+import { Icon } from "astro-icon/components";
 export interface Props {
   assetGlob: Record<string, () => Promise<{ default: AstroImageMetadata }>>;
   image?: unknown;
@@ -45,6 +49,7 @@ const {
   allowMetadata = false,
   allowClip = false,
   allowFilename = false,
+  allowDownload = false,
 } = Astro.props;
 
 // const filePaths = Object.keys(Astro.props.assetGlob).map((vitePath) =>
@@ -53,14 +58,58 @@ const {
 
 let metadata: Record<string, Record<string, any>> | null = null;
 if (allowMetadata) {
-  metadata = await getImageMetadata(Object.keys(Astro.props.assetGlob));
+  metadata = await getMetadata(Object.keys(Astro.props.assetGlob));
   console.log("collected metadata");
 }
 
 let embeddings: Record<string, number[]> | null = null;
 if (allowClip) {
-  embeddings = await getImageEmbeddings(Object.keys(Astro.props.assetGlob));
+  embeddings = await getEmbeddings(Object.keys(Astro.props.assetGlob));
   console.log("collected embeddings");
+}
+
+let downloadUrls: Record<string, string> | null = null;
+if (allowDownload) {
+  console.log("ALLOW DOWNLOAD");
+  const filepathDownloadPairs = await Promise.all(
+    Object.entries(Astro.props.assetGlob).map(
+      async ([filePath, modulePromise]): Promise<[string, string]> => {
+        const module = await getCachedImageModule(filePath, modulePromise);
+        const maxRes = 2000;
+        const width = Math.min(
+          module.width,
+          module.height > module.width
+            ? Math.round((maxRes / module.height) * module.width)
+            : maxRes,
+        );
+        const img = await getImage({
+          src: module,
+          width,
+          format: "webp",
+          quality: 85,
+        });
+        return [filePath, img.src];
+      },
+    ),
+  );
+  const result = await uploadRemoteImages(
+    {
+      platform: "cloudflare-r2",
+      accountId: import.meta.env.CLOUDFLARE_ACCOUNT_ID,
+      bucketName: import.meta.env.R2_BUCKET_NAME,
+      r2AccessKey: import.meta.env.R2_ACCESS_KEY_ID,
+      r2SecretKey: import.meta.env.R2_SECRET_ACCESS_KEY,
+      outDir: "dist",
+    },
+    filepathDownloadPairs.map(([key, value]) => value),
+  );
+  downloadUrls = Object.fromEntries(
+    filepathDownloadPairs.map(([filepath, _], index) => [
+      filepath,
+      result[index],
+    ]),
+  );
+  console.log(downloadUrls);
 }
 
 // function dmsToDecimal(dmsStr: string) {
@@ -79,29 +128,6 @@ if (allowClip) {
 //   return parseFloat(decimal.toFixed(6));
 // }
 
-interface ImageMetadata {
-  camera?: string;
-  lens?: string;
-  focalLength?: number;
-  aperture?: number;
-  shutterSpeed?: string;
-  iso?: number;
-  lon?: number;
-  lat?: number;
-}
-
-interface ImageData {
-  filePath: string;
-  name: string;
-  src: any;
-  width: number;
-  height: number;
-  highRes: string;
-  aspectRatio: number;
-  embeddings?: string;
-  metadata?: ImageMetadata;
-}
-
 const imagesData = await Promise.all(
   Object.entries(Astro.props.assetGlob).map(
     async ([filePath, modulePromise]) => {
@@ -111,6 +137,7 @@ const imagesData = await Promise.all(
         module,
         allowClip,
         allowMetadata,
+        allowFullscreen,
         embeddings,
         metadata,
       });
@@ -211,6 +238,9 @@ console.log("end of Gallery frontmatter");
               data-lat={image.metadata?.lat}
               data-lon={image.metadata?.lon}
               data-emb={image.embeddings}
+              data-download={
+                allowDownload && downloadUrls && downloadUrls[image.filePath]
+              }
               style={{
                 flexGrow: image.aspectRatio,
                 aspectRatio: image.aspectRatio,
@@ -234,7 +264,18 @@ console.log("end of Gallery frontmatter");
                 loading="lazy"
                 class="thumb-img"
               />
-              {allowFilename && <div class="name-label">{image.name}</div>}
+              {allowFilename && (
+                <div
+                  class="name-label"
+                  class:list={[allowDownload && "allowDownload"]}
+                >
+                  {image.name}
+                  {allowDownload && (
+                    <Icon name="bi:cloud-arrow-down" class="download" />
+                    <Icon name="bi:cloud-check" class="downloaded" />
+                  )}
+                </div>
+              )}
             </div>
           );
         })
@@ -331,6 +372,10 @@ console.log("end of Gallery frontmatter");
     transform: scale(1.01);
   }
 
+  :global(.noFullscreen) .galleryImage:hover {
+    transform: none;
+  }
+
   img.thumb-img {
     display: block;
     width: 100%;
@@ -348,6 +393,44 @@ console.log("end of Gallery frontmatter");
     border-bottom-left-radius: 0.5em;
     font-size: 0.8rem;
     z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    transition:
+      background-color 0.1s ease,
+      color 0.1s ease;
+  }
+
+  .allowDownload:hover {
+    background-color: #ffffffc0;
+    cursor: pointer;
+  }
+
+  :global(.isDownloaded) .allowDownload:hover {
+    background-color: #ffffff80;
+    cursor: initial;
+  }
+
+  .download, .downloaded {
+    font-size: 1rem;
+    color: black;
+    transition: transform 0.1s ease;
+  }
+
+  .downloaded {
+    display: none;
+  }
+
+  :global(.isDownloaded) .download {
+    display: none;
+  }
+
+  :global(.isDownloaded) .downloaded {
+    display: block;
+  }
+
+  .allowDownload:hover .download {
+    transform: scale(1.2);
   }
 
   #fullscreenOverlay {
@@ -546,10 +629,16 @@ console.log("end of Gallery frontmatter");
 <script>
   import { cleanseName, dotProduct } from "./_utils";
 
-  const fullScreenEl = document.querySelector("#fullscreenOverlay");
-  const fullScreenScroll = document.querySelector("#fullscreenScroll");
-  const metadataTitle = document.querySelector("#metaTitle");
-  const fullScreenImage = document.querySelector("#fullscreenPlaceholder");
+  const fullScreenEl = document.querySelector(
+    "#fullscreenOverlay",
+  ) as HTMLElement;
+  const fullScreenScroll = document.querySelector(
+    "#fullscreenScroll",
+  ) as HTMLElement;
+  const metadataTitle = document.querySelector("#metaTitle") as HTMLElement;
+  const fullScreenImage = document.querySelector(
+    "#fullscreenPlaceholder",
+  ) as HTMLElement;
   const imageViewport = document.querySelector("#imageViewport") as HTMLElement;
   const metaChipsRow = document.querySelector("#metaChipsRow") as HTMLElement;
 
@@ -1372,6 +1461,7 @@ console.log("end of Gallery frontmatter");
             ort.InferenceSession.create(modelPath, {
               executionProviders: ["wasm"],
             }),
+            // @ts-ignore
             import("https://deno.land/x/clip_bpe@v0.0.6/mod.js"),
           ]);
 
@@ -1527,4 +1617,61 @@ console.log("end of Gallery frontmatter");
       });
     }, 250); // Snappy 250ms delay for text characters
   });
+
+  // downloads
+
+  const downloadBuuttons = document.querySelectorAll(".allowDownload");
+  const completedDownloads = new Set();
+
+  downloadBuuttons.forEach((button) => {
+    button.addEventListener("click", async (e) => {
+      console.log("click");
+      e.preventDefault();
+      e.stopPropagation();
+      const image = button.closest(".galleryImage");
+      if (!image) return;
+      const url = image.getAttribute("data-download");
+      if (url) {
+        if (completedDownloads.has(url)) {
+          console.log("Already downloaded:", url);
+          return;
+        }
+        await downloadFile(
+          url,
+          image.getAttribute("data-name") || "blakesanie-download",
+        );
+        completedDownloads.add(url);
+        image.classList.add("isDownloaded");
+      }
+    });
+  });
+
+  async function downloadFile(url: string, filename: string) {
+    try {
+      // 1. Fetch the data from the URL
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      // 2. Convert the response to a blob (Binary Large Object)
+      const blob = await response.blob();
+
+      // 3. Create a local URL representing the blob
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      // 4. Create a temporary anchor element
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename || "download"; // Specify the filename
+
+      // 5. Append to DOM, click it to trigger download, and remove it
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      // 6. Clean up the blob URL to free memory
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  }
 </script>

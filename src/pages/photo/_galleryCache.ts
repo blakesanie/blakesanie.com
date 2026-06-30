@@ -1,7 +1,7 @@
 import { getImage } from "astro:assets";
 import path from "path";
 import { encodeEmbeddings } from "./_utils"; // adjust path as needed
-import type { ImageMetadata } from 'astro';
+import type { ImageMetadata as AstroImageMetadata } from 'astro';
 
 const lensReplacements: Record<string, string> = {
     "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED":
@@ -79,8 +79,32 @@ interface ProcessImageParams {
     module: any;
     allowClip: boolean;
     allowMetadata: boolean;
+    allowFullscreen: boolean;
     embeddings: any;
     metadata: any;
+}
+
+interface ImageMetadata {
+    camera?: string;
+    lens?: string;
+    focalLength?: number;
+    aperture?: number;
+    shutterSpeed?: string;
+    iso?: number;
+    lon?: number;
+    lat?: number;
+}
+
+interface ImageData {
+    filePath: string;
+    name: string;
+    src: any;
+    width: number;
+    height: number;
+    highRes: string;
+    aspectRatio: number;
+    embeddings?: string;
+    metadata?: ImageMetadata;
 }
 
 export async function getSharedProcessedImage({
@@ -88,9 +112,10 @@ export async function getSharedProcessedImage({
     module,
     allowClip,
     allowMetadata,
+    allowFullscreen,
     embeddings,
     metadata
-}: ProcessImageParams) {
+}: ProcessImageParams): Promise<ImageData> {
     // Unique cache key based on configuration requirements
     const cacheKey = `${filePath}_clip:${allowClip}_meta:${allowMetadata}`;
     if (processedImagesCache.has(cacheKey)) {
@@ -104,12 +129,12 @@ export async function getSharedProcessedImage({
     const aspectRatioNum = width && height ? width / height : 1;
 
     // ⚡ Heavy Operation: Resizing/compressing via Astro's image service
-    const highRes = await getImage({
+    const highRes = allowFullscreen ? await getImage({
         src: module,
         width: Math.round(Math.sqrt(2500000 / (height * width)) * width),
         quality: 85,
         format: "webp",
-    });
+    }) : undefined;
 
     let out: any = {
         filePath,
@@ -117,7 +142,7 @@ export async function getSharedProcessedImage({
         src: module,
         width,
         height,
-        highRes: highRes.src,
+        highRes: highRes?.src,
         aspectRatio: aspectRatioNum,
     };
 
@@ -178,9 +203,11 @@ export async function getSharedMapImage(img: any) {
 }
 
 // A global-to-the-module map that stores the import promises
-const moduleCache = new Map<string, ImageMetadata>();
+const moduleCache = new Map<string, AstroImageMetadata>();
 
-export async function getCachedImageModule(filePath: string, modulePromise?: () => Promise<ImageModule>) {
+export async function getCachedImageModule(filePath: string, modulePromise?: () => Promise<{
+    default: AstroImageMetadata
+}>) {
 
     const cached = moduleCache.get(filePath);
     if (cached) {

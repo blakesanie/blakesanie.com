@@ -41,3 +41,4 @@ wrangler.toml
 .satori-cache
 public/og-images
 .wrangler
+.image-pipeline/

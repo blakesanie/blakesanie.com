@@ -1,6 +1,9 @@
 ---
 import { getImage } from "astro:assets";
-import { getImageColors, getImageBlurPlaceholders } from "astro-image-pipeline"; // Adjust this import path to your setup
+import {
+  getImageColors,
+  getImageBlurPlaceholders,
+} from "../../../plugins/vite-image-pipeline/dist/image-pipeline";
 
 interface Props {
   src: any; // Accepts Astro image imports or remote URLs
