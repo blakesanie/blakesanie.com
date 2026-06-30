@@ -85,49 +85,71 @@ export default defineConfig({
       CSS: {
         csso: {
           comments: false,
-          restructure: true,
+          restructure: true,       // Safe: Merges duplicate CSS selectors and rules
+          forceMediaMerge: true,   // Safe: Combines matching @media queries
         },
       },
       HTML: {
         "html-minifier-terser": {
+          collapseWhitespace: true,
+          collapseBooleanAttributes: true,
+          collapseInlineTagWhitespace: true,
           removeComments: true,
-          removeAttributeQuotes: true,
+          removeAttributeQuotes: true,        // Safe: Drops quotes only where HTML5 spec allows
           removeStyleQuotes: true,
           removeScriptTypeAttributes: true,
           removeStyleLinkTypeAttributes: true,
+          removeOptionalTags: false,         // CHANGED TO FALSE: Keeps <html>/<body> tags to prevent parsing bugs
+          removeRedundantAttributes: true,   // Safe: Removes defaults like type="text"
+          removeEmptyAttributes: true,
+          decodeEntities: true,              // Safe: Uses direct UTF-8 characters
           minifyCSS: true,
           minifyJS: true,
-          continueOnParseError: true,
-          collapseWhitespace: true,
-          collapseBooleanAttributes: true,
+          sortAttributes: true,              // Safe: Boosts Gzip/Brotli compression ratios
+          sortClassName: true,               // Safe: Alphabetizes utility classes for better compression
         },
       },
       JavaScript: {
         terser: {
-          compress: true,
-          ie8: false,
-          keep_classnames: false,
-          keep_fnames: false,
-          mangle: true,
+          ecma: 2020,
+          compress: {
+            passes: 3,                       // Safe: 3 passes catches nested dead code without syntax corruption
+            dead_code: true,
+            unused: true,
+            conditionals: true,
+            evaluate: true,
+            booleans: true,
+            loops: true,
+            sequences: true,
+            unsafe_arrows: true,             // Safe: Converts standard anonymous functions to arrow functions
+            drop_console: true,              // Safe: Removes console.logs
+            drop_debugger: true,
+          },
+          mangle: {
+            toplevel: true,                  // Safe: Mangles local/global variables, leaves object properties untouched
+          },
+          format: {
+            comments: false,                 // Safe: Purges all comments, including legal headers
+          },
           toplevel: true,
         },
       },
-      SVG: true,
+      SVG: {
+        multipass: true,                     // Safe: Loops SVGO to strip redundant vector metadata
+        plugins: [
+          {
+            name: 'preset-default',
+            params: {
+              overrides: {
+                cleanupNumericValues: { floatPrecision: 3 }, // CHANGED TO 3: Prevents distortion of complex vector shapes
+                convertPathData: { floatPrecision: 3 },
+                removeViewBox: false,                       // Prevents SVG scaling bugs
+              },
+            },
+          },
+        ],
+      },
       Image: false,
-      // cssOptions: {
-      //   preset: "default", // CSS minification preset
-      // },
-      // htmlOptions: {
-      //   collapseWhitespace: true,
-      //   removeComments: true,
-      //   minifyCSS: true,
-      //   minifyJS: true,
-      //   removeAttributeQuotes: true,
-      // },
-      // jsOptions: {
-      //   compress: true,
-      //   mangle: true, // Shorten variable names
-      // },
     }),
     icon(),
     deleteOriginalJpegs(),

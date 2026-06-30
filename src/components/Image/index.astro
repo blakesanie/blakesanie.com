@@ -4,9 +4,16 @@ import {
   getImageColors,
   getImageBlurPlaceholders,
 } from "../../../plugins/vite-image-pipeline/dist/image-pipeline";
+import type { ImageMetadata } from "astro";
+
+type SrcType =
+  | string
+  | ImageMetadata
+  | { default: ImageMetadata }
+  | Promise<{ default: ImageMetadata }>;
 
 interface Props {
-  src: any; // Accepts Astro image imports or remote URLs
+  src: SrcType;
   alt: string;
   width?: number;
   height?: number;
@@ -35,23 +42,43 @@ const {
 let placeholderStyle: Record<string, string> = {};
 let imageAttrs: any = {};
 
+async function srcToImageMetadata(src: SrcType): Promise<ImageMetadata | null> {
+  if (typeof src === "string") {
+    return null;
+  }
+  if (src instanceof Promise) {
+    return srcToImageMetadata(await src);
+  }
+  if (typeof src === "object") {
+    const srcObj = src as any;
+    if (srcObj.default) {
+      return srcObj.default;
+    } else if (srcObj.src) {
+      return srcObj;
+    }
+    return null;
+  }
+  throw Error("<Image> src input invalid: " + src);
+}
+
 try {
   // 1. Resolve the underlying reference path
-  let resolvedSrc = src;
-  if (src instanceof Promise) {
-    resolvedSrc = await src;
+
+  let w = width;
+  let h = height;
+  let srcString = typeof src == "string" ? src : null;
+  let imageMetadata = await srcToImageMetadata(src);
+  if (imageMetadata) {
+    if (w) w = Math.min(w, imageMetadata.width);
+    if (h) h = Math.min(h, imageMetadata.height);
   }
-
-  const filepath =
-    typeof resolvedSrc === "string"
-      ? resolvedSrc
-      : resolvedSrc.fsPath || resolvedSrc.default?.fsPath || resolvedSrc.src;
-
+  let finalSrc = srcString || imageMetadata;
+  if (!finalSrc) throw Error("<Image> src input empty: " + src);
   // 2. Offload image asset processing to Astro's build engine
   const optimizedImage = await getImage({
-    src,
-    width,
-    height,
+    src: finalSrc,
+    width: w,
+    height: h,
     quality,
     format,
     widths,
@@ -63,11 +90,11 @@ try {
     ...optimizedImage.attributes,
   };
 
+  const filepath = imageMetadata?.src;
   // 3. Delegate placeholder operations to the parallelized disk cache pipeline
-  if (placeholder === "color") {
+  if (filepath && placeholder === "color") {
     const colorMap = await getImageColors([filepath]);
     const dominant = colorMap[filepath];
-
     if (dominant) {
       placeholderStyle = {
         "background-color": `rgb(${dominant.r}, ${dominant.g}, ${dominant.b})`,
@@ -78,7 +105,7 @@ try {
         filepath,
       );
     }
-  } else if (placeholder === "blur") {
+  } else if (filepath && placeholder === "blur") {
     const blurMap = await getImageBlurPlaceholders([filepath]);
     const base64Uri = blurMap[filepath];
 

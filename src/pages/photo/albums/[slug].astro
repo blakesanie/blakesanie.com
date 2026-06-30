@@ -9,15 +9,15 @@ import type { Props } from "../_Gallery.astro";
 export async function getStaticPaths() {
   // 2. Safely type-cast the glob using brackets if you need explicit typing, or let it slide as Vite handles it
   const marathonImages = import.meta.glob(
-    "/src/assets/client_alias/chi-marathon-2025/*.{jpg,jpeg,png,webp}",
+    "/src/assets/client_alias/chi-marathon-2025/*.{jpg,jpeg,png,webp,avif}",
   );
 
   const XXXRelayCrossImages = import.meta.glob(
-    "/src/assets/client_alias/relay-cross-2025/*.{jpg,jpeg,png,webp}",
+    "/src/assets/client_alias/relay-cross-2025/*.{jpg,jpeg,png,webp,avif}",
   );
 
   const mnrImages = import.meta.glob(
-    "/src/assets/client_alias/mnr-labor-day-2025/*.{jpg,jpeg,png,webp}",
+    "/src/assets/client_alias/mnr-labor-day-2025/*.{jpg,jpeg,png,webp,avif}",
   );
 
   return [

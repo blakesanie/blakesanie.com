@@ -23,7 +23,7 @@ if (Astro.props.image) {
   image = await getImage({
     src: Astro.props.image,
     width: 1200,
-    format: "webp",
+    format: "avif",
     quality: 75,
   });
 } else {
@@ -60,7 +60,7 @@ if (Astro.props.image) {
 
   const width = 1200;
   const height = 900;
-  const format = "webp";
+  const format = "avif";
   const quality = 75;
 
   const svg = await satori(
@@ -148,12 +148,12 @@ if (Astro.props.image) {
   const safeTitle = Astro.props.title
     ? Astro.props.title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")
     : "default";
-  const filename = `${safeTitle}-og.webp`;
+  const filename = `${safeTitle}-og.avif`;
 
-  // 2. Compress the PNG buffer straight to WebP using Sharp
-  const webpBuffer = await sharp(pngBuffer)
+  // 2. Compress the PNG buffer straight to avif using Sharp
+  const buffer = await sharp(pngBuffer)
     .resize(width, height)
-    .webp({ quality: quality })
+    .avif({ quality: quality })
     .toBuffer();
 
   const isProd = import.meta.env.PROD;
@@ -165,7 +165,7 @@ if (Astro.props.image) {
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true });
   }
-  fs.writeFileSync(path.join(targetDir, filename), webpBuffer);
+  fs.writeFileSync(path.join(targetDir, filename), buffer);
 
   // 3. Keep the browser image source path identical for both
   image = {

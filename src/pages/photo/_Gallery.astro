@@ -85,7 +85,7 @@ if (allowDownload) {
         const img = await getImage({
           src: module,
           width,
-          format: "webp",
+          format: "avif",
           quality: 85,
         });
         return [filePath, img.src];
@@ -260,7 +260,7 @@ console.log("end of Gallery frontmatter");
                   Math.round((600 / image.height) * image.width),
                 )}
                 quality={75}
-                format="webp"
+                format="avif"
                 loading="lazy"
                 class="thumb-img"
               />

@@ -133,7 +133,7 @@ export async function getSharedProcessedImage({
         src: module,
         width: Math.round(Math.sqrt(2500000 / (height * width)) * width),
         quality: 85,
-        format: "webp",
+        format: "avif",
     }) : undefined;
 
     let out: any = {
@@ -186,7 +186,7 @@ export async function getSharedMapImage(img: any) {
         src: img.src,
         width: Math.round(w),
         height: Math.round(h),
-        format: "webp",
+        format: "avif",
     });
 
     const result = {
