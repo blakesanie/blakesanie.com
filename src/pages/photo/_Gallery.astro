@@ -1419,10 +1419,17 @@ console.log("end of Gallery frontmatter");
     );
   }
 
-  const initialDeepLink = window.location.pathname;
+  // 1. Get the current pathname
+  let initialDeepLink = window.location.pathname;
+  
+  // 2. Safely strip the trailing slash if one exists (excluding the home root slash)
+  if (initialDeepLink.endsWith("/") && initialDeepLink !== "/") {
+    initialDeepLink = initialDeepLink.slice(0, -1);
+  }
+
   if (
     initialDeepLink.startsWith("/photo/") &&
-    initialDeepLink !== "/photo/" &&
+    initialDeepLink !== "/photo" && // Note: adjusted to match stripped slash
     initialDeepLink !== "/photo/map" &&
     !initialDeepLink.startsWith("/photo/albums/")
   ) {
