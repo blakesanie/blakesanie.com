@@ -14,6 +14,7 @@ type SrcType =
 
 interface Props {
   src: SrcType;
+  filepath?: string;
   alt: string;
   width?: number;
   height?: number;
@@ -27,6 +28,7 @@ interface Props {
 
 const {
   src,
+  filepath,
   alt,
   width,
   widths,
@@ -89,10 +91,10 @@ try {
     srcSet: optimizedImage.srcSet.attribute,
     ...optimizedImage.attributes,
   };
-
-  const filepath = imageMetadata?.src;
   // 3. Delegate placeholder operations to the parallelized disk cache pipeline
-  if (filepath && placeholder === "color") {
+  if (placeholder === "color") {
+    if (!filepath)
+      throw Error("[Image Component] filepath missing for color placeholder");
     const colorMap = await getImageColors([filepath]);
     const dominant = colorMap[filepath];
     if (dominant) {
@@ -105,7 +107,12 @@ try {
         filepath,
       );
     }
-  } else if (filepath && placeholder === "blur") {
+  } else if (placeholder === "blur") {
+    if (!filepath)
+      throw Error(
+        "[Image Component] filepath missing for blur placeholder: " +
+          JSON.stringify(Astro.props, null, 2),
+      );
     const blurMap = await getImageBlurPlaceholders([filepath]);
     const base64Uri = blurMap[filepath];
 
@@ -123,9 +130,8 @@ try {
     }
   }
 } catch (error) {
-  console.error(
-    "[Image Component] Failed to seamlessly process image assets:",
-    error,
+  throw Error(
+    "[Image Component] Failed to seamlessly process image assets: " + error,
   );
 }
 

@@ -223,12 +223,10 @@ export async function getCachedImageModule(filePath: string, modulePromise?: () 
     const module = (await modulePromise()).default;
 
     moduleCache.set(filePath, module);
-
     return module;
 }
 
-type ImageModule = { default: ImageMetadata };
-type AssetGlob = Record<string, () => Promise<ImageModule>>;
+type AssetGlob = Record<string, () => Promise<{ default: AstroImageMetadata }>>;
 
 let portfolioAssetGlobCache: AssetGlob | null = null;
 
@@ -238,8 +236,8 @@ export function getCachedPortfolioAssetGlob(): AssetGlob {
     }
 
     // 2. Pass the ImageModule type into the glob generic
-    portfolioAssetGlobCache = import.meta.glob<ImageModule>(
-        "/src/assets/portfolio_alias/*.{jpg,jpeg,png,webp}"
+    portfolioAssetGlobCache = import.meta.glob<{ default: AstroImageMetadata }>(
+        "/src/assets/portfolio_alias/*.{jpg,jpeg,png,webp,avif}"
     );
 
     return portfolioAssetGlobCache;

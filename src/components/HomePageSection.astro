@@ -11,7 +11,14 @@ interface LinkInterface {
 }
 
 const links: LinkInterface[] = Astro.props.links;
-let { text, imageSrc, style, class: className, ...props } = Astro.props;
+let {
+  text,
+  imageSrc,
+  imageFilepath,
+  style,
+  class: className,
+  ...props
+} = Astro.props;
 const maxImageOpacity = 0.5;
 ---
 
@@ -20,6 +27,7 @@ const maxImageOpacity = 0.5;
     imageSrc && (
       <Image
         placeholder="blur"
+        filepath={imageFilepath}
         src={imageSrc}
         alt=""
         loading="lazy"

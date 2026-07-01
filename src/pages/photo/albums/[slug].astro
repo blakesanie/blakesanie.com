@@ -5,18 +5,33 @@ import relayCrossImage from "/src/assets/client_alias/relay-cross-2025/DSC01406.
 import mnrImage from "/src/assets/client_alias/mnr-labor-day-2025/DSC00237.jpg";
 import type { Props } from "../_Gallery.astro";
 
-// 1. Let inference do the heavy lifting here to avoid complex JSX-breaking < > structures on the function signature
-export async function getStaticPaths() {
-  // 2. Safely type-cast the glob using brackets if you need explicit typing, or let it slide as Vite handles it
-  const marathonImages = import.meta.glob(
+// Extract the type out of the function signature to fix the parsing bug
+type StaticPathResult = {
+  params: {
+    slug: string;
+  };
+  props: {
+    assetGlob: Record<string, () => Promise<{ default: ImageMetadata }>>;
+    title: string;
+    description: string;
+    heading: string;
+    allowDownload: boolean;
+    allowFilename: boolean;
+    imageFilepath: string;
+    subheading?: string;
+  };
+}[];
+
+export async function getStaticPaths(): Promise<StaticPathResult> {
+  const marathonImages = import.meta.glob<{ default: ImageMetadata }>(
     "/src/assets/client_alias/chi-marathon-2025/*.{jpg,jpeg,png,webp,avif}",
   );
 
-  const XXXRelayCrossImages = import.meta.glob(
+  const XXXRelayCrossImages = import.meta.glob<{ default: ImageMetadata }>(
     "/src/assets/client_alias/relay-cross-2025/*.{jpg,jpeg,png,webp,avif}",
   );
 
-  const mnrImages = import.meta.glob(
+  const mnrImages = import.meta.glob<{ default: ImageMetadata }>(
     "/src/assets/client_alias/mnr-labor-day-2025/*.{jpg,jpeg,png,webp,avif}",
   );
 
@@ -30,7 +45,8 @@ export async function getStaticPaths() {
         heading: "Chicago Marathon 2025",
         allowDownload: false,
         allowFilename: true,
-        image: chiMarathonImage,
+        imageFilepath:
+          "/src/assets/client_alias/chi-marathon-2025/DSC02413.jpg",
         subheading:
           'October 12, 2025. Chicago Marathon along LaSalle (mile 4) and Wells (mile 12). Download available for personal use. <a href="https://www.instagram.com/blakesanie.jpg/" target="_blank">@blakesanie.jpg</a>',
       },
@@ -44,7 +60,7 @@ export async function getStaticPaths() {
         heading: "XXX Relay Cross 2025",
         allowDownload: false,
         allowFilename: true,
-        image: relayCrossImage,
+        imageFilepath: "/src/assets/client_alias/relay-cross-2025/DSC01406.jpg",
         subheading:
           'September 14, 2025, at Jackson Park, Chicago. Download available for personal use. Attribution <a href="https://www.instagram.com/blakesanie.jpg/" target="_blank">@blakesanie.jpg</a>',
       },
@@ -58,7 +74,8 @@ export async function getStaticPaths() {
         heading: "MNR Labor Day 2025",
         allowDownload: true,
         allowFilename: true,
-        image: mnrImage,
+        imageFilepath:
+          "/src/assets/client_alias/mnr-labor-day-2025/DSC00237.jpg",
       },
     },
   ];

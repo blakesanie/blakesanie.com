@@ -37,7 +37,8 @@ function enforcePeriod(str: string) {
           <h2>{item.props.title}</h2>
           <p>{enforcePeriod(item.props.description)}</p>
           <Image
-            src={item.props.image}
+            src={item.props.assetGlob[item.props.imageFilepath]()}
+            filepath={item.props.imageFilepath}
             alt=""
             widths={[800]}
             quality={75}
