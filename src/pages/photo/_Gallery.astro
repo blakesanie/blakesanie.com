@@ -50,6 +50,7 @@ const {
   allowClip = false,
   allowFilename = false,
   allowDownload = false,
+  randomize = false
 } = Astro.props;
 
 // const filePaths = Object.keys(Astro.props.assetGlob).map((vitePath) =>
@@ -220,7 +221,9 @@ console.log("end of Gallery frontmatter");
     id="photoContent"
     class={`${allowMap ? "" : "noMap"} ${allowFullscreen ? "" : "noFullscreen"} view-${initialMode}`}
   >
-    <div id="gallery">
+    <div id="gallery" class:list={{
+      toShuffle: randomize
+    }}>
       {
         imagesData.map((image) => {
           return (
@@ -341,7 +344,7 @@ console.log("end of Gallery frontmatter");
   }
 
   #gallery {
-    display: none;
+    display: flex;
     flex-wrap: wrap;
     gap: var(--gutter);
     width: 100%;
@@ -349,9 +352,10 @@ console.log("end of Gallery frontmatter");
     justify-content: center;
   }
 
-  #photoContent.view-gallery #gallery {
-    display: flex;
+  #gallery.toShuffle {
+    display: none;
   }
+
 
   @media screen and (max-width: 1050px) {
     #gallery {
@@ -631,6 +635,34 @@ console.log("end of Gallery frontmatter");
 <script>
   import { cleanseName, dotProduct } from "./_utils";
 
+    // --- Browser Load Time Randomization ---
+  const galleryImages = document.querySelectorAll(".galleryImage");
+  const galleryContainer = document.getElementById("gallery");
+
+  const shouldRandomize = galleryContainer!.classList.contains("toShuffle")
+
+  if (shouldRandomize && galleryImages.length > 0) {
+    // Convert NodeList to a standard array for shuffling
+    const itemsArray = Array.from(galleryImages);
+
+    // Fisher-Yates Shuffle algorithm
+    for (let i = itemsArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [itemsArray[i], itemsArray[j]] = [itemsArray[j], itemsArray[i]];
+    }
+
+    // Append elements back into the DOM in their new random order
+    itemsArray.forEach((item) => {
+      galleryContainer!.appendChild(item);
+    });
+  }
+
+  // Reveal the gallery now that shuffling is complete
+  galleryContainer!.classList.remove("toShuffle");
+
+
+
+
   const fullScreenEl = document.querySelector(
     "#fullscreenOverlay",
   ) as HTMLElement;
@@ -651,7 +683,6 @@ console.log("end of Gallery frontmatter");
   const nextButton = document.querySelector("#nextButton") as HTMLElement;
   const prevButton = document.querySelector("#prevButton") as HTMLElement;
 
-  const galleryImages = document.querySelectorAll(".galleryImage");
   const photoContent = document.getElementById("photoContent");
 
   let activeTransitionImg: HTMLImageElement | null = null;
@@ -1656,28 +1687,30 @@ console.log("end of Gallery frontmatter");
   });
 
   async function downloadFile(url: string, filename: string) {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Network response was not ok");
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Network response was not ok");
 
-    const blob = await response.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
 
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = filename || "download";
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename || "download";
 
-    document.body.appendChild(a);
-    a.click();
+      document.body.appendChild(a);
+      a.click();
 
-    // Give the browser UI a split second to register the download animation
-    setTimeout(() => {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(blobUrl);
-    }, 100);
+      // Give the browser UI a split second to register the download animation
+      setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+      }, 100);
 
-  } catch (error) {
-    console.error("Download failed:", error);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+
   }
-}
+
 </script>
