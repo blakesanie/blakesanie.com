@@ -42,3 +42,5 @@ wrangler.toml
 public/og-images
 .wrangler
 .image-pipeline/
+
+scripts/

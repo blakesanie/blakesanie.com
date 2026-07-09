@@ -97,6 +97,7 @@ if (allowDownload) {
       platform: "cloudflare-r2",
       accountId: import.meta.env.CLOUDFLARE_ACCOUNT_ID,
       bucketName: import.meta.env.R2_BUCKET_NAME,
+      bucketDomain: "download.blakesanie.com",
       r2AccessKey: import.meta.env.R2_ACCESS_KEY_ID,
       r2SecretKey: import.meta.env.R2_SECRET_ACCESS_KEY,
       outDir: "dist",
@@ -1655,31 +1656,28 @@ console.log("end of Gallery frontmatter");
   });
 
   async function downloadFile(url: string, filename: string) {
-    try {
-      // 1. Fetch the data from the URL
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("Network response was not ok");
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Network response was not ok");
 
-      // 2. Convert the response to a blob (Binary Large Object)
-      const blob = await response.blob();
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
 
-      // 3. Create a local URL representing the blob
-      const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = filename || "download";
 
-      // 4. Create a temporary anchor element
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = filename || "download"; // Specify the filename
+    document.body.appendChild(a);
+    a.click();
 
-      // 5. Append to DOM, click it to trigger download, and remove it
-      document.body.appendChild(a);
-      a.click();
+    // Give the browser UI a split second to register the download animation
+    setTimeout(() => {
       document.body.removeChild(a);
-
-      // 6. Clean up the blob URL to free memory
       window.URL.revokeObjectURL(blobUrl);
-    } catch (error) {
-      console.error("Download failed:", error);
-    }
+    }, 100);
+
+  } catch (error) {
+    console.error("Download failed:", error);
   }
+}
 </script>
