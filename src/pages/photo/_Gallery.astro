@@ -348,7 +348,7 @@ console.log("end of Gallery frontmatter");
     flex-wrap: wrap;
     gap: var(--gutter);
     width: 100%;
-    --base-height: 280px;
+    --base-height: calc(145px + 8vw);
     justify-content: center;
   }
 
@@ -357,11 +357,11 @@ console.log("end of Gallery frontmatter");
   }
 
 
-  @media screen and (max-width: 1050px) {
+  /* @media screen and (max-width: 1050px) {
     #gallery {
       --base-height: 220px;
     }
-  }
+  } */
 
   .galleryImage {
     position: relative;
