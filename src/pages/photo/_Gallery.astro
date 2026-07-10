@@ -356,6 +356,10 @@ console.log("end of Gallery frontmatter");
     display: none;
   }
 
+  .view-map #gallery {
+    display: none;
+  }
+
 
   /* @media screen and (max-width: 1050px) {
     #gallery {
@@ -1177,7 +1181,7 @@ console.log("end of Gallery frontmatter");
     // Check if we are currently in map view
     const isMapView = photoContent?.classList.contains("view-map");
 
-    const fullScreenScrolled = (fullScreenScroll.scrollTop + fullScreenScroll.clientHeight) >= fullScreenScroll.scrollHeight;
+    const fullScreenScrolled = (fullScreenScroll.scrollTop + fullScreenScroll.clientHeight) >= fullScreenScroll.scrollHeight && fullScreenScroll.scrollTop > 0;
 
     // Find the currently active gallery image element
     const activeGalleryImg = document.querySelector(
