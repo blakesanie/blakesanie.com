@@ -23,7 +23,7 @@ if (Astro.props.image) {
   image = await getImage({
     src: Astro.props.image,
     width: 1200,
-    format: "avif",
+    format: "webp",
     quality: 75,
   });
 } else {
@@ -60,7 +60,7 @@ if (Astro.props.image) {
 
   const width = 1200;
   const height = 900;
-  const format = "avif";
+  const format = "webp";
   const quality = 75;
 
   const svg = await satori(
@@ -148,12 +148,12 @@ if (Astro.props.image) {
   const safeTitle = Astro.props.title
     ? Astro.props.title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")
     : "default";
-  const filename = `${safeTitle}-og.avif`;
+  const filename = `${safeTitle}-og.webp`;
 
-  // 2. Compress the PNG buffer straight to avif using Sharp
+  // 2. Compress the PNG buffer straight to webp using Sharp
   const buffer = await sharp(pngBuffer)
     .resize(width, height)
-    .avif({ quality: quality })
+    .webp({ quality: quality })
     .toBuffer();
 
   const isProd = import.meta.env.PROD;
