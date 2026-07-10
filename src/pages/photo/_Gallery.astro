@@ -1177,6 +1177,8 @@ console.log("end of Gallery frontmatter");
     // Check if we are currently in map view
     const isMapView = photoContent?.classList.contains("view-map");
 
+    const fullScreenScrolled = (fullScreenScroll.scrollTop + fullScreenScroll.clientHeight) >= fullScreenScroll.scrollHeight;
+
     // Find the currently active gallery image element
     const activeGalleryImg = document.querySelector(
       ".galleryImage.active",
@@ -1196,7 +1198,7 @@ console.log("end of Gallery frontmatter");
       "img.thumb-img",
     ) as HTMLImageElement;
 
-    if (isMapView) {
+    if (isMapView || fullScreenScrolled) {
       // --- STRICT FADE-OUT FOR MAP VIEW ---
       fullScreenEl.classList.remove("active");
 
@@ -1212,6 +1214,8 @@ console.log("end of Gallery frontmatter");
           (fullScreenImage as HTMLElement).style.height = "";
           fullScreenImage.setAttribute("src", "");
         }
+
+        fullScreenScroll.scrollTop = 0;
 
         fullScreenEl.style.display = "none";
         document
@@ -1297,7 +1301,7 @@ console.log("end of Gallery frontmatter");
           (fullScreenImage as HTMLElement).style.height = "";
           fullScreenImage.setAttribute("src", "");
         }
-
+        fullScreenScroll.scrollTop = 0;
         fullScreenEl.style.display = "none";
         document
           .querySelector(".galleryImage.active")
