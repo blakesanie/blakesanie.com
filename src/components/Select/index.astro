@@ -23,25 +23,62 @@ const { label, options, initial } = Astro.props;
 
 <style>
     div {
-        /* box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1); */
         border: 1px solid #eee;
         border-radius: 8px;
         padding: 0.25em;
         position: relative;
-        padding-right: 0.25em;
-        /* width: 100%; */
+        background-color: white;
+        display: inline-flex;
+        align-items: center;
     }
     select {
+        /* 1. Strip native appearance */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+
+        /* 2. Kill Safari inner shadows & highlights */
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        text-shadow: none;
+        outline: none;
+
+        /* 3. Add custom dropdown arrow (black fill) */
+        background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+        background-repeat: no-repeat;
+        background-position: right 0.6em center;
+        background-size: 0.65em auto;
+        background-color: transparent;
+
+        /* 4. Force black text on iOS/Mobile Safari */
+        color: #000000;
+        -webkit-text-fill-color: #000000;
+        opacity: 1; /* Fixes iOS Safari translucent text tint */
+
+        font-family: inherit;
         font-size: 1em;
-        background: none;
-        border: none;
-        padding: 0.25em;
+        line-height: normal;
+
+        /* 5. Reset box dimensions & borders */
+        border: 0;
+        border-radius: 0;
+        margin: 0;
+        padding: 0.25em 1.8em 0.25em 0.5em;
         cursor: pointer;
-        /* width: 100%; */
+        width: 100%;
     }
+
+    /* Force option items to render in black */
+    select option {
+        color: #000000;
+        background-color: #ffffff;
+    }
+
     select:focus {
         outline: none;
+        box-shadow: none;
     }
+
     label {
         position: absolute;
         top: 0;
@@ -52,5 +89,7 @@ const { label, options, initial } = Astro.props;
         padding: 0 0.3em;
         color: #bbb;
         font-weight: 400;
+        pointer-events: none;
+        z-index: 1;
     }
 </style>

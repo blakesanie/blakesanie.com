@@ -372,6 +372,7 @@ console.log("end of Gallery frontmatter");
     width: 100%;
     --base-height: calc(145px + 8vw);
     justify-content: center;
+    align-items: flex-start;
   }
 
   #gallery.toShuffle {
@@ -394,6 +395,7 @@ console.log("end of Gallery frontmatter");
     transition: transform 0.05s ease;
     will-change: transform;
     cursor: pointer;
+    overflow: hidden;
   }
 
   :global(.noFullscreen) .galleryImage {
@@ -413,6 +415,7 @@ console.log("end of Gallery frontmatter");
     width: 100%;
     height: 100%;
     z-index: 1;
+    object-fit: cover;
   }
 
   .name-label {
@@ -533,6 +536,7 @@ console.log("end of Gallery frontmatter");
     object-fit: cover;
     z-index: 2;
     opacity: 0;
+    object-fit: contain;
   }
 
   .fullscreen-placeholder.loaded {
@@ -654,6 +658,7 @@ console.log("end of Gallery frontmatter");
       flex-grow: 1 !important;
       max-width: none !important;
       max-height: none !important;
+      height: auto !important;
     }
     #metaTitle {
       font-size: 1.05rem;
@@ -881,7 +886,7 @@ console.log("end of Gallery frontmatter");
 
       // Show image if "All" is selected or if the image contains the selected tag
       if (selectedCategory === "All" || tags.includes(selectedCategory)) {
-        htmlEl.style.display = ""; // Restores standard layout display
+        htmlEl.style.removeProperty("display"); // Restores standard layout display
       } else {
         htmlEl.style.display = "none";
       }
