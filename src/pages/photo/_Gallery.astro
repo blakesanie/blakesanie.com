@@ -6,6 +6,7 @@ import MapGallery from "./_MapGallery.astro";
 import { encodeEmbeddings } from "./_utils";
 import Toggle from "../../components/Toggle/index.astro";
 import TextInput from "../../components/TextInput/index.astro";
+import Select from "../../components/Select/index.astro";
 import {
   getEmbeddings,
   getMetadata,
@@ -18,6 +19,7 @@ import {
   getSharedProcessedImage,
   getSharedMapImage,
   getCachedImageModule,
+  type ImageData
 } from "./_galleryCache";
 import { Icon } from "astro-icon/components";
 export interface Props {
@@ -147,6 +149,14 @@ const imagesData = await Promise.all(
   ),
 );
 
+const tagsToImages = new Map<string, ImageData[]>();
+imagesData.forEach(image => {
+  for (const tag of image.macosTags) {
+    if (!tagsToImages.has(tag)) tagsToImages.set(tag, []);
+    tagsToImages.get(tag)?.push(image);
+  }
+})
+
 // 🔥 MEMOIZED: Optimizes map thumbnails once
 const mapImages = await Promise.all(
   imagesData
@@ -197,6 +207,11 @@ console.log("end of Gallery frontmatter");
       )
     }
     {
+      tagsToImages.size > 0 && (
+        <Select label={`Category`} options={["All"].concat(Array.from(tagsToImages.keys()))} initial="All"/>
+    )
+    }
+    {
       allowClip && (
         <TextInput
           id="clip"
@@ -245,6 +260,7 @@ console.log("end of Gallery frontmatter");
               data-download={
                 allowDownload && downloadUrls && downloadUrls[image.filePath]
               }
+              data-tags={image.macosTags.join(",")}
               style={{
                 flexGrow: image.aspectRatio,
                 aspectRatio: image.aspectRatio,
@@ -853,6 +869,25 @@ console.log("end of Gallery frontmatter");
     });
   }
 
+  const categorySelect = document.querySelector("#controls select") as HTMLSelectElement;
+
+  categorySelect?.addEventListener("change", (e) => {
+    console.log('change', e)
+    const selectedCategory = (e.target as HTMLSelectElement).value;
+
+    galleryImages.forEach((image) => {
+      const htmlEl = image as HTMLElement;
+      const tags = (htmlEl.getAttribute("data-tags") || "").split(",");
+
+      // Show image if "All" is selected or if the image contains the selected tag
+      if (selectedCategory === "All" || tags.includes(selectedCategory)) {
+        htmlEl.style.display = ""; // Restores standard layout display
+      } else {
+        htmlEl.style.display = "none";
+      }
+    });
+  });
+
   function fullScreenOrrientationHorizontal(
     width: number,
     height: number,
@@ -1392,20 +1427,33 @@ console.log("end of Gallery frontmatter");
 
   exitButton?.addEventListener("click", () => exitFullscreen());
 
+  function getAdjacentVisibleImage(current: HTMLElement, direction: 'next' | 'prev'): HTMLImageElement | null {
+    let sibling = direction === 'next' ? current.nextElementSibling : current.previousElementSibling;
+    
+    while (sibling) {
+      if ((sibling as HTMLElement).style.display !== "none") {
+        return sibling as HTMLImageElement;
+      }
+      sibling = direction === 'next' ? sibling.nextElementSibling : sibling.previousElementSibling;
+    }
+    
+    return null;
+  }
+
   nextButton?.addEventListener("click", () => {
-    const currentImage = document.querySelector(
-      ".galleryImage.active",
-    ) as HTMLImageElement;
-    if (currentImage?.nextElementSibling)
-      enterFullscreen(currentImage.nextElementSibling as HTMLImageElement);
+    const currentImage = document.querySelector(".galleryImage.active") as HTMLImageElement;
+    if (!currentImage) return;
+    
+    const nextImg = getAdjacentVisibleImage(currentImage, "next");
+    if (nextImg) enterFullscreen(nextImg);
   });
 
   prevButton?.addEventListener("click", () => {
-    const currentImage = document.querySelector(
-      ".galleryImage.active",
-    ) as HTMLImageElement;
-    if (currentImage?.previousElementSibling)
-      enterFullscreen(currentImage.previousElementSibling as HTMLImageElement);
+    const currentImage = document.querySelector(".galleryImage.active") as HTMLImageElement;
+    if (!currentImage) return;
+
+    const prevImg = getAdjacentVisibleImage(currentImage, "prev");
+    if (prevImg) enterFullscreen(prevImg);
   });
 
   window.addEventListener("keydown", (e) => {
@@ -1596,8 +1644,6 @@ console.log("end of Gallery frontmatter");
     return rawData.map((val) => val / (l2Norm || 1));
   }
 
-  // --- Rest of your UI / Map / Gallery Logic code (From previous step) ---
-  // ...
 
   // Kick off dynamic asset injections immediately on page mount
   initCLIP().catch((err) => console.error("Eager load tracking failed:", err));

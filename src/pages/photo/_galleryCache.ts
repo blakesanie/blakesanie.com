@@ -95,7 +95,7 @@ interface ImageMetadata {
     lat?: number;
 }
 
-interface ImageData {
+export interface ImageData {
     filePath: string;
     name: string;
     src: any;
@@ -105,6 +105,7 @@ interface ImageData {
     aspectRatio: number;
     embeddings?: string;
     metadata?: ImageMetadata;
+    macosTags: [];
 }
 
 export async function getSharedProcessedImage({
@@ -144,6 +145,7 @@ export async function getSharedProcessedImage({
         height,
         highRes: highRes?.src,
         aspectRatio: aspectRatioNum,
+        macosTags: module.macosTags
     };
 
     if (allowClip && embeddings) {
