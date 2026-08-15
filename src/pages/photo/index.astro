@@ -2,26 +2,19 @@
 import Gallery from "./_Gallery.astro";
 import {
   getCachedPortfolioAssetGlob,
-  getCachedImageModule,
 } from "./_galleryCache";
 
 const assetGlob = getCachedPortfolioAssetGlob();
-let image: ImageMetadata | undefined = undefined;
-if (Astro.props.imageFilePath) {
-  image = await getCachedImageModule(
-    Astro.props.imageFilePath,
-    assetGlob[Astro.props.imageFilePath],
-  );
-}
 ---
 
 <!-- <p>test</p> -->
 <Gallery
+  title={Astro.props.title}
   initialMode={Astro.props.initialMode}
   assetGlob={assetGlob}
   allowMetadata={true}
   allowClip={true}
-  image={image}
+  imageFilePath={Astro.props.imageFilePath}
   imageName={Astro.props.imageName}
   allowMap={true}
   allowFullscreen={true}
@@ -29,6 +22,7 @@ if (Astro.props.imageFilePath) {
   allowFilename={false}
   allowBlog={true}
   allowUniqueUrls={true}
+  allowDeepLink={true}
   heading="Photography"
   subheading="Photography offers me a creative escape from my logical, algorithmic side; allowing me to see the world with fresh eyes. From the vibrant streets of San Francisco to the timeless charm of Venice - even the familiar beauty of my own backyard - I find endless inspiration in the compositions that surround me."
 />

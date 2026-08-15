@@ -24,7 +24,7 @@ import {
 import { Icon } from "astro-icon/components";
 export interface Props {
   assetGlob: Record<string, () => Promise<{ default: AstroImageMetadata }>>;
-  image?: unknown;
+  imageFilePath?: string;
   imageName?: string;
   initialMode?: string;
   allowFullscreen?: boolean;
@@ -40,6 +40,7 @@ export interface Props {
   allowUniqueUrls?: boolean;
   title?: string;
   description?: string;
+  allowDeepLink?: boolean;
 }
 
 const {
@@ -58,6 +59,15 @@ const {
 // const filePaths = Object.keys(Astro.props.assetGlob).map((vitePath) =>
 //   path.resolve(path.join(process.cwd(), vitePath)),
 // );
+
+let image: ImageMetadata | undefined = undefined;
+if (Astro.props.imageFilePath) {
+  image = await getCachedImageModule(
+    Astro.props.imageFilePath,
+    Astro.props.assetGlob[Astro.props.imageFilePath],
+  );
+  console.log("image for album", image)
+}
 
 let metadata: Record<string, Record<string, any>> | null = null;
 if (allowMetadata) {
@@ -190,7 +200,7 @@ console.log("end of Gallery frontmatter");
   flangeColor="white"
   title={title}
   description={description}
-  image={Astro.props.image}
+  image={image}
 >
   {heading && <h1>{heading}</h1>}
   {subheading && <p set:html={subheading} />}
@@ -671,7 +681,11 @@ console.log("end of Gallery frontmatter");
     }
   }
 </style>
-
+<script define:vars={{
+  allowDeepLink: Astro.props.allowDeepLink
+  }}>
+window.allowDeepLink = allowDeepLink;
+</script>
 <script>
   import { cleanseName, dotProduct } from "./_utils";
 
@@ -1004,10 +1018,11 @@ console.log("end of Gallery frontmatter");
     const isMapView = photoContent?.classList.contains("view-map");
 
     if (dataName) {
-      document.title = `${dataName} | Photography | Blake Sanie`;
+      document.title = `${dataName} | Photo | Blake Sanie`;
     }
 
-    if (pushState && dataName) {
+    //@ts-ignore
+    if (window.allowDeepLink && pushState && dataName) {
       const path = window.location.pathname;
       const isPhotoPage =
         path === "/photo" ||
@@ -1527,25 +1542,28 @@ console.log("end of Gallery frontmatter");
     );
   }
 
-  // 1. Get the current pathname
-  let initialDeepLink = window.location.pathname;
-  
-  // 2. Safely strip the trailing slash if one exists (excluding the home root slash)
-  if (initialDeepLink.endsWith("/") && initialDeepLink !== "/") {
-    initialDeepLink = initialDeepLink.slice(0, -1);
-  }
+  //@ts-ignore
+  if (window.allowDeepLink) {
+    // 1. Get the current pathname
+    let initialDeepLink = window.location.pathname;
+    
+    // 2. Safely strip the trailing slash if one exists (excluding the home root slash)
+    if (initialDeepLink.endsWith("/") && initialDeepLink !== "/") {
+      initialDeepLink = initialDeepLink.slice(0, -1);
+    }
 
-  if (
-    initialDeepLink.startsWith("/photo/") &&
-    initialDeepLink !== "/photo" && // Note: adjusted to match stripped slash
-    initialDeepLink !== "/photo/map" &&
-    !initialDeepLink.startsWith("/photo/albums/")
-  ) {
-    const slug = initialDeepLink.split("/").pop();
-    const found = Array.from(galleryImages).find(
-      (el) => cleanseName(el.getAttribute("data-name") || "") === slug,
-    );
-    if (found) enterFullscreen(found as HTMLImageElement, false);
+    if (
+      initialDeepLink.startsWith("/photo/") &&
+      initialDeepLink !== "/photo" && // Note: adjusted to match stripped slash
+      initialDeepLink !== "/photo/map" &&
+      !initialDeepLink.startsWith("/photo/albums/")
+    ) {
+      const slug = initialDeepLink.split("/").pop();
+      const found = Array.from(galleryImages).find(
+        (el) => cleanseName(el.getAttribute("data-name") || "") === slug,
+      );
+      if (found) enterFullscreen(found as HTMLImageElement, false);
+    }
   }
 
   const clipInput = document.querySelector("#clip") as HTMLInputElement;

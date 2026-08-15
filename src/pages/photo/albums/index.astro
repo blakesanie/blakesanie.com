@@ -35,10 +35,10 @@ function enforcePeriod(str: string) {
       staticPaths.map((item) => (
         <a href={"/photo/albums/" + item.params.slug}>
           <h2>{item.props.title}</h2>
-          <p>{enforcePeriod(item.props.description)}</p>
+          <p>{enforcePeriod(item.props.description || "")}</p>
           <Image
-            src={item.props.assetGlob[item.props.imageFilepath]()}
-            filepath={item.props.imageFilepath}
+            src={item.props.assetGlob[item.props.imageFilePath]()}
+            filepath={item.props.imageFilePath}
             alt=""
             widths={[800]}
             quality={75}
