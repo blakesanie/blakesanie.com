@@ -1511,6 +1511,9 @@ window.allowDeepLink = allowDeepLink;
 
   ["galleryNavLink", "mapNavLink"].forEach((id) => {
     document.getElementById(id)?.addEventListener("click", (e) => {
+      if (window.location.pathname.includes("album")) {
+        return;
+      }
       e.preventDefault();
       const href = (e.currentTarget as HTMLElement).getAttribute("href");
       setView(href === "/photo/map" ? "map" : "gallery");

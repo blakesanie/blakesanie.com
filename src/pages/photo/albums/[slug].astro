@@ -29,7 +29,28 @@ export async function getStaticPaths(): Promise<StaticPathResult> {
     "/src/assets/client_alias/chi-aw-show-2026/*.{jpg,jpeg,png,webp,avif}",
   );
 
+  const northMich2026Images = import.meta.glob<{ default: ImageMetadata }>(
+    "/src/assets/client_alias/north-mich/*.{jpg,jpeg,png,webp,avif}",
+  );
+
   return [
+     {
+      params: { slug: "northern-michigan-2026" },
+      props: {
+        assetGlob: northMich2026Images,
+        title: "Mackinac Island and Pictured Rocks",
+        description: "Greatest sights in Northern Michigan.",
+        heading: "Mackinac Island and Pictured Rocks",
+        allowDownload: false,
+        allowFilename: false,
+        allowFullscreen: true,
+        allowMetadata: true,
+        imageFilePath:
+          "/src/assets/client_alias/north-mich/DSC08034.jpg",
+        subheading:
+          'August 2026 - Northern Michigan. 2 locations, 2 days each.',
+      },
+    },
     {
       params: { slug: "chi-air-and-water-show-2026" },
       props: {
@@ -44,7 +65,7 @@ export async function getStaticPaths(): Promise<StaticPathResult> {
         imageFilePath:
           "/src/assets/client_alias/chi-aw-show-2026/DSC06713.jpg",
         subheading:
-          'August 2026 - Chicago Lakefront. <a href="mailto:blake@sanie.com">Email</a> for Licensing.</a>',
+          'August 2026 - Chicago Lakefront. <a href="mailto:blake@sanie.com">Email blake@sanie.com</a> for licensing.</a>',
       },
     },
     {
