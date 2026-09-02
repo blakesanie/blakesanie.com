@@ -36,7 +36,7 @@ function enforcePeriod(str: string) {
           <Image
             src={item.props.assetGlob[item.props.imageFilePath]()}
             filepath={item.props.imageFilePath}
-            alt=""
+            alt={`${item.props.title} album cover`}
             widths={[800]}
             quality={75}
             format="avif"

@@ -4,6 +4,7 @@ import { Icon } from "astro-icon/components";
 //@ts-ignore
 import Button from "../../components/basic/Button.astro";
 import Substack from "../../components/Substack.astro";
+import ExternalLink from "../../components/ExternalLink.astro";
 import Image from "../../components/Image/index.astro";
 import type { ImageMetadata } from "astro";
 import { projects } from "../../data/projects";
@@ -62,15 +63,15 @@ function toFragrment(str: string) {
                 <div class="links">
                   {project.links.map(({ label, href, ...link }) => {
                     return (
-                      <a href={href} target="_blank" class="link">
+                      <ExternalLink href={href} class="link">
                         <Button icon={link.icon}>{label}</Button>
-                      </a>
+                      </ExternalLink>
                     );
                   })}
                 </div>
               )}
             </div>
-            <a class="demo" href={defaultLink} target="_blank">
+            <ExternalLink class="demo" href={defaultLink || "#"}>
               {imageSrc ? (
                 <Image
                   placeholder="blur"
@@ -87,10 +88,13 @@ function toFragrment(str: string) {
                   src={project.youtube}
                   allow="autoplay; encrypted-media"
                   allowfullscreen="allowfullscreen"
+                  title={`Demo video for ${title}`}
+                  width="800"
+                  height="450"
                   class="youtube"
                 />
               ) : null}
-            </a>
+            </ExternalLink>
           </div>
         );
       })

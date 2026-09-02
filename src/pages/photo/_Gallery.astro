@@ -324,22 +324,29 @@ console.log("end of Gallery frontmatter");
 
   {
     allowFullscreen && (
-      <div id="fullscreenOverlay" role="dialog" aria-modal="true" tabindex="-1">
+      <div
+        id="fullscreenOverlay"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="metaTitle"
+        tabindex="-1"
+      >
         <div id="fullscreenScroll">
           <div id="imageViewport">
             <div class="metadata-panel" id="metadataPanel">
-              <div class="metadata-title" id="metaTitle" />
+              <div class="metadata-title" id="metaTitle" aria-live="polite" />
               <div class="metadata-chips-row" id="metaChipsRow" />
               <div class="metadata-actions">
-                <div id="exitButton">Exit</div>
-                <div id="prevButton">Prev</div>
-                <div id="nextButton">Next</div>
+                <button type="button" id="exitButton" aria-label="Close fullscreen image">Exit</button>
+                <button type="button" id="prevButton" aria-label="Show previous image">Prev</button>
+                <button type="button" id="nextButton" aria-label="Show next image">Next</button>
               </div>
             </div>
             <img
               id="fullscreenPlaceholder"
               class="fullscreen-placeholder"
               alt=""
+              aria-hidden="true"
             />
           </div>
           <div id="viewportBelow">
@@ -630,15 +637,35 @@ console.log("end of Gallery frontmatter");
     flex-direction: row;
   }
 
-  .metadata-actions div {
+  .metadata-actions button {
     width: 3em;
+    border: 0;
+    background: transparent;
+    font: inherit;
     cursor: pointer;
     opacity: 0.5;
     transition: opacity 0.1s ease;
   }
 
-  .metadata-actions div:hover {
+  .metadata-actions button:hover,
+  .metadata-actions button:focus-visible {
     opacity: 1;
+  }
+
+  :global(:focus-visible) {
+    outline: 3px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
   }
 
   @media screen and (max-width: 800px) {
@@ -746,6 +773,7 @@ window.allowDeepLink = allowDeepLink;
   const photoContent = document.getElementById("photoContent");
 
   let activeTransitionImg: HTMLImageElement | null = null;
+  let lastFocusedElement: HTMLElement | null = null;
   let isEnterAnimating = false;
   let isExitAnimating = false;
 
@@ -990,6 +1018,7 @@ window.allowDeepLink = allowDeepLink;
   function enterFullscreen(image: HTMLImageElement, pushState = true) {
     if (!fullScreenEl) return;
     if (isEnterAnimating || isExitAnimating) return;
+    lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
     // Remove any previous active transitions if they somehow exist
     if (activeTransitionImg && activeTransitionImg.parentNode) {
@@ -1203,6 +1232,8 @@ window.allowDeepLink = allowDeepLink;
 
       const transitionImg = document.createElement("img");
       transitionImg.src = thumbImg.src;
+      transitionImg.alt = "";
+      transitionImg.setAttribute("aria-hidden", "true");
       transitionImg.className = "gallery-transition-clone";
 
       transitionImg.style.left = `${galleryRect.left}px`;
@@ -1270,6 +1301,7 @@ window.allowDeepLink = allowDeepLink;
         fullScreenEl.style.display = "none";
       }, 200);
       document.body.style.overflow = "";
+      lastFocusedElement?.focus();
       isExitAnimating = false;
       return;
     }
@@ -1303,6 +1335,7 @@ window.allowDeepLink = allowDeepLink;
           ?.classList.remove("active");
         document.title = baseTitle;
         document.body.style.overflow = "";
+        lastFocusedElement?.focus();
         isExitAnimating = false;
       }, 250);
     } else {
@@ -1335,6 +1368,8 @@ window.allowDeepLink = allowDeepLink;
       // Create transition clone at current fullscreen placeholder coordinates
       const transitionImg = document.createElement("img");
       transitionImg.src = thumbImg.src;
+      transitionImg.alt = "";
+      transitionImg.setAttribute("aria-hidden", "true");
       transitionImg.className = "gallery-transition-clone";
 
       transitionImg.style.left = `${finalOverlayRect.left}px`;
@@ -1388,6 +1423,7 @@ window.allowDeepLink = allowDeepLink;
           ?.classList.remove("active");
         document.title = baseTitle;
         document.body.style.overflow = "";
+        lastFocusedElement?.focus();
         isExitAnimating = false;
       }, 250);
     }

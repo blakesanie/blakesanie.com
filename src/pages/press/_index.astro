@@ -2,6 +2,7 @@
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import Substack from "../../components/Substack.astro";
 import Image from "../../components/Image/index.astro";
+import ExternalLink from "../../components/ExternalLink.astro";
 import { pressItems } from "../../data/press";
 import type { PressItem } from "../../types/content";
 
@@ -78,19 +79,19 @@ const press = await Promise.all(pressItems.map((link) => processLink(link)));
     {
       press.map(({ title, site, image, date, link }) => {
         return (
-          <a class="article" href={link} target="_blank">
+          <ExternalLink class="article" href={link}>
             <p class="title">{title}</p>
             <p class="site">{site}</p>
             <p class="date">{date}</p>
             <Image
               src={"/src/assets/images/press/" + image}
-              alt={""}
+              alt={`Article image for ${title}`}
               loading="lazy"
               placeholder="blur"
               format="webp"
               quality={70}
             />
-          </a>
+          </ExternalLink>
         );
       })
     }

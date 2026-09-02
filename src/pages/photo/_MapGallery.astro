@@ -207,6 +207,8 @@ const { mapImages } = Astro.props;
 
       // Create raw HTML element for the marker image
       const img = document.createElement("img");
+      img.alt = "";
+      img.setAttribute("aria-hidden", "true");
       img.src = photo.path;
       img.className = "custom-image-marker";
       img.style.width = `${photo.width}px`;
@@ -243,6 +245,8 @@ const { mapImages } = Astro.props;
         container.className = "cluster-container";
 
         const img = document.createElement("img");
+        img.alt = "";
+        img.setAttribute("aria-hidden", "true");
         img.src = photo.path;
         img.className = "custom-image-marker";
         img.style.width = `${photo.width * 1.2}px`;
