@@ -3,6 +3,7 @@ import path from "path";
 import { encodeEmbeddings } from "./_utils"; // adjust path as needed
 import type { ImageMetadata as AstroImageMetadata } from 'astro';
 import type { ExifRecord, GalleryImage } from '../../types/content';
+import { getMacOSTags } from '../../lib/macos-tags';
 
 const lensReplacements: Record<string, string> = {
     "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED":
@@ -74,8 +75,8 @@ function resolveFocalLength(exif: ExifRecord): number | undefined {
 }
 
 // Global memory stores that survive across Astro build iterations
-const processedImagesCache = new Map<string, any>();
-const optimizedMapImagesCache = new Map<string, any>();
+const processedImagesCache = new Map<string, ImageData>();
+const optimizedMapImagesCache = new Map<string, GalleryImage>();
 
 interface ProcessImageParams {
     filePath: string;
@@ -122,8 +123,9 @@ export async function getSharedProcessedImage({
 }: ProcessImageParams): Promise<ImageData> {
     // Unique cache key based on configuration requirements
     const cacheKey = `${filePath}_clip:${allowClip}_meta:${allowMetadata}`;
-    if (processedImagesCache.has(cacheKey)) {
-        return processedImagesCache.get(cacheKey);
+    const cachedImage = processedImagesCache.get(cacheKey);
+    if (cachedImage) {
+        return cachedImage;
     }
 
     const filename = path.basename(filePath);
@@ -148,7 +150,7 @@ export async function getSharedProcessedImage({
         height,
         highRes: highRes?.src,
         aspectRatio: aspectRatioNum,
-        macosTags: Array.isArray(module.macosTags) ? module.macosTags : [],
+        macosTags: await getMacOSTags(filePath),
     };
 
     if (allowClip && embeddings) {
@@ -184,8 +186,9 @@ type MappableImage = ImageData & {
 };
 
 export async function getSharedMapImage(img: MappableImage): Promise<GalleryImage> {
-    if (optimizedMapImagesCache.has(img.filePath)) {
-        return optimizedMapImagesCache.get(img.filePath);
+    const cachedMapImage = optimizedMapImagesCache.get(img.filePath);
+    if (cachedMapImage) {
+        return cachedMapImage;
     }
 
     const originalAR = img.width / img.height;
