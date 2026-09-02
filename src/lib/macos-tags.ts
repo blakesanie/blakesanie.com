@@ -15,13 +15,7 @@ export function parseMacOSTags(output: string): string[] {
   return output
     .split("\n")
     .map((line) => line.trim())
-    .filter(
-      (line) =>
-        line &&
-        !line.startsWith("kMDItemUserTags") &&
-        line !== "(" &&
-        line !== ")",
-    )
+    .filter((line) => line && !line.startsWith("kMDItemUserTags") && line !== "(" && line !== ")")
     .map((line) =>
       line
         .replace(/,$/, "")

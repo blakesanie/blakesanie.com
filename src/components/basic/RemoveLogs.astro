@@ -1,9 +1,9 @@
 ---
+
 ---
 
-{!import.meta.env.DEV ? (
-    <script>
-      window.originalConsoleLog = console.log; console.log = function () {};
-    </script>
+{
+  !import.meta.env.DEV ? (
+    <script>window.originalConsoleLog = console.log; console.log = function () {};</script>
   ) : null
 }

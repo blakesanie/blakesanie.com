@@ -100,8 +100,7 @@ try {
   };
   // 3. Delegate placeholder operations to the parallelized disk cache pipeline
   if (placeholder === "color") {
-    if (!filepath)
-      throw Error("[Image Component] filepath missing for color placeholder");
+    if (!filepath) throw Error("[Image Component] filepath missing for color placeholder");
     const colorMap = await getImageColors([filepath]);
     const dominant = colorMap[filepath];
     if (dominant) {
@@ -109,10 +108,7 @@ try {
         "background-color": `rgb(${dominant.r}, ${dominant.g}, ${dominant.b})`,
       };
     } else {
-      console.error(
-        "[Image Component] Failed to get dominant color for",
-        filepath,
-      );
+      console.error("[Image Component] Failed to get dominant color for", filepath);
     }
   } else if (placeholder === "blur") {
     if (!filepath)
@@ -130,16 +126,11 @@ try {
         "background-position": "center",
       };
     } else {
-      console.error(
-        "[Image Component] Failed to get blur placeholder for",
-        filepath,
-      );
+      console.error("[Image Component] Failed to get blur placeholder for", filepath);
     }
   }
 } catch (error) {
-  throw Error(
-    "[Image Component] Failed to seamlessly process image assets: " + error,
-  );
+  throw Error("[Image Component] Failed to seamlessly process image assets: " + error);
 }
 
 // Map string style declarations safely into explicit key-value pairings
@@ -161,11 +152,7 @@ const combinedStyle = {
 
 <img
   alt={alt}
-  class:list={[
-    "smart-image",
-    placeholder === "blur" && "smooth-blur",
-    className,
-  ]}
+  class:list={["smart-image", placeholder === "blur" && "smooth-blur", className]}
   style={combinedStyle}
   {...imageAttrs}
   {...rest}

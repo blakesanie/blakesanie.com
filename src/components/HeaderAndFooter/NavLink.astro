@@ -29,8 +29,7 @@ const targetPath = targetUrl.pathname.replace(/\/$/, "");
 // Evaluate active status securely
 const active = Astro.props.activePattern
   ? Astro.props.activePattern.test(Astro.url.pathname)
-  : currentPath === targetPath ||
-    (targetPath !== "" && currentPath.startsWith(targetPath + "/"));
+  : currentPath === targetPath || (targetPath !== "" && currentPath.startsWith(targetPath + "/"));
 
 const { textColor } = Astro.props;
 ---

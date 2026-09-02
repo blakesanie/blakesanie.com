@@ -13,9 +13,7 @@ Astro.props.fontUrl =
   Astro.props.fontUrl ||
   "https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&display=swap";
 
-const title = Astro.props.title
-  ? Astro.props.title + " | Blake Sanie"
-  : "Blake Sanie";
+const title = Astro.props.title ? Astro.props.title + " | Blake Sanie" : "Blake Sanie";
 
 let image: { src: string } | null = null;
 if (Astro.props.image) {
@@ -26,15 +24,9 @@ if (Astro.props.image) {
     quality: 75,
   });
 } else {
-  const font = fs.readFileSync(
-    "src/assets/fonts/Assistant/static/Assistant-Regular.ttf",
-  );
-  const font2 = fs.readFileSync(
-    "src/assets/fonts/Assistant/static/Assistant-SemiBold.ttf",
-  );
-  const ogBg = fs.readFileSync(
-    "src/assets/portfolio_alias/Manhattan Bridge.jpg",
-  );
+  const font = fs.readFileSync("src/assets/fonts/Assistant/static/Assistant-Regular.ttf");
+  const font2 = fs.readFileSync("src/assets/fonts/Assistant/static/Assistant-SemiBold.ttf");
+  const ogBg = fs.readFileSync("src/assets/portfolio_alias/Manhattan Bridge.jpg");
   const b64 = ogBg.toString("base64");
 
   const arrowSvg = Astro.props.redirect
@@ -149,10 +141,7 @@ if (Astro.props.image) {
   const filename = `${safeTitle}-og.webp`;
 
   // 2. Compress the PNG buffer straight to webp using Sharp
-  const buffer = await sharp(pngBuffer)
-    .resize(width, height)
-    .webp({ quality: quality })
-    .toBuffer();
+  const buffer = await sharp(pngBuffer).resize(width, height).webp({ quality: quality }).toBuffer();
 
   const isProd = import.meta.env.PROD;
   const targetDir = isProd
@@ -173,11 +162,9 @@ if (Astro.props.image) {
 
 const { noIndex } = Astro.props;
 
-const imageAlt =
-  Astro.props?.imageAlt || "Open Graph Thumbnail Image for blakesanie.com";
+const imageAlt = Astro.props?.imageAlt || "Open Graph Thumbnail Image for blakesanie.com";
 const description =
-  Astro.props.description ||
-  "Software Engineer. Photographer. Ironman. Lifelong Student.";
+  Astro.props.description || "Software Engineer. Photographer. Ironman. Lifelong Student.";
 ---
 
 <html lang="en">
@@ -186,19 +173,12 @@ const description =
 
     <!-- <meta charset="utf-8" /> -->
     <!-- <meta viewport="width=device-width, initial-scale=1" /> -->
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <SEO
       title={title}
       description={description}
       noindex={noIndex ? true : false}
-      nofollow={Astro.props.noFollow
-        ? Astro.props.noFollow
-        : noIndex
-          ? true
-          : false}
+      nofollow={Astro.props.noFollow ? Astro.props.noFollow : noIndex ? true : false}
       charset="utf-8"
       openGraph={{
         basic: {
@@ -216,10 +196,7 @@ const description =
       }}
       extend={{}}
     />
-    <meta
-      name="google-site-verification"
-      content="ePB1GvvA8L5Hza96sGcmDLw_jIzjhQ2JhXbIAg_8hlA"
-    />
+    <meta name="google-site-verification" content="ePB1GvvA8L5Hza96sGcmDLw_jIzjhQ2JhXbIAg_8hlA" />
     <meta name="theme-color" content={Astro.props.themeColor} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link
@@ -262,58 +239,18 @@ const description =
       sizes="152x152"
       href="/favicons/apple-touch-icon-152x152.png"
     />
-    <link
-      rel="icon"
-      type="image/png"
-      href="/favicons/favicon-196x196.png"
-      sizes="196x196"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="/favicons/favicon-96x96.png"
-      sizes="96x96"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="/favicons/favicon-32x32.png"
-      sizes="32x32"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="/favicons/favicon-16x16.png"
-      sizes="16x16"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="/favicons/favicon-128.png"
-      sizes="128x128"
-    />
+    <link rel="icon" type="image/png" href="/favicons/favicon-196x196.png" sizes="196x196" />
+    <link rel="icon" type="image/png" href="/favicons/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="/favicons/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/favicons/favicon-16x16.png" sizes="16x16" />
+    <link rel="icon" type="image/png" href="/favicons/favicon-128.png" sizes="128x128" />
     <meta name="application-name" content=" " />
     <meta name="msapplication-TileColor" content="#FFFFFF" />
-    <meta
-      name="msapplication-TileImage"
-      content="/favicons/mstile-144x144.png"
-    />
-    <meta
-      name="msapplication-square70x70logo"
-      content="/favicons/mstile-70x70.png"
-    />
-    <meta
-      name="msapplication-square150x150logo"
-      content="/favicons/mstile-150x150.png"
-    />
-    <meta
-      name="msapplication-wide310x150logo"
-      content="/favicons/mstile-310x150.png"
-    />
-    <meta
-      name="msapplication-square310x310logo"
-      content="/favicons/mstile-310x310.png"
-    />
+    <meta name="msapplication-TileImage" content="/favicons/mstile-144x144.png" />
+    <meta name="msapplication-square70x70logo" content="/favicons/mstile-70x70.png" />
+    <meta name="msapplication-square150x150logo" content="/favicons/mstile-150x150.png" />
+    <meta name="msapplication-wide310x150logo" content="/favicons/mstile-310x150.png" />
+    <meta name="msapplication-square310x310logo" content="/favicons/mstile-310x310.png" />
 
     <Fragment
       set:html={`<script type="application/ld+json">{
@@ -328,9 +265,8 @@ const description =
     />
     <script is:inline defer src="/_vercel/insights/script.js"></script>
     <!-- Google tag (gtag.js) -->
-    <script is:inline
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=UA-164774604-1"></script>
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=UA-164774604-1"
+    ></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(...args: unknown[]) {

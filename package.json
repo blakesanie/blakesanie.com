@@ -11,7 +11,11 @@
     "astro": "astro",
     "deploy": "npm run build && wrangler pages deploy dist --branch=main",
     "clean": "rm -rf .astro dist node_modules/.vite",
-    "test": "vitest run --config vitest.config.ts"
+    "test": "vitest run --config vitest.config.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "astro check",
+    "lint": "eslint astro.config.ts vite.config.ts src/lib src/types src/data"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.2",
@@ -101,15 +105,19 @@
     "@babel/plugin-syntax-jsx": "^7.27.1",
     "@babel/preset-env": "^7.27.2",
     "@babel/register": "^7.27.1",
+    "@eslint/js": "^10.0.1",
     "@iconify-json/bi": "^1.2.7",
     "@iconify-json/humbleicons": "^1.2.10",
     "@types/node": "^22.15.21",
     "autoprefixer": "^10.4.21",
     "clean-css": "^5.3.3",
+    "eslint": "^10.9.1",
+    "eslint-plugin-astro": "^3.1.0",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "prettier-plugin-astro": "^0.14.1",
     "tailwindcss": "^4.1.7",
+    "typescript-eslint": "^8.69.0",
     "vitest": "^4.1.9"
   }
 }

@@ -11,14 +11,7 @@ interface LinkInterface {
 }
 
 const links: LinkInterface[] = Astro.props.links;
-let {
-  text,
-  imageSrc,
-  imageFilepath,
-  style,
-  class: className,
-  ...props
-} = Astro.props;
+let { text, imageSrc, imageFilepath, style, class: className, ...props } = Astro.props;
 ---
 
 <div style={{ ...style }} class:list={["section", className]} {...props}>
@@ -44,11 +37,7 @@ let {
       <div class="links">
         {links.map(({ target, href, label, ...props }) => {
           return (
-            <SmartHref
-              href={href}
-              target={target}
-              class:list={[props.class, "link"]}
-            >
+            <SmartHref href={href} target={target} class:list={[props.class, "link"]}>
               {label}
             </SmartHref>
           );

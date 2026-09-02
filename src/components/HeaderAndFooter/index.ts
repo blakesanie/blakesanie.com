@@ -30,15 +30,15 @@ const mouseOffSections = document.querySelectorAll("nav");
 const mouseNoFocusSections = document.querySelectorAll("#nowPlayingSection");
 
 // some div .navHoverZone may exist within a nav anchor element. Get that here
-const activeNavHoverZone = document.querySelector<HTMLElement>(
-  ".active .navHoverZone",
-);
+const activeNavHoverZone = document.querySelector<HTMLElement>(".active .navHoverZone");
 let activeAnchor = activeNavHoverZone?.parentElement as HTMLAnchorElement | null;
-const hoverZone: HTMLElement = (activeAnchor
-  ? hoverZoneBehind
-    ? nav.insertBefore(activeNavHoverZone!, nav.firstChild)
-    : nav.appendChild(activeNavHoverZone!)
-  : document.querySelector<HTMLElement>(".navHoverZone"))!;
+const hoverZone: HTMLElement = (
+  activeAnchor
+    ? hoverZoneBehind
+      ? nav.insertBefore(activeNavHoverZone!, nav.firstChild)
+      : nav.appendChild(activeNavHoverZone!)
+    : document.querySelector<HTMLElement>(".navHoverZone")
+)!;
 
 if (activeAnchor) {
   positionHoverAtAnchor(activeAnchor);
@@ -168,8 +168,7 @@ window.addEventListener("scroll", () => {
   }
   const currentScroll = window.scrollY;
   const timestamp = new Date().getTime();
-  const scrollVelocity =
-    (currentScroll - prevScroll) / (timestamp - prevScrollTimestamp);
+  const scrollVelocity = (currentScroll - prevScroll) / (timestamp - prevScrollTimestamp);
   if (currentScroll <= 0) {
     menuIsDown = false;
     header.style.position = "fixed";
@@ -179,10 +178,7 @@ window.addEventListener("scroll", () => {
       header.style.position = "absolute";
       header.style.transform = "none";
     }
-  } else if (
-    currentScroll > mobileHeaderHeight &&
-    prevScroll <= mobileHeaderHeight
-  ) {
+  } else if (currentScroll > mobileHeaderHeight && prevScroll <= mobileHeaderHeight) {
     if (menuIsDown) {
     } else {
       moveHeaderDown(false, false);
@@ -198,7 +194,6 @@ window.addEventListener("scroll", () => {
   prevScroll = currentScroll;
   prevScrollTimestamp = timestamp;
 });
-
 
 //  __       __                                      ________                                                    __
 // /  \     /  |                                    /        |                                                  /  |
@@ -223,10 +218,7 @@ const hamburgerClick = () => {
   const innerHeight = header.scrollHeight;
   if (menuExpanded) {
     header?.classList.remove("expanded");
-    header.style.setProperty(
-      "--headerHeight",
-      Math.min(innerHeight, window.innerHeight) + "px",
-    );
+    header.style.setProperty("--headerHeight", Math.min(innerHeight, window.innerHeight) + "px");
     setTimeout(() => {
       header.style.setProperty("--headerHeight", mobileHeaderHeight + "px");
     }, 0);
@@ -234,10 +226,7 @@ const hamburgerClick = () => {
     moveHoverToAnchor(undefined);
 
     header?.classList.add("expanded");
-    header.style.setProperty(
-      "--headerHeight",
-      Math.min(innerHeight, window.innerHeight) + "px",
-    );
+    header.style.setProperty("--headerHeight", Math.min(innerHeight, window.innerHeight) + "px");
     setTimeout(() => {
       header.style.setProperty("--headerHeight", "auto");
     }, headerHeightTransitionDuration * 1000);
@@ -310,19 +299,19 @@ if (header && nav) {
   const navWidth = nav.offsetWidth;
   const delta = headerWidth - navWidth;
   if (delta > 0) {
-    const newHeaderWidth = headerWidth + delta + 'px';
-    header.style.setProperty('--headerWidth', newHeaderWidth)
+    const newHeaderWidth = headerWidth + delta + "px";
+    header.style.setProperty("--headerWidth", newHeaderWidth);
   }
 }
 
 // Listen for external navigation updates (e.g. from photo mode toggle)
-window.addEventListener('update-nav-active', (e: any) => {
+window.addEventListener("update-nav-active", (e: any) => {
   const { href } = e.detail;
-  const targetAnchor = Array.from(anchors).find(a => a.getAttribute('href') === href);
+  const targetAnchor = Array.from(anchors).find((a) => a.getAttribute("href") === href);
   if (targetAnchor && targetAnchor !== activeAnchor) {
     // Update active class on parent LI elements
-    anchors.forEach(a => a.parentElement?.classList.remove('active'));
-    targetAnchor.parentElement?.classList.add('active');
+    anchors.forEach((a) => a.parentElement?.classList.remove("active"));
+    targetAnchor.parentElement?.classList.add("active");
 
     activeAnchor = targetAnchor;
     moveHoverToAnchor(targetAnchor);

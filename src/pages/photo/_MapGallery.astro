@@ -60,10 +60,7 @@ const { mapImages } = Astro.props;
   is:inline
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&libraries=marker&v=weekly"
 ></script>
-<script
-  is:inline
-  src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"
-></script>
+<script is:inline src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
 
 <script is:inline define:vars={{ mapImages }}>
   let mainMap = null;
@@ -223,9 +220,7 @@ const { mapImages } = Astro.props;
       });
 
       marker.addListener("click", () => {
-        window.dispatchEvent(
-          new CustomEvent("photo-map-click", { detail: { name: photo.name } }),
-        );
+        window.dispatchEvent(new CustomEvent("photo-map-click", { detail: { name: photo.name } }));
       });
 
       // Attach custom property to the DOM element container for the clusterer to reference

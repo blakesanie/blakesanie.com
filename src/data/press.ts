@@ -25,7 +25,6 @@ export const pressItems: PressItem[] = pressItemSchema.array().parse([
     link: "https://www.linkedin.com/feed/update/urn:li:activity:6833004016574840832/",
     date: "August 13 2021",
     image: "schon.jpg",
-    title:
-      "Schonfeld: Last week, we were fortunate enough to welcome our Schonfeld summer…",
+    title: "Schonfeld: Last week, we were fortunate enough to welcome our Schonfeld summer…",
   },
 ]);

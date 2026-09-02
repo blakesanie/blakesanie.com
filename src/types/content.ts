@@ -61,10 +61,7 @@ export interface SeoMetadata {
 
 export type ExifRecord = Record<string, unknown>;
 
-export const exifRecordSchema = z.record(
-  z.string(),
-  z.unknown(),
-);
+export const exifRecordSchema = z.record(z.string(), z.unknown());
 
 export const metadataMapSchema = z.record(z.string(), exifRecordSchema);
 export const embeddingMapSchema = z.record(z.string(), z.array(z.number()));

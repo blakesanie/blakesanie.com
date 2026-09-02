@@ -48,9 +48,7 @@ export function toTenths(num: number) {
                 <p class="timeRange">
                   {position.startMonth} {position.startYear}
                   {" - "}
-                  {position.endMonth
-                    ? `${position.endMonth} ${position.endYear}`
-                    : "Present"}
+                  {position.endMonth ? `${position.endMonth} ${position.endYear}` : "Present"}
                 </p>
                 <ul>
                   {position.bullets.map((bullet) => (
@@ -100,9 +98,7 @@ export function toTenths(num: number) {
       <article>
         <h4>
           <strong>Technical Skills</strong>: {
-            resume.skills
-              .map((skill) => `${skill.domain} (${skill.skills.join(", ")})`)
-              .join(", ")
+            resume.skills.map((skill) => `${skill.domain} (${skill.skills.join(", ")})`).join(", ")
           }
         </h4>
       </article>

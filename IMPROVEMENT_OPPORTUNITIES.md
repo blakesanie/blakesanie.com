@@ -24,16 +24,16 @@ That structure is optional; the non-optional part is making ownership, build bou
 
 ## Current inventory
 
-| Area | Current state | Main concern |
-| --- | --- | --- |
-| Astro site | Static output, roughly 20 page files plus shared components | Page-level data and browser scripts are tightly coupled to rendering |
-| Photography | Dynamic image globs, EXIF, embeddings, map thumbnails, R2 uploads, browser CLIP search | Very expensive and difficult to test or reason about |
-| Standalone projects | Many hand-written apps in `public/` (`periodicTable`, `planets`, `spotifyMosaic`, `401k`, etc.) | No common lifecycle, ownership, or quality gate |
-| Next app | Separate `next/` application copied into Astro `dist/` during CI | Build errors and lint failures are explicitly ignored |
-| API | Both `api/nowPlaying.js` and `functions/api/nowPlaying.js` exist | Duplicate implementations can drift and have different runtime assumptions |
-| Build plugins | Local `plugins/vite-image-pipeline` is consumed through its built `dist/` output | Source/build artifact contract is unclear |
-| Deployment | GitHub Actions clones a private photo repo, builds Astro and Next, then deploys | Trigger, credentials, and artifact ownership are fragile |
-| Data/tooling | Large JSON, CSV, HAR, notebooks, PDFs, and generated/static files are checked in | Repository size and reviewability will degrade over time |
+| Area                | Current state                                                                                   | Main concern                                                               |
+| ------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Astro site          | Static output, roughly 20 page files plus shared components                                     | Page-level data and browser scripts are tightly coupled to rendering       |
+| Photography         | Dynamic image globs, EXIF, embeddings, map thumbnails, R2 uploads, browser CLIP search          | Very expensive and difficult to test or reason about                       |
+| Standalone projects | Many hand-written apps in `public/` (`periodicTable`, `planets`, `spotifyMosaic`, `401k`, etc.) | No common lifecycle, ownership, or quality gate                            |
+| Next app            | Separate `next/` application copied into Astro `dist/` during CI                                | Build errors and lint failures are explicitly ignored                      |
+| API                 | Both `api/nowPlaying.js` and `functions/api/nowPlaying.js` exist                                | Duplicate implementations can drift and have different runtime assumptions |
+| Build plugins       | Local `plugins/vite-image-pipeline` is consumed through its built `dist/` output                | Source/build artifact contract is unclear                                  |
+| Deployment          | GitHub Actions clones a private photo repo, builds Astro and Next, then deploys                 | Trigger, credentials, and artifact ownership are fragile                   |
+| Data/tooling        | Large JSON, CSV, HAR, notebooks, PDFs, and generated/static files are checked in                | Repository size and reviewability will degrade over time                   |
 
 ## Priority model
 

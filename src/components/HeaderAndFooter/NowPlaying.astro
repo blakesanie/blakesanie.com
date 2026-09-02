@@ -169,8 +169,7 @@ const { shadowColor, textColor } = Astro.props;
   }
 
   async function setNowPlaying(skipCache = false) {
-    const { name, live, link, album, artists, image } =
-      await getNowPlaying(skipCache);
+    const { name, live, link, album, artists, image } = await getNowPlaying(skipCache);
     const songTitle = document.getElementById("songTitle");
     const songArtist = document.getElementById("songArtist");
     const songAlbum = document.getElementById("songAlbum");
@@ -182,7 +181,8 @@ const { shadowColor, textColor } = Astro.props;
       !(songAlbum instanceof HTMLElement) ||
       !(albumCover instanceof HTMLImageElement) ||
       !(nowPlaying instanceof HTMLAnchorElement)
-    ) return;
+    )
+      return;
     songTitle.innerText = name;
     songArtist.innerText = artists.join(", ");
     songAlbum.innerText = album;
@@ -233,7 +233,7 @@ const { shadowColor, textColor } = Astro.props;
     {
       // Offset to trigger the callback 20px *after* the element is in full view
       rootMargin: "-100px 0px -100px 0px", // Top offset of 20px
-    }
+    },
   );
 
   const targetElement = document.getElementById("albumCover");

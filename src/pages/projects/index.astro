@@ -13,7 +13,6 @@ const imagesGlob = import.meta.glob<{ default: ImageMetadata }>(
   "/src/assets/images/**/*.{png,jpg,jpeg}",
 );
 
-
 function toFragrment(str: string) {
   return str.split("(")[0].toLowerCase().replaceAll(" ", "-");
 }
@@ -26,24 +25,20 @@ function toFragrment(str: string) {
 >
   <h1>Projects</h1>
   <p>
-    My software engineering journey is rooted in hands-on projects and driven by
-    a passion for continuous growth. Dive into my portfolio of applications,
-    services, and research spanning Full-Stack Development, Data Engineering,
-    and Machine Learning. From writing my first 'Hello World!' at 14 to earning
-    a Master's in Computer Science, these projects reflect milestones in my
+    My software engineering journey is rooted in hands-on projects and driven by a passion for
+    continuous growth. Dive into my portfolio of applications, services, and research spanning
+    Full-Stack Development, Data Engineering, and Machine Learning. From writing my first 'Hello
+    World!' at 14 to earning a Master's in Computer Science, these projects reflect milestones in my
     skills, curiosity, and ever-expanding impact.
   </p>
   <div id="projects">
     {
       projects.map(({ title, id, description, tech, ...project }) => {
-        const defaultLink =
-          project.links && project.links[0] && project.links[0].href;
+        const defaultLink = project.links && project.links[0] && project.links[0].href;
 
         // Resolve target image module dynamically from global build manifest
         const imageSrc =
-          project.image && imagesGlob[project.image]
-            ? imagesGlob[project.image]()
-            : null;
+          project.image && imagesGlob[project.image] ? imagesGlob[project.image]() : null;
 
         return (
           <div class="project" id={id || toFragrment(title)}>

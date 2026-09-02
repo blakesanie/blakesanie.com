@@ -46,11 +46,7 @@ function createShader(gl: WebGLRenderingContext, type: number, source: string) {
   return shader;
 }
 
-function createProgram(
-  gl: WebGLRenderingContext,
-  vsSrc: string,
-  fsSrc: string
-) {
+function createProgram(gl: WebGLRenderingContext, vsSrc: string, fsSrc: string) {
   const vs = createShader(gl, gl.VERTEX_SHADER, vsSrc);
   const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSrc);
   const program = gl.createProgram()!;
@@ -80,7 +76,7 @@ gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(
   gl.ARRAY_BUFFER,
   new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-  gl.STATIC_DRAW
+  gl.STATIC_DRAW,
 );
 
 const texCoordBuffer = gl.createBuffer();
@@ -88,7 +84,7 @@ gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
 gl.bufferData(
   gl.ARRAY_BUFFER,
   new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]),
-  gl.STATIC_DRAW
+  gl.STATIC_DRAW,
 );
 
 // Uniforms
@@ -150,8 +146,7 @@ function computeScale(samplesPerSide = 100) {
     const dx = x - params.cx;
     const dy = y - params.cy;
     const r2 = dx * dx + dy * dy;
-    const radial =
-      1 + params.k1 * r2 + params.k2 * r2 * r2 + params.k3 * r2 * r2 * r2;
+    const radial = 1 + params.k1 * r2 + params.k2 * r2 * r2 + params.k3 * r2 * r2 * r2;
 
     const xDist = dx * radial;
     const yDist = dy * radial;
@@ -230,9 +225,7 @@ window.addEventListener("resize", resizeGrid);
 
 // --- REVERSE GRID ---
 const sourceImg = document.getElementById("sourceImage") as HTMLImageElement;
-const reverseGridCanvas = document.getElementById(
-  "beforeGrid"
-) as HTMLCanvasElement;
+const reverseGridCanvas = document.getElementById("beforeGrid") as HTMLCanvasElement;
 const rctx = reverseGridCanvas.getContext("2d")!;
 
 function resizeReverseGrid() {
@@ -246,8 +239,7 @@ function distortPoint(x: number, y: number): [number, number] {
   const dx = x - params.cx;
   const dy = y - params.cy;
   const r2 = dx * dx + dy * dy;
-  const radial =
-    1 + params.k1 * r2 + params.k2 * r2 * r2 + params.k3 * r2 * r2 * r2;
+  const radial = 1 + params.k1 * r2 + params.k2 * r2 * r2 + params.k3 * r2 * r2 * r2;
 
   const xDist = dx * radial;
   const yDist = dy * radial;
@@ -318,14 +310,8 @@ function resizeStage() {
   const workingWidth = window.innerWidth;
   const workingHeight = window.innerHeight - controlsMinHeight;
   // const workingAspectRatio = workingWidth / workingHeight
-  const bestImageWidthWhenStacked = Math.min(
-    workingWidth,
-    (workingHeight / 2) * aspectRatio
-  );
-  const bestImageWidthWhenFlat = Math.min(
-    workingWidth / 2,
-    workingHeight * aspectRatio
-  );
+  const bestImageWidthWhenStacked = Math.min(workingWidth, (workingHeight / 2) * aspectRatio);
+  const bestImageWidthWhenFlat = Math.min(workingWidth / 2, workingHeight * aspectRatio);
   const stacked = bestImageWidthWhenStacked > bestImageWidthWhenFlat;
   if (stacked) {
     imagesElement.classList.add("col");
@@ -342,8 +328,7 @@ window.addEventListener("resize", resizeStage);
 
 // file handling
 
-const fileInput =
-  document.querySelector<HTMLInputElement>('input[type="file"]');
+const fileInput = document.querySelector<HTMLInputElement>('input[type="file"]');
 
 fileInput?.addEventListener("change", (event) => {
   const target = event.target as HTMLInputElement;
@@ -391,7 +376,7 @@ function exportFullRes() {
   tmpGl.bufferData(
     tmpGl.ARRAY_BUFFER,
     new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-    tmpGl.STATIC_DRAW
+    tmpGl.STATIC_DRAW,
   );
 
   const texBuf = tmpGl.createBuffer();
@@ -399,30 +384,15 @@ function exportFullRes() {
   tmpGl.bufferData(
     tmpGl.ARRAY_BUFFER,
     new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]),
-    tmpGl.STATIC_DRAW
+    tmpGl.STATIC_DRAW,
   );
 
   // Upload original image as texture
   const tex = tmpGl.createTexture();
   tmpGl.bindTexture(tmpGl.TEXTURE_2D, tex);
-  tmpGl.texImage2D(
-    tmpGl.TEXTURE_2D,
-    0,
-    tmpGl.RGBA,
-    tmpGl.RGBA,
-    tmpGl.UNSIGNED_BYTE,
-    originalImage
-  );
-  tmpGl.texParameteri(
-    tmpGl.TEXTURE_2D,
-    tmpGl.TEXTURE_WRAP_S,
-    tmpGl.CLAMP_TO_EDGE
-  );
-  tmpGl.texParameteri(
-    tmpGl.TEXTURE_2D,
-    tmpGl.TEXTURE_WRAP_T,
-    tmpGl.CLAMP_TO_EDGE
-  );
+  tmpGl.texImage2D(tmpGl.TEXTURE_2D, 0, tmpGl.RGBA, tmpGl.RGBA, tmpGl.UNSIGNED_BYTE, originalImage);
+  tmpGl.texParameteri(tmpGl.TEXTURE_2D, tmpGl.TEXTURE_WRAP_S, tmpGl.CLAMP_TO_EDGE);
+  tmpGl.texParameteri(tmpGl.TEXTURE_2D, tmpGl.TEXTURE_WRAP_T, tmpGl.CLAMP_TO_EDGE);
   tmpGl.texParameteri(tmpGl.TEXTURE_2D, tmpGl.TEXTURE_MIN_FILTER, tmpGl.LINEAR);
 
   // Uniforms
@@ -490,9 +460,7 @@ function renderLensImg() {
   lensImg.style.width = newWidth + "%";
 }
 
-const opticalWidthSlider = document.getElementById(
-  "opticalWidth"
-) as HTMLInputElement;
+const opticalWidthSlider = document.getElementById("opticalWidth") as HTMLInputElement;
 const opticalWidthVal = document.getElementById("opticalWidthVal");
 
 if (opticalWidthSlider && opticalWidthVal) {
@@ -534,14 +502,7 @@ function loadImg(src: string) {
     const texture = gl.createTexture();
     gl.viewport(0, 0, displayWidth, displayHeight);
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(
-      gl.TEXTURE_2D,
-      0,
-      gl.RGBA,
-      gl.RGBA,
-      gl.UNSIGNED_BYTE,
-      offscreen
-    );
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, offscreen);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
