@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-import redirects from "/src/redirects.json";
+import redirects from "../../redirects.json";
 ---
 
 <a id="newsCTA" href={redirects.newsletter.href} target="_blank"
@@ -14,7 +14,7 @@ import redirects from "/src/redirects.json";
 <script>
   const element = document.getElementById("newsCTA");
   const stored = localStorage.getItem("closeNLUntil");
-  const parsedDate = new Date(stored);
+  const parsedDate = stored ? new Date(stored) : new Date(0);
   const now = new Date();
   if (now > parsedDate) {
     setTimeout(() => {

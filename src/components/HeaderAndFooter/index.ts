@@ -20,7 +20,9 @@ const {
 // $$ |$$$$ |/$$$$$$$ |  $$ $$/         $$ |  $$ |$$ \__$$ |  $$ $$/  $$$$$$$$/ $$ |
 // $$ | $$$ |$$    $$ |   $$$/          $$ |  $$ |$$    $$/    $$$/   $$       |$$ |
 // $$/   $$/  $$$$$$$/     $/           $$/   $$/  $$$$$$/      $/     $$$$$$$/ $$/
-const nav = document.querySelector("nav");
+const nav = document.querySelector<HTMLElement>("nav");
+const header = document.querySelector<HTMLElement>("header");
+if (!nav || !header) throw new Error("Header navigation is not mounted");
 const anchors: NodeListOf<HTMLAnchorElement> = document.querySelectorAll(
   "nav .navSection:not(#nowPlayingSection) a",
 );
@@ -28,15 +30,15 @@ const mouseOffSections = document.querySelectorAll("nav");
 const mouseNoFocusSections = document.querySelectorAll("#nowPlayingSection");
 
 // some div .navHoverZone may exist within a nav anchor element. Get that here
-let activeNavHoverZone: HTMLElement = document.querySelector(
+const activeNavHoverZone = document.querySelector<HTMLElement>(
   ".active .navHoverZone",
 );
-let activeAnchor = activeNavHoverZone?.parentElement as HTMLAnchorElement;
-let hoverZone = activeAnchor
+let activeAnchor = activeNavHoverZone?.parentElement as HTMLAnchorElement | null;
+const hoverZone: HTMLElement = (activeAnchor
   ? hoverZoneBehind
-    ? nav.insertBefore(activeNavHoverZone, nav.firstChild)
-    : nav.appendChild(activeNavHoverZone)
-  : (document.querySelector(".navHoverZone") as HTMLElement);
+    ? nav.insertBefore(activeNavHoverZone!, nav.firstChild)
+    : nav.appendChild(activeNavHoverZone!)
+  : document.querySelector<HTMLElement>(".navHoverZone"))!;
 
 if (activeAnchor) {
   positionHoverAtAnchor(activeAnchor);
@@ -45,14 +47,14 @@ if (activeAnchor) {
 let menuExpanded = false;
 
 for (let i = 0; i < anchors.length; i++) {
-  anchors[i].addEventListener("mouseenter", (e) => {
+  anchors[i].addEventListener("mouseenter", () => {
     moveHoverToAnchor(anchors[i]);
   });
   anchors[i].addEventListener("mousemove", (e) => {
     e.stopPropagation();
   });
 
-  anchors[i].addEventListener("click", (e) => {
+  anchors[i].addEventListener("click", () => {
     activeAnchor = anchors[i];
     moveHoverToAnchor(anchors[i]);
   });
@@ -60,10 +62,10 @@ for (let i = 0; i < anchors.length; i++) {
 
 // release hover effect back to resting state when leaving specified area
 for (let i = 0; i < mouseOffSections.length; i++) {
-  mouseOffSections[i].addEventListener("mouseleave", (e) => {
+  mouseOffSections[i].addEventListener("mouseleave", () => {
     moveHoverToAnchor(undefined);
   });
-  mouseOffSections[i].addEventListener("mousemove", (e) => {
+  mouseOffSections[i].addEventListener("mousemove", () => {
     if (window.innerWidth <= mobileMaxWidth) {
       moveHoverToAnchor(undefined);
     }
@@ -71,15 +73,15 @@ for (let i = 0; i < mouseOffSections.length; i++) {
 }
 // some elements within the area may not need a hover focus, so explicitly call them out here
 for (let i = 0; i < mouseNoFocusSections.length; i++) {
-  mouseNoFocusSections[i].addEventListener("mouseenter", (e) => {
+  mouseNoFocusSections[i].addEventListener("mouseenter", () => {
     moveHoverToAnchor(undefined);
   });
 }
 
-let hoveFadeOutTimeout: NodeJS.Timeout;
+let hoveFadeOutTimeout: ReturnType<typeof setTimeout>;
 
-function moveHoverToAnchor(anchor: HTMLAnchorElement) {
-  if (!anchor && hoverZone) {
+function moveHoverToAnchor(anchor: HTMLAnchorElement | undefined) {
+  if (!anchor) {
     if (!activeAnchor) {
       // just fade out
       clearTimeout(hoveFadeOutTimeout);
@@ -138,8 +140,8 @@ window.addEventListener("resize", function () {
 let prevScroll = 0;
 let prevScrollTimestamp = 0;
 let menuIsDown = false;
-var existingInterval;
-const moveHeaderDown = (isDown, isAnimated) => {
+let existingInterval: ReturnType<typeof setTimeout> | undefined;
+const moveHeaderDown = (isDown: boolean, isAnimated: boolean) => {
   header.style.position = "fixed";
   if (existingInterval) {
     clearTimeout(existingInterval);
@@ -211,8 +213,6 @@ window.addEventListener("scroll", () => {
 //                                                                      $$ |
 //                                                                      $$/
 // let menuExpanded = false;
-const header = document.querySelector("header");
-
 const hamburger = document.getElementById("hamburger");
 
 // let pendingHamburgerClick = false;

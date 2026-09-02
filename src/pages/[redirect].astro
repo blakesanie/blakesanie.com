@@ -1,6 +1,7 @@
 ---
 import redirects from "../redirects.json";
 import HeaderAndFooter from "../components/HeaderAndFooter/index.astro";
+import type { RedirectMap } from "../types/redirects";
 
 export function getStaticPaths() {
   return Object.keys(redirects).map((endpoint) => {
@@ -13,7 +14,9 @@ export function getStaticPaths() {
 }
 
 const { redirect } = Astro.params;
-const { title, href, short, internal } = redirects[redirect];
+const redirectData = redirect ? (redirects as RedirectMap)[redirect] : undefined;
+if (!redirectData) return Astro.redirect("/");
+const { title, href, short } = redirectData;
 ---
 
 <HeaderAndFooter
@@ -28,7 +31,7 @@ const { title, href, short, internal } = redirects[redirect];
   <h1>Redirecting to {title}</h1>
 </HeaderAndFooter>
 
-<script
+<script is:inline
   define:vars={{
     href: href,
   }}

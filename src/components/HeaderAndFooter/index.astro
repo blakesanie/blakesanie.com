@@ -1,14 +1,11 @@
 ---
-import { GoogleFontsOptimizer } from "astro-google-fonts-optimizer";
 import CommonHead from "./CommonHead.astro";
-import { SEO } from "astro-seo";
-import { renderImg } from "astro-imagetools/api";
 import HoverZone from "./HoverZone.astro";
 import { Icon } from "astro-icon/components";
 import NavLink from "./NavLink.astro";
 import NowPlaying from "./NowPlaying.astro";
 import SoundBars from "./SoundBars.astro";
-import { HeaderVars } from "./shared";
+import type { HeaderVars } from "./shared";
 // import Newsletter from "../Newsletter/index.astro";
 const mobileMaxWidth = 800; // still manually declared in media query declaration
 const headerWidth = 130;
@@ -849,7 +846,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   }
 </style>
 
-<script
+<script is:inline
   define:vars={{
     headerVars,
   }}

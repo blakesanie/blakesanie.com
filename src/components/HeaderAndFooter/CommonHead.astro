@@ -7,7 +7,6 @@ import { Resvg } from "@resvg/resvg-js";
 import fs from "fs";
 import { getImage } from "astro:assets";
 import path from "node:path";
-import type { GetImageResult } from "astro";
 import sharp from "sharp";
 
 Astro.props.fontUrl =
@@ -60,7 +59,6 @@ if (Astro.props.image) {
 
   const width = 1200;
   const height = 900;
-  const format = "webp";
   const quality = 75;
 
   const svg = await satori(
@@ -130,7 +128,7 @@ if (Astro.props.image) {
           height: "100%",
         },
       },
-    },
+    } as any,
     {
       width: width,
       height: height,
@@ -328,15 +326,15 @@ const description =
        ]
     }</script>`}
     />
-    <script defer src="/_vercel/insights/script.js"></script>
+    <script is:inline defer src="/_vercel/insights/script.js"></script>
     <!-- Google tag (gtag.js) -->
-    <script
+    <script is:inline
       async
       src="https://www.googletagmanager.com/gtag/js?id=UA-164774604-1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
+      function gtag(...args: unknown[]) {
+        window.dataLayer.push(args);
       }
       gtag("js", new Date());
 

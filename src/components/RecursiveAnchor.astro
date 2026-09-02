@@ -17,10 +17,10 @@ for (const pair of Object.entries(Astro.props.tree)) {
 }
 // console.log(links, dirs);
 links.sort((a, b) => {
-  return a.name - b.name;
+  return a.name.localeCompare(b.name);
 });
 dirs.sort((a, b) => {
-  return a.name - b.name;
+  return a.name.localeCompare(b.name);
 });
 ---
 
