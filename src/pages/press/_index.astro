@@ -1,6 +1,14 @@
 ---
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import Substack from "../../components/Substack.astro";
+import Image from "../../components/Image/index.astro";
+
+interface PressLink {
+  link: string;
+  image?: string;
+  date?: string;
+  title: string;
+}
 
 const links = [
   {
@@ -32,24 +40,24 @@ const links = [
   },
 ];
 
-async function processLink({ link, image, date, title }) {
+async function processLink({ link, image, date, title }: PressLink) {
   let site = link.split("://")[1].split("/")[0];
   let couldFetch = true;
-  let res;
+  let res: Response | undefined;
   try {
     res = await fetch(link);
   } catch (e) {
     console.log("failed to process link", link);
     couldFetch = false;
   }
-  if (couldFetch) {
+  if (couldFetch && res) {
     const text = await res.text();
     //   console.log(text);
     title = text.split("<title>")[1].split("</title>")[0];
     title = title.replace(" on LinkedIn", "");
     site = site.replace("www.", "");
     //   article:published_time
-    function getContentProperty(text, query) {
+    function getContentProperty(text: string, query: string): string | undefined {
       const split = text.split(query);
       if (split.length == 1) return;
       const afterContentIndex = split[1].indexOf('content="');
@@ -109,13 +117,12 @@ const press = await Promise.all(links.map((link) => processLink(link)));
             <p class="title">{title}</p>
             <p class="site">{site}</p>
             <p class="date">{date}</p>
-            <Img
+            <Image
               src={"/src/assets/images/press/" + image}
               alt={""}
               loading="lazy"
-              placeholder="blurred"
+              placeholder="blur"
               format="webp"
-              breakpoints={[800]}
               quality={70}
             />
           </a>

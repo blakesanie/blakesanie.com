@@ -6,7 +6,10 @@ import RecursiveAnchor from "../../components/RecursiveAnchor.astro";
 const files = await glob("public/**/*");
 // console.log(files);
 
-const tree = {};
+interface PublicTree {
+  [key: string]: string | PublicTree;
+}
+const tree: PublicTree = {};
 
 for (let file of files) {
   const stats = fs.lstatSync(file);
@@ -21,7 +24,9 @@ for (let file of files) {
     if (!subtree[part]) {
       subtree[part] = {};
     }
-    subtree = subtree[part];
+    const next = subtree[part];
+    if (typeof next !== "object") break;
+    subtree = next;
   }
   subtree[parts[parts.length - 1]] = "/" + file;
 }

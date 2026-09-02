@@ -1,12 +1,12 @@
 ---
 import resume from "./resume";
 
-export function formatPhone(num) {
+export function formatPhone(num: number) {
   const s = "" + num;
   return `(${s.substring(0, 3)}) ${s.substring(s.length - 7, s.length - 4)}-${s.substring(s.length - 4)}`;
 }
 
-export function toTenths(num) {
+export function toTenths(num: number) {
   if (num % 1 == 0) {
     return "" + num + ".0";
   }

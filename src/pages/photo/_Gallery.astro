@@ -3,7 +3,6 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import { getImage } from "astro:assets";
 import Image from "../../components/Image/index.astro";
 import MapGallery from "./_MapGallery.astro";
-import { encodeEmbeddings } from "./_utils";
 import Toggle from "../../components/Toggle/index.astro";
 import TextInput from "../../components/TextInput/index.astro";
 import Select from "../../components/Select/index.astro";
@@ -12,9 +11,7 @@ import {
   getMetadata,
   uploadRemoteImages,
 } from "vite-image-pipeline";
-import path from "path";
 import type { ImageMetadata as AstroImageMetadata } from "astro";
-import { experimental_AstroContainer } from "astro/container";
 import {
   getSharedProcessedImage,
   getSharedMapImage,
@@ -115,7 +112,7 @@ if (allowDownload) {
       r2SecretKey: import.meta.env.R2_SECRET_ACCESS_KEY,
       outDir: "dist",
     },
-    filepathDownloadPairs.map(([key, value]) => value),
+    filepathDownloadPairs.map(([, value]) => value),
   );
   downloadUrls = Object.fromEntries(
     filepathDownloadPairs.map(([filepath, _], index) => [
@@ -681,7 +678,7 @@ console.log("end of Gallery frontmatter");
     }
   }
 </style>
-<script define:vars={{
+<script is:inline define:vars={{
   allowDeepLink: Astro.props.allowDeepLink
   }}>
 window.allowDeepLink = allowDeepLink;

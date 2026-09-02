@@ -537,7 +537,7 @@ function toFragrment(str: string) {
               {tech && (
                 <div class="tech">
                   {tech.map(({ icon, name }) => {
-                    return <Icon name={icon} tech={name} size="1.8em" />;
+                    return <Icon name={icon} data-tech={name} size="1.8em" />;
                   })}
                   <div class="selectedTech" />
                 </div>
@@ -693,10 +693,10 @@ function toFragrment(str: string) {
   const techIcons = document.querySelectorAll(".tech svg");
 
   for (let i = 0; i < techIcons.length; i++) {
-    function showTech(e) {
+    function showTech(e: Event) {
       const target = e.target;
-      if (target) {
-        const attr = target.getAttribute("tech");
+      if (target instanceof Element) {
+        const attr = target.getAttribute("data-tech");
         const selected = target.parentNode?.querySelector(".selectedTech");
         if (attr && selected) {
           selected.innerHTML = attr;
@@ -721,8 +721,8 @@ function toFragrment(str: string) {
     });
   }
 
-  const copyIcons = {};
-  const checkIcons = {};
+  const copyIcons: Record<string, HTMLElement> = {};
+  const checkIcons: Record<string, HTMLElement> = {};
 
   const titleIcons = document.querySelectorAll("h2 svg");
   for (let i = 0; i < titleIcons.length; i++) {
@@ -738,7 +738,7 @@ function toFragrment(str: string) {
     titleIcon.addEventListener("click", () => {
       const url = window.location.href.split("#")[0] + "#" + id;
       navigator.clipboard.writeText(url);
-      history.pushState(null, null, url);
+      history.pushState(null, "", url);
       for (const id2 in copyIcons) {
         if (id == id2) {
           checkIcons[id].style.display = "block";

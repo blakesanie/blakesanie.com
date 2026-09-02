@@ -166,7 +166,7 @@ const markupData = [
     </div>
   </HomePageSection>
   {
-    markupData.map((data, i) => {
+    markupData.map((data) => {
       return (
         <HomePageSection
           imageSrc={data.imageSrc}
@@ -280,7 +280,7 @@ const markupData = [
   const h1 = document.querySelector("h1");
 
   setTimeout(() => {
-    const typed = new Typed("#typed", {
+    new Typed("#typed", {
       strings: ["^500 Scroll to learn more..."],
       typeSpeed: 50,
       backSpeed: 40,
