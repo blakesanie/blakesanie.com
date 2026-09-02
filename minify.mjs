@@ -2,26 +2,23 @@ import fs from 'fs/promises';
 import path from 'path';
 import { minify } from 'html-minifier-terser';
 
+/** @typedef {{ success: true, file: string, sizeBefore: number, sizeAfter: number }} MinifySuccess */
+/** @typedef {{ success: false, file: string, error: string }} MinifyFailure */
+/** @typedef {MinifySuccess | MinifyFailure} MinifyResult */
+
 // Asynchronously discover all HTML files recursively
 const getFilesAsync = async (dir) => {
-    try {
-        const list = await fs.readdir(dir);
-        const subDirsAndFiles = await Promise.all(
-            list.map(async (file) => {
-                const fullPath = path.join(dir, file);
-                const stat = await fs.stat(fullPath);
-                if (stat.isDirectory()) {
-                    return getFilesAsync(fullPath);
-                } else if (file.endsWith('.html')) {
-                    return fullPath;
-                }
-                return [];
-            })
-        );
-        return subDirsAndFiles.flat();
-    } catch {
-        return [];
-    }
+    const list = await fs.readdir(dir);
+    const subDirsAndFiles = await Promise.all(
+        list.map(async (file) => {
+            const fullPath = path.join(dir, file);
+            const stat = await fs.stat(fullPath);
+            if (stat.isDirectory()) return getFilesAsync(fullPath);
+            if (file.endsWith('.html')) return [fullPath];
+            return [];
+        })
+    );
+    return subDirsAndFiles.flat();
 };
 
 const formatBytes = (bytes) => {
@@ -32,17 +29,26 @@ const formatBytes = (bytes) => {
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 };
 
+const isValidHtmlDocument = (html) =>
+    html.includes('<html') && html.includes('</html>') && html.trim().length > 0;
+
 const runMinifierPipeline = async () => {
     const files = await getFilesAsync('./dist');
+    if (files.length === 0) throw new Error('[minify] No generated HTML files found in dist.');
 
     console.log(`\x1b[36m[minify]\x1b[0m Starting advanced HTML, CSS, and JS minification...\n`);
 
     // Map each file to an isolated execution task that returns its own metrics
+    /** @type {Promise<MinifyResult>[]} */
     const tasks = files.map(async (file) => {
         const relativePath = file.replace(/^.\/dist\//, '');
         try {
             const content = await fs.readFile(file, 'utf8');
             const sizeBefore = Buffer.byteLength(content, 'utf8');
+
+            if (!isValidHtmlDocument(content)) {
+                throw new Error('Input is not a complete HTML document');
+            }
 
             const minified = await minify(content, {
                 collapseWhitespace: true,
@@ -107,7 +113,6 @@ const runMinifierPipeline = async () => {
                         booleans: true,
                         sequences: true,
                         unsafe_arrows: true,
-                        drop_console: true,
                         drop_debugger: true
                     },
                     format: { comments: false }
@@ -115,6 +120,9 @@ const runMinifierPipeline = async () => {
             });
 
             const sizeAfter = Buffer.byteLength(minified, 'utf8');
+            if (!isValidHtmlDocument(minified)) {
+                throw new Error('Minified output is not a complete HTML document');
+            }
             await fs.writeFile(file, minified);
 
             return {
@@ -127,7 +135,7 @@ const runMinifierPipeline = async () => {
             return {
                 success: false,
                 file: relativePath,
-                error: err.message.split('\n')[0]
+                error: err instanceof Error ? err.message.split('\n')[0] : String(err)
             };
         }
     });
@@ -171,6 +179,14 @@ const runMinifierPipeline = async () => {
     console.log(`Total bundle size before: ${formatBytes(totalBytesBefore)}`);
     console.log(`Total bundle size after : ${formatBytes(totalBytesAfter)}`);
     console.log(`Total space saved        : \x1b[32m${formatBytes(totalSavings)} (-${totalPercentSavings}%)\x1b[0m\n`);
+
+    const canary = results.find((result) => result.file === 'index.html');
+    if (!canary || !canary.success) {
+        throw new Error('[minify] Canary route dist/index.html was not minified successfully.');
+    }
+    if (failCount > 0) {
+        throw new Error(`[minify] ${failCount} HTML file(s) failed minification; release aborted.`);
+    }
 };
 
 await runMinifierPipeline();
