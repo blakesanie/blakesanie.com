@@ -6,7 +6,7 @@ deployment client used by this repository.
 ## Production flow
 
 1. Download or otherwise prepare the local image and photo data required by the photo pages.
-2. Run `npm run deploy` from the repository root.
+2. Run `pnpm deploy` from the repository root.
 3. The script builds the Astro output, runs the post-build minification, and publishes `dist/` to
    the `main` branch of the Cloudflare Pages project defined by `wrangler.toml`.
 
@@ -16,13 +16,13 @@ environment because the local image assets are not available there.
 ## Local prerequisites
 
 - Node.js matching `.nvmrc`
-- Installed npm dependencies via `npm ci`
+- Installed pnpm dependencies via `pnpm install --frozen-lockfile`
 - Wrangler authentication for the Cloudflare account
 - Locally available image/photo data required by the build
 - Local values from `.env.example` for build-time integrations
 - Cloudflare Pages Function values from `.dev.vars.example`
 
-Use `npm run build` when you only need to produce or inspect `dist/` without publishing it. Pull
+Use `pnpm build` when you only need to produce or inspect `dist/` without publishing it. Pull
 request validation belongs in a separate GitHub Actions quality workflow and must not publish
 production assets.
 

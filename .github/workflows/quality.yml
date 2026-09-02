@@ -24,34 +24,39 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: npm
+          cache: pnpm
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.24.0
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Check formatting
-        run: npm run format:check
+        run: pnpm format:check
 
       - name: Typecheck Astro
-        run: npm run typecheck
+        run: pnpm typecheck
 
       - name: Lint
-        run: npm run lint
+        run: pnpm lint
 
       - name: Run tests and smoke checks
-        run: npm test
+        run: pnpm test
 
       - name: Build static site
-        run: npm run build
+        run: pnpm build
 
       - name: Typecheck, lint, and build Next app when present
         if: ${{ hashFiles('next/package.json') != '' }}
         working-directory: next
         run: |
-          npm ci
-          npm run typecheck --if-present
-          npm run lint --if-present
-          npm run build --if-present
+          pnpm install --frozen-lockfile
+          pnpm typecheck --if-present
+          pnpm lint --if-present
+          pnpm build --if-present
 
       - name: Audit dependencies
         run: npm audit --audit-level=high
