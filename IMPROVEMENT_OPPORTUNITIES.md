@@ -1,6 +1,6 @@
 # blakesanie.com improvement opportunities
 
-Audit date: 2026-09-02  
+Audit date: 2026-09-02
 Scope: the root Astro application, `src/`, `public/`, `api/`, `functions/`, `next/`, `plugins/`, build/deploy configuration, and checked-in data/tooling.
 
 ## Executive summary
@@ -315,4 +315,3 @@ The repository is in a strong long-term state when:
 - Third-party browser code is isolated, CSP-restricted, lazy-loaded where appropriate, and covered by accessibility/smoke tests.
 - A new contributor can run the site with fixtures and understand how a change reaches production from the README.
 - Legacy applications and experimental routes have an explicit lifecycle instead of silently sharing the production build.
-
