@@ -1,0 +1,6 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "blakesanie-com"
+compatibility_date = "2026-06-24"
+
+# The directory containing your compiled static frontend assets
+pages_build_output_dir = "./dist"

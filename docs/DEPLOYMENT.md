@@ -19,7 +19,17 @@ environment because the local image assets are not available there.
 - Installed npm dependencies via `npm ci`
 - Wrangler authentication for the Cloudflare account
 - Locally available image/photo data required by the build
+- Local values from `.env.example` for build-time integrations
+- Cloudflare Pages Function values from `.dev.vars.example`
 
 Use `npm run build` when you only need to produce or inspect `dist/` without publishing it. Pull
 request validation belongs in a separate GitHub Actions quality workflow and must not publish
 production assets.
+
+## Secrets
+
+Never place secret values in `wrangler.toml`, source files, or committed environment files. Use
+`.env` for local build-time values and `.dev.vars` for local Pages Function bindings. Configure
+the three Spotify values as Cloudflare Pages production secrets before publishing the API
+function. The Google Maps key is intentionally browser-visible; restrict it by HTTP referrer,
+API, and quota because it is embedded into generated HTML at build time.

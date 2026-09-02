@@ -16,7 +16,11 @@ pnpm-debug.log*
 
 # environment variables
 .env
-.env.production
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
 
 # macOS-specific files
 .DS_Store
@@ -35,7 +39,6 @@ public/assets/imageEmbeddings*.json
 __pycache__/
 
 icloudImages
-wrangler.toml
 .satori-cache
 public/og-images
 .wrangler
