@@ -3,6 +3,15 @@
   "type": "module",
   "version": "0.0.1",
   "packageManager": "pnpm@11.24.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "onnxruntime-node",
+      "protobufjs",
+      "sharp",
+      "workerd"
+    ]
+  },
   "scripts": {
     "dev": "astro dev --host --port $PORT",
     "dev3000": "astro dev --host --port 3000",
