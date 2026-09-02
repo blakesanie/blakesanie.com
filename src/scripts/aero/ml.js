@@ -22,44 +22,13 @@ window.resumeML = async function () {
   window.mlRunning = false;
 };
 
-function get1dGaussianKernel(sigma, size) {
-  // Generate a 1d gaussian distribution across a range
-  var x = tf.range(Math.floor(-size / 2) + 1, Math.floor(size / 2) + 1);
-  x = tf.pow(x, 2);
-  x = tf.exp(x.div(-2.0 * (sigma * sigma)));
-  x = x.div(tf.sum(x));
-  return x;
-}
-
-function get2dGaussianKernel(size, sigma) {
-  sigma = sigma || 0.3 * ((size - 1) * 0.5 - 1) + 0.8;
-  return tf.tidy(() => {
-    // This default is to mimic opencv2.
-
-    var kerne1d = get1dGaussianKernel(sigma, size);
-    return tf.outerProduct(kerne1d, kerne1d).expandDims(2).expandDims(2);
-  });
-}
-
-function blurImage(image, kernel) {
-  const asFloat = tf.cast(image, "float32");
-  tf.dispose(image);
-  const conved = tf.depthwiseConv2d(asFloat, kernel, 1, "same");
-  tf.dispose(asFloat);
-  const greater = conved.greater(0.5);
-  tf.dispose(conved);
-  return greater;
-}
-
-const kernel = get2dGaussianKernel(20, 10);
-
 async function captureIteration() {
   console.log("capturing from cam", cam);
   let frame;
   frame = await cam.capture(); //tf.browser.fromPixels(document.querySelector("img"));
   console.log("got frame!");
   // debugger;
-  const [height, width, depth] = frame.shape;
+  const [height, width] = frame.shape;
   const newHeight = (width / 16) * 9;
   const y1 = (height - newHeight) / 2 / height;
 

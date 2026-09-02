@@ -74,7 +74,7 @@ directionSelect.addEventListener("change", (e) => {
 });
 
 const calibrateButton = document.querySelector("#calibrateButton");
-calibrateButton.addEventListener("click", (e) => {
+calibrateButton.addEventListener("click", () => {
   calibrate();
 });
 
@@ -115,9 +115,6 @@ visSelect.addEventListener("change", (e) => {
 
 // calibration
 
-let c;
-const b = 0.0450364;
-const thirtyFiveToMPS = 35 * speedToMPS["kmph"];
 
 window.sleep = function (ms) {
   return new Promise((res) => {
@@ -177,8 +174,6 @@ const viscosity = 0.02;
 
 const fps = (window.fps = 24);
 
-let sceneWidth = 2.5; // meters
-let dx = sceneWidth / xdim; // meters per cell
 
 var pxPerSquare = 10; //Number(sizeSelect.options[sizeSelect.selectedIndex].value);
 
@@ -218,11 +213,9 @@ var uy = new Array(xdim * ydim);
 var curl = new Array(xdim * ydim);
 var barrier = new Array(xdim * ydim); // boolean array of barrier locations
 
-let needToRenderNewBarrier = false;
-
 async function checkForNewBoundary() {
   if (window.newBoundaries) {
-    const [highRes, simRes] = window.newBoundaries;
+    const [, simRes] = window.newBoundaries;
     // needToRenderNewBarrier = true;
     // for (let i = 0; i < highRes.length; i++) {
     //   barrierImage.data[i * 4 + 3] = highRes[i] > 0 ? 0 : 180;
@@ -256,7 +249,6 @@ let scheduledStart;
 let absorbedX;
 let absorbedY;
 let lastAbsorbedX;
-let lastAbsorbedY;
 
 let chartFrames = 0;
 let chartMaxSeconds = 10;
@@ -288,7 +280,6 @@ function simulate() {
     collide();
   }
   lastAbsorbedX = absorbedX;
-  lastAbsorbedY = absorbedY;
   if (baselineLow) {
     const onSpectrum =
       (baselineHigh - lastAbsorbedX / speedInMPS) /
@@ -358,7 +349,6 @@ function setBoundaries() {
   // return;
   const eqStartPerRow = [];
   let firstBarrierX;
-  let firstBarrierY;
   let lastBarrierX;
   let lastBarrierY;
   let hasBarrier = false;
@@ -371,7 +361,6 @@ function setBoundaries() {
         hasBarrier = true;
         if (firstBarrierX === undefined) {
           firstBarrierX = x;
-          firstBarrierY = y;
         }
         // minBarrierX = Math.min(minBarrierX, x);
         lastBarrierX = x;
@@ -649,8 +638,6 @@ function paintCanvas() {
         colorSquare(x, y, 0, 0, 0, 160);
       } else {
         let rgba;
-        let opacity = 1;
-        let saturation = 1;
         if (plotType == 0) {
           rgba = valToColor(curl[x + y * xdim]);
         } else if (plotType == 1) {

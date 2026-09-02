@@ -12,7 +12,6 @@ const powerCanvas = document.getElementById("powerChart");
 Chart.defaults.font.family = "Nunito";
 
 const powerColor = "#4EB7FF";
-const forceColor = "#FF6E28";
 const gridColor = "#ffffff30";
 const tickColor = "#ffffff50";
 const labelColor = "#ffffff80";
@@ -34,7 +33,7 @@ const powerChart = new Chart(powerCanvas, {
     scales: {
       x: {
         ticks: {
-          callback: function (value, index, ticks) {
+          callback: function (_value, index, ticks) {
             const out = (ticks.length - (index + 1)) / fps;
             if (out == 0) {
               return "Now";
