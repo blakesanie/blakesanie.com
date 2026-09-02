@@ -1,12 +1,16 @@
 import { defineConfig } from "astro/config";
-import { astroImageTools } from "astro-imagetools";
 import compress from "astro-compress";
 import sitemap from "astro-sitemap";
-import mdx from "@astrojs/mdx";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
 import redirects from "/src/redirects.json";
 import icon from "astro-icon";
+import { astroImagePipelinePlugin } from "vite-image-pipeline";
+import path from "path"
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { execFile } from 'node:child_process'; // Added missing import
+import { promisify } from 'node:util';         // Added missing import
+const execFileAsync = promisify(execFile);
+
 const noSitemap = new Set(Object.keys(redirects));
 // so not in sitemap
 noSitemap.add("chicago");
@@ -16,32 +20,124 @@ noSitemap.add("music");
 noSitemap.add("resume-raw");
 noSitemap.add("401k");
 
-// https://astro.build/config
-export default defineConfig({
-  // output: "static",
-  // adapter: vercelStatic(),
-  site: "https://blakesanie.com",
-  markdown: {
-    shikiConfig: {
-      // Choose from Shiki's built-in themes (or add your own)
-      // https://github.com/shikijs/shiki/blob/main/docs/themes.md
-      theme: "github-light",
-      // Add custom languages
-      // Note: Shiki has countless langs built-in, including .astro!
-      // https://github.com/shikijs/shiki/blob/main/docs/languages.md
-      langs: [],
-      lineNumbers: true,
-      // Enable word wrap to prevent horizontal scrolling
-      wrap: true,
+async function getMacOSTags(filePath) {
+  try {
+    // 1. Strip Vite query parameters AND '/@fs' prefix
+    let cleanPath = decodeURIComponent(filePath.split('?')[0]);
+    if (cleanPath.startsWith('/@fs/')) {
+      cleanPath = cleanPath.slice(4); // '/@fs/Users/...' -> '/Users/...'
+    }
+
+    // 2. Omit '-raw' for a clean, structured output
+    const { stdout } = await execFileAsync('mdls', [
+      '-name',
+      'kMDItemUserTags',
+      cleanPath,
+    ]);
+
+    if (!stdout || stdout.includes('(null)')) {
+      return [];
+    }
+
+    // 3. Parse lines between '(' and ')'
+    const lines = stdout.split('\n');
+    const tags = [];
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      
+      // Skip array brackets and header
+      if (!trimmed || trimmed.startsWith('kMDItemUserTags') || trimmed === '(' || trimmed === ')') {
+        continue;
+      }
+
+      // Clean up commas, quotes, and color code suffixes (e.g. "Red\n6")
+      const tag = trimmed
+        .replace(/,$/, '')              // Remove trailing comma
+        .replace(/^"|"$/g, '')          // Strip surrounding quotes
+        .replace(/\\n\d+$/, '')         // Strip color ID suffix if present
+        .trim();
+
+      if (tag) tags.push(tag);
+    }
+
+    return tags;
+  } catch (err) {
+    return [];
+  }
+}
+
+// Vite Plugin definition
+function macosTagsPlugin() {
+  return {
+    name: 'vite-plugin-macos-tags',
+    enforce: 'post', // Run AFTER Astro / image pipeline builds the default object
+    async transform(code, id) {
+      if (/\.(png|jpe?g|webp|avif|gif|svg)$/i.test(id)) {
+        const filePath = decodeURIComponent(id.split('?')[0]);
+        const tags = await getMacOSTags(filePath);
+        const tagsJson = JSON.stringify(tags);
+
+        // Attach macosTags directly onto the 'export default' object
+        if (code.includes('export default')) {
+          const updatedCode = code.replace(
+            /export default\s+([\s\S]+?);?$/,
+            `const _img = $1;\n_img.macosTags = ${tagsJson};\nexport default _img;\nexport const macosTags = ${tagsJson};`
+          );
+          return { code: updatedCode, map: null };
+        }
+
+        return {
+          code: `${code}\nexport const macosTags = ${tagsJson};`,
+          map: null,
+        };
+      }
+    },
+  };
+}
+
+const deleteOriginalJpegs = () => ({
+  name: 'delete-original-jpegs',
+  hooks: {
+    'astro:build:done': async ({ dir }) => {
+      // dir is a URL object pointing to your /dist folder
+      const astroAssetsDir = path.join(fileURLToPath(dir), '_astro');
+
+      if (!fs.existsSync(astroAssetsDir)) return;
+
+      const files = fs.readdirSync(astroAssetsDir);
+      let count = 0;
+
+      for (const file of files) {
+        // Match both .jpg and .jpeg files
+        if (/\.(jpg|jpeg)$/i.test(file)) {
+          fs.unlinkSync(path.join(astroAssetsDir, file));
+          count++;
+        }
+      }
+
+      if (count > 0) {
+        console.log(`\x1b[36m[cleanup]\x1b[0m Successfully removed ${count} original high-res JPEG(s) from dist/_astro/`);
+      }
     },
   },
+});
+
+// https://astro.build/config
+export default defineConfig({
+  output: "static",
+  // adapter: vercelStatic(),
+  site: "https://blakesanie.com",
+  vite: {
+    plugins: [macosTagsPlugin()], //  Vite plugins belong inside vite.plugins
+  },
   integrations: [
-    mdx({
-      remarkPlugins: [remarkMath],
-      rehypePlugins: [rehypeKatex],
-      gfm: true,
-    }),
-    astroImageTools,
+    astroImagePipelinePlugin(),
+    // mdx({
+    //   remarkPlugins: [remarkMath],
+    //   rehypePlugins: [rehypeKatex],
+    //   gfm: true,
+    // }),
     sitemap({
       filter(page) {
         let parts = page.split("/");
@@ -67,54 +163,7 @@ export default defineConfig({
         return true;
       },
     }),
-    compress({
-      CSS: {
-        csso: {
-          comments: false,
-          restructure: true,
-        },
-      },
-      HTML: {
-        "html-minifier-terser": {
-          removeComments: true,
-          removeAttributeQuotes: true,
-          removeStyleQuotes: true,
-          removeScriptTypeAttributes: true,
-          removeStyleLinkTypeAttributes: true,
-          minifyCSS: true,
-          minifyJS: true,
-          continueOnParseError: true,
-          collapseWhitespace: true,
-          collapseBooleanAttributes: true,
-        },
-      },
-      JavaScript: {
-        terser: {
-          compress: true,
-          ie8: false,
-          keep_classnames: false,
-          keep_fnames: false,
-          mangle: true,
-          toplevel: true,
-        },
-      },
-      SVG: true,
-      Image: false,
-      // cssOptions: {
-      //   preset: "default", // CSS minification preset
-      // },
-      // htmlOptions: {
-      //   collapseWhitespace: true,
-      //   removeComments: true,
-      //   minifyCSS: true,
-      //   minifyJS: true,
-      //   removeAttributeQuotes: true,
-      // },
-      // jsOptions: {
-      //   compress: true,
-      //   mangle: true, // Shorten variable names
-      // },
-    }),
     icon(),
+    deleteOriginalJpegs(),
   ],
 });

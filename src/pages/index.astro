@@ -2,6 +2,15 @@
 import HeaderAndFooter from "../components/HeaderAndFooter/index.astro";
 import HomePageSection from "../components/HomePageSection.astro";
 
+import chiImage from "../assets/images/bg/chi.jpg";
+import croslandImage from "../assets/images/bg/crosland.jpg";
+import bikeImage from "../assets/images/bg/bike.jpg";
+import brainstormImage from "../assets/images/bg/brainstorm.jpg";
+import connectImage from "../assets/images/bg/connect.jpg";
+import manhattanBridgeImage from "../assets/portfolio_alias/Manhattan Bridge.jpg";
+
+import coverImage from "../assets/images/cover.jpg";
+
 const { message } = Astro.props;
 
 const markupData = [
@@ -9,7 +18,8 @@ const markupData = [
     text: [
       "I'm an inventive Software Engineer passionate for revolutionizing Financial Services, based in Chicago.",
     ],
-    imageUrl: "/src/assets/images/bg/chi.jpg",
+    imageSrc: chiImage,
+    imageFilepath: "/src/assets/images/bg/chi.jpg",
     links: [
       {
         href: "/resume",
@@ -39,7 +49,8 @@ const markupData = [
     text: [
       "Recently, I accepted my Master's from Georgia Tech with highest distinction, where I devised groundbreaking Artificial Intelligence methods.",
     ],
-    imageUrl: "/src/assets/images/bg/crosland.jpg",
+    imageSrc: croslandImage,
+    imageFilepath: "/src/assets/images/bg/crosland.jpg",
     links: [
       {
         href: "/projects#leenet",
@@ -57,7 +68,8 @@ const markupData = [
   },
   {
     text: ["Beyond my novel work, I'm an ambitious triathlete and cyclist,"],
-    imageUrl: "/src/assets/images/bg/bike.jpg",
+    imageSrc: bikeImage,
+    imageFilepath: "/src/assets/images/bg/bike.jpg",
     links: [
       {
         href: "/strava",
@@ -74,7 +86,8 @@ const markupData = [
   },
   {
     text: ["artistic, perspective-chasing photographer,"],
-    imageUrl: "/photo-portfolio/portfolio2k/ManhattanBridge.jpg",
+    imageSrc: manhattanBridgeImage,
+    imageFilepath: "/src/assets/portfolio_alias/Manhattan Bridge.jpg",
     links: [
       {
         href: "/photo",
@@ -92,7 +105,8 @@ const markupData = [
   },
   {
     text: ["with a knack for design, mathematics, and computational research."],
-    imageUrl: "/src/assets/images/bg/brainstorm.jpg",
+    imageSrc: brainstormImage,
+    imageFilepath: "/src/assets/images/bg/brainstorm.jpg",
     links: [
       {
         href: "/blog",
@@ -106,7 +120,8 @@ const markupData = [
 
   {
     text: ["Let's connect."],
-    imageUrl: "/src/assets/images/bg/connect.jpg",
+    imageSrc: connectImage,
+    imageFilepath: "/src/assets/images/bg/connect.jpg",
     links: [
       {
         href: "mailto:blake@sanie.com",
@@ -142,7 +157,8 @@ const markupData = [
   <HomePageSection
     id="firstSection"
     class="homePageSection sectionTransitionParent"
-    imageUrl="/src/assets/images/cover.jpg"
+    imageSrc={coverImage}
+    imageFilepath="/src/assets/images/cover.jpg"
   >
     <h1>Hi, I'm Blake</h1>
     <div id="typedContainer">
@@ -150,15 +166,18 @@ const markupData = [
     </div>
   </HomePageSection>
   {
-    markupData.map((data, i) => (
-      <HomePageSection
-        imageUrl={data.imageUrl}
-        text={data.text}
-        links={data.links}
-        class="homePageSection sectionTransitionParent"
-        style={data.style}
-      />
-    ))
+    markupData.map((data, i) => {
+      return (
+        <HomePageSection
+          imageSrc={data.imageSrc}
+          imageFilepath={data.imageFilepath}
+          text={data.text}
+          links={data.links}
+          class="homePageSection sectionTransitionParent"
+          style={data.style}
+        />
+      );
+    })
   }
 </HeaderAndFooter>
 {
@@ -207,12 +226,10 @@ const markupData = [
     /* clip-path: ; */
     /* margin-top: 0.5em; */
     width: 10em;
-    z-index: 99999;
   }
   #typedContainer {
     font-size: 1.6em;
     height: 2em;
-    z-index: 100;
     margin-top: -0.2em;
   }
   .fullCenter {
@@ -273,7 +290,7 @@ const markupData = [
   }, 2000);
 
   const sections = document.querySelectorAll<HTMLElement>(
-    ".sectionTransitionParent"
+    ".sectionTransitionParent",
   );
 
   function handleScroll() {

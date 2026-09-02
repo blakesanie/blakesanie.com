@@ -1,16 +1,16 @@
 ---
-const { style } = Astro.props;
+const { style, textColor, noBackdropFilter, flangeColor } = Astro.props;
 import { Icon } from "astro-icon/components";
 ---
 
-<div class="navHoverZone" style={style}>
-  <Icon name="invertedCurve" />
-  <Icon name="invertedCurve" id="curveIconFlip" />
+<div class:list={["navHoverZone", { noBackdropFilter }]} style={style}>
+  <Icon name="invertedCurve" style={flangeColor ? `color: ${flangeColor}` : ''} />
+  <Icon name="invertedCurve" id="curveIconFlip" style={flangeColor ? `color: ${flangeColor}` : ''} />
 </div>
 
 <style>
   [data-icon] {
-    color: white;
+    color: var(--textColor, white);
     position: absolute;
     top: 0;
     right: var(--navPadding);
@@ -47,6 +47,10 @@ import { Icon } from "astro-icon/components";
   .isHome .navHoverZone {
     backdrop-filter: none;
     background-color: rgba(255, 255, 255, 0.14);
+  }
+  .noBackdropFilter.navHoverZone {
+    backdrop-filter: none;
+    background-color: white;
   }
 
   .noTab .navHoverZone,

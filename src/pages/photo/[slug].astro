@@ -1,44 +1,28 @@
 ---
 import PortfolioPage from "./index.astro";
-import exiftoolJson from "../../../photo-portfolio/temp/blake/metadata.json";
+import { cleanseName } from "./_utils";
+import path from "path";
+import { getCachedPortfolioAssetGlob } from "./_galleryCache";
 
-export async function getStaticPaths() {
-  const glob = await import.meta.glob("/photo-portfolio/temp/blake/*");
-  return (
-    await Promise.all(
-      Object.keys(glob)
-        .filter((path) => path.endsWith(".jpg"))
-        .map(async (path) => {
-          const filename = path.split("/").pop();
-          const name = filename?.split(".").slice(0, -1).join(".");
-          if (!name) throw new Error(`No filename found for path: ${path}`);
-          console.log("name is", name);
-          const meta = exiftoolJson[name];
-          if (!meta) throw new Error(`No metadata found for ${filename}`);
+export function getStaticPaths() {
+  const assetGlob = getCachedPortfolioAssetGlob();
 
-          const title = decodeURIComponent(
-            meta["File Name"]
-              .split(".")
-              .slice(0, -1)
-              .join(".")
-              .replaceAll("_", " "),
-          );
-
-          return [
-            {
-              params: {
-                slug: name,
-              },
-              props: {
-                image: path,
-                imageName: title,
-              },
-            },
-          ];
-        }),
-    )
-  ).flat();
+  return Object.keys(assetGlob).map((filePath) => {
+    const fileName = path.basename(filePath);
+    const name = fileName.split(".").slice(0, -1).join(".");
+    return {
+      params: {
+        slug: cleanseName(name),
+      },
+      props: {
+        imageName: name,
+        filePath: filePath, // Pass down the raw filename instead of processing the image here
+      },
+    };
+  });
 }
+
+const { imageName, filePath } = Astro.props;
 ---
 
-<PortfolioPage image={Astro.props.image} imageName={Astro.props.imageName} />
+<PortfolioPage imageFilePath={filePath} imageName={imageName} />

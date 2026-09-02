@@ -1,20 +1,28 @@
 ---
 import Gallery from "./_Gallery.astro";
+import {
+  getCachedPortfolioAssetGlob,
+} from "./_galleryCache";
+
+const assetGlob = getCachedPortfolioAssetGlob();
 ---
 
+<!-- <p>test</p> -->
 <Gallery
+  title={Astro.props.title}
   initialMode={Astro.props.initialMode}
-  path="./photo-portfolio/temp/blake"
-  image={Astro.props.image}
+  assetGlob={assetGlob}
+  allowMetadata={true}
+  allowClip={true}
+  imageFilePath={Astro.props.imageFilePath}
   imageName={Astro.props.imageName}
   allowMap={true}
   allowFullscreen={true}
   randomize={true}
-  allowMetadata={true}
-  allowClip={true}
   allowFilename={false}
   allowBlog={true}
   allowUniqueUrls={true}
+  allowDeepLink={true}
   heading="Photography"
   subheading="Photography offers me a creative escape from my logical, algorithmic side; allowing me to see the world with fresh eyes. From the vibrant streets of San Francisco to the timeless charm of Venice - even the familiar beauty of my own backyard - I find endless inspiration in the compositions that surround me."
 />

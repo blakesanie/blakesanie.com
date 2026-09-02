@@ -42,26 +42,6 @@ if (activeAnchor) {
   positionHoverAtAnchor(activeAnchor);
 }
 
-function isMobileDevice() {
-  const userAgent = navigator.userAgent.toLowerCase();
-  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(
-    userAgent,
-  );
-}
-
-// function isPhone() {
-//   const userAgent = navigator.userAgent.toLowerCase();
-//   return /iphone|ipod|android.*mobile/.test(userAgent); // Matches phones
-// }
-//
-// function isTablet() {
-//   const userAgent = navigator.userAgent.toLowerCase();
-//   return /ipad|android(?!.*mobile)/.test(userAgent); // Matches tablets
-// }
-
-const isMobile = isMobileDevice();
-document.body.classList.add(isMobile ? "mobile" : "desktop");
-
 let menuExpanded = false;
 
 for (let i = 0; i < anchors.length; i++) {
@@ -334,3 +314,17 @@ if (header && nav) {
     header.style.setProperty('--headerWidth', newHeaderWidth)
   }
 }
+
+// Listen for external navigation updates (e.g. from photo mode toggle)
+window.addEventListener('update-nav-active', (e: any) => {
+  const { href } = e.detail;
+  const targetAnchor = Array.from(anchors).find(a => a.getAttribute('href') === href);
+  if (targetAnchor && targetAnchor !== activeAnchor) {
+    // Update active class on parent LI elements
+    anchors.forEach(a => a.parentElement?.classList.remove('active'));
+    targetAnchor.parentElement?.classList.add('active');
+
+    activeAnchor = targetAnchor;
+    moveHoverToAnchor(targetAnchor);
+  }
+});

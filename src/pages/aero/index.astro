@@ -1,38 +1,38 @@
 ---
-import { Img } from "astro-imagetools/components";
 import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
+import Image from "../../components/Image/index.astro";
+import AeroPng from "../../assets/images/aero/aero.png";
+import AeroBeforePng from "../../assets/images/aero_before.jpg";
 ---
 
 <CommonHead
   fontUrl="https://fonts.googleapis.com/css2?family=Nunito:wght@300;500;700&display=swap"
   title="Aero - Virtual Cycling Wind Tunnel"
   description="Utilizing an optimal cycling body position significantly reduces the defeating effects of wind resistance. Today, Aero navigates you towards wind resistance minimization - on the web."
-  image="/src/assets/images/aero/aero.png"
+  image={AeroPng}
   themeColor="black"
 >
   <div id="cover">
-    <Img
-      src="/src/assets/images/aero/aero.png"
+    <Image
+      src={AeroPng}
+      filepath="/src/assets/images/aero/aero.png"
       alt=""
       loading="lazy"
-      placeholder="blurred"
-      format="webp"
+      placeholder="blur"
+      format="avif"
       breakpoints={[400, 800, 1200, 1600, 2000]}
       quality={50}
     />
-    <Img
-      src="/src/assets/images/aero_before.jpg"
+    <Image
+      src={AeroBeforePng}
+      filepath="/src/assets/images/aero_before.jpg"
       alt=""
       loading="lazy"
-      placeholder="blurred"
-      format="webp"
+      placeholder="blur"
+      format="avif"
       breakpoints={[400, 800, 1200, 1600, 2000]}
       quality={50}
-      attributes={{
-        img: {
-          id: "topImage",
-        },
-      }}
+      id="topImage"
     />
     <div id="coverMain">
       <h1>Aero<br /><span id="byline">by Blake</span></h1>
@@ -71,10 +71,13 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
     I brushed up on computer vision-based image segmentation, fluid dynamics, Eulerian
     simulation, and hardware-accelerated web technologies. Culminating from a thorough
     academic survey, chaotic whiteboard sessions, curious software experiments, and
-    key development victories, I am thrilled to share this tool with the cycling
-    community.
+    key development victories, I am thrilled to share this tool with the cycling community.
   </p>
-  <a class="button" href="/blog/Aero/breakdown">Read Technical Breakdown</a>
+  <a
+    class="button"
+    href="https://blakesanie.substack.com/p/aero-virtual-cycling-wind-tunnel"
+    >Read Technical Breakdown</a
+  >
 </CommonHead>
 
 <!-- <html>

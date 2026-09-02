@@ -24,8 +24,8 @@ const textColor = Astro.props.darkText ? "black" : "white";
 const navPadding = 0.5; // was 0.6 em
 const isHome = Astro.props.isHome;
 const noTab = isHome || Astro.props.noTab;
-const { allowMainStyles, noContentPadding, hideSpotify } = Astro.props;
-const hoverZoneBehind = isHome; // || Astro.props.hoverZoneBehind;
+const { allowMainStyles, noContentPadding, hideSpotify, noBackdropFilter, flangeColor } = Astro.props;
+const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
 
 // console.log("title, desc", title, description, "props", Astro.props)
 const headerVars: HeaderVars = {
@@ -51,8 +51,12 @@ const headerVars: HeaderVars = {
       <line x1="10" y1="80" x2="90" y2="80"></line>
     </svg>
     {
-      Astro.url.pathname == "/" ? <a id="logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Blake Sanie</a> : <a id="logo" href="/"}>Blake Sanie</a>
-    }
+  Astro.url.pathname == "/" ? (
+    <a id="logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Blake Sanie</a>
+  ) : (
+    <a id="logo" href="/">Blake Sanie</a>
+  )
+}
 
     <div id="bio">
       <span>Software Engineer.</span>
@@ -70,26 +74,31 @@ const headerVars: HeaderVars = {
               zIndex: Astro.props.pageNotInNav ? 1 : 0,
             }}
             class="active"
+            textColor={textColor}
           />
         )
       }
       <ul>
         <div class="navSection">
           <p>Online</p>
-          <NavLink
+          {/* <NavLink
             hoverZoneBehind={hoverZoneBehind}
             icon="majesticons:newspaper-line"
             href="/press"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Press
-          </NavLink>
+          </NavLink> */}
           <NavLink
             hoverZoneBehind={hoverZoneBehind}
             icon="jam:write"
             href="/blog"
             textColor={textColor}
             chip="Newsletter"
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Blog
           </NavLink>
@@ -101,6 +110,8 @@ const headerVars: HeaderVars = {
             icon="majesticons:applications-add-line"
             href="/projects"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Projects
           </NavLink>
@@ -111,6 +122,8 @@ const headerVars: HeaderVars = {
             chip="M.S."
             chipIcon="majesticons:academic-cap-line"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Résumé
           </NavLink>
@@ -119,6 +132,8 @@ const headerVars: HeaderVars = {
             icon="uil:github-alt"
             href="/github"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             GitHub
           </NavLink>
@@ -129,8 +144,11 @@ const headerVars: HeaderVars = {
             hoverZoneBehind={hoverZoneBehind}
             icon="majesticons:dashboard-line"
             href="/photo"
-            id="photoNavLink"
+            activePattern={/^\/photo(?:\/(?!(map|albums)(?:\/|$)).*)?$/}
+            id="galleryNavLink"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Gallery
           </NavLink>
@@ -140,6 +158,8 @@ const headerVars: HeaderVars = {
             href="/photo/map"
             id="mapNavLink"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             GPS Map
           </NavLink>
@@ -147,8 +167,10 @@ const headerVars: HeaderVars = {
             hoverZoneBehind={hoverZoneBehind}
             icon="material-symbols:photo-camera-front-outline"
             href="/photo/albums"
-            id="photoNavLink"
+            id="albumsNavLink"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Albums
           </NavLink>
@@ -161,6 +183,8 @@ const headerVars: HeaderVars = {
             href="/strava"
             chip="Lake Placid"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Strava
           </NavLink>
@@ -170,24 +194,18 @@ const headerVars: HeaderVars = {
             icon="majesticons:mail-line"
             href="/email"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Email
           </NavLink>
-          <NavLink
-            class="contactCard"
-            hoverZoneBehind={hoverZoneBehind}
-            icon="ic:outline-person-pin"
-            href="/contact.vcf"
-            textColor={textColor}
-          >
-            Contact
-          </NavLink>
-
           <NavLink
             hoverZoneBehind={hoverZoneBehind}
             icon="lucide:linkedin"
             href="/linkedin"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             LinkedIn
           </NavLink>
@@ -196,6 +214,8 @@ const headerVars: HeaderVars = {
             icon="lucide:instagram"
             href="/instagram"
             textColor={textColor}
+            noBackdropFilter={noBackdropFilter}
+            flangeColor={flangeColor}
           >
             Instagram
           </NavLink>
@@ -346,7 +366,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     padding: 1.4em 0;
     --side-padding: 0.7em;
     overflow-y: scroll;
-    isolation: isolate;
+    /* isolation: isolate; */
     z-index: 1;
     /* padding-left: var(--side-padding); */
   }
@@ -381,7 +401,7 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     flex: 1;
     /* background-color: white; */
     margin-left: var(--headerWidth);
-    isolation: isolate;
+    /* isolation: isolate; */
     /* z-index: -10; */
   }
   #logo {
@@ -394,7 +414,6 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     width: 4em;
     padding: 0.5em 0;
     min-height: 4em;
-    //margin: 0 var(--navPadding);
     cursor: pointer;
     text-align: center;
     line-height: 1.4em;
@@ -407,22 +426,16 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
       background-image 0.2s ease,
       border 0.2s ease,
       box-shadow 0.2s ease;
-    //border: 1px solid rgba(255, 0, 0, 0.1);
-    //background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3cpath d='M10,0 H90 Q100,0 100,10 V90 Q100,100 90,100 H10 Q0,100 0,90 V10 Q0,0 10,0 Z' fill='none' stroke='white' stroke-width='4' stroke-dasharray='4%2c 10' stroke-dashoffset='10' stroke-opacity='0.4' stroke-linecap='square' stroke-location='inside'/%3e%3c/svg%3e");
     background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='white' stroke-width='4' stroke-dasharray='4%2c 12' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square' rx='0' ry='0'/%3e%3c/svg%3e");
   }
   :global(.darkText) #logo {
-    //background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3cpath d='M10,0 H90 Q100,0 100,10 V90 Q100,100 90,100 H10 Q0,100 0,90 V10 Q0,0 10,0 Z' fill='none' stroke='black' stroke-width='4' stroke-dasharray='6%2c 12' stroke-dashoffset='10' stroke-opacity='0.4' stroke-linecap='square' stroke-location='outside'/%3e%3c/svg%3e");
     background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='black' stroke-width='4' stroke-dasharray='4%2c 12' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square' rx='0' ry='0'/%3e%3c/svg%3e");
   }
   #logo:hover {
     background-color: rgb(21 82 148); /*var(--textColor);*/
     color: white !important; /*var(--headerColorOpaque) !important;*/
-    //border-radius: 0.7em;
     background-image: none !important;
-    //border: 2px solid white;
     border-radius: 6px;
-    //background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='white' stroke-width='4' stroke-dasharray='4%2c 12' stroke-dashoffset='0' stroke-opacity='0.4' stroke-linecap='square' rx='0' ry='0'/%3e%3c/svg%3e");
     box-shadow:
       0px 0px 0px 2px white,
       0px 0px 0px 6px rgb(21 82 148);
@@ -488,20 +501,11 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     /* font-weight: 600; */
   }
 
-  :global(.mobile .email) {
-    display: none;
-  }
-
-  :global(.desktop .contactCard) {
-    display: none;
-  }
-
   #made {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    //padding: 0 1.7em;
     font-size: 0.8em;
     /* color: rgba(255, 255, 255, 0.5); */
     color: var(--textColor);
@@ -533,7 +537,6 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     bottom: 0;
     width: var(--headerWidth);
 
-    //padding-top: 100px;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -543,8 +546,6 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
   }
 
   #below > div {
-    //backdrop-filter: blur(4px);
-    //background: rgba(255, 255, 255, 0.1);
     border: 1px solid var(--textColor);
     width: auto;
     border-bottom: none;
@@ -552,11 +553,6 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     border-top-left-radius: 1em;
     border-top-right-radius: 1em;
     background: var(--headerColorOpaque);
-    //background: linear-gradient(
-      to bottom,
-      transparent,
-      rgba(255, 255, 255, 0.2) 50%
-    );
     font-size: 0.8em;
     animation: bounce 1.5s infinite ease-in-out;
     box-shadow:

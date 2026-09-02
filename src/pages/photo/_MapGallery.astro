@@ -1,0 +1,305 @@
+---
+export interface Props {
+  mapImages: {
+    name: string;
+    path: string;
+    lat: number;
+    lon: number;
+    width: number;
+    height: number;
+  }[];
+}
+
+const { mapImages } = Astro.props;
+---
+
+<div id="map-container">
+  <div id="map-canvas"></div>
+</div>
+
+<style>
+  #map-container {
+    display: none;
+    width: 100%;
+    height: calc(100dvh - 150px);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f0f0f0;
+  }
+
+  :global(.view-map) #map-container {
+    display: block;
+  }
+
+  #map-canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Target the HTML content inside the Advanced Markers */
+  :global(.custom-image-marker) {
+    border: 5px solid white;
+    border-radius: 3px;
+    object-fit: cover;
+  }
+
+  :global(.cluster-badge) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: white;
+    color: black;
+    padding: 0.5em;
+    font-size: 1em;
+    font-weight: 500;
+    border-bottom-left-radius: 0.5em;
+  }
+</style>
+
+<script
+  is:inline
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&libraries=marker&v=weekly"
+></script>
+<script
+  is:inline
+  src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"
+></script>
+
+<script define:vars={{ mapImages }}>
+  let mainMap = null;
+  let mapInitialized = false;
+
+  async function initMainMap() {
+    if (mapInitialized) return;
+    mapInitialized = true;
+
+    const { Map } = await google.maps.importLibrary("maps");
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
+    const mapOptions = {
+      center: { lat: 0, lng: 0 },
+      zoom: 2,
+      mapId: "DEMO_MAP_ID", // AdvancedMarkerElement requires a Map ID (use your own if you have one)
+      mapTypeControl: false,
+      streetViewControl: true,
+      streetViewControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
+      zoomControl: true,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
+      fullscreenControl: true,
+      fullscreenControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
+      rotateControl: true,
+      rotateControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
+      styles: [
+        { elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+        { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
+        {
+          featureType: "administrative.land_parcel",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#bdbdbd" }],
+        },
+        {
+          featureType: "administrative.province",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#9e9e9e" }],
+        },
+        {
+          featureType: "landscape.natural.terrain",
+          stylers: [{ color: "#c9c9c9" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "geometry",
+          stylers: [{ color: "#f5f5f5" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#757575" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "geometry",
+          stylers: [{ color: "#ededed" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#b0b0b0" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry",
+          stylers: [{ visibility: "simplified" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#f2f2f2" }, { visibility: "on" }],
+        },
+        {
+          featureType: "road.arterial",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#757575" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry",
+          stylers: [{ color: "#e6e6e6" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry.stroke",
+          stylers: [{ visibility: "simplified" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#616161" }],
+        },
+        {
+          featureType: "road.local",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#9e9e9e" }],
+        },
+        {
+          featureType: "transit.line",
+          elementType: "geometry",
+          stylers: [{ color: "#e5e5e5" }],
+        },
+        {
+          featureType: "transit.station",
+          elementType: "geometry",
+          stylers: [{ color: "#eeeeee" }],
+        },
+        {
+          featureType: "water",
+          elementType: "geometry",
+          stylers: [{ color: "#c9c9c9" }],
+        },
+        {
+          featureType: "water",
+          elementType: "geometry.fill",
+          stylers: [{ color: "#c7e9ff" }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#9e9e9e" }],
+        },
+      ],
+    };
+
+    const mapCanvas = document.getElementById("map-canvas");
+    mainMap = new Map(mapCanvas, mapOptions);
+    const bounds = new google.maps.LatLngBounds();
+    const markers = [];
+
+    mapImages.forEach((photo) => {
+      const position = { lat: photo.lat, lng: photo.lon };
+      bounds.extend(position);
+
+      // Create raw HTML element for the marker image
+      const img = document.createElement("img");
+      img.src = photo.path;
+      img.className = "custom-image-marker";
+      img.style.width = `${photo.width}px`;
+      img.style.height = `${photo.height}px`;
+
+      const marker = new AdvancedMarkerElement({
+        position,
+        map: mainMap,
+        title: photo.name,
+        content: img,
+      });
+
+      marker.addListener("click", () => {
+        window.dispatchEvent(
+          new CustomEvent("photo-map-click", { detail: { name: photo.name } }),
+        );
+      });
+
+      // Attach custom property to the DOM element container for the clusterer to reference
+      marker.photoData = photo;
+      markers.push(marker);
+    });
+
+    if (mapImages.length > 0) {
+      mainMap.fitBounds(bounds);
+    }
+
+    const { MarkerClusterer } = window.markerClusterer;
+
+    const renderer = {
+      render: ({ count, position, markers: clusterMarkers }) => {
+        const photo = clusterMarkers[0].photoData;
+
+        // Container element for handling the cluster image + badge count
+        const container = document.createElement("div");
+        container.className = "cluster-container";
+
+        const img = document.createElement("img");
+        img.src = photo.path;
+        img.className = "custom-image-marker";
+        img.style.width = `${photo.width * 1.2}px`;
+        img.style.height = `${photo.height * 1.2}px`;
+        container.appendChild(img);
+
+        if (count > 1) {
+          const badge = document.createElement("span");
+          badge.className = "cluster-badge";
+          badge.innerText = String(count);
+          container.appendChild(badge);
+        }
+
+        const marker = new AdvancedMarkerElement({
+          position,
+          content: container,
+          zIndex: count,
+        });
+
+        marker.addListener("click", () => {
+          if (count > 1) {
+            const clusterBounds = new google.maps.LatLngBounds();
+            clusterMarkers.forEach((m) => clusterBounds.extend(m.position));
+            mainMap.fitBounds(clusterBounds);
+          } else {
+            window.dispatchEvent(
+              new CustomEvent("photo-map-click", {
+                detail: { name: photo.name },
+              }),
+            );
+          }
+        });
+
+        return marker;
+      },
+    };
+
+    new MarkerClusterer({
+      map: mainMap,
+      markers,
+      renderer,
+    });
+  }
+
+  window.addEventListener("photo-view-change", (e) => {
+    if (e.detail.view === "map") {
+      initMainMap();
+    }
+  });
+
+  const photoContent = document.getElementById("photoContent");
+  if (photoContent && photoContent.classList.contains("view-map")) {
+    initMainMap();
+  }
+</script>

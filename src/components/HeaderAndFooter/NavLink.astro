@@ -2,28 +2,35 @@
 import { Icon } from "astro-icon/components";
 import HoverZone from "./HoverZone.astro";
 import SmartHref from "./SmartHref.astro";
-const { icon, chip, chipIcon, chipColor, href, id, hoverZoneBehind } =
-  Astro.props;
+const {
+  icon,
+  chip,
+  chipIcon,
+  chipColor,
+  href,
+  id,
+  hoverZoneBehind,
+  noBackdropFilter,
+  flangeColor,
+} = Astro.props;
 let [iconPack, iconName] = icon.split(":");
 let [chipPack, chipName] = chipIcon ? chipIcon.split(":") : [0, 0];
 // if (chipIcon && chipIcon.includes("70.3")) {
 //   console.log(chipPack, chipName);
 // }
-let path = Astro.url.pathname.substring(1).split("?")[0];
-if (path.charAt(path.length - 1) == "/") {
-  path = path.substring(0, path.length - 1);
-}
-const route = href
-  .replace("://", "")
-  .split("/")
-  .slice(1)
-  .join("/")
-  .split("?")[0];
-const active =
-  path == route ||
-  (path.startsWith("blog") && route.startsWith("blog")) ||
-  (path.startsWith("photo/albums") && route.startsWith("photo/albums"));
-Astro.props.active; // for nested urls: blog/.../.......
+
+// Clean up current browser path matching strings safely
+const currentPath = Astro.url.pathname.replace(/\/$/, ""); // Strip trailing slash if present
+
+// Generate a structural reference URL object to cleanly grab pathname whether relative or absolute
+const targetUrl = new URL(href, Astro.url.origin);
+const targetPath = targetUrl.pathname.replace(/\/$/, "");
+
+// Evaluate active status securely
+const active = Astro.props.activePattern
+  ? Astro.props.activePattern.test(Astro.url.pathname)
+  : currentPath === targetPath ||
+    (targetPath !== "" && currentPath.startsWith(targetPath + "/"));
 
 const { textColor } = Astro.props;
 ---
@@ -31,7 +38,15 @@ const { textColor } = Astro.props;
 <li class:list={[{ active: active }, Astro.props.class]}>
   <SmartHref href={href} id={id}>
     <!-- <Icon icon={icon} class="icon" /> -->
-    {active && hoverZoneBehind && <HoverZone />}
+    {
+      active && hoverZoneBehind && (
+        <HoverZone
+          textColor={textColor}
+          noBackdropFilter={noBackdropFilter}
+          flangeColor={flangeColor}
+        />
+      )
+    }
     <Icon name={iconPack + ":" + iconName} size="1.2em" />
 
     <span class="navLinkText">
@@ -52,7 +67,15 @@ const { textColor } = Astro.props;
         </div>
       )
     }
-    {active && !hoverZoneBehind && <HoverZone />}
+    {
+      active && !hoverZoneBehind && (
+        <HoverZone
+          textColor={textColor}
+          noBackdropFilter={noBackdropFilter}
+          flangeColor={flangeColor}
+        />
+      )
+    }
   </SmartHref>
 
   <style define:vars={{ chipColor: chipColor, textColor }}>

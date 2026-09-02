@@ -1,38 +1,44 @@
 ---
 // @ts-ignore
-import { Img } from "astro-imagetools/components";
+import Image from "./Image/index.astro";
 import SmartHref from "./HeaderAndFooter/SmartHref.astro";
+
 interface LinkInterface {
   target: string;
   href: string;
   label: string;
   class?: string;
 }
+
 const links: LinkInterface[] = Astro.props.links;
-let { text, imageUrl, style, class: className, ...props } = Astro.props;
+let {
+  text,
+  imageSrc,
+  imageFilepath,
+  style,
+  class: className,
+  ...props
+} = Astro.props;
 const maxImageOpacity = 0.5;
 ---
 
 <div style={{ ...style }} class:list={["section", className]} {...props}>
   {
-    imageUrl && (
-      <Img
-        src={imageUrl}
+    imageSrc && (
+      <Image
+        placeholder="blur"
+        filepath={imageFilepath}
+        src={imageSrc}
         alt=""
         loading="lazy"
-        placeholder="blurred"
-        format="webp"
-        breakpoints={[400, 800, 1200, 1600, 2000]}
-        quality={50}
-        attributes={{
-          img: {
-            class: "bg",
-          },
-        }}
+        widths={[400, 800, 1200, 1600, 2000]}
+        sizes="100vw"
+        quality={75}
+        format="avif"
+        class="bg"
       />
     )
   }
-  <!-- {(text || links) && <} -->
   {text && <h2>{text}</h2>}
   {
     links && (
@@ -83,7 +89,6 @@ const maxImageOpacity = 0.5;
     width: 100%;
     height: 100vh;
     height: 100svh;
-    /* border: 1px solid red; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -96,19 +101,19 @@ const maxImageOpacity = 0.5;
       padding-left: 0;
     }
   }
-  :global(.bg) {
+
+  /* Target the native background class directly */
+  .bg {
     position: absolute;
     top: 0;
     left: 0;
     width: 100% !important;
     height: 100% !important;
     object-fit: cover;
-    /* z-index: -1; */
     opacity: 0.6;
-    /* transition: transform 0.1s ease-out; */
-    /* opacity: 0.5; */
-    /* filter: brightness(0.5); */
+    z-index: 0; /* Ensures backdrop layout order stays beneath headings */
   }
+
   h2 {
     font-size: 2.7em;
     text-align: center;
@@ -122,6 +127,7 @@ const maxImageOpacity = 0.5;
     flex-wrap: wrap;
     padding: 0.5em;
     margin-top: 1em;
+    z-index: 1;
   }
   .link {
     text-align: center;
@@ -132,7 +138,6 @@ const maxImageOpacity = 0.5;
     backdrop-filter: blur(5px);
     border-radius: 8px;
     transition: background-color 0.1s ease;
-    /* border: 2px solid rgba(255, 255, 255, 0.2); */
   }
   .link:hover {
     background-color: rgba(0, 0, 0, 0.2);

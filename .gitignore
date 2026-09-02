@@ -35,3 +35,12 @@ public/assets/imageEmbeddings*.json
 public/route-builder
 /public/_next/
 __pycache__/
+
+icloudImages
+wrangler.toml
+.satori-cache
+public/og-images
+.wrangler
+.image-pipeline/
+
+scripts/

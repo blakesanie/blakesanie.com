@@ -1,0 +1,173 @@
+---
+import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
+
+const imagePath = "/og/thumb.jpg";
+---
+
+<CommonHead
+  title="Distortion"
+  description="Easy and maximum quality correction against Barrel and Pincushion Distortion, even after crop. Leverages the Brown-Conrady model radial distortion model under the hood."
+>
+  <h1>Free Online Lens Distortion Correction Correction Tool</h1>
+  <p>
+    Easy and maximum quality correction against Barrel and Pincushion
+    Distortion, even after crop. Leverages the Brown-Conrady model radial
+    distortion model under the hood.
+  </p>
+
+  <div id="images" class="col">
+    <div id="undistorted">
+      <canvas id="afterImage"></canvas>
+      <canvas id="afterGrid"></canvas>
+    </div>
+    <div id="distorted">
+      <img src={imagePath} id="sourceImage" />
+      <canvas id="beforeGrid"></canvas>
+    </div>
+  </div>
+  <div id="controls">
+    <div id="buttons">
+      <input type="file" accept="image/*" />
+      <button id="export">Export</button>
+    </div>
+    <div id="plane">
+      <div id="circle"></div>
+      <img id="lensImg" />
+      <div id="opticalCenter"></div>
+    </div>
+    <div id="params">
+      <div class="slider">
+        <!-- Radial distortion -->
+        <label for="k1">k1:</label>
+        <input type="range" id="k1" min="-1" max="1" step="0.001" value="0" />
+        <span id="k1Val">0.000</span>
+      </div>
+
+      <div class="slider">
+        <label for="k2">k2:</label>
+        <input type="range" id="k2" min="-1" max="1" step="0.001" value="0" />
+        <span id="k2Val">0.000</span>
+      </div>
+
+      <div class="slider">
+        <label for="k3">k3:</label>
+        <input type="range" id="k3" min="-1" max="1" step="0.001" value="0" />
+        <span id="k3Val">0.000</span>
+      </div>
+
+      <div class="slider">
+        <label for="opticalWidth">optical width:</label>
+        <input
+          type="range"
+          id="opticalWidth"
+          min="1"
+          max="100"
+          step="0.1"
+          value="100"
+        />
+        <span id="opticalWidthVal">100%</span>
+      </div>
+
+      <div class="slider">
+        <label>
+          <input type="checkbox" id="toggleGrid" checked />
+          Show Grid
+        </label>
+      </div>
+    </div>
+  </div>
+</CommonHead>
+
+<style>
+  :global(*) {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  :global(body) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h1 {
+    font-size: 2em;
+    padding: 1em 2em;
+  }
+
+  p {
+    font-size: 1em;
+    padding: 1em 2em;
+  }
+
+  img,
+  canvas {
+    display: block;
+  }
+
+  #images {
+    display: flex;
+  }
+  #images > div {
+    flex: 1;
+    position: relative;
+  }
+  #images * {
+    width: 100%;
+  }
+  #afterGrid,
+  #beforeGrid {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .col {
+    flex-direction: column;
+  }
+
+  #controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  #buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  #plane {
+    width: 260px;
+    height: 260px;
+    position: relative;
+  }
+  #circle {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    border: 2px solid #00000020;
+    background: #00000010;
+  }
+  #lensImg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    cursor: pointer;
+  }
+  #opticalCenter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background-color: red;
+  }
+</style>
+
+<script src="./_script.ts"></script>

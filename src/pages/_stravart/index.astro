@@ -1,0 +1,86 @@
+---
+import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
+---
+
+<CommonHead title="Stravart Planner">
+  <main>
+    <h1>Stravart Planner</h1>
+    <div id="map"></div>
+  </main>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+</CommonHead>
+
+<style>
+  #map {
+    height: 500px;
+  }
+</style>
+
+<script>
+  var leafletMap;
+  function map() {
+    leafletMap = L.map("map").setView([41.878113, -87.729799], 12);
+
+    // Add a tile layer to the map
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(leafletMap);
+    console.log("done");
+
+    window.bounds = leafletMap.getBounds();
+
+    // Load the overpass.json data
+    fetch("/overpass.json")
+      .then((response) => response.json())
+      .then((data) => {
+        plotBikePaths(data);
+      })
+      .catch((error) => console.error("Error loading overpass.json:", error));
+  }
+
+  function plotBikePaths(overpassData) {
+    const nodes = new Map();
+
+    // Store all nodes with coordinates
+    overpassData.elements.forEach((element) => {
+      if (element.type === "node") {
+        nodes.set(element.id, [element.lat, element.lon]);
+      }
+    });
+
+    // Draw paths
+    overpassData.elements.forEach((element) => {
+      if (element.type === "way" && element.nodes) {
+        const pathCoords = element.nodes
+          .map((nodeId) => nodes.get(nodeId))
+          .filter((coord) => coord);
+        if (pathCoords.length > 1) {
+          L.polyline(pathCoords, { color: "blue", weight: 3 }).addTo(
+            leafletMap
+          );
+        }
+      }
+    });
+  }
+
+  function waitForLeaflet() {
+    try {
+      L;
+    } catch {
+      setTimeout(waitForLeaflet, 10);
+      return;
+    }
+    map();
+  }
+  waitForLeaflet();
+</script>

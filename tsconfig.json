@@ -7,15 +7,17 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "jsx": "preserve",
-    "jsxImportSource": "react",
     "allowJs": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
   },
-  "include": ["src", "env.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*", // 👈 Ensures all files deep inside src are caught
+    "env.d.ts",
+    ".astro/types.d.ts",
+  ],
+  "exclude": ["node_modules", "dist"],
 }
