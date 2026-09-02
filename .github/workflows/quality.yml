@@ -1,0 +1,70 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Typecheck Astro
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run tests and smoke checks
+        run: npm test
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Typecheck, lint, and build Next app when present
+        if: ${{ hashFiles('next/package.json') != '' }}
+        working-directory: next
+        run: |
+          npm ci
+          npm run typecheck --if-present
+          npm run lint --if-present
+          npm run build --if-present
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+
+      - name: Scan repository for secrets
+        uses: gitleaks/gitleaks-action@v2
+
+      - name: Upload failed build output
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-build-output
+          path: |
+            dist/
+            .astro/
+          if-no-files-found: ignore
