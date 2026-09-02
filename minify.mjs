@@ -112,8 +112,9 @@ const runMinifierPipeline = async () => {
                         evaluate: true,
                         booleans: true,
                         sequences: true,
-                        unsafe_arrows: true,
-                        drop_debugger: true
+                    unsafe_arrows: true,
+                    drop_console: true,
+                    drop_debugger: true
                     },
                     format: { comments: false }
                 }
