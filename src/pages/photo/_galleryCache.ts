@@ -2,6 +2,7 @@ import { getImage } from "astro:assets";
 import path from "path";
 import { encodeEmbeddings } from "./_utils"; // adjust path as needed
 import type { ImageMetadata as AstroImageMetadata } from 'astro';
+import type { ExifRecord, GalleryImage } from '../../types/content';
 
 const lensReplacements: Record<string, string> = {
     "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED":
@@ -21,25 +22,27 @@ const cameraReplacements: Record<string, string> = {
     FC3682: "DJI Mini 3",
 };
 
-function resolveCamera(exif: Record<string, any>) {
+function resolveCamera(exif: ExifRecord): string | undefined {
     for (const x of ["model", "CameraModelName", "Model"]) {
-        if (exif[x] && cameraReplacements[exif[x]])
-            return cameraReplacements[exif[x]];
+        const value = exif[x];
+        if (typeof value === "string" && cameraReplacements[value])
+            return cameraReplacements[value];
     }
 }
 
-function resolveLens(exif: Record<string, any>) {
+function resolveLens(exif: ExifRecord): string | undefined {
     for (const x of ["Lens", "LensModel", "LensSpec"]) {
-        if (exif[x] && lensReplacements[exif[x]]) return lensReplacements[exif[x]];
+        const value = exif[x];
+        if (typeof value === "string" && lensReplacements[value]) return lensReplacements[value];
     }
 }
 
-function resolveShutter(exif: Record<string, any>) {
+function resolveShutter(exif: ExifRecord): string | number | undefined {
     let x = exif["ExposureTime"];
-    if (x) return x;
+    if (typeof x === "string" || typeof x === "number") return x;
 }
 
-function resolveAperture(exif: Record<string, any>): number | undefined {
+function resolveAperture(exif: ExifRecord): number | undefined {
     const x = exif["FNumber"];
     if (!x) return undefined;
     let n;
@@ -60,13 +63,13 @@ function resolveAperture(exif: Record<string, any>): number | undefined {
     return n;
 }
 
-function resolveFocalLength(exif: Record<string, any>): number | undefined {
+function resolveFocalLength(exif: ExifRecord): number | undefined {
     const focal = exif["FocalLengthIn35mmFormat"];
     if (focal) {
         if (typeof focal == "number") {
             return focal;
         }
-        return parseFloat(focal);
+        return typeof focal === "string" ? parseFloat(focal) : undefined;
     }
 }
 
@@ -76,15 +79,15 @@ const optimizedMapImagesCache = new Map<string, any>();
 
 interface ProcessImageParams {
     filePath: string;
-    module: any;
+    module: AstroImageMetadata;
     allowClip: boolean;
     allowMetadata: boolean;
     allowFullscreen: boolean;
-    embeddings: any;
-    metadata: any;
+    embeddings: Record<string, number[]> | null;
+    metadata: Record<string, ExifRecord> | null;
 }
 
-interface ImageMetadata {
+export interface ImageMetadata {
     camera?: string;
     lens?: string;
     focalLength?: number;
@@ -98,14 +101,14 @@ interface ImageMetadata {
 export interface ImageData {
     filePath: string;
     name: string;
-    src: any;
+    src: AstroImageMetadata;
     width: number;
     height: number;
-    highRes: string;
+    highRes?: string;
     aspectRatio: number;
     embeddings?: string;
     metadata?: ImageMetadata;
-    macosTags: [];
+    macosTags: string[];
 }
 
 export async function getSharedProcessedImage({
@@ -137,7 +140,7 @@ export async function getSharedProcessedImage({
         format: "avif",
     }) : undefined;
 
-    let out: any = {
+    const out: ImageData = {
         filePath,
         name,
         src: module,
@@ -145,7 +148,7 @@ export async function getSharedProcessedImage({
         height,
         highRes: highRes?.src,
         aspectRatio: aspectRatioNum,
-        macosTags: module.macosTags
+        macosTags: Array.isArray(module.macosTags) ? module.macosTags : [],
     };
 
     if (allowClip && embeddings) {
@@ -161,10 +164,13 @@ export async function getSharedProcessedImage({
                 lens: resolveLens(exif),
                 focalLength: resolveFocalLength(exif),
                 aperture: resolveAperture(exif),
-                shutterSpeed: resolveShutter(exif),
-                iso: exif.ISO,
-                lon: exif.GPSLongitude,
-                lat: exif.GPSLatitude,
+                shutterSpeed: (() => {
+                    const value = resolveShutter(exif);
+                    return value === undefined ? undefined : String(value);
+                })(),
+                iso: typeof exif.ISO === "number" ? exif.ISO : undefined,
+                lon: typeof exif.GPSLongitude === "number" ? exif.GPSLongitude : undefined,
+                lat: typeof exif.GPSLatitude === "number" ? exif.GPSLatitude : undefined,
             };
         }
     }
@@ -173,7 +179,11 @@ export async function getSharedProcessedImage({
     return out;
 }
 
-export async function getSharedMapImage(img: any) {
+type MappableImage = ImageData & {
+    metadata: ImageMetadata & { lat: number; lon: number };
+};
+
+export async function getSharedMapImage(img: MappableImage): Promise<GalleryImage> {
     if (optimizedMapImagesCache.has(img.filePath)) {
         return optimizedMapImagesCache.get(img.filePath);
     }
@@ -194,8 +204,8 @@ export async function getSharedMapImage(img: any) {
     const result = {
         name: img.name,
         path: optimized.src,
-        lat: img.metadata?.lat,
-        lon: img.metadata?.lon,
+        lat: img.metadata.lat,
+        lon: img.metadata.lon,
         width: Math.round(w) / 2,
         height: Math.round(h) / 2,
     };

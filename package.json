@@ -90,7 +90,8 @@
     "vite-image-pipeline": "file:plugins/vite-image-pipeline",
     "vite-plugin-windicss": "^1.9.4",
     "wrangler": "^4.104.0",
-    "yarn": "^1.22.22"
+    "yarn": "^1.22.22",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@babel/cli": "^7.27.2",
