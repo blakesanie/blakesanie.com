@@ -9,7 +9,7 @@
     "build": "astro build && node minify.mjs",
     "preview": "npx wrangler pages dev",
     "astro": "astro",
-    "deploy": "npx wrangler pages deploy --branch=main",
+    "deploy": "npm run build && wrangler pages deploy dist --branch=main",
     "clean": "rm -rf .astro dist node_modules/.vite"
   },
   "dependencies": {
