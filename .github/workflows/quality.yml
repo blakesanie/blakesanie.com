@@ -59,7 +59,7 @@ jobs:
           pnpm build --if-present
 
       - name: Audit dependencies
-        run: npm audit --audit-level=high
+        run: pnpm audit --audit-level=high
 
       - name: Scan repository for secrets
         uses: gitleaks/gitleaks-action@v2
