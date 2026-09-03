@@ -1,0 +1,49 @@
+/* Self-hosted typefaces used by site and legacy static pages. */
+@font-face {
+  font-family: "Assistant";
+  font-style: normal;
+  /* Match prior Google Fonts request, which loaded weights 200 through 800. */
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("/fonts/assistant-variable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/nunito.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url("/fonts/source-sans-3-variable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Quicksand";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/quicksand.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 300 400;
+  font-display: swap;
+  src: url("/fonts/open-sans.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Droid Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/droid-sans.woff2") format("woff2");
+}

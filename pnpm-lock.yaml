@@ -68,9 +68,6 @@ importers:
       astro:
         specifier: ^7.0.7
         version: 7.2.10(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@22.20.1)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.51.2)(yaml@2.9.0)
-      astro-google-fonts-optimizer:
-        specifier: ^0.2.2
-        version: 0.2.2
       astro-icon:
         specifier: ^1.1.5
         version: 1.2.0
@@ -2057,9 +2054,6 @@ packages:
   astro-eslint-parser@3.1.0:
     resolution: {integrity: sha512-lS5qlx401Q1ZUhQ44XQnM4uT2qI6hA0H+vstrd841xGVxunFOs0ut3DWJGYHK1l7mxRxQdDi1j53pfE7/AyGlA==}
     engines: {node: ^22.22.3 || ^24.16.0 || >=26.3.0}
-
-  astro-google-fonts-optimizer@0.2.2:
-    resolution: {integrity: sha512-YQxp/ExF3NzUomAGuu1VKecO7/ETRnhnE50gqwAqfpbGPZFj4MYa4XxK1ukBg3R63QmKuE5uurOiKmXiLzttuw==}
 
   astro-icon@1.2.0:
     resolution: {integrity: sha512-0848V2WZuTPhqGSqLeZimLJZ5wmamMtWYzvA2kvg8s2DrUPZ3/nrTcHJWN0eJHt62jy7uvNxgTNiUJGIr7JNxg==}
@@ -5566,8 +5560,6 @@ snapshots:
       - '@emnapi/core'
       - '@emnapi/runtime'
       - supports-color
-
-  astro-google-fonts-optimizer@0.2.2: {}
 
   astro-icon@1.2.0:
     dependencies:

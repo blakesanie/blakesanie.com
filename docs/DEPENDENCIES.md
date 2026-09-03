@@ -5,7 +5,7 @@ is `pnpm-lock.yaml`.
 
 ## Intentional runtime/build dependencies
 
-- `astro`, `astro-icon`, `astro-sitemap`, and `astro-google-fonts-optimizer` build the site shell.
+- `astro`, `astro-icon`, and `astro-sitemap` build the site shell.
 - `vite-image-pipeline`, `sharp`, `exiftool-vendored`, and `@huggingface/transformers` power the
   local photo metadata, resizing, and embedding pipeline.
 - `satori` and `sharp` generate social preview images in `CommonHead.astro`.
