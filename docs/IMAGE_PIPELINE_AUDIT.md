@@ -28,13 +28,13 @@ Current output is dominated by photo fan-out, not repeated JavaScript imports:
 - Full `dist` is 537 MiB after deleting original JPEGs.
 - Source photo aliases expose 1,340 files totaling about 6.1 GiB.
 
-First priority: make every dynamic `/photo/[slug]` page render one selected
-photo instead of the complete gallery. That removes repeated gallery markup,
-encoded embeddings, metadata, and thumbnail transforms from every deep-link
-page while preserving unique photo URLs. This needs a product decision about
-what a direct photo page should show, so it is deliberately not changed here.
+The shared-gallery `/photo/*` architecture and its `data-*` payload are
+intentional. A direct photo URL must keep enough state for client-side movement
+between gallery, map, and photo views without a full page reload. Do not split
+those pages into separate reduced payloads or move the existing metadata,
+embeddings, and control data to a deferred manifest.
 
-Second priority: redesign package cache writes. Today every individual
+First priority: redesign package cache writes. Today every individual
 `<Image placeholder="color">` call serializes behind one global lock and can
 rewrite the complete JSON cache. This is a much better target than adding more
 module-level caches.
@@ -70,6 +70,17 @@ Relevant site boundaries:
   emitted JPEGs after the build.
 - Package entry points live in `src/image-pipeline.ts`, `src/utils.ts`, and
   `src/remote.ts` under the local package repository.
+
+## Product decisions
+
+- Keep `/photo/`, `/photo/map/`, and `/photo/[slug]/` on one shared gallery
+  data model. Client-side transitions are a required user experience.
+- Keep gallery `data-*` attributes, including metadata and encoded embeddings.
+  They are the client-side state contract, not accidental page bloat.
+- Optimize build work and cache behavior without changing that contract.
+- Evolve `vite-image-pipeline` into a robust standalone package. Astro support
+  is an optional adapter, not a requirement for consumers that only need core
+  image data features.
 
 ## Cache assessment
 
@@ -140,8 +151,8 @@ Recommended package design:
    `flushCaches()` call / Astro build hook, rather than after each public call.
 4. Add `prune` support to remove entries no longer in a supplied asset set.
 5. Expose batch APIs as the preferred path. The site can collect gallery file
-   paths once, preload colors and blur data in parallel, then pass values into
-   the image renderer or a manifest.
+   paths once and preload colors or blur values in parallel. Keep rendering
+   through the existing `<Image>` component and `data-*` contract.
 
 An atomic temp-file-and-rename write should replace direct `writeFile()` so an
 interrupted build cannot leave invalid JSON. The current loader recovers by
@@ -167,24 +178,21 @@ several gigabytes, and it would make caching slower than processing it.
 
 ## Site opportunities
 
-### P0 — stop rendering full gallery for each individual photo URL
+### P0 — preserve shared gallery, optimize only its build work
 
-`src/pages/photo/[slug].astro` passes a selected file into `photo/index.astro`,
-but that page always renders `_Gallery.astro` with the entire portfolio glob.
-Each selected-photo route therefore embeds the full gallery and client script.
-The output confirms this: individual routes are around 328 KiB each.
+`src/pages/photo/[slug].astro` deliberately renders the same gallery state as
+`/photo/`. Individual routes are around 328 KiB each because that enables
+client-side movement among photographs, gallery, and map without a page reload.
+This duplication is an accepted output-size tradeoff, not a refactor target.
 
-Preferred shape:
+Focus optimization on data production instead:
 
-- Keep `/photo/` as full gallery.
-- Keep `/photo/map/` as full gallery plus map mode.
-- Make `/photo/[slug]/` a dedicated detail component containing one optimized
-  image, its relevant metadata, navigation, and a gallery backlink.
-- Load CLIP embeddings only on pages that expose semantic search.
-
-This will cut static HTML materially and prevents a direct image link from
-downloading data for every other image. It changes direct-photo UI, so decide
-the desired detail-page experience before implementation.
+- cache EXIF, embeddings, colors, blur placeholders, image modules, and Astro
+  transforms correctly;
+- batch source-data lookups before rendering many image components;
+- preserve every current `data-*` field and client-side navigation behavior;
+- measure output and warm-build time after package cache changes, rather than
+  reducing page state.
 
 ### P1 — select responsive sizes intentionally
 
@@ -202,24 +210,16 @@ then measure LCP and transferred bytes.
 `aero/index.astro` already demonstrates multiple breakpoints; it should also be
 checked against actual CSS layout and `sizes` before treating it as a template.
 
-### P1 — remove or defer hidden page data
+### Accepted tradeoff — gallery page data
 
 Gallery HTML includes metadata, tags, encoded CLIP vectors, full-resolution
-URLs, and download URLs as `data-*` attributes for each image. That supports
-rich client behavior, but it makes every page heavy. The two root gallery modes
-each emit essentially same 328 KiB data payload.
+URLs, and download URLs as `data-*` attributes for each image. This is required
+for current client-side navigation and controls. Keep it in page HTML.
 
-Possible approaches, ordered from least to most invasive:
-
-1. Do not serialize fields not enabled by current page controls.
-2. Put large embeddings in a versioned static JSON file loaded only when search
-   opens.
-3. Emit a compact gallery manifest once and have gallery/map modes consume it.
-4. Keep full EXIF only on a detail page or lazy endpoint.
-
-GPS coordinates are intentionally public for map mode today. Treat that as a
-privacy policy decision; EXIF extraction exposes more source metadata than a
-display page necessarily needs.
+The two root gallery modes each emit essentially same 328 KiB data payload.
+That is accepted. Improvements must preserve it, not replace it with an
+on-demand manifest. GPS coordinates are intentionally public for map mode;
+continue treating that as an explicit privacy policy decision.
 
 ### P2 — fetch external press content outside rendering
 
@@ -277,6 +277,27 @@ Minimum test matrix:
 - matching ETag skips upload and removes local output,
 - integration hook ordering with Astro static builds.
 
+### P0 — separate standalone core from framework adapters
+
+The README describes a framework-agnostic package, but the sole public entry
+point exports Astro integration code and its declarations reference Astro. A
+consumer that only needs `getImageColors()` should not need Astro installed or
+know about its lifecycle.
+
+Publish explicit entry points:
+
+```text
+vite-image-pipeline          core API: pipeline instance and feature APIs
+vite-image-pipeline/astro    Astro integration and Astro-only types
+vite-image-pipeline/remote   optional R2 upload adapter
+```
+
+Use a `package.json` `exports` map with JavaScript, declaration, and package
+metadata entries for each path. Keep framework imports type-only and scoped to
+the Astro entry point. `sharp`, EXIF, Transformers/ONNX, and AWS should be
+feature-scoped optional dependencies where package tooling permits it, so a
+color-only consumer does not necessarily install remote-upload and ML stacks.
+
 ### P1 — make global state instance-scoped
 
 The package writes `metadataCache`, `embeddingCache`, locks, and remote platform
@@ -322,14 +343,17 @@ dependency surface for simple users.
 ## Recommended implementation sequence
 
 1. Add package tests and make installation reproducible.
-2. Fix remote failure semantics and type/API issues in a package PR.
-3. Implement dirty, atomic, batched cache persistence plus in-flight request
-   coalescing in a package PR. Benchmark cold and warm builds before and after.
-4. Release package. Update site to released version; use local `file:` link only
+2. Split standalone core, Astro adapter, and remote adapter entry points without
+   changing current site API.
+3. Fix remote failure semantics, custom-domain support, type/API issues, and
+   instance isolation in package PRs.
+4. Implement dirty, atomic, batched cache persistence plus in-flight request
+   coalescing. Benchmark cold and warm builds before and after.
+5. Release package. Update site to released version; use local `file:` link only
    during integration testing.
-5. Decide direct-photo page UX, then split it from full gallery in a site PR.
-6. Add intentional thumbnail candidates and `sizes`; compare total output,
-   page transfer, and LCP.
+6. Preserve shared photo pages and `data-*` attributes. Add intentional
+   thumbnail candidates and `sizes`; compare total output, page transfer, and
+   LCP without changing navigation behavior.
 7. Persist `node_modules/.astro/assets` and `.image-pipeline` in CI caches.
    Cache the Transformers model directory only if deployment environment permits
    it and cache keys include package lockfile plus model name/version.
