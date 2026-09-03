@@ -6,17 +6,17 @@ describe("shouldIncludeSitemapRoute", () => {
     "/",
     "/projects/",
     "https://blakesanie.com/photo/",
+    "/photo/map/",
     "/photo/albums/",
     "/photo/albums/landscape/",
+    "/photo/albums/landscape/sunset/",
   ])("includes %s", (route) => {
     expect(shouldIncludeSitemapRoute(route)).toBe(true);
   });
 
   it.each([
     "/chicago/",
-    "/photo/map/",
     "/photo/sunset/",
-    "/photo/albums/landscape/sunset/",
     "https://blakesanie.com/music/",
   ])("excludes %s", (route) => {
     expect(shouldIncludeSitemapRoute(route)).toBe(false);
