@@ -14,10 +14,7 @@ const { actions, defaultAction } = Astro.props as Props;
   {
     actions.map(({ id, label }) => {
       return (
-        <button
-          class:list={["toggleButton", { active: id == defaultAction }]}
-          id={id}
-        >
+        <button class:list={["toggleButton", { active: id == defaultAction }]} id={id}>
           {label}
         </button>
       );
@@ -62,7 +59,9 @@ const { actions, defaultAction } = Astro.props as Props;
   }
   .toggle.ready .toggleFloater {
     visibility: visible;
-    transition: transform 0.2s ease, width 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      width 0.2s ease;
   }
 </style>
 
