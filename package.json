@@ -10,7 +10,7 @@
     "build": "astro build && node minify.mjs",
     "preview": "pnpm exec wrangler pages dev",
     "astro": "astro",
-    "deploy": "pnpm build && pnpm exec wrangler pages deploy dist --branch=main",
+    "deploy": "pnpm exec wrangler pages deploy dist --branch=main",
     "clean": "rm -rf .astro dist node_modules/.vite",
     "test": "vitest run --config vitest.config.ts",
     "format": "prettier --write .",
