@@ -48,6 +48,7 @@ export const albums: Album[] = albumSchema.array().parse([
     description: "September 1, 2025. Photographs from Monday Night Ride.",
     heading: "MNR Labor Day 2025",
     allowDownload: true,
+    allowRemoteImages: true,
     allowFilename: true,
     imageFilePath: "/src/assets/client_alias/mnr-labor-day-2025/DSC00237.jpg",
   },
