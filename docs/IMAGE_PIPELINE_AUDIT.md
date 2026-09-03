@@ -237,6 +237,14 @@ When configuring the R2 custom domain, send immutable cache headers for hashed
 current R2 `PutObject` omits `CacheControl`, so deployment policy must be set at
 the bucket/CDN or added as an option.
 
+The R2 pipeline must also support a custom public bucket domain. For this site,
+generated download URLs must use `https://download.blakesanie.com/<object-key>`
+rather than R2's bucket endpoint. Make `bucketDomain` an optional
+`cloudflare-r2` setting, validate it as a hostname or URL, normalize a trailing
+slash, and use it only when generating public URLs. Uploads must still use the
+account-scoped S3 API endpoint. Document this separately from `bucketName`: the
+former is a browser-facing URL origin; the latter is an R2 API bucket identifier.
+
 ## Package opportunities
 
 ### P0 — fail build when required remote upload fails
@@ -289,10 +297,11 @@ instance. This also makes tests isolated and permits two projects in one process
   `createRemotePlatform` to improve stack traces and readability.
 - `crypto` and `existsSync` imports in `image-pipeline.ts` are unused.
 - Public option types should be imported with `import type`.
-- The custom-domain addition presently exists only as uncommitted local package
-  work. Release it with tests and documentation, then update site dependency to
-  that release. Do not point production at `file:plugins/vite-image-pipeline`.
-  A local file dependency is appropriate only for development and CI validation.
+- Implement and test custom `bucketDomain` support, including
+  `download.blakesanie.com` as this site's production domain. Release it with
+  documentation, then update site dependency to that release. Do not point
+  production at `file:plugins/vite-image-pipeline`; use it only for local
+  development and CI validation.
 
 ### P2 — use bounded concurrency
 
