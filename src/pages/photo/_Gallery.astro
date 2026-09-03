@@ -122,6 +122,7 @@ if (allowDownload) {
       cacheControl: "public, max-age=31536000, immutable",
     },
     filepathDownloadPairs.map(([, value]) => value),
+    () => import.meta.env.PROD,
   );
   downloadUrls = Object.fromEntries(
     filepathDownloadPairs.map(([filepath, _], index) => [
