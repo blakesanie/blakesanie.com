@@ -39,10 +39,15 @@ async function handleCallback(callback) {
 }
 
 if (redirect.protocol === "https:") {
-  console.log(`Open this URL, authorize Spotify, then paste the full redirected URL here:\n\n${authorizeUrl}\n`);
-  if (process.platform === "darwin") spawn("open", [authorizeUrl], { stdio: "ignore", detached: true });
-  const rl = createInterface({ input, output });
-  try { await handleCallback(new URL(await rl.question("Redirected URL: "))); } finally { rl.close(); }
+  const callbackUrl = process.argv[2];
+  if (callbackUrl) {
+    await handleCallback(new URL(callbackUrl));
+  } else {
+    console.log(`Open this URL, authorize Spotify, then paste the full redirected URL here:\n\n${authorizeUrl}\n`);
+    if (process.platform === "darwin") spawn("open", [authorizeUrl], { stdio: "ignore", detached: true });
+    const rl = createInterface({ input, output });
+    try { await handleCallback(new URL(await rl.question("Redirected URL: "))); } finally { rl.close(); }
+  }
 } else {
   const server = createServer(async (request, response) => {
     try {
