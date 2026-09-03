@@ -4,8 +4,8 @@ import { spawn } from "node:child_process";
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-// Use the callback already registered in this project's Spotify app.
-const redirectUri = process.env.SPOTIFY_REDIRECT_URI || "http://localhost:8888/callback";
+// Spotify permits HTTP callbacks only on a loopback IP, not `localhost`.
+const redirectUri = process.env.SPOTIFY_REDIRECT_URI || "http://127.0.0.1:8888/callback";
 const redirect = new URL(redirectUri);
 
 if (!clientId || !clientSecret) {
