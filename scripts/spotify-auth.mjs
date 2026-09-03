@@ -7,6 +7,7 @@ import { spawn } from "node:child_process";
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 const redirectUri = process.env.SPOTIFY_REDIRECT_URI || "http://127.0.0.1:8888/callback";
+const providedCode = process.env.CODE || (process.argv[2] && !process.argv[2].startsWith("http") ? process.argv[2] : null);
 const redirect = new URL(redirectUri);
 if (!clientId || !clientSecret) throw new Error("SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET must be set in .env");
 if (redirect.protocol !== "https:" && !(redirect.protocol === "http:" && ["localhost", "127.0.0.1"].includes(redirect.hostname))) {
@@ -38,7 +39,9 @@ async function handleCallback(callback) {
   await exchangeCode(code);
 }
 
-if (redirect.protocol === "https:") {
+if (providedCode) {
+  await exchangeCode(providedCode);
+} else if (redirect.protocol === "https:") {
   const callbackUrl = process.argv[2];
   if (callbackUrl) {
     await handleCallback(new URL(callbackUrl));
