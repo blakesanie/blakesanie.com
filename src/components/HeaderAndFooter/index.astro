@@ -365,8 +365,8 @@ $$$$$$$/     $$$$/   $$$$$$$ |$$/  $$$$$$$/
     padding: 1.4em 0;
     --side-padding: 0.7em;
     overflow-y: scroll;
-    /* isolation: isolate; */
-    z-index: 1;
+    /* Keep navigation above page content and its transformed stacking contexts. */
+    z-index: 1000;
     /* padding-left: var(--side-padding); */
   }
   header :global(a),

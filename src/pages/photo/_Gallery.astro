@@ -383,8 +383,8 @@ function getAspectBucket(aspectRatio: number): AspectBucket {
 <style define:vars={{ gutter }}>
 
   :global(.pageContent) p {
-    padding-left: 1em;
-    padding-right: 1em;
+    padding-left: 1em !important;
+    padding-right: 1em !important;
   }
 
   #controls {
@@ -1569,21 +1569,21 @@ window.allowDeepLink = allowDeepLink;
 
   function getAdjacentVisibleImage(current: HTMLElement, direction: 'next' | 'prev'): HTMLImageElement | null {
     let sibling = direction === 'next' ? current.nextElementSibling : current.previousElementSibling;
-    
+
     while (sibling) {
       if ((sibling as HTMLElement).style.display !== "none") {
         return sibling as HTMLImageElement;
       }
       sibling = direction === 'next' ? sibling.nextElementSibling : sibling.previousElementSibling;
     }
-    
+
     return null;
   }
 
   nextButton?.addEventListener("click", () => {
     const currentImage = document.querySelector(".galleryImage.active") as HTMLImageElement;
     if (!currentImage) return;
-    
+
     const nextImg = getAdjacentVisibleImage(currentImage, "next");
     if (nextImg) enterFullscreen(nextImg);
   });
@@ -1672,7 +1672,7 @@ window.allowDeepLink = allowDeepLink;
   if (window.allowDeepLink) {
     // 1. Get the current pathname
     let initialDeepLink = window.location.pathname;
-    
+
     // 2. Safely strip the trailing slash if one exists (excluding the home root slash)
     if (initialDeepLink.endsWith("/") && initialDeepLink !== "/") {
       initialDeepLink = initialDeepLink.slice(0, -1);
