@@ -4,14 +4,15 @@ import { spawn } from "node:child_process";
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-const redirectUri = process.env.SPOTIFY_REDIRECT_URI || "http://localhost:8888/callback";
+// Spotify permits HTTP only for loopback IP redirects (not `localhost`).
+const redirectUri = process.env.SPOTIFY_REDIRECT_URI || "http://127.0.0.1:8888/callback";
 const redirect = new URL(redirectUri);
 
 if (!clientId || !clientSecret) {
   throw new Error("SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET must be set in .env");
 }
-if (redirect.protocol !== "http:" || redirect.hostname !== "localhost") {
-  throw new Error("SPOTIFY_REDIRECT_URI must use an http://localhost callback");
+if (redirect.protocol !== "http:" || redirect.hostname !== "127.0.0.1") {
+  throw new Error("SPOTIFY_REDIRECT_URI must use an http://127.0.0.1 callback");
 }
 
 const state = randomBytes(24).toString("hex");
