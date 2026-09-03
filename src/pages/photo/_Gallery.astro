@@ -195,6 +195,15 @@ if (Astro.props.imageName) {
 const description =
   Astro.props.description || "My portfolio of artistic photographs.";
 const gutter = "10px";
+
+type AspectBucket = "portrait" | "square" | "landscape" | "panorama";
+
+function getAspectBucket(aspectRatio: number): AspectBucket {
+  if (aspectRatio < 0.8) return "portrait";
+  if (aspectRatio <= 1.25) return "square";
+  if (aspectRatio <= 2) return "landscape";
+  return "panorama";
+}
 ---
 
 <HeaderAndFooter
@@ -275,6 +284,8 @@ const gutter = "10px";
               data-iso={image.metadata?.iso}
               data-width={image.width}
               data-height={image.height}
+              data-aspect-ratio={image.aspectRatio}
+              data-aspect-bucket={getAspectBucket(image.aspectRatio)}
               data-lat={image.metadata?.lat}
               data-lon={image.metadata?.lon}
               data-emb={image.embeddings}
@@ -735,20 +746,67 @@ window.allowDeepLink = allowDeepLink;
 
   const shouldRandomize = galleryContainer!.classList.contains("toShuffle")
 
-  if (shouldRandomize && galleryImages.length > 0) {
-    // Convert NodeList to a standard array for shuffling
-    const itemsArray = Array.from(galleryImages);
+  type AspectBucket = "portrait" | "square" | "landscape" | "panorama";
+  type GalleryItem = HTMLElement & { dataset: DOMStringMap & { aspectBucket: AspectBucket; aspectRatio: string } };
 
-    // Fisher-Yates Shuffle algorithm
-    for (let i = itemsArray.length - 1; i > 0; i--) {
+  function shuffle<T>(items: T[]) {
+    for (let i = items.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [itemsArray[i], itemsArray[j]] = [itemsArray[j], itemsArray[i]];
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+  }
+
+  if (shouldRandomize && galleryImages.length > 0) {
+    const buckets: Record<AspectBucket, GalleryItem[]> = {
+      portrait: [],
+      square: [],
+      landscape: [],
+      panorama: [],
+    };
+    Array.from(galleryImages, (image) => image as GalleryItem).forEach((image) => {
+      buckets[image.dataset.aspectBucket].push(image);
+    });
+    Object.values(buckets).forEach(shuffle);
+
+    // One layout read. The remaining work is linear in the image count.
+    const galleryWidth = galleryContainer!.parentElement?.clientWidth || window.innerWidth;
+    const baseHeight = window.innerWidth <= 800 ? 190 : 145 + window.innerWidth * 0.08;
+    const gutter = 10;
+    let estimatedRowWidth = 0;
+    let previousBucket: AspectBucket | undefined;
+    const orderedImages: GalleryItem[] = [];
+
+    while (orderedImages.length < galleryImages.length) {
+      const candidates = (Object.keys(buckets) as AspectBucket[])
+        .filter((bucket) => buckets[bucket].length > 0)
+        .map((bucket) => ({ bucket, image: buckets[bucket][buckets[bucket].length - 1] }));
+
+      const ranked = candidates.map(({ bucket, image }) => {
+        const imageWidth = Number(image.dataset.aspectRatio) * baseHeight + gutter;
+        const projectedWidth = estimatedRowWidth + imageWidth;
+        let penalty = 0;
+
+        // Mix shapes, keep panoramas from monopolizing a row, and favor an
+        // image that brings the estimated row close to the gallery width.
+        if (bucket === previousBucket) penalty += 8;
+        if (bucket === "panorama" && estimatedRowWidth > 0) penalty += 4;
+        if (projectedWidth > galleryWidth * 1.12) penalty += 12;
+        penalty += Math.abs(galleryWidth - projectedWidth) / galleryWidth;
+
+        return { bucket, image, imageWidth, penalty };
+      }).sort((a, b) => a.penalty - b.penalty);
+
+      // Randomly select one of the two best fits: fresh order, bounded taste.
+      const bestChoices = ranked.slice(0, Math.min(2, ranked.length));
+      const next = bestChoices[Math.floor(Math.random() * bestChoices.length)];
+      buckets[next.bucket].pop();
+      orderedImages.push(next.image);
+      previousBucket = next.bucket;
+      estimatedRowWidth += next.imageWidth;
+      if (estimatedRowWidth >= galleryWidth) estimatedRowWidth = 0;
     }
 
-    // Append elements back into the DOM in their new random order
-    itemsArray.forEach((item) => {
-      galleryContainer!.appendChild(item);
-    });
+    orderedImages.forEach((image) => galleryContainer!.appendChild(image));
   }
 
   // Reveal the gallery now that shuffling is complete
