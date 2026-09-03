@@ -17,8 +17,10 @@ complete production build may also require its native image libraries and local 
 
 ## Build and deployment
 
-`pnpm build` creates the static site and applies the HTML post-processing step. `pnpm deploy`
-builds and deploys `dist/` to Cloudflare Pages. Deployments are intentionally local because the
+`pnpm build` creates the static site, applies HTML post-processing, and uploads required remote
+images to R2. `pnpm deploy` runs that build, verifies every `download.blakesanie.com` image URL
+referenced by `dist/`, then publishes `dist/` to Cloudflare Pages. A failed R2 upload or
+verification prevents the site deployment. Deployments are intentionally local because the
 portfolio images are not stored online.
 
 Keep credentials in local `.env` or Cloudflare bindings. Never commit values to `.env.example` or

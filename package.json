@@ -10,7 +10,8 @@
     "build": "astro build && node minify.mjs",
     "preview": "pnpm exec wrangler pages dev",
     "astro": "astro",
-    "deploy": "pnpm exec wrangler pages deploy dist --branch=main",
+    "verify:remote-images": "node tools/verify-remote-images.mjs",
+    "deploy": "pnpm run build && pnpm run verify:remote-images && pnpm exec wrangler pages deploy dist --branch=main",
     "clean": "rm -rf .astro dist node_modules/.vite",
     "test": "vitest run --config vitest.config.ts",
     "format": "prettier --write .",
@@ -46,7 +47,7 @@
     "satori": "^0.13.1",
     "sharp": "^0.35.1",
     "typed.js": "^3.0.0",
-    "vite-image-pipeline": "1.0.3",
+    "vite-image-pipeline": "1.0.4",
     "wrangler": "^4.104.0",
     "zod": "^3.25.76"
   },
