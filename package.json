@@ -7,6 +7,7 @@
     "dev": "astro dev --host --port $PORT",
     "dev3000": "astro dev --host --port 3000",
     "start": "astro dev",
+    "spotify-auth": "node --env-file=.env scripts/spotify-auth.mjs",
     "build": "astro build && node minify.mjs",
     "preview": "pnpm exec wrangler pages dev",
     "astro": "astro",
