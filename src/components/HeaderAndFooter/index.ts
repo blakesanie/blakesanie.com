@@ -233,7 +233,6 @@ const hamburgerClick = () => {
     header.style.position = "fixed";
   }
   menuExpanded = !menuExpanded;
-  // console.log("menuExpanded: ", menuExpanded);
 };
 
 hamburger?.addEventListener("click", hamburgerClick);
@@ -253,11 +252,9 @@ let wideScrollY = 0;
 let wasMobile = false;
 const evaluateTransitionable = () => {
   const isMobile = window.innerWidth <= mobileMaxWidth;
-  // console.log(isMobile);
   if (isMobile && !wasMobile) {
     header.classList.add("headerTransitionable");
     // const originalScrollTop = wideScrollY;
-    // console.log("widescrolly before mobile", wideScrollY);
     wideScrollY = header.scrollTop;
     header.scrollTop = 0;
     // hoverZone.style.transition = "none";
@@ -270,8 +267,6 @@ const evaluateTransitionable = () => {
     // hoverZone.style.transition = "none";
     // hoverZone?.classList.remove("hoverZoneTransition");
     // moveHoverToAnchor(undefined);
-    // console.log(wideScrollY);
-    console.log("widescrolly when wide", wideScrollY);
     header.scrollTop = wideScrollY;
   }
   wasMobile = isMobile;

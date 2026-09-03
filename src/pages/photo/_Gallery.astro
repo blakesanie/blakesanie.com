@@ -57,6 +57,10 @@ const {
   randomize = false
 } = Astro.props;
 
+if (allowRemoteImages) {
+  console.log("[Gallery] Remote images enabled; optimized images will upload to R2");
+}
+
 // const filePaths = Object.keys(Astro.props.assetGlob).map((vitePath) =>
 //   path.resolve(path.join(process.cwd(), vitePath)),
 // );
@@ -67,7 +71,6 @@ if (Astro.props.imageFilePath) {
     Astro.props.imageFilePath,
     Astro.props.assetGlob[Astro.props.imageFilePath],
   );
-  console.log("image for album", image)
 }
 
 let metadata: ReturnType<typeof metadataMapSchema.parse> | null = null;
@@ -75,7 +78,6 @@ if (allowMetadata) {
   metadata = metadataMapSchema.parse(
     await getMetadata(Object.keys(Astro.props.assetGlob)),
   );
-  console.log("collected metadata");
 }
 
 let embeddings: ReturnType<typeof embeddingMapSchema.parse> | null = null;
@@ -83,14 +85,12 @@ if (allowClip) {
   embeddings = embeddingMapSchema.parse(
     await getEmbeddings(Object.keys(Astro.props.assetGlob)),
   );
-  console.log("collected embeddings");
 }
 
 const imageColors = await getImageColors(Object.keys(Astro.props.assetGlob));
 
 let downloadUrls: Record<string, string> | null = null;
 if (allowDownload) {
-  console.log("ALLOW DOWNLOAD");
   const filepathDownloadPairs = await Promise.all(
     Object.entries(Astro.props.assetGlob).map(
       async ([filePath, modulePromise]): Promise<[string, string]> => {
@@ -132,7 +132,6 @@ if (allowDownload) {
       result[index],
     ]),
   );
-  console.log(downloadUrls);
 }
 
 // function dmsToDecimal(dmsStr: string) {
@@ -196,7 +195,6 @@ if (Astro.props.imageName) {
 const description =
   Astro.props.description || "My portfolio of artistic photographs.";
 const gutter = "10px";
-console.log("end of Gallery frontmatter");
 ---
 
 <HeaderAndFooter
@@ -934,7 +932,6 @@ window.allowDeepLink = allowDeepLink;
   const categorySelect = document.querySelector("#controls select") as HTMLSelectElement;
 
   categorySelect?.addEventListener("change", (e) => {
-    console.log('change', e)
     const selectedCategory = (e.target as HTMLSelectElement).value;
 
     galleryImages.forEach((image) => {
@@ -1644,7 +1641,6 @@ window.allowDeepLink = allowDeepLink;
     if (modelSession && tokenizer) return Promise.resolve();
     if (initializationPromise) return initializationPromise;
 
-    console.log("Injecting ONNX runtime and fetching CLIP components...");
 
     initializationPromise = new Promise((resolve, reject) => {
       const script = document.createElement("script");
@@ -1669,7 +1665,6 @@ window.allowDeepLink = allowDeepLink;
           modelSession = session;
           tokenizer = new TokenizerModule.default();
 
-          console.log("CLIP Model Loaded successfully.");
           if (clipInput) {
             clipInput.removeAttribute("disabled");
             clipInput.placeholder =
@@ -1750,7 +1745,6 @@ window.allowDeepLink = allowDeepLink;
       if (!query) return;
 
       try {
-        console.log(`Embedding query: "${query}"`);
         const textVector = await embedString(query);
 
         // Locate the parent element holding your galleryImages list
@@ -1781,9 +1775,6 @@ window.allowDeepLink = allowDeepLink;
           galleryContainer.appendChild(item.element);
         });
 
-        console.log(
-          "Grid layout reordered using 4-bit vector math space mapping.",
-        );
       } catch (err) {
         console.error("Semantic sort loop failure:", err);
       }
@@ -1799,7 +1790,6 @@ window.allowDeepLink = allowDeepLink;
     const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
 
     nameDebounceTimeout = window.setTimeout(() => {
-      console.log(`Filtering gallery by name query: "${query}"`);
 
       galleryImages.forEach((image) => {
         const htmlEl = image as HTMLElement;
@@ -1824,7 +1814,6 @@ window.allowDeepLink = allowDeepLink;
 
   downloadBuuttons.forEach((button) => {
     button.addEventListener("click", async (e) => {
-      console.log("click");
       e.preventDefault();
       e.stopPropagation();
       const image = button.closest(".galleryImage");
@@ -1832,7 +1821,6 @@ window.allowDeepLink = allowDeepLink;
       const url = image.getAttribute("data-download");
       if (url) {
         if (completedDownloads.has(url)) {
-          console.log("Already downloaded:", url);
           return;
         }
         await downloadFile(

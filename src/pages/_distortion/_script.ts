@@ -489,7 +489,6 @@ function loadImg(src: string) {
     canvas.width = displayWidth;
     canvas.height = displayHeight;
 
-    console.log("aspect ratio", aspectRatio);
 
     // Create an offscreen canvas to resize the image
     const offscreen = document.createElement("canvas");

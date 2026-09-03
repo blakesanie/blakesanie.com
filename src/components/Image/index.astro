@@ -105,7 +105,6 @@ try {
     ...optimizedImage.attributes,
   };
   if (remote) {
-    console.log(`[Image Component] Queueing remote image upload: ${optimizedImage.src}`);
     const [remoteSrc] = await uploadRemoteImages(
       {
         platform: "cloudflare-r2",
@@ -121,7 +120,6 @@ try {
       () => import.meta.env.PROD,
     );
     imageAttrs.src = remoteSrc;
-    console.log(`[Image Component] Remote image URL: ${remoteSrc}`);
   }
   // 3. Delegate placeholder operations to the parallelized disk cache pipeline
   if (placeholder === "color") {

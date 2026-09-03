@@ -51,8 +51,6 @@ function resolveAperture(exif: ExifRecord): number | undefined {
     n = x;
   }
   if (n === undefined) {
-    console.log(exif);
-    console.log("FNumber is not numerical: " + x);
     return undefined;
   }
 
@@ -228,14 +226,12 @@ export async function getCachedImageModule(
 ) {
   const cached = moduleCache.get(filePath);
   if (cached) {
-    // console.log('image module cache hit:', filePath);
     return cached;
   }
 
   if (!modulePromise) {
     throw new Error(`File path not found in glob: ${filePath}`);
   }
-  // console.log('image module cache miss');
 
   const module = (await modulePromise()).default;
 

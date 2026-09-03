@@ -13,12 +13,11 @@ async function processLink({ link, image, date, title }: PressItem) {
   try {
     res = await fetch(link);
   } catch (e) {
-    console.log("failed to process link", link);
+    console.error("Failed to process link", link);
     couldFetch = false;
   }
   if (couldFetch && res) {
     const text = await res.text();
-    //   console.log(text);
     title = text.split("<title>")[1].split("</title>")[0];
     title = title.replace(" on LinkedIn", "");
     site = site.replace("www.", "");
@@ -68,9 +67,7 @@ async function processLink({ link, image, date, title }: PressItem) {
   };
 }
 const press = await Promise.all(pressItems.map((link) => processLink(link)));
-// console.log(press);
 // const f1 = await fetch(links[0]);
-// console.log("f1", await f1.text());
 ---
 
 <HeaderAndFooter allowMainStyles title="Press" description="">
