@@ -93,8 +93,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       vite-image-pipeline:
-        specifier: 1.0.2
-        version: 1.0.2(@types/node@22.20.1)
+        specifier: 1.0.3
+        version: 1.0.3(@types/node@22.20.1)
       wrangler:
         specifier: ^4.104.0
         version: 4.128.0
@@ -3584,8 +3584,8 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  vite-image-pipeline@1.0.2:
-    resolution: {integrity: sha512-rX4fXTAKTC+WnMwfeyjaQ5vqTuJUhwXk3t7BAEHnPi4mk7CAxdqUa9cV/5iIvcA4Q0BjeKwmoeIBKkynr4UQZg==}
+  vite-image-pipeline@1.0.3:
+    resolution: {integrity: sha512-nBNC57g5aR9L/8x92YhAd0ptojGdKWFNmvCz3m2VrzcrnDxvZQ7MRD7Pgyra3KkL0SVYUkj4sFzLddQ+Ibc6vQ==}
 
   vite@8.2.2:
     resolution: {integrity: sha512-cFKLV/PRgAUlIRm5WjMjJ86jrftzpqcgH+Us+DS8mI3CDNiH30Whrz8uHL3+MOLPAgqbMBAqWdAHAphOAM+z/Q==}
@@ -7201,7 +7201,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-image-pipeline@1.0.2(@types/node@22.20.1):
+  vite-image-pipeline@1.0.3(@types/node@22.20.1):
     dependencies:
       '@aws-sdk/client-s3': 3.1125.0
       '@huggingface/transformers': 4.2.0

@@ -392,7 +392,6 @@ root and `/astro` exports, tests, and documentation.
 The site batches gallery color extraction once per gallery render and supplies
 the result to each image component. This keeps all gallery `data-*` fields and
 client-side transitions intact while avoiding one color-pipeline request per
-thumbnail. The site must update to the released package version before it can
-use the `/astro` entry point, `download.blakesanie.com`, and R2 cache-control
-settings in production; a `file:plugins/...` dependency cannot be deployed from
-this repository because the package is a separate Git repository.
+thumbnail. The site integration now uses published `vite-image-pipeline@1.0.3`,
+the `/astro` entry point, `download.blakesanie.com`, and immutable R2 cache
+headers. It does not depend on a local `file:plugins/...` package.

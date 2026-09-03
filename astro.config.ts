@@ -5,7 +5,7 @@ import type { AstroIntegration } from "astro";
 import { unlink, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { astroImagePipelinePlugin } from "vite-image-pipeline";
+import { astroImagePipelinePlugin } from "vite-image-pipeline/astro";
 import { macosTagsPlugin } from "./src/lib/macos-tags-plugin";
 import { shouldIncludeSitemapRoute } from "./src/lib/sitemap";
 

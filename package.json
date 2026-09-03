@@ -47,7 +47,7 @@
     "satori": "^0.13.1",
     "sharp": "^0.35.1",
     "typed.js": "^3.0.0",
-    "vite-image-pipeline": "1.0.2",
+    "vite-image-pipeline": "1.0.3",
     "wrangler": "^4.104.0",
     "zod": "^3.25.76"
   },
