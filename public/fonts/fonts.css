@@ -2,7 +2,8 @@
 @font-face {
   font-family: "Assistant";
   font-style: normal;
-  font-weight: 200 800;
+  /* Match prior Google Fonts request, which loaded weights 200 through 600. */
+  font-weight: 200 600;
   font-display: swap;
   src: url("/fonts/assistant-variable.woff2") format("woff2");
 }
