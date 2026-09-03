@@ -1,5 +1,4 @@
 ---
-import { GoogleFontsOptimizer } from "astro-google-fonts-optimizer";
 import { SEO } from "astro-seo";
 import RemoveLogs from "../basic/RemoveLogs.astro";
 import satori from "satori";
@@ -8,10 +7,6 @@ import fs from "fs";
 import { getImage } from "astro:assets";
 import path from "node:path";
 import sharp from "sharp";
-
-Astro.props.fontUrl =
-  Astro.props.fontUrl ||
-  "https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&display=swap";
 
 const title = Astro.props.title ? Astro.props.title + " | Blake Sanie" : "Blake Sanie";
 
@@ -276,7 +271,7 @@ const description =
 
       gtag("config", "UA-164774604-1");
     </script>
-    <GoogleFontsOptimizer url={Astro.props.fontUrl} />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
     <slot name="head" />
   </head>
 
