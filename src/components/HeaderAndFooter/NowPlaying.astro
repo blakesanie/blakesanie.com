@@ -1,7 +1,3 @@
----
-const { shadowColor, textColor } = Astro.props;
----
-
 <a id="nowPlaying" target="_blank">
   <img class="loading" id="albumCover" />
   <div class="right">
@@ -9,27 +5,9 @@ const { shadowColor, textColor } = Astro.props;
     <div id="songArtist" class="loading">song artist</div>
     <div id="songAlbum" class="loading">song album</div>
   </div>
-  <div id="windowCover"></div>
 </a>
 
-<style
-  define:vars={{
-    textColor: textColor,
-    shadowColor: shadowColor,
-  }}
->
-  #windowCover {
-    position: fixed;
-    height: 100%;
-    width: 100vw;
-    background: var(--shadowColor);
-    top: 0;
-    left: 0;
-    opacity: 0;
-    z-index: 2;
-    pointer-events: none;
-    transition: opacity 0.16s ease;
-  }
+<style>
   #nowPlaying {
     display: flex;
     padding: 0.5em var(--navPadding);
@@ -64,9 +42,6 @@ const { shadowColor, textColor } = Astro.props;
     border-radius: 8px;
     opacity: 1 !important;
     border: none;
-  }
-  #nowPlaying:hover #windowCover {
-    opacity: 0.9;
   }
   img {
     aspect-ratio: 1;
