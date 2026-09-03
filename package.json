@@ -52,6 +52,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
     "@eslint/js": "^10.0.1",
     "@iconify-json/bi": "^1.2.7",
     "@iconify-json/humbleicons": "^1.2.10",
