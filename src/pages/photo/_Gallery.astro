@@ -34,6 +34,7 @@ export interface Props {
   heading?: string;
   subheading?: string;
   allowDownload?: boolean;
+  allowRemoteImages?: boolean;
   allowFilename?: boolean;
   allowBlog?: boolean;
   allowUniqueUrls?: boolean;
@@ -52,6 +53,7 @@ const {
   allowClip = false,
   allowFilename = false,
   allowDownload = false,
+  allowRemoteImages = false,
   randomize = false
 } = Astro.props;
 
@@ -295,6 +297,7 @@ console.log("end of Gallery frontmatter");
               <Image
                 placeholder="color"
                 src={image.src}
+                remote={allowRemoteImages}
                 filepath={image.filePath}
                 placeholderColor={imageColors[image.filePath]}
                 alt={image.name || "Portfolio photograph"}

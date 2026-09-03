@@ -36,6 +36,7 @@ export interface Album {
   heading: string;
   subheading?: string;
   allowDownload?: boolean;
+  allowRemoteImages?: boolean;
   allowFilename?: boolean;
   allowFullscreen?: boolean;
   allowMetadata?: boolean;
@@ -102,6 +103,7 @@ export const albumSchema = z.object({
   heading: z.string().min(1),
   subheading: z.string().optional(),
   allowDownload: z.boolean().optional(),
+  allowRemoteImages: z.boolean().optional(),
   allowFilename: z.boolean().optional(),
   allowFullscreen: z.boolean().optional(),
   allowMetadata: z.boolean().optional(),
