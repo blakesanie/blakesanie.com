@@ -1,6 +1,5 @@
 ---
 let n = Astro.props.n || 5;
-// console.log("n is ", n);
 const color = Astro.props.color || "white";
 ---
 
@@ -61,8 +60,8 @@ const color = Astro.props.color || "white";
 
 <script>
   const bars = document.querySelectorAll(".soundBars > span");
-  // console.log("bars", bars);
-  bars.forEach((bar, i) => {
+  bars.forEach((bar) => {
+    if (!(bar instanceof HTMLElement)) return;
     const duration = 0.8 + Math.random() * 1.5;
     bar.style.animationDuration = `${duration}s`;
   });

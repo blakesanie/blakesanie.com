@@ -1,0 +1,75 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.24.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Typecheck Astro
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Run tests and smoke checks
+        run: pnpm test
+
+      - name: Build static site
+        run: pnpm build
+
+      - name: Typecheck, lint, and build Next app when present
+        if: ${{ hashFiles('next/package.json') != '' }}
+        working-directory: next
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm typecheck --if-present
+          pnpm lint --if-present
+          pnpm build --if-present
+
+      - name: Audit dependencies
+        run: pnpm audit --audit-level=high
+
+      - name: Scan repository for secrets
+        uses: gitleaks/gitleaks-action@v2
+
+      - name: Upload failed build output
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-build-output
+          path: |
+            dist/
+            .astro/
+          if-no-files-found: ignore

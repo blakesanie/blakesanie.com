@@ -2,10 +2,6 @@ const video = document.getElementById("videoelement");
 const toggleButton = document.getElementById("toggleCamera");
 toggleButton.addEventListener("click", toggleCamera);
 
-function handleSuccess(stream) {
-  video.srcObject = stream;
-}
-
 // async function getDevices() {
 //   await navigator.mediaDevices.getUserMedia({ video: true });
 //   const allDevices = await navigator.mediaDevices.enumerateDevices();

@@ -236,11 +236,11 @@ interface Resume {
   email: string;
   phone: number;
   website?: string;
-  education?: Education[];
-  employment?: Employer[];
-  projects?: Project[];
-  interests?: string[];
-  skills?: SkillDomain[];
+  education: Education[];
+  employment: Employer[];
+  projects: Project[];
+  interests: string[];
+  skills: SkillDomain[];
   competencies: string[];
   certifications: Certification[];
 }

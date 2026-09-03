@@ -1,7 +1,6 @@
 ---
 import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import resume from "../_resume-raw/resume";
-import { toTenths, formatPhone } from "../_resume-raw/index.astro";
 ---
 
 <HeaderAndFooter
@@ -24,9 +23,7 @@ import { toTenths, formatPhone } from "../_resume-raw/index.astro";
               <p class="timeRange">
                 {position.startMonth} {position.startYear}
                 {" - "}
-                {position.endMonth
-                  ? `${position.endMonth} ${position.endYear}`
-                  : "Present"}
+                {position.endMonth ? `${position.endMonth} ${position.endYear}` : "Present"}
               </p>
               <ul>
                 {position.bullets.map((bullet) => (

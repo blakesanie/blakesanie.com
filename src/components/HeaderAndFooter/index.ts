@@ -20,7 +20,9 @@ const {
 // $$ |$$$$ |/$$$$$$$ |  $$ $$/         $$ |  $$ |$$ \__$$ |  $$ $$/  $$$$$$$$/ $$ |
 // $$ | $$$ |$$    $$ |   $$$/          $$ |  $$ |$$    $$/    $$$/   $$       |$$ |
 // $$/   $$/  $$$$$$$/     $/           $$/   $$/  $$$$$$/      $/     $$$$$$$/ $$/
-const nav = document.querySelector("nav");
+const nav = document.querySelector<HTMLElement>("nav");
+const header = document.querySelector<HTMLElement>("header");
+if (!nav || !header) throw new Error("Header navigation is not mounted");
 const anchors: NodeListOf<HTMLAnchorElement> = document.querySelectorAll(
   "nav .navSection:not(#nowPlayingSection) a",
 );
@@ -28,15 +30,15 @@ const mouseOffSections = document.querySelectorAll("nav");
 const mouseNoFocusSections = document.querySelectorAll("#nowPlayingSection");
 
 // some div .navHoverZone may exist within a nav anchor element. Get that here
-let activeNavHoverZone: HTMLElement = document.querySelector(
-  ".active .navHoverZone",
-);
-let activeAnchor = activeNavHoverZone?.parentElement as HTMLAnchorElement;
-let hoverZone = activeAnchor
-  ? hoverZoneBehind
-    ? nav.insertBefore(activeNavHoverZone, nav.firstChild)
-    : nav.appendChild(activeNavHoverZone)
-  : (document.querySelector(".navHoverZone") as HTMLElement);
+const activeNavHoverZone = document.querySelector<HTMLElement>(".active .navHoverZone");
+let activeAnchor = activeNavHoverZone?.parentElement as HTMLAnchorElement | null;
+const hoverZone: HTMLElement = (
+  activeAnchor
+    ? hoverZoneBehind
+      ? nav.insertBefore(activeNavHoverZone!, nav.firstChild)
+      : nav.appendChild(activeNavHoverZone!)
+    : document.querySelector<HTMLElement>(".navHoverZone")
+)!;
 
 if (activeAnchor) {
   positionHoverAtAnchor(activeAnchor);
@@ -45,14 +47,14 @@ if (activeAnchor) {
 let menuExpanded = false;
 
 for (let i = 0; i < anchors.length; i++) {
-  anchors[i].addEventListener("mouseenter", (e) => {
+  anchors[i].addEventListener("mouseenter", () => {
     moveHoverToAnchor(anchors[i]);
   });
   anchors[i].addEventListener("mousemove", (e) => {
     e.stopPropagation();
   });
 
-  anchors[i].addEventListener("click", (e) => {
+  anchors[i].addEventListener("click", () => {
     activeAnchor = anchors[i];
     moveHoverToAnchor(anchors[i]);
   });
@@ -60,10 +62,10 @@ for (let i = 0; i < anchors.length; i++) {
 
 // release hover effect back to resting state when leaving specified area
 for (let i = 0; i < mouseOffSections.length; i++) {
-  mouseOffSections[i].addEventListener("mouseleave", (e) => {
+  mouseOffSections[i].addEventListener("mouseleave", () => {
     moveHoverToAnchor(undefined);
   });
-  mouseOffSections[i].addEventListener("mousemove", (e) => {
+  mouseOffSections[i].addEventListener("mousemove", () => {
     if (window.innerWidth <= mobileMaxWidth) {
       moveHoverToAnchor(undefined);
     }
@@ -71,15 +73,15 @@ for (let i = 0; i < mouseOffSections.length; i++) {
 }
 // some elements within the area may not need a hover focus, so explicitly call them out here
 for (let i = 0; i < mouseNoFocusSections.length; i++) {
-  mouseNoFocusSections[i].addEventListener("mouseenter", (e) => {
+  mouseNoFocusSections[i].addEventListener("mouseenter", () => {
     moveHoverToAnchor(undefined);
   });
 }
 
-let hoveFadeOutTimeout: NodeJS.Timeout;
+let hoveFadeOutTimeout: ReturnType<typeof setTimeout>;
 
-function moveHoverToAnchor(anchor: HTMLAnchorElement) {
-  if (!anchor && hoverZone) {
+function moveHoverToAnchor(anchor: HTMLAnchorElement | undefined) {
+  if (!anchor) {
     if (!activeAnchor) {
       // just fade out
       clearTimeout(hoveFadeOutTimeout);
@@ -138,8 +140,8 @@ window.addEventListener("resize", function () {
 let prevScroll = 0;
 let prevScrollTimestamp = 0;
 let menuIsDown = false;
-var existingInterval;
-const moveHeaderDown = (isDown, isAnimated) => {
+let existingInterval: ReturnType<typeof setTimeout> | undefined;
+const moveHeaderDown = (isDown: boolean, isAnimated: boolean) => {
   header.style.position = "fixed";
   if (existingInterval) {
     clearTimeout(existingInterval);
@@ -166,8 +168,7 @@ window.addEventListener("scroll", () => {
   }
   const currentScroll = window.scrollY;
   const timestamp = new Date().getTime();
-  const scrollVelocity =
-    (currentScroll - prevScroll) / (timestamp - prevScrollTimestamp);
+  const scrollVelocity = (currentScroll - prevScroll) / (timestamp - prevScrollTimestamp);
   if (currentScroll <= 0) {
     menuIsDown = false;
     header.style.position = "fixed";
@@ -177,10 +178,7 @@ window.addEventListener("scroll", () => {
       header.style.position = "absolute";
       header.style.transform = "none";
     }
-  } else if (
-    currentScroll > mobileHeaderHeight &&
-    prevScroll <= mobileHeaderHeight
-  ) {
+  } else if (currentScroll > mobileHeaderHeight && prevScroll <= mobileHeaderHeight) {
     if (menuIsDown) {
     } else {
       moveHeaderDown(false, false);
@@ -197,7 +195,6 @@ window.addEventListener("scroll", () => {
   prevScrollTimestamp = timestamp;
 });
 
-
 //  __       __                                      ________                                                    __
 // /  \     /  |                                    /        |                                                  /  |
 // $$  \   /$$ |  ______   _______   __    __       $$$$$$$$/  __    __   ______    ______   _______    _______ $$/   ______   _______
@@ -211,8 +208,6 @@ window.addEventListener("scroll", () => {
 //                                                                      $$ |
 //                                                                      $$/
 // let menuExpanded = false;
-const header = document.querySelector("header");
-
 const hamburger = document.getElementById("hamburger");
 
 // let pendingHamburgerClick = false;
@@ -223,10 +218,7 @@ const hamburgerClick = () => {
   const innerHeight = header.scrollHeight;
   if (menuExpanded) {
     header?.classList.remove("expanded");
-    header.style.setProperty(
-      "--headerHeight",
-      Math.min(innerHeight, window.innerHeight) + "px",
-    );
+    header.style.setProperty("--headerHeight", Math.min(innerHeight, window.innerHeight) + "px");
     setTimeout(() => {
       header.style.setProperty("--headerHeight", mobileHeaderHeight + "px");
     }, 0);
@@ -234,17 +226,13 @@ const hamburgerClick = () => {
     moveHoverToAnchor(undefined);
 
     header?.classList.add("expanded");
-    header.style.setProperty(
-      "--headerHeight",
-      Math.min(innerHeight, window.innerHeight) + "px",
-    );
+    header.style.setProperty("--headerHeight", Math.min(innerHeight, window.innerHeight) + "px");
     setTimeout(() => {
       header.style.setProperty("--headerHeight", "auto");
     }, headerHeightTransitionDuration * 1000);
     header.style.position = "fixed";
   }
   menuExpanded = !menuExpanded;
-  // console.log("menuExpanded: ", menuExpanded);
 };
 
 hamburger?.addEventListener("click", hamburgerClick);
@@ -264,11 +252,9 @@ let wideScrollY = 0;
 let wasMobile = false;
 const evaluateTransitionable = () => {
   const isMobile = window.innerWidth <= mobileMaxWidth;
-  // console.log(isMobile);
   if (isMobile && !wasMobile) {
     header.classList.add("headerTransitionable");
     // const originalScrollTop = wideScrollY;
-    // console.log("widescrolly before mobile", wideScrollY);
     wideScrollY = header.scrollTop;
     header.scrollTop = 0;
     // hoverZone.style.transition = "none";
@@ -281,8 +267,6 @@ const evaluateTransitionable = () => {
     // hoverZone.style.transition = "none";
     // hoverZone?.classList.remove("hoverZoneTransition");
     // moveHoverToAnchor(undefined);
-    // console.log(wideScrollY);
-    console.log("widescrolly when wide", wideScrollY);
     header.scrollTop = wideScrollY;
   }
   wasMobile = isMobile;
@@ -310,19 +294,19 @@ if (header && nav) {
   const navWidth = nav.offsetWidth;
   const delta = headerWidth - navWidth;
   if (delta > 0) {
-    const newHeaderWidth = headerWidth + delta + 'px';
-    header.style.setProperty('--headerWidth', newHeaderWidth)
+    const newHeaderWidth = headerWidth + delta + "px";
+    header.style.setProperty("--headerWidth", newHeaderWidth);
   }
 }
 
 // Listen for external navigation updates (e.g. from photo mode toggle)
-window.addEventListener('update-nav-active', (e: any) => {
+window.addEventListener("update-nav-active", (e: any) => {
   const { href } = e.detail;
-  const targetAnchor = Array.from(anchors).find(a => a.getAttribute('href') === href);
+  const targetAnchor = Array.from(anchors).find((a) => a.getAttribute("href") === href);
   if (targetAnchor && targetAnchor !== activeAnchor) {
     // Update active class on parent LI elements
-    anchors.forEach(a => a.parentElement?.classList.remove('active'));
-    targetAnchor.parentElement?.classList.add('active');
+    anchors.forEach((a) => a.parentElement?.classList.remove("active"));
+    targetAnchor.parentElement?.classList.add("active");
 
     activeAnchor = targetAnchor;
     moveHoverToAnchor(targetAnchor);

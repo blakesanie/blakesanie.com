@@ -3,24 +3,23 @@ import HeaderAndFooter from "../../components/HeaderAndFooter/index.astro";
 import { getImage } from "astro:assets";
 import Image from "../../components/Image/index.astro";
 import MapGallery from "./_MapGallery.astro";
-import { encodeEmbeddings } from "./_utils";
 import Toggle from "../../components/Toggle/index.astro";
 import TextInput from "../../components/TextInput/index.astro";
 import Select from "../../components/Select/index.astro";
 import {
   getEmbeddings,
+  getImageColors,
   getMetadata,
   uploadRemoteImages,
 } from "vite-image-pipeline";
-import path from "path";
 import type { ImageMetadata as AstroImageMetadata } from "astro";
-import { experimental_AstroContainer } from "astro/container";
 import {
   getSharedProcessedImage,
   getSharedMapImage,
   getCachedImageModule,
   type ImageData
 } from "./_galleryCache";
+import { embeddingMapSchema, metadataMapSchema } from "../../types/content";
 import { Icon } from "astro-icon/components";
 export interface Props {
   assetGlob: Record<string, () => Promise<{ default: AstroImageMetadata }>>;
@@ -35,6 +34,7 @@ export interface Props {
   heading?: string;
   subheading?: string;
   allowDownload?: boolean;
+  allowRemoteImages?: boolean;
   allowFilename?: boolean;
   allowBlog?: boolean;
   allowUniqueUrls?: boolean;
@@ -53,8 +53,13 @@ const {
   allowClip = false,
   allowFilename = false,
   allowDownload = false,
+  allowRemoteImages = false,
   randomize = false
 } = Astro.props;
+
+if (allowRemoteImages) {
+  console.log("[Gallery] Remote images enabled; optimized images will upload to R2");
+}
 
 // const filePaths = Object.keys(Astro.props.assetGlob).map((vitePath) =>
 //   path.resolve(path.join(process.cwd(), vitePath)),
@@ -66,24 +71,26 @@ if (Astro.props.imageFilePath) {
     Astro.props.imageFilePath,
     Astro.props.assetGlob[Astro.props.imageFilePath],
   );
-  console.log("image for album", image)
 }
 
-let metadata: Record<string, Record<string, any>> | null = null;
+let metadata: ReturnType<typeof metadataMapSchema.parse> | null = null;
 if (allowMetadata) {
-  metadata = await getMetadata(Object.keys(Astro.props.assetGlob));
-  console.log("collected metadata");
+  metadata = metadataMapSchema.parse(
+    await getMetadata(Object.keys(Astro.props.assetGlob)),
+  );
 }
 
-let embeddings: Record<string, number[]> | null = null;
+let embeddings: ReturnType<typeof embeddingMapSchema.parse> | null = null;
 if (allowClip) {
-  embeddings = await getEmbeddings(Object.keys(Astro.props.assetGlob));
-  console.log("collected embeddings");
+  embeddings = embeddingMapSchema.parse(
+    await getEmbeddings(Object.keys(Astro.props.assetGlob)),
+  );
 }
+
+const imageColors = await getImageColors(Object.keys(Astro.props.assetGlob));
 
 let downloadUrls: Record<string, string> | null = null;
 if (allowDownload) {
-  console.log("ALLOW DOWNLOAD");
   const filepathDownloadPairs = await Promise.all(
     Object.entries(Astro.props.assetGlob).map(
       async ([filePath, modulePromise]): Promise<[string, string]> => {
@@ -110,12 +117,14 @@ if (allowDownload) {
       platform: "cloudflare-r2",
       accountId: import.meta.env.CLOUDFLARE_ACCOUNT_ID,
       bucketName: import.meta.env.R2_BUCKET_NAME,
-      bucketDomain: "download.blakesanie.com",
       r2AccessKey: import.meta.env.R2_ACCESS_KEY_ID,
       r2SecretKey: import.meta.env.R2_SECRET_ACCESS_KEY,
       outDir: "dist",
+      bucketDomain: "download.blakesanie.com",
+      cacheControl: "public, max-age=31536000, immutable",
     },
-    filepathDownloadPairs.map(([key, value]) => value),
+    filepathDownloadPairs.map(([, value]) => value),
+    () => import.meta.env.PROD,
   );
   downloadUrls = Object.fromEntries(
     filepathDownloadPairs.map(([filepath, _], index) => [
@@ -123,7 +132,6 @@ if (allowDownload) {
       result[index],
     ]),
   );
-  console.log(downloadUrls);
 }
 
 // function dmsToDecimal(dmsStr: string) {
@@ -171,7 +179,9 @@ imagesData.forEach(image => {
 const mapImages = await Promise.all(
   imagesData
     .filter(
-      (img) =>
+      (img): img is typeof img & {
+        metadata: NonNullable<typeof img.metadata> & { lat: number; lon: number };
+      } =>
         img.metadata?.lat !== undefined && img.metadata?.lon !== undefined,
     )
     .map(async (img) => await getSharedMapImage(img)),
@@ -185,7 +195,6 @@ if (Astro.props.imageName) {
 const description =
   Astro.props.description || "My portfolio of artistic photographs.";
 const gutter = "10px";
-console.log("end of Gallery frontmatter");
 ---
 
 <HeaderAndFooter
@@ -208,6 +217,7 @@ console.log("end of Gallery frontmatter");
     {
       allowMap && (
         <Toggle
+          id="photoViewToggle"
           actions={[
             { id: "toggleGallery", label: "Gallery" },
             { id: "toggleMap", label: "Map" },
@@ -245,6 +255,7 @@ console.log("end of Gallery frontmatter");
   <div
     id="photoContent"
     class={`${allowMap ? "" : "noMap"} ${allowFullscreen ? "" : "noFullscreen"} view-${initialMode}`}
+    data-initial-mode={initialMode}
   >
     <div id="gallery" class:list={{
       toShuffle: randomize
@@ -284,7 +295,9 @@ console.log("end of Gallery frontmatter");
               <Image
                 placeholder="color"
                 src={image.src}
+                remote={allowRemoteImages}
                 filepath={image.filePath}
+                placeholderColor={imageColors[image.filePath]}
                 alt={image.name || "Portfolio photograph"}
                 width={Math.max(
                   600,
@@ -318,22 +331,29 @@ console.log("end of Gallery frontmatter");
 
   {
     allowFullscreen && (
-      <div id="fullscreenOverlay" role="dialog" aria-modal="true" tabindex="-1">
+      <div
+        id="fullscreenOverlay"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="metaTitle"
+        tabindex="-1"
+      >
         <div id="fullscreenScroll">
           <div id="imageViewport">
             <div class="metadata-panel" id="metadataPanel">
-              <div class="metadata-title" id="metaTitle" />
+              <div class="metadata-title" id="metaTitle" aria-live="polite" />
               <div class="metadata-chips-row" id="metaChipsRow" />
               <div class="metadata-actions">
-                <div id="exitButton">Exit</div>
-                <div id="prevButton">Prev</div>
-                <div id="nextButton">Next</div>
+                <button type="button" id="exitButton" aria-label="Close fullscreen image">Exit</button>
+                <button type="button" id="prevButton" aria-label="Show previous image">Prev</button>
+                <button type="button" id="nextButton" aria-label="Show next image">Next</button>
               </div>
             </div>
             <img
               id="fullscreenPlaceholder"
               class="fullscreen-placeholder"
               alt=""
+              aria-hidden="true"
             />
           </div>
           <div id="viewportBelow">
@@ -624,15 +644,35 @@ console.log("end of Gallery frontmatter");
     flex-direction: row;
   }
 
-  .metadata-actions div {
+  .metadata-actions button {
     width: 3em;
+    border: 0;
+    background: transparent;
+    font: inherit;
     cursor: pointer;
     opacity: 0.5;
     transition: opacity 0.1s ease;
   }
 
-  .metadata-actions div:hover {
+  .metadata-actions button:hover,
+  .metadata-actions button:focus-visible {
     opacity: 1;
+  }
+
+  :global(:focus-visible) {
+    outline: 3px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
   }
 
   @media screen and (max-width: 800px) {
@@ -681,7 +721,7 @@ console.log("end of Gallery frontmatter");
     }
   }
 </style>
-<script define:vars={{
+<script is:inline define:vars={{
   allowDeepLink: Astro.props.allowDeepLink
   }}>
 window.allowDeepLink = allowDeepLink;
@@ -740,6 +780,7 @@ window.allowDeepLink = allowDeepLink;
   const photoContent = document.getElementById("photoContent");
 
   let activeTransitionImg: HTMLImageElement | null = null;
+  let lastFocusedElement: HTMLElement | null = null;
   let isEnterAnimating = false;
   let isExitAnimating = false;
 
@@ -891,7 +932,6 @@ window.allowDeepLink = allowDeepLink;
   const categorySelect = document.querySelector("#controls select") as HTMLSelectElement;
 
   categorySelect?.addEventListener("change", (e) => {
-    console.log('change', e)
     const selectedCategory = (e.target as HTMLSelectElement).value;
 
     galleryImages.forEach((image) => {
@@ -984,6 +1024,7 @@ window.allowDeepLink = allowDeepLink;
   function enterFullscreen(image: HTMLImageElement, pushState = true) {
     if (!fullScreenEl) return;
     if (isEnterAnimating || isExitAnimating) return;
+    lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
     // Remove any previous active transitions if they somehow exist
     if (activeTransitionImg && activeTransitionImg.parentNode) {
@@ -1197,6 +1238,8 @@ window.allowDeepLink = allowDeepLink;
 
       const transitionImg = document.createElement("img");
       transitionImg.src = thumbImg.src;
+      transitionImg.alt = "";
+      transitionImg.setAttribute("aria-hidden", "true");
       transitionImg.className = "gallery-transition-clone";
 
       transitionImg.style.left = `${galleryRect.left}px`;
@@ -1264,6 +1307,7 @@ window.allowDeepLink = allowDeepLink;
         fullScreenEl.style.display = "none";
       }, 200);
       document.body.style.overflow = "";
+      lastFocusedElement?.focus();
       isExitAnimating = false;
       return;
     }
@@ -1297,6 +1341,7 @@ window.allowDeepLink = allowDeepLink;
           ?.classList.remove("active");
         document.title = baseTitle;
         document.body.style.overflow = "";
+        lastFocusedElement?.focus();
         isExitAnimating = false;
       }, 250);
     } else {
@@ -1329,6 +1374,8 @@ window.allowDeepLink = allowDeepLink;
       // Create transition clone at current fullscreen placeholder coordinates
       const transitionImg = document.createElement("img");
       transitionImg.src = thumbImg.src;
+      transitionImg.alt = "";
+      transitionImg.setAttribute("aria-hidden", "true");
       transitionImg.className = "gallery-transition-clone";
 
       transitionImg.style.left = `${finalOverlayRect.left}px`;
@@ -1382,6 +1429,7 @@ window.allowDeepLink = allowDeepLink;
           ?.classList.remove("active");
         document.title = baseTitle;
         document.body.style.overflow = "";
+        lastFocusedElement?.focus();
         isExitAnimating = false;
       }, 250);
     }
@@ -1412,6 +1460,11 @@ window.allowDeepLink = allowDeepLink;
       document.getElementById("toggleGallery")?.classList.add("active");
       document.getElementById("toggleMap")?.classList.remove("active");
       window.dispatchEvent(
+        new CustomEvent("toggle-action", {
+          detail: { toggleId: "photoViewToggle", actionId: "toggleGallery" },
+        }),
+      );
+      window.dispatchEvent(
         new CustomEvent("photo-view-change", { detail: { view: "gallery" } }),
       );
       if (pushState && window.location.pathname !== "/photo") {
@@ -1425,6 +1478,11 @@ window.allowDeepLink = allowDeepLink;
       photoContent?.classList.add("view-map");
       document.getElementById("toggleMap")?.classList.add("active");
       document.getElementById("toggleGallery")?.classList.remove("active");
+      window.dispatchEvent(
+        new CustomEvent("toggle-action", {
+          detail: { toggleId: "photoViewToggle", actionId: "toggleMap" },
+        }),
+      );
       window.dispatchEvent(
         new CustomEvent("photo-view-change", { detail: { view: "map" } }),
       );
@@ -1539,7 +1597,10 @@ window.allowDeepLink = allowDeepLink;
     if (found) enterFullscreen(found as HTMLImageElement);
   });
 
-  if (window.location.pathname === "/photo/map") {
+  const initialView = photoContent?.dataset.initialMode === "map" ? "map" : "gallery";
+  setView(initialView, false);
+
+  if (initialView === "map") {
     window.dispatchEvent(
       new CustomEvent("update-nav-active", { detail: { href: "/photo/map" } }),
     );
@@ -1580,7 +1641,6 @@ window.allowDeepLink = allowDeepLink;
     if (modelSession && tokenizer) return Promise.resolve();
     if (initializationPromise) return initializationPromise;
 
-    console.log("Injecting ONNX runtime and fetching CLIP components...");
 
     initializationPromise = new Promise((resolve, reject) => {
       const script = document.createElement("script");
@@ -1605,7 +1665,6 @@ window.allowDeepLink = allowDeepLink;
           modelSession = session;
           tokenizer = new TokenizerModule.default();
 
-          console.log("CLIP Model Loaded successfully.");
           if (clipInput) {
             clipInput.removeAttribute("disabled");
             clipInput.placeholder =
@@ -1686,7 +1745,6 @@ window.allowDeepLink = allowDeepLink;
       if (!query) return;
 
       try {
-        console.log(`Embedding query: "${query}"`);
         const textVector = await embedString(query);
 
         // Locate the parent element holding your galleryImages list
@@ -1717,9 +1775,6 @@ window.allowDeepLink = allowDeepLink;
           galleryContainer.appendChild(item.element);
         });
 
-        console.log(
-          "Grid layout reordered using 4-bit vector math space mapping.",
-        );
       } catch (err) {
         console.error("Semantic sort loop failure:", err);
       }
@@ -1735,7 +1790,6 @@ window.allowDeepLink = allowDeepLink;
     const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
 
     nameDebounceTimeout = window.setTimeout(() => {
-      console.log(`Filtering gallery by name query: "${query}"`);
 
       galleryImages.forEach((image) => {
         const htmlEl = image as HTMLElement;
@@ -1760,7 +1814,6 @@ window.allowDeepLink = allowDeepLink;
 
   downloadBuuttons.forEach((button) => {
     button.addEventListener("click", async (e) => {
-      console.log("click");
       e.preventDefault();
       e.stopPropagation();
       const image = button.closest(".galleryImage");
@@ -1768,7 +1821,6 @@ window.allowDeepLink = allowDeepLink;
       const url = image.getAttribute("data-download");
       if (url) {
         if (completedDownloads.has(url)) {
-          console.log("Already downloaded:", url);
           return;
         }
         await downloadFile(

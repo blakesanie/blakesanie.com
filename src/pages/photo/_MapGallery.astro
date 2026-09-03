@@ -60,12 +60,9 @@ const { mapImages } = Astro.props;
   is:inline
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACmDd88Pi1CAoU8Q4keEPKzc1RzqIkCuw&libraries=marker&v=weekly"
 ></script>
-<script
-  is:inline
-  src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"
-></script>
+<script is:inline src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
 
-<script define:vars={{ mapImages }}>
+<script is:inline define:vars={{ mapImages }}>
   let mainMap = null;
   let mapInitialized = false;
 
@@ -210,6 +207,8 @@ const { mapImages } = Astro.props;
 
       // Create raw HTML element for the marker image
       const img = document.createElement("img");
+      img.alt = "";
+      img.setAttribute("aria-hidden", "true");
       img.src = photo.path;
       img.className = "custom-image-marker";
       img.style.width = `${photo.width}px`;
@@ -223,9 +222,7 @@ const { mapImages } = Astro.props;
       });
 
       marker.addListener("click", () => {
-        window.dispatchEvent(
-          new CustomEvent("photo-map-click", { detail: { name: photo.name } }),
-        );
+        window.dispatchEvent(new CustomEvent("photo-map-click", { detail: { name: photo.name } }));
       });
 
       // Attach custom property to the DOM element container for the clusterer to reference
@@ -248,6 +245,8 @@ const { mapImages } = Astro.props;
         container.className = "cluster-container";
 
         const img = document.createElement("img");
+        img.alt = "";
+        img.setAttribute("aria-hidden", "true");
         img.src = photo.path;
         img.className = "custom-image-marker";
         img.style.width = `${photo.width * 1.2}px`;

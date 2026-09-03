@@ -13,7 +13,7 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""
   />
-  <script
+  <script is:inline
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
@@ -26,16 +26,35 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
 </style>
 
 <script>
-  var leafletMap;
+  interface LeafletMap {
+    getBounds(): unknown;
+  }
+  interface Leaflet {
+    map(id: string): { setView(center: [number, number], zoom: number): LeafletMap };
+    tileLayer(url: string, options: { attribution: string }): { addTo(map: LeafletMap): void };
+    polyline(coords: [number, number][], options: { color: string; weight: number }): { addTo(map: LeafletMap): void };
+  }
+  interface OverpassElement {
+    type: string;
+    id: number;
+    lat?: number;
+    lon?: number;
+    nodes?: number[];
+  }
+  interface OverpassData {
+    elements: OverpassElement[];
+  }
+  const leaflet = (window as Window & { L?: Leaflet }).L!;
+  if (!leaflet) throw new Error("Leaflet did not load");
+  let leafletMap: LeafletMap;
   function map() {
-    leafletMap = L.map("map").setView([41.878113, -87.729799], 12);
+    leafletMap = leaflet.map("map").setView([41.878113, -87.729799], 12);
 
     // Add a tile layer to the map
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(leafletMap);
-    console.log("done");
 
     window.bounds = leafletMap.getBounds();
 
@@ -48,13 +67,15 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
       .catch((error) => console.error("Error loading overpass.json:", error));
   }
 
-  function plotBikePaths(overpassData) {
-    const nodes = new Map();
+  function plotBikePaths(overpassData: OverpassData) {
+    const nodes = new Map<number, [number, number]>();
 
     // Store all nodes with coordinates
     overpassData.elements.forEach((element) => {
       if (element.type === "node") {
-        nodes.set(element.id, [element.lat, element.lon]);
+        if (element.lat !== undefined && element.lon !== undefined) {
+          nodes.set(element.id, [element.lat, element.lon]);
+        }
       }
     });
 
@@ -63,9 +84,9 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
       if (element.type === "way" && element.nodes) {
         const pathCoords = element.nodes
           .map((nodeId) => nodes.get(nodeId))
-          .filter((coord) => coord);
+          .filter((coord): coord is [number, number] => coord !== undefined);
         if (pathCoords.length > 1) {
-          L.polyline(pathCoords, { color: "blue", weight: 3 }).addTo(
+          leaflet.polyline(pathCoords, { color: "blue", weight: 3 }).addTo(
             leafletMap
           );
         }
@@ -75,7 +96,7 @@ import CommonHead from "../../components/HeaderAndFooter/CommonHead.astro";
 
   function waitForLeaflet() {
     try {
-      L;
+      if (!leaflet) throw new Error("Leaflet did not load");
     } catch {
       setTimeout(waitForLeaflet, 10);
       return;

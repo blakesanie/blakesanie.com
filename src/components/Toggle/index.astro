@@ -1,6 +1,11 @@
 ---
-const { actions, defaultAction } = Astro.props;
-// console.log(actions);
+interface Props {
+  actions: { id: string; label: string }[];
+  defaultAction?: string;
+  id?: string;
+}
+
+const { actions, defaultAction } = Astro.props as Props;
 ---
 
 <div class="toggle" {...Astro.props}>
@@ -8,10 +13,7 @@ const { actions, defaultAction } = Astro.props;
   {
     actions.map(({ id, label }) => {
       return (
-        <button
-          class:list={["toggleButton", { active: id == defaultAction }]}
-          id={id}
-        >
+        <button class:list={["toggleButton", { active: id == defaultAction }]} id={id}>
           {label}
         </button>
       );
@@ -39,6 +41,10 @@ const { actions, defaultAction } = Astro.props;
     position: relative; /* 2. Ensures buttons sit on top of the background floater */
     z-index: 1;
   }
+  .toggle:not(.ready) .toggleButton.active {
+    background-color: #f4f4f4;
+    border-radius: 0.25em;
+  }
   /* Remove background-color from button.active so it doesn't clash with the floater */
   .toggleFloater {
     position: absolute;
@@ -47,8 +53,14 @@ const { actions, defaultAction } = Astro.props;
     background-color: #f4f4f4;
     border-radius: 0.25em;
     /* 3. Define the transition permanently here, only animating transform and width */
-    transition: transform 0.2s ease, width 0.2s ease; 
     pointer-events: none; /* Stops the floater from blocking button clicks */
+    visibility: hidden;
+  }
+  .toggle.ready .toggleFloater {
+    visibility: visible;
+    transition:
+      transform 0.2s ease,
+      width 0.2s ease;
   }
 </style>
 
@@ -57,29 +69,34 @@ const { actions, defaultAction } = Astro.props;
   const toggles = document.querySelectorAll(".toggle");
 
   toggles.forEach((toggle) => {
-    const buttons = toggle.querySelectorAll(".toggleButton");
-    const floater = toggle.querySelector(".toggleFloater");
-    let activeButton = toggle.querySelector(".toggleButton.active");
+    const buttons = toggle.querySelectorAll<HTMLButtonElement>(".toggleButton");
+    const floater = toggle.querySelector<HTMLElement>(".toggleFloater");
+    const activeButton = toggle.querySelector<HTMLButtonElement>(".toggleButton.active");
+
+    function positionFloater(button: HTMLButtonElement) {
+      if (!floater) return;
+      floater.style.transform = `translate(${button.offsetLeft}px, ${button.offsetTop}px)`;
+      floater.style.width = `${button.clientWidth}px`;
+      floater.style.height = `${button.clientHeight}px`;
+    }
 
     // Initialize the floater position immediately on load
-    if (activeButton && floater) {
-      floater.style.width = `${activeButton.clientWidth}px`;
-      floater.style.height = `${activeButton.clientHeight}px`;
-      floater.style.transform = `translate(${activeButton.offsetLeft}px, ${activeButton.offsetTop}px)`;
-      
-      // Remove active class from button so only the floater provides the background
-      activeButton.classList.remove("active"); 
-    }
+    if (activeButton) positionFloater(activeButton);
+
+    requestAnimationFrame(() => toggle.classList.add("ready"));
 
     buttons.forEach((button) => {
       button.addEventListener("click", () => {
-        if (!floater) return;
-        
-        // Simply animate to the clicked button's dimensions
-        floater.style.transform = `translate(${button.offsetLeft}px, ${button.offsetTop}px)`;
-        floater.style.width = `${button.clientWidth}px`;
-        floater.style.height = `${button.clientHeight}px`;
+        positionFloater(button);
       });
+    });
+
+    window.addEventListener("toggle-action", (event) => {
+      const detail = (event as CustomEvent<{ actionId?: string; toggleId?: string }>).detail;
+      if (!detail || detail.toggleId !== toggle.getAttribute("id")) return;
+
+      const action = Array.from(buttons).find((button) => button.id === detail.actionId);
+      if (action) positionFloater(action);
     });
   });
 </script>

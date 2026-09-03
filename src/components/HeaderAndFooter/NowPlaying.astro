@@ -1,5 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
 const { shadowColor, textColor } = Astro.props;
 ---
 
@@ -129,20 +128,28 @@ const { shadowColor, textColor } = Astro.props;
 
   const maxInterval = 60 * 1000;
 
-  let updateInterval;
+  let updateInterval: ReturnType<typeof setInterval> | undefined;
 
-  async function getNowPlaying(skipCache = false) {
-    let json;
+  interface NowPlaying {
+    name: string;
+    live: boolean;
+    link: string;
+    album: string;
+    artists: string[];
+    image: string;
+    timestamp: string | Date;
+  }
+
+  async function getNowPlaying(skipCache = false): Promise<NowPlaying> {
+    let json: NowPlaying;
     if (!skipCache) {
       const cached = window.localStorage.getItem("nowPlaying");
       if (cached) {
         json = JSON.parse(cached);
-        const timestamp = new Date(json.timestamp);
-        const now = new Date();
+        const timestamp = new Date(json.timestamp).getTime();
+        const now = Date.now();
         const age = now - timestamp;
-        // console.log("Found chached track", json, "that is", age, "ms old");
         if (age < maxInterval) {
-          // console.log("Starting new interval in", maxInterval - age, "ms");
           clearInterval(updateInterval);
           setTimeout(function () {
             startInterval(true);
@@ -151,7 +158,6 @@ const { shadowColor, textColor } = Astro.props;
         }
       }
     }
-    // console.log("Fetching new track");
     const res = await fetch("/api/nowPlaying");
     json = await res.json();
     json.timestamp = new Date();
@@ -160,23 +166,38 @@ const { shadowColor, textColor } = Astro.props;
   }
 
   async function setNowPlaying(skipCache = false) {
-    const { name, live, link, album, artists, image } =
-      await getNowPlaying(skipCache);
-    document.getElementById("songTitle").innerText = name;
-    document.getElementById("songArtist").innerText = artists.join(", ");
-    document.getElementById("songAlbum").innerText = album;
-    document.getElementById("albumCover").src = image;
-    document.getElementById("nowPlaying").href = link;
+    const { name, live, link, album, artists, image } = await getNowPlaying(skipCache);
+    const songTitle = document.getElementById("songTitle");
+    const songArtist = document.getElementById("songArtist");
+    const songAlbum = document.getElementById("songAlbum");
+    const albumCover = document.getElementById("albumCover");
+    const nowPlaying = document.getElementById("nowPlaying");
+    if (
+      !(songTitle instanceof HTMLElement) ||
+      !(songArtist instanceof HTMLElement) ||
+      !(songAlbum instanceof HTMLElement) ||
+      !(albumCover instanceof HTMLImageElement) ||
+      !(nowPlaying instanceof HTMLAnchorElement)
+    )
+      return;
+    songTitle.innerText = name;
+    songArtist.innerText = artists.join(", ");
+    songAlbum.innerText = album;
+    albumCover.src = image;
+    nowPlaying.href = link;
 
     const titleElement = document.querySelector("#nowPlayingSection > p");
+    const titleText = titleElement?.firstChild;
+    const titleBars = titleElement?.querySelector<HTMLElement>(".soundBars");
+    if (!titleText || !titleBars) return;
     if (live) {
-      titleElement.childNodes[0].nodeValue = "Now Playing";
-      titleElement.childNodes[1].style.display = "flex";
-      titleElement.childNodes[1].style.opacity = 1;
+      titleText.nodeValue = "Now Playing";
+      titleBars.style.display = "flex";
+      titleBars.style.opacity = "1";
     } else {
-      titleElement.childNodes[0].nodeValue = "Recently Played";
-      titleElement.childNodes[1].style.display = "none";
-      titleElement.childNodes[1].style.opacity = 0;
+      titleText.nodeValue = "Recently Played";
+      titleBars.style.display = "none";
+      titleBars.style.opacity = "0";
     }
 
     const loading = document.querySelectorAll("#nowPlaying .loading");
@@ -195,9 +216,9 @@ const { shadowColor, textColor } = Astro.props;
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        const belowEl = document.getElementById("below")
-          .children[0] as HTMLElement;
-        console.log(entry);
+        const below = document.getElementById("below");
+        const belowEl = below?.firstElementChild;
+        if (!(belowEl instanceof HTMLElement)) return;
         if (entry.isIntersecting) {
           belowEl.style.display = "none";
         } else {
@@ -208,9 +229,9 @@ const { shadowColor, textColor } = Astro.props;
     {
       // Offset to trigger the callback 20px *after* the element is in full view
       rootMargin: "-100px 0px -100px 0px", // Top offset of 20px
-    }
+    },
   );
 
   const targetElement = document.getElementById("albumCover");
-  observer.observe(targetElement);
+  if (targetElement) observer.observe(targetElement);
 </script>

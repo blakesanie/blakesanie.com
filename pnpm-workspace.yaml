@@ -1,0 +1,9 @@
+minimumReleaseAge: 0
+
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  onnxruntime-node: true
+  protobufjs: true
+  sharp: true
+  workerd: true

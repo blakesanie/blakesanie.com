@@ -1,6 +1,8 @@
 ---
 import Gallery from "../_Gallery.astro";
 import type { Props } from "../_Gallery.astro";
+import { albums } from "../../../data/albums";
+import type { Album } from "../../../types/content";
 
 // Extract the type out of the function signature to fix the parsing bug
 type StaticPathResult = {
@@ -9,8 +11,12 @@ type StaticPathResult = {
   };
   props: Props & {
     imageFilePath: string;
-  }
+  };
 }[];
+
+type AlbumDefinition = Album & {
+  assetGlob: Record<string, () => Promise<{ default: ImageMetadata }>>;
+};
 
 export async function getStaticPaths(): Promise<StaticPathResult> {
   const marathonImages = import.meta.glob<{ default: ImageMetadata }>(
@@ -33,84 +39,21 @@ export async function getStaticPaths(): Promise<StaticPathResult> {
     "/src/assets/client_alias/north-mich/*.{jpg,jpeg,png,webp,avif}",
   );
 
-  return [
-     {
-      params: { slug: "northern-michigan-2026" },
-      props: {
-        assetGlob: northMich2026Images,
-        title: "Mackinac Island and Pictured Rocks",
-        description: "Greatest sights in Northern Michigan.",
-        heading: "Mackinac Island and Pictured Rocks",
-        allowDownload: false,
-        allowFilename: false,
-        allowFullscreen: true,
-        allowMetadata: true,
-        imageFilePath:
-          "/src/assets/client_alias/north-mich/DSC08034.jpg",
-        subheading:
-          'August 2026 - Northern Michigan. 2 locations, 2 days each.',
-      },
+  const assetGlobs: Record<string, AlbumDefinition["assetGlob"]> = {
+    "northern-michigan-2026": northMich2026Images,
+    "chi-air-and-water-show-2026": aw2026Images,
+    "chi-marathon-2025": marathonImages,
+    "xxx-relay-cross-2025": XXXRelayCrossImages,
+    "mnr-labor-day-2025": mnrImages,
+  };
+
+  return albums.map((album) => ({
+    params: { slug: album.slug },
+    props: {
+      ...album,
+      assetGlob: assetGlobs[album.slug],
     },
-    {
-      params: { slug: "chi-air-and-water-show-2026" },
-      props: {
-        assetGlob: aw2026Images,
-        title: "Chicago Air and Water Show 2026",
-        description: "Chicago's annual lakefront aviation exposition.",
-        heading: "Chicago Air and Water Show 2026",
-        allowDownload: false,
-        allowFilename: false,
-        allowFullscreen: true,
-        allowMetadata: true,
-        imageFilePath:
-          "/src/assets/client_alias/chi-aw-show-2026/DSC06713.jpg",
-        subheading:
-          'August 2026 - Chicago Lakefront. <a href="mailto:blake@sanie.com">Email blake@sanie.com</a> for licensing.</a>',
-      },
-    },
-    {
-      params: { slug: "chi-marathon-2025" },
-      props: {
-        assetGlob: marathonImages,
-        title: "Chicago Marathon 2025",
-        description: "October 12, 2025. Chicago Marathon in Old Town.",
-        heading: "Chicago Marathon 2025",
-        allowDownload: false,
-        allowFilename: true,
-        imageFilePath:
-          "/src/assets/client_alias/chi-marathon-2025/DSC02413.jpg",
-        subheading:
-          'October 12, 2025. Chicago Marathon along LaSalle (mile 4) and Wells (mile 12). Download available for personal use. <a href="https://www.instagram.com/blakesanie.jpg/" target="_blank">@blakesanie.jpg</a>',
-      },
-    },
-    {
-      params: { slug: "xxx-relay-cross-2025" },
-      props: {
-        assetGlob: XXXRelayCrossImages,
-        title: "XXX Relay Cross 2025",
-        description: "September 14, 2025. Cyclocross Relay Bike Race Images",
-        heading: "XXX Relay Cross 2025",
-        allowDownload: false,
-        allowFilename: true,
-        imageFilePath: "/src/assets/client_alias/relay-cross-2025/DSC01406.jpg",
-        subheading:
-          'September 14, 2025, at Jackson Park, Chicago. Download available for personal use. Attribution <a href="https://www.instagram.com/blakesanie.jpg/" target="_blank">@blakesanie.jpg</a>',
-      },
-    },
-    {
-      params: { slug: "mnr-labor-day-2025" },
-      props: {
-        assetGlob: mnrImages,
-        title: "MNR Labor Day 2025",
-        description: "September 1, 2025. Photographs from Monday Night Ride.",
-        heading: "MNR Labor Day 2025",
-        allowDownload: true,
-        allowFilename: true,
-        imageFilePath:
-          "/src/assets/client_alias/mnr-labor-day-2025/DSC00237.jpg",
-      },
-    },
-  ];
+  }));
 }
 ---
 

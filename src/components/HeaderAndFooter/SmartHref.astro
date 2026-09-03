@@ -1,10 +1,12 @@
 ---
 import redirects from "../../redirects.json";
+import type { RedirectMap } from "../../types/redirects";
 
-let {href} = Astro.props;
-const key = href.substring(1) as string
-const fullHref = redirects[key]?.href;
+let { href } = Astro.props;
+const key = href.substring(1) as string;
+const fullHref = (redirects as RedirectMap)[key]?.href;
 ---
-<a href={ fullHref || href} {...Astro.props}>
-    <slot />
+
+<a href={fullHref || href} {...Astro.props}>
+  <slot />
 </a>

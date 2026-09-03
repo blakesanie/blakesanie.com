@@ -1,0 +1,12 @@
+.astro/
+dist/
+node_modules/
+.venv/
+public/
+src/assets/
+src/pages/_stravart/
+plugins/vite-image-pipeline/
+next/
+src/pages/photo/_Gallery.astro
+*.ipynb
+*.json

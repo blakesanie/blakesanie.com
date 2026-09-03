@@ -4,9 +4,11 @@ import fs from "fs";
 import RecursiveAnchor from "../../components/RecursiveAnchor.astro";
 
 const files = await glob("public/**/*");
-// console.log(files);
 
-const tree = {};
+interface PublicTree {
+  [key: string]: string | PublicTree;
+}
+const tree: PublicTree = {};
 
 for (let file of files) {
   const stats = fs.lstatSync(file);
@@ -21,11 +23,12 @@ for (let file of files) {
     if (!subtree[part]) {
       subtree[part] = {};
     }
-    subtree = subtree[part];
+    const next = subtree[part];
+    if (typeof next !== "object") break;
+    subtree = next;
   }
   subtree[parts[parts.length - 1]] = "/" + file;
 }
-// console.log("tree", tree);
 ---
 
 <html>
@@ -99,7 +102,6 @@ for (let file of files) {
   //       document.body.classList.add("searching");
   //       const anchors = document.querySelectorAll("a");
   //       for (const anchor of anchors) {
-  //         console.log(
   //           "anchor inner text",
   //           anchor.innerText.toLowerCase(),
   //           query,
@@ -118,7 +120,6 @@ for (let file of files) {
   //               searchedMap[parent.innerText] = 0;
   //             }
   //             searchedMap[parent.innerText]++;
-  //             console.log("increment", parent?.innerText);
   //             parent = parent?.parentElement;
   //           }
   //         } else if (anchor.classList.contains("searched")) {
@@ -128,7 +129,6 @@ for (let file of files) {
   //           while (parent?.tagName != "BODY") {
   //             parent?.classList.remove("searched");
   //             searchedMap[parent.innerText]--;
-  //             console.log("decrement", parent?.innerText);
 
   //             parent = parent?.parentElement;
   //           }

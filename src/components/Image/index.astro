@@ -3,8 +3,10 @@ import { getImage } from "astro:assets";
 import {
   getImageColors,
   getImageBlurPlaceholders,
-} from "../../../plugins/vite-image-pipeline/dist/image-pipeline";
+  uploadRemoteImages,
+} from "vite-image-pipeline";
 import type { ImageMetadata } from "astro";
+import type { HTMLAttributes } from "astro/types";
 
 type SrcType =
   | string
@@ -12,37 +14,49 @@ type SrcType =
   | { default: ImageMetadata }
   | Promise<{ default: ImageMetadata }>;
 
-interface Props {
+type NativeImageProps = Omit<
+  HTMLAttributes<"img">,
+  "alt" | "class" | "src" | "style" | "width" | "height"
+>;
+
+interface Props extends NativeImageProps {
   src: SrcType;
+  /** Upload the optimized image to R2 and use its public URL. */
+  remote?: boolean;
   filepath?: string;
   alt: string;
   width?: number;
   height?: number;
+  widths?: number[];
+  breakpoints?: number[];
   quality?: string | number;
   format?: string;
   placeholder?: "color" | "blur" | "none";
+  placeholderColor?: { r: number; g: number; b: number };
   class?: string;
-  style?: string | Record<string, any>;
-  [key: string]: any;
+  style?: string | Record<string, string | number>;
 }
 
 const {
   src,
+  remote = false,
   filepath,
   alt,
   width,
   widths,
+  breakpoints,
   height,
   quality,
   format,
   placeholder = "none",
+  placeholderColor,
   class: className,
   style = {},
   ...rest
 } = Astro.props;
 
 let placeholderStyle: Record<string, string> = {};
-let imageAttrs: any = {};
+let imageAttrs: Record<string, unknown> = {};
 
 async function srcToImageMetadata(src: SrcType): Promise<ImageMetadata | null> {
   if (typeof src === "string") {
@@ -52,11 +66,10 @@ async function srcToImageMetadata(src: SrcType): Promise<ImageMetadata | null> {
     return srcToImageMetadata(await src);
   }
   if (typeof src === "object") {
-    const srcObj = src as any;
-    if (srcObj.default) {
-      return srcObj.default;
-    } else if (srcObj.src) {
-      return srcObj;
+    if ("default" in src) {
+      return src.default;
+    } else if ("src" in src) {
+      return src;
     }
     return null;
   }
@@ -83,29 +96,44 @@ try {
     height: h,
     quality,
     format,
-    widths,
+    widths: widths ?? breakpoints,
   });
 
   imageAttrs = {
     src: optimizedImage.src,
-    srcSet: optimizedImage.srcSet.attribute,
+    ...(remote ? {} : { srcSet: optimizedImage.srcSet.attribute }),
     ...optimizedImage.attributes,
   };
+  if (remote) {
+    const [remoteSrc] = await uploadRemoteImages(
+      {
+        platform: "cloudflare-r2",
+        accountId: import.meta.env.CLOUDFLARE_ACCOUNT_ID,
+        bucketName: import.meta.env.R2_BUCKET_NAME,
+        r2AccessKey: import.meta.env.R2_ACCESS_KEY_ID,
+        r2SecretKey: import.meta.env.R2_SECRET_ACCESS_KEY,
+        outDir: "dist",
+        bucketDomain: "download.blakesanie.com",
+        cacheControl: "public, max-age=31536000, immutable",
+      },
+      [optimizedImage.src],
+      () => import.meta.env.PROD,
+    );
+    imageAttrs.src = remoteSrc;
+  }
   // 3. Delegate placeholder operations to the parallelized disk cache pipeline
   if (placeholder === "color") {
-    if (!filepath)
+    if (!filepath && !placeholderColor) {
       throw Error("[Image Component] filepath missing for color placeholder");
-    const colorMap = await getImageColors([filepath]);
-    const dominant = colorMap[filepath];
+    }
+    const colorMap = filepath && !placeholderColor ? await getImageColors([filepath]) : {};
+    const dominant = placeholderColor || (filepath ? colorMap[filepath] : undefined);
     if (dominant) {
       placeholderStyle = {
         "background-color": `rgb(${dominant.r}, ${dominant.g}, ${dominant.b})`,
       };
     } else {
-      console.error(
-        "[Image Component] Failed to get dominant color for",
-        filepath,
-      );
+      console.error("[Image Component] Failed to get dominant color for", filepath);
     }
   } else if (placeholder === "blur") {
     if (!filepath)
@@ -123,16 +151,11 @@ try {
         "background-position": "center",
       };
     } else {
-      console.error(
-        "[Image Component] Failed to get blur placeholder for",
-        filepath,
-      );
+      console.error("[Image Component] Failed to get blur placeholder for", filepath);
     }
   }
 } catch (error) {
-  throw Error(
-    "[Image Component] Failed to seamlessly process image assets: " + error,
-  );
+  throw Error("[Image Component] Failed to seamlessly process image assets: " + error);
 }
 
 // Map string style declarations safely into explicit key-value pairings
@@ -154,11 +177,7 @@ const combinedStyle = {
 
 <img
   alt={alt}
-  class:list={[
-    "smart-image",
-    placeholder === "blur" && "smooth-blur",
-    className,
-  ]}
+  class:list={["smart-image", placeholder === "blur" && "smooth-blur", className]}
   style={combinedStyle}
   {...imageAttrs}
   {...rest}

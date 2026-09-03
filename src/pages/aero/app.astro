@@ -10,23 +10,21 @@ import AeroPng from "../../assets/images/aero/aero.png";
   image={AeroPng}
   themeColor="black"
 >
+  <script is:inline type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js" slot="head"
+  ></script>
   <script
-    type="text/javascript"
-    src="https://cdn.jsdelivr.net/npm/chart.js"
-    slot="head"></script>
-  <script
+    is:inline
     type="text/javascript"
     src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"
     slot="head"></script>
   <script
+    is:inline
     type="text/javascript"
     src="https://cdn.jsdelivr.net/npm/@tensorflow-models/deeplab@0.2.2/dist/deeplab.min.js"
     slot="head"></script>
   <div id="cover">
     <div class="bar" id="topBar">
-      <a class="flex1" href="/aero"
-        ><h1>Aero<span id="byline">by Blake</span></h1></a
-      >
+      <a class="flex1" href="/aero"><h1>Aero<span id="byline">by Blake</span></h1></a>
       <div id="controlsHolder">
         <div id="controlsBar">
           <button class="selectedButton">Speed</button>
@@ -39,14 +37,7 @@ import AeroPng from "../../assets/images/aero/aero.png";
           <div class="inputModule">
             <p class="inputLabel">Speed</p>
             <div class="hbox center">
-              <input
-                type="range"
-                min="0"
-                max="40"
-                value="25"
-                step="1"
-                id="speedSlider"
-              />
+              <input type="range" min="0" max="40" value="25" step="1" id="speedSlider" />
               <div id="speedOutput">25</div>
             </div>
           </div>
@@ -98,8 +89,7 @@ import AeroPng from "../../assets/images/aero/aero.png";
       </div> -->
     <div id="frameView">
       <div id="sixteenByNine">
-        <video autoplay playsinline webkit-playsinline muted id="videoelement"
-        ></video>
+        <video autoplay playsinline webkit-playsinline muted id="videoelement"></video>
         <canvas id="barrierCanvas"></canvas>
         <canvas id="physicsCanvas"></canvas>
       </div>

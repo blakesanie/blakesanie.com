@@ -1,0 +1,5 @@
+# Cloudflare Pages Function bindings for local development.
+# Use `wrangler secret put` or the Cloudflare dashboard for production values.
+SPOTIFY_CLIENT_ID=
+SPOTIFY_CLIENT_SECRET=
+SPOTIFY_REFRESH_TOKEN=

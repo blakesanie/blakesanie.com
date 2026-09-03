@@ -1,11 +1,15 @@
 ---
-const { style, textColor, noBackdropFilter, flangeColor } = Astro.props;
+const { style, noBackdropFilter, flangeColor } = Astro.props;
 import { Icon } from "astro-icon/components";
 ---
 
 <div class:list={["navHoverZone", { noBackdropFilter }]} style={style}>
-  <Icon name="invertedCurve" style={flangeColor ? `color: ${flangeColor}` : ''} />
-  <Icon name="invertedCurve" id="curveIconFlip" style={flangeColor ? `color: ${flangeColor}` : ''} />
+  <Icon name="invertedCurve" style={flangeColor ? `color: ${flangeColor}` : ""} />
+  <Icon
+    name="invertedCurve"
+    id="curveIconFlip"
+    style={flangeColor ? `color: ${flangeColor}` : ""}
+  />
 </div>
 
 <style>
