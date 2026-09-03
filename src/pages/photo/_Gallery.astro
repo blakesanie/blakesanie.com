@@ -205,6 +205,7 @@ console.log("end of Gallery frontmatter");
     {
       allowMap && (
         <Toggle
+          id="photoViewToggle"
           actions={[
             { id: "toggleGallery", label: "Gallery" },
             { id: "toggleMap", label: "Map" },
@@ -242,6 +243,7 @@ console.log("end of Gallery frontmatter");
   <div
     id="photoContent"
     class={`${allowMap ? "" : "noMap"} ${allowFullscreen ? "" : "noFullscreen"} view-${initialMode}`}
+    data-initial-mode={initialMode}
   >
     <div id="gallery" class:list={{
       toShuffle: randomize
@@ -1409,6 +1411,11 @@ window.allowDeepLink = allowDeepLink;
       document.getElementById("toggleGallery")?.classList.add("active");
       document.getElementById("toggleMap")?.classList.remove("active");
       window.dispatchEvent(
+        new CustomEvent("toggle-action", {
+          detail: { toggleId: "photoViewToggle", actionId: "toggleGallery" },
+        }),
+      );
+      window.dispatchEvent(
         new CustomEvent("photo-view-change", { detail: { view: "gallery" } }),
       );
       if (pushState && window.location.pathname !== "/photo") {
@@ -1422,6 +1429,11 @@ window.allowDeepLink = allowDeepLink;
       photoContent?.classList.add("view-map");
       document.getElementById("toggleMap")?.classList.add("active");
       document.getElementById("toggleGallery")?.classList.remove("active");
+      window.dispatchEvent(
+        new CustomEvent("toggle-action", {
+          detail: { toggleId: "photoViewToggle", actionId: "toggleMap" },
+        }),
+      );
       window.dispatchEvent(
         new CustomEvent("photo-view-change", { detail: { view: "map" } }),
       );
@@ -1536,7 +1548,10 @@ window.allowDeepLink = allowDeepLink;
     if (found) enterFullscreen(found as HTMLImageElement);
   });
 
-  if (window.location.pathname === "/photo/map") {
+  const initialView = photoContent?.dataset.initialMode === "map" ? "map" : "gallery";
+  setView(initialView, false);
+
+  if (initialView === "map") {
     window.dispatchEvent(
       new CustomEvent("update-nav-active", { detail: { href: "/photo/map" } }),
     );
