@@ -6,10 +6,11 @@ interface Props {
   ariaLabel?: string;
 }
 
-const { href, class: className, id, ariaLabel } = Astro.props;
+const { href, class: className, id, ariaLabel, ...attributes } = Astro.props;
 ---
 
 <a
+  {...attributes}
   href={href}
   class={className}
   id={id}
