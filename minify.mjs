@@ -41,7 +41,7 @@ const runMinifierPipeline = async () => {
     // Map each file to an isolated execution task that returns its own metrics
     /** @type {Promise<MinifyResult>[]} */
     const tasks = files.map(async (file) => {
-        const relativePath = file.replace(/^.\/dist\//, '');
+        const relativePath = path.relative('./dist', file);
         try {
             const content = await fs.readFile(file, 'utf8');
             const sizeBefore = Buffer.byteLength(content, 'utf8');
