@@ -187,9 +187,13 @@ const mapImages = await Promise.all(
     .map(async (img) => await getSharedMapImage(img)),
 );
 
-let title = Astro.props.title ? Astro.props.title + " | Photo" : "Photography";
+// Keep deeper photography routes consistent with the established `Photo`
+// section name. The bare `/photo` landing page remains `Photography`.
+let title = Astro.props.title
+  ? `${Astro.props.title} | Photo`
+  : "Photography";
 if (Astro.props.imageName) {
-  title = Astro.props.imageName + " | " + title;
+  title = `${Astro.props.imageName} | Photo`;
 }
 
 const description =
