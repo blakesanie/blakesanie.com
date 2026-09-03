@@ -11,7 +11,7 @@ const imageFilePattern = /\.(png|jpe?g|webp|avif|gif|svg)(?:\?.*)?$/i;
 export function macosTagsPlugin(): Plugin {
   return {
     name: "vite-plugin-macos-tags",
-    async load(id) {
+    async load(id: string) {
       if (imageFilePattern.test(id)) await getMacOSTags(id);
       return undefined;
     },
