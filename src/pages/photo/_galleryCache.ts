@@ -120,7 +120,7 @@ export async function getSharedProcessedImage({
   metadata,
 }: ProcessImageParams): Promise<ImageData> {
   // Unique cache key based on configuration requirements
-  const cacheKey = `${filePath}_clip:${allowClip}_meta:${allowMetadata}`;
+  const cacheKey = `${filePath}_clip:${allowClip}_meta:${allowMetadata}_fullscreen:${allowFullscreen}`;
   const cachedImage = processedImagesCache.get(cacheKey);
   if (cachedImage) {
     return cachedImage;

@@ -8,6 +8,7 @@ import TextInput from "../../components/TextInput/index.astro";
 import Select from "../../components/Select/index.astro";
 import {
   getEmbeddings,
+  getImageColors,
   getMetadata,
   uploadRemoteImages,
 } from "vite-image-pipeline";
@@ -82,6 +83,8 @@ if (allowClip) {
   );
   console.log("collected embeddings");
 }
+
+const imageColors = await getImageColors(Object.keys(Astro.props.assetGlob));
 
 let downloadUrls: Record<string, string> | null = null;
 if (allowDownload) {
@@ -290,6 +293,7 @@ console.log("end of Gallery frontmatter");
                 placeholder="color"
                 src={image.src}
                 filepath={image.filePath}
+                placeholderColor={imageColors[image.filePath]}
                 alt={image.name || "Portfolio photograph"}
                 width={Math.max(
                   600,

@@ -29,6 +29,7 @@ interface Props extends NativeImageProps {
   quality?: string | number;
   format?: string;
   placeholder?: "color" | "blur" | "none";
+  placeholderColor?: { r: number; g: number; b: number };
   class?: string;
   style?: string | Record<string, string | number>;
 }
@@ -44,6 +45,7 @@ const {
   quality,
   format,
   placeholder = "none",
+  placeholderColor,
   class: className,
   style = {},
   ...rest
@@ -100,9 +102,11 @@ try {
   };
   // 3. Delegate placeholder operations to the parallelized disk cache pipeline
   if (placeholder === "color") {
-    if (!filepath) throw Error("[Image Component] filepath missing for color placeholder");
-    const colorMap = await getImageColors([filepath]);
-    const dominant = colorMap[filepath];
+    if (!filepath && !placeholderColor) {
+      throw Error("[Image Component] filepath missing for color placeholder");
+    }
+    const colorMap = filepath && !placeholderColor ? await getImageColors([filepath]) : {};
+    const dominant = placeholderColor || (filepath ? colorMap[filepath] : undefined);
     if (dominant) {
       placeholderStyle = {
         "background-color": `rgb(${dominant.r}, ${dominant.g}, ${dominant.b})`,
