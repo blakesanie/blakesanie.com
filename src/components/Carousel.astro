@@ -1,0 +1,111 @@
+---
+interface Props {
+  /** Optional class for styling the carousel from the consuming page. */
+  class?: string;
+  /** Approximate animation speed in pixels per second when content overflows. */
+  speed?: number;
+}
+
+const { class: className, speed = 40 } = Astro.props;
+const animationSpeed = Number.isFinite(speed) && speed > 0 ? speed : 40;
+---
+
+<div
+  class:list={["carousel", className]}
+  data-carousel
+  data-carousel-speed={animationSpeed}
+>
+  <div class="carousel__track">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .carousel {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .carousel__track {
+    display: flex;
+    flex-wrap: nowrap;
+    width: max-content;
+    min-width: 100%;
+    align-items: center;
+  }
+
+  .carousel__track > * {
+    flex: 0 0 auto;
+  }
+
+  .carousel[data-carousel-overflowing="true"] .carousel__track {
+    animation: carousel-scroll var(--carousel-duration) linear infinite;
+  }
+
+  .carousel[data-carousel-overflowing="true"]:hover .carousel__track {
+    animation-play-state: paused;
+  }
+
+  @keyframes carousel-scroll {
+    to {
+      transform: translateX(calc(-1 * var(--carousel-distance)));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel[data-carousel-overflowing="true"] .carousel__track {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const initializedCarousels = new WeakSet<HTMLElement>();
+
+  const initializeCarousel = (carousel: HTMLElement) => {
+    if (initializedCarousels.has(carousel)) return;
+    initializedCarousels.add(carousel);
+
+    const track = carousel.querySelector<HTMLElement>(".carousel__track");
+    if (!track) return;
+
+    const update = () => {
+      // Remove the previous copy before measuring, so resizing never compounds clones.
+      track.querySelectorAll<HTMLElement>("[data-carousel-clone]").forEach((clone) => clone.remove());
+      carousel.removeAttribute("data-carousel-overflowing");
+      track.style.removeProperty("--carousel-distance");
+      track.style.removeProperty("--carousel-duration");
+      track.style.removeProperty("transform");
+
+      const distance = track.scrollWidth - carousel.clientWidth;
+      if (distance <= 1) return;
+
+      // A second copy makes the end of one pass identical to the beginning of the next.
+      Array.from(track.children).forEach((child) => {
+        const clone = child.cloneNode(true) as HTMLElement;
+        clone.setAttribute("data-carousel-clone", "true");
+        clone.setAttribute("aria-hidden", "true");
+        track.append(clone);
+      });
+
+      const originalWidth = track.scrollWidth / 2;
+      const speed = Number(carousel.dataset.carouselSpeed) || 40;
+      track.style.setProperty("--carousel-distance", `${originalWidth}px`);
+      track.style.setProperty("--carousel-duration", `${originalWidth / speed}s`);
+      carousel.dataset.carouselOverflowing = "true";
+    };
+
+    const observer = new ResizeObserver(update);
+    observer.observe(carousel);
+    track.querySelectorAll<HTMLImageElement>("img").forEach((image) => {
+      image.addEventListener("load", update);
+    });
+    update();
+  };
+
+  const initializeCarousels = () =>
+    document.querySelectorAll<HTMLElement>("[data-carousel]").forEach(initializeCarousel);
+
+  initializeCarousels();
+  document.addEventListener("astro:page-load", initializeCarousels);
+</script>
