@@ -10,11 +10,11 @@ interface Props {
   [key: string]: unknown;
 }
 
-let { href } = Astro.props;
+const { href, ...attributes } = Astro.props;
 const key = href.substring(1) as string;
 const fullHref = (redirects as RedirectMap)[key]?.href;
 ---
 
-<a href={fullHref || href} {...Astro.props}>
+<a {...attributes} href={fullHref || href}>
   <slot />
 </a>

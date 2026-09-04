@@ -1,6 +1,10 @@
 ---
+interface AnchorTree {
+  [key: string]: string | AnchorTree;
+}
+
 interface Props {
-  tree: Record<string, string | Record<string, unknown>>;
+  tree: AnchorTree;
 }
 
 const links = [];

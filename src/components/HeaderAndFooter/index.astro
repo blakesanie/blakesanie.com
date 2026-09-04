@@ -46,11 +46,11 @@ const headerColorOpaque = Astro.props.colorOpaque || `rgb(106, 160, 219)`;
 const themeColor = Astro.props.themeColor || "rgb(72, 161, 223)";
 const textColor = Astro.props.darkText ? "black" : "white";
 const navPadding = 0.5; // was 0.6 em
-const isHome = Astro.props.isHome;
-const noTab = isHome || Astro.props.noTab;
+const isHome = Astro.props.isHome ?? false;
+const noTab = isHome || (Astro.props.noTab ?? false);
 const { allowMainStyles, noContentPadding, hideSpotify, noBackdropFilter, flangeColor } =
   Astro.props;
-const hoverZoneBehind = isHome || Astro.props.hoverZoneBehind;
+const hoverZoneBehind = isHome || (Astro.props.hoverZoneBehind ?? false);
 
 const headerVars: HeaderVars = {
   mobileHeaderHeight: mobileHeaderHeight,

@@ -29,7 +29,7 @@ const props = Astro.props;
 const title = props.title ? props.title + " | Blake Sanie" : "Blake Sanie";
 
 let image: { src: string } | null = null;
-  if (props.image) {
+if (props.image) {
   image = await getImage({
     src: props.image,
     width: 1200,
