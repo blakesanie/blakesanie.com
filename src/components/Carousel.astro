@@ -77,8 +77,16 @@ const animationSpeed = Number.isFinite(speed) && speed > 0 ? speed : 40;
       track.style.removeProperty("--carousel-duration");
       track.style.removeProperty("transform");
 
-      const distance = track.scrollWidth - carousel.clientWidth;
-      if (distance <= 1) return;
+      // Summing the child boxes avoids a Safari flexbox quirk where a
+      // max-content track can report the viewport width as its scrollWidth.
+      const children = Array.from(track.children);
+      const childWidth = children.reduce(
+        (total, child) => total + child.getBoundingClientRect().width,
+        0,
+      );
+      const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
+      const originalWidth = childWidth + gap * Math.max(0, children.length - 1);
+      if (originalWidth <= carousel.clientWidth + 1) return;
 
       // A second copy makes the end of one pass identical to the beginning of the next.
       Array.from(track.children).forEach((child) => {
@@ -88,7 +96,6 @@ const animationSpeed = Number.isFinite(speed) && speed > 0 ? speed : 40;
         track.append(clone);
       });
 
-      const originalWidth = track.scrollWidth / 2;
       const speed = Number(carousel.dataset.carouselSpeed) || 40;
       track.style.setProperty("--carousel-distance", `${originalWidth}px`);
       track.style.setProperty("--carousel-duration", `${originalWidth / speed}s`);
