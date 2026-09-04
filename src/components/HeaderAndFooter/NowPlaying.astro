@@ -1,4 +1,11 @@
 ---
+interface Props {
+  /** Color used for the hover backdrop behind the player. */
+  shadowColor: string;
+  /** Color used for player text and loading-state styling. */
+  textColor: string;
+}
+
 const { shadowColor, textColor } = Astro.props;
 ---
 

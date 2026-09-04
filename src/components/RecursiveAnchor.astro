@@ -1,4 +1,8 @@
 ---
+interface Props {
+  tree: Record<string, string | Record<string, unknown>>;
+}
+
 const links = [];
 const dirs = [];
 for (const pair of Object.entries(Astro.props.tree)) {

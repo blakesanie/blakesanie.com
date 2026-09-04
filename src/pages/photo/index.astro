@@ -1,6 +1,14 @@
 ---
 import Gallery from "./_Gallery.astro";
+import type { Props as GalleryProps } from "./_Gallery.astro";
 import { getCachedPortfolioAssetGlob } from "./_galleryCache";
+
+interface Props {
+  title?: GalleryProps["title"];
+  initialMode?: GalleryProps["initialMode"];
+  imageFilePath?: GalleryProps["imageFilePath"];
+  imageName?: GalleryProps["imageName"];
+}
 
 const assetGlob = getCachedPortfolioAssetGlob();
 ---

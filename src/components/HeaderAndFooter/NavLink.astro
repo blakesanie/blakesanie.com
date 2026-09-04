@@ -2,6 +2,22 @@
 import { Icon } from "astro-icon/components";
 import HoverZone from "./HoverZone.astro";
 import SmartHref from "./SmartHref.astro";
+
+interface Props {
+  icon: string;
+  href: string;
+  id?: string;
+  chip?: string;
+  chipIcon?: string;
+  chipColor?: string;
+  textColor?: string;
+  hoverZoneBehind?: boolean;
+  noBackdropFilter?: boolean;
+  flangeColor?: string;
+  activePattern?: RegExp;
+  class?: string;
+}
+
 const {
   icon,
   chip,

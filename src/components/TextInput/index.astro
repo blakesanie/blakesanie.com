@@ -1,4 +1,9 @@
 ---
+interface Props {
+  label: string;
+  [key: string]: unknown;
+}
+
 const { label, ...props } = Astro.props;
 ---
 

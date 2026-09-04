@@ -6,6 +6,33 @@ import NavLink from "./NavLink.astro";
 import NowPlaying from "./NowPlaying.astro";
 import SoundBars from "./SoundBars.astro";
 import type { HeaderVars } from "./shared";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  title?: string;
+  image?: string | ImageMetadata;
+  imageAlt?: string;
+  description?: string;
+  noIndex?: boolean;
+  noFollow?: boolean;
+  redirect?: boolean;
+  themeColor?: string;
+  color?: string;
+  colorOpaque?: string;
+  darkText?: boolean;
+  isHome?: boolean;
+  noTab?: boolean;
+  allowMainStyles?: boolean;
+  noContentPadding?: boolean;
+  hideSpotify?: boolean;
+  noBackdropFilter?: boolean;
+  flangeColor?: string;
+  hoverZoneBehind?: boolean;
+  pageNotInNav?: boolean;
+  mainClass?: string;
+  noFooter?: boolean;
+}
+
 // import Newsletter from "../Newsletter/index.astro";
 const mobileMaxWidth = 800; // still manually declared in media query declaration
 const headerWidth = 130;
@@ -16,7 +43,7 @@ const headerPositionTransitionDuration = 0.3;
 let headerColor = Astro.props.color || "#007ED4bb";
 const headerColorOpaque = Astro.props.colorOpaque || `rgb(106, 160, 219)`;
 
-Astro.props.themeColor = Astro.props.themeColor || "rgb(72, 161, 223)";
+const themeColor = Astro.props.themeColor || "rgb(72, 161, 223)";
 const textColor = Astro.props.darkText ? "black" : "white";
 const navPadding = 0.5; // was 0.6 em
 const isHome = Astro.props.isHome;
@@ -36,7 +63,11 @@ const headerVars: HeaderVars = {
 };
 ---
 
-<CommonHead {...Astro.props} bodyClasslist={[{ isHome: isHome, noTab: noTab }]}>
+<CommonHead
+  {...Astro.props}
+  themeColor={themeColor}
+  bodyClasslist={[{ isHome: isHome, noTab: noTab }]}
+>
   <header class:list={[{ darkText: textColor == "black" }]}>
     <svg id="hamburger" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
       <line x1="10" y1="20" x2="90" y2="20"></line>
