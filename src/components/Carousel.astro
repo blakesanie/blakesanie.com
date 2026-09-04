@@ -39,6 +39,7 @@ const animationSpeed = Number.isFinite(speed) && speed > 0 ? speed : 40;
   }
 
   .carousel[data-carousel-overflowing="true"] .carousel__track {
+    will-change: transform;
     animation: carousel-scroll var(--carousel-duration) linear infinite;
   }
 
@@ -47,8 +48,12 @@ const animationSpeed = Number.isFinite(speed) && speed > 0 ? speed : 40;
   }
 
   @keyframes carousel-scroll {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+
     to {
-      transform: translateX(calc(-1 * var(--carousel-distance)));
+      transform: translate3d(calc(-1 * var(--carousel-distance)), 0, 0);
     }
   }
 
@@ -69,27 +74,42 @@ const animationSpeed = Number.isFinite(speed) && speed > 0 ? speed : 40;
     const track = carousel.querySelector<HTMLElement>(".carousel__track");
     if (!track) return;
 
+    let lastContentWidth = 0;
+    let lastContainerWidth = 0;
+
     const update = () => {
-      // Remove the previous copy before measuring, so resizing never compounds clones.
+      // Measure originals only. Rebuilding clones for every iOS resize event
+      // continually restarts the animation at frame zero.
+      const originalChildren = Array.from(track.children).filter(
+        (child) => !child.hasAttribute("data-carousel-clone"),
+      );
+      const childWidth = originalChildren.reduce(
+        (total, child) => total + child.getBoundingClientRect().width,
+        0,
+      );
+      const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
+      const originalWidth = childWidth + gap * Math.max(0, originalChildren.length - 1);
+      const containerWidth = carousel.clientWidth;
+
+      if (
+        Math.abs(originalWidth - lastContentWidth) < 1 &&
+        Math.abs(containerWidth - lastContainerWidth) < 1
+      ) return;
+
       track.querySelectorAll<HTMLElement>("[data-carousel-clone]").forEach((clone) => clone.remove());
       carousel.removeAttribute("data-carousel-overflowing");
       track.style.removeProperty("--carousel-distance");
       track.style.removeProperty("--carousel-duration");
       track.style.removeProperty("transform");
 
-      // Summing the child boxes avoids a Safari flexbox quirk where a
-      // max-content track can report the viewport width as its scrollWidth.
-      const children = Array.from(track.children);
-      const childWidth = children.reduce(
-        (total, child) => total + child.getBoundingClientRect().width,
-        0,
-      );
-      const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
-      const originalWidth = childWidth + gap * Math.max(0, children.length - 1);
-      if (originalWidth <= carousel.clientWidth + 1) return;
+      if (originalWidth <= containerWidth + 1) {
+        lastContentWidth = originalWidth;
+        lastContainerWidth = containerWidth;
+        return;
+      }
 
       // A second copy makes the end of one pass identical to the beginning of the next.
-      Array.from(track.children).forEach((child) => {
+      originalChildren.forEach((child) => {
         const clone = child.cloneNode(true) as HTMLElement;
         clone.setAttribute("data-carousel-clone", "true");
         clone.setAttribute("aria-hidden", "true");
@@ -100,6 +120,8 @@ const animationSpeed = Number.isFinite(speed) && speed > 0 ? speed : 40;
       track.style.setProperty("--carousel-distance", `${originalWidth}px`);
       track.style.setProperty("--carousel-duration", `${originalWidth / speed}s`);
       carousel.dataset.carouselOverflowing = "true";
+      lastContentWidth = originalWidth;
+      lastContainerWidth = containerWidth;
     };
 
     const observer = new ResizeObserver(update);

@@ -6,6 +6,7 @@ describe("shouldIncludeSitemapRoute", () => {
     "/",
     "/projects/",
     "https://blakesanie.com/photo/",
+    "/photo/engagement/",
     "/photo/map/",
     "/photo/albums/",
     "/photo/albums/landscape/",
