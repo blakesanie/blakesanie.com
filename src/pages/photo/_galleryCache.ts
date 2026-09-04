@@ -3,7 +3,12 @@ import path from "path";
 import { encodeEmbeddings } from "./_utils"; // adjust path as needed
 import type { ImageMetadata as AstroImageMetadata } from "astro";
 import type { ExifRecord, GalleryImage } from "../../types/content";
-import { getMacOSTags } from "../../lib/macos-tags";
+
+type TaggedImageMetadata = AstroImageMetadata & { macosTags?: string[] };
+type TaggedImageModule = {
+  default: TaggedImageMetadata;
+  macosTags?: string[];
+};
 
 const lensReplacements: Record<string, string> = {
   "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED": "Nikon 18-105mm f/3.5-5.6G DX",
@@ -76,7 +81,7 @@ const optimizedMapImagesCache = new Map<string, GalleryImage>();
 
 interface ProcessImageParams {
   filePath: string;
-  module: AstroImageMetadata;
+  module: TaggedImageMetadata;
   allowClip: boolean;
   allowMetadata: boolean;
   allowFullscreen: boolean;
@@ -148,7 +153,7 @@ export async function getSharedProcessedImage({
     height,
     highRes: highRes?.src,
     aspectRatio: aspectRatioNum,
-    macosTags: await getMacOSTags(filePath),
+    macosTags: module.macosTags ?? [],
   };
 
   if (allowClip && embeddings) {
@@ -216,13 +221,11 @@ export async function getSharedMapImage(img: MappableImage): Promise<GalleryImag
 }
 
 // A global-to-the-module map that stores the import promises
-const moduleCache = new Map<string, AstroImageMetadata>();
+const moduleCache = new Map<string, TaggedImageMetadata>();
 
 export async function getCachedImageModule(
   filePath: string,
-  modulePromise?: () => Promise<{
-    default: AstroImageMetadata;
-  }>,
+  modulePromise?: () => Promise<TaggedImageModule>,
 ) {
   const cached = moduleCache.get(filePath);
   if (cached) {
@@ -233,13 +236,17 @@ export async function getCachedImageModule(
     throw new Error(`File path not found in glob: ${filePath}`);
   }
 
-  const module = (await modulePromise()).default;
+  const importedModule = await modulePromise();
+  const module = {
+    ...importedModule.default,
+    macosTags: importedModule.macosTags ?? importedModule.default.macosTags,
+  };
 
   moduleCache.set(filePath, module);
   return module;
 }
 
-type AssetGlob = Record<string, () => Promise<{ default: AstroImageMetadata }>>;
+type AssetGlob = Record<string, () => Promise<TaggedImageModule>>;
 
 let portfolioAssetGlobCache: AssetGlob | null = null;
 
@@ -249,7 +256,7 @@ export function getCachedPortfolioAssetGlob(): AssetGlob {
   }
 
   // 2. Pass the ImageModule type into the glob generic
-  portfolioAssetGlobCache = import.meta.glob<{ default: AstroImageMetadata }>(
+  portfolioAssetGlobCache = import.meta.glob<TaggedImageModule>(
     "/src/assets/portfolio_alias/*.{jpg,jpeg,png,webp,avif}",
   );
 
