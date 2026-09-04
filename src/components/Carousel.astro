@@ -40,27 +40,6 @@ const animationSpeed = Number.isFinite(speed) && speed > 0 ? speed : 40;
 
   .carousel[data-carousel-overflowing="true"] .carousel__track {
     will-change: transform;
-    animation: carousel-scroll var(--carousel-duration) linear infinite;
-  }
-
-  .carousel[data-carousel-overflowing="true"]:hover .carousel__track {
-    animation-play-state: paused;
-  }
-
-  @keyframes carousel-scroll {
-    from {
-      transform: translate3d(0, 0, 0);
-    }
-
-    to {
-      transform: translate3d(calc(-1 * var(--carousel-distance)), 0, 0);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .carousel[data-carousel-overflowing="true"] .carousel__track {
-      animation: none;
-    }
   }
 </style>
 
@@ -74,8 +53,43 @@ const animationSpeed = Number.isFinite(speed) && speed > 0 ? speed : 40;
     const track = carousel.querySelector<HTMLElement>(".carousel__track");
     if (!track) return;
 
-    let lastContentWidth = 0;
-    let lastContainerWidth = 0;
+    let lastContentWidth = Number.NaN;
+    let wasOverflowing = false;
+    let animationFrame: number | undefined;
+    let animationDistance = 0;
+    let animationSpeed = 0;
+    let offset = 0;
+    let previousFrameTime = 0;
+
+    const stopAnimation = () => {
+      if (animationFrame !== undefined) cancelAnimationFrame(animationFrame);
+      animationFrame = undefined;
+      animationDistance = 0;
+      animationSpeed = 0;
+      offset = 0;
+      previousFrameTime = 0;
+      track.style.removeProperty("transform");
+    };
+
+    const animate = (frameTime: number) => {
+      if (previousFrameTime) {
+        const elapsedSeconds = (frameTime - previousFrameTime) / 1_000;
+        offset = (offset + elapsedSeconds * animationSpeed) % animationDistance;
+        track.style.transform = `translate3d(-${offset}px, 0, 0)`;
+      }
+
+      previousFrameTime = frameTime;
+      animationFrame = requestAnimationFrame(animate);
+    };
+
+    const startAnimation = () => {
+      if (animationFrame !== undefined || !animationDistance) return;
+
+      // Wait until the copied images participate in layout before starting.
+      // This prevents an iOS Safari compositor bug that can pin a transform
+      // animation at its initial frame.
+      animationFrame = requestAnimationFrame(animate);
+    };
 
     const update = () => {
       // Measure originals only. Rebuilding clones for every iOS resize event
@@ -90,21 +104,23 @@ const animationSpeed = Number.isFinite(speed) && speed > 0 ? speed : 40;
       const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
       const originalWidth = childWidth + gap * Math.max(0, originalChildren.length - 1);
       const containerWidth = carousel.clientWidth;
+      const isOverflowing = originalWidth > containerWidth + 1;
 
+      // Mobile Safari reports ResizeObserver changes while its browser chrome
+      // expands and collapses. If the content still has the same overflow
+      // state, rebuilding the duplicate copy would restart its animation.
       if (
         Math.abs(originalWidth - lastContentWidth) < 1 &&
-        Math.abs(containerWidth - lastContainerWidth) < 1
+        isOverflowing === wasOverflowing
       ) return;
 
+      stopAnimation();
       track.querySelectorAll<HTMLElement>("[data-carousel-clone]").forEach((clone) => clone.remove());
       carousel.removeAttribute("data-carousel-overflowing");
-      track.style.removeProperty("--carousel-distance");
-      track.style.removeProperty("--carousel-duration");
-      track.style.removeProperty("transform");
 
-      if (originalWidth <= containerWidth + 1) {
+      if (!isOverflowing) {
         lastContentWidth = originalWidth;
-        lastContainerWidth = containerWidth;
+        wasOverflowing = false;
         return;
       }
 
@@ -117,11 +133,13 @@ const animationSpeed = Number.isFinite(speed) && speed > 0 ? speed : 40;
       });
 
       const speed = Number(carousel.dataset.carouselSpeed) || 40;
-      track.style.setProperty("--carousel-distance", `${originalWidth}px`);
-      track.style.setProperty("--carousel-duration", `${originalWidth / speed}s`);
       carousel.dataset.carouselOverflowing = "true";
       lastContentWidth = originalWidth;
-      lastContainerWidth = containerWidth;
+      wasOverflowing = true;
+
+      animationDistance = originalWidth;
+      animationSpeed = speed;
+      startAnimation();
     };
 
     const observer = new ResizeObserver(update);
@@ -129,7 +147,17 @@ const animationSpeed = Number.isFinite(speed) && speed > 0 ? speed : 40;
     track.querySelectorAll<HTMLImageElement>("img").forEach((image) => {
       image.addEventListener("load", update);
     });
-    update();
+
+    if (window.matchMedia("(hover: hover)").matches) {
+      carousel.addEventListener("mouseenter", () => {
+        if (animationFrame !== undefined) cancelAnimationFrame(animationFrame);
+        animationFrame = undefined;
+        previousFrameTime = 0;
+      });
+      carousel.addEventListener("mouseleave", startAnimation);
+    }
+
+    requestAnimationFrame(update);
   };
 
   const initializeCarousels = () =>
