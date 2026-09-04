@@ -10,6 +10,10 @@ const excludedRoutes = new Set([
   "401k",
 ]);
 
+// These are standalone photography pages, not individual `/photo/:slug`
+// entries from the photo collection.
+const includedPhotoPages = new Set(["engagement"]);
+
 function pathnameSegments(page: string): string[] {
   const pathname = new URL(page, "https://sitemap.invalid").pathname;
   return pathname.split("/").filter(Boolean);
@@ -27,8 +31,11 @@ export function shouldIncludeSitemapRoute(page: string): boolean {
   // 3. Keep every non-photo route.
   if (first !== "photo") return true;
 
-  // 4. Keep photo landing page plus map and album sections.
-  if (!second || second === "albums" || second === "map") return true;
+  // 4. Keep the photo landing page, standalone photography pages, and the
+  // map and album sections.
+  if (!second || includedPhotoPages.has(second) || second === "albums" || second === "map") {
+    return true;
+  }
 
   // 5. All other `/photo/:slug` routes are individual photos.
   return false;

@@ -1,0 +1,391 @@
+---
+import CommonHead from "../../../components/HeaderAndFooter/CommonHead.astro";
+import HeroImage from "../../../assets/client_alias/Emma-and-Chris/DSC08285.jpg";
+import Image from "../../../components/Image/index.astro";
+import ColumnMasonry from "../../../components/ColumnMasonry.astro"
+import type { ImageMetadata } from "astro";
+import Carousel from "../../../components/Carousel.astro"
+import OgImage from "../../../assets/images/og/engagement-photo-og.png"
+
+const imageModules = import.meta.glob<{ default: ImageMetadata }>(
+  "../../../assets/client_alias/engagement-demo/*.{jpg,jpeg,png,webp,avif}",
+  { eager: true },
+);
+const images = Object.entries(imageModules)
+  .sort(([first], [second]) => first.localeCompare(second))
+  .map(([filepath, module]) => ({ filepath, src: module.default }));
+---
+
+<CommonHead title={"Engagement Photography"} description="Timeless, candid engagement photography across Chicago." image={OgImage}>
+    <div id="hero">
+        <Image src={HeroImage} alt="" widths={[2000, 1200, 800, 600]} placeholder="blur" />
+        <div id="title">
+            <h1>Blake Sanie<br /><span>Timeless, candid engagement photography across Chicago.</span></h1>
+        </div>
+        <div id="action">
+<button data-cal-link="blake-sanie-dy66kr"
+  data-cal-config='{"layout":"month_view","theme":"light"}'>Check Availability & Book</button>
+        </div>
+                    
+    </div>
+    <h2>About Blake</h2>
+    <p>I capture clean, authentic moments without awkward posing or wasted time. Sessions are fast, relaxed, and tailored around your personal love story—whether we're working with iconic skyline views, quiet park architecture, or the lakefront.</p>
+    <p>Every session is backed by three simple commitments: <strong>Uncompromising High Quality, 100% Dependable & On-Time, Lightning-Fast Delivery</strong></p>
+    <h2>How It Works</h2>
+<div id="process">
+    <div>
+        <h3>1. Location & Strategy</h3>
+        <p>We pick the right spot and exact time for breathtaking pictures in alignment with your day's plans - all while maintaining the element of surprise and candid emotion. Execution plan is coordinated clearly over text and/or phone.</p>
+    </div>
+    <div>
+        <h3>2. Fast, Focused Session</h3>
+        <p>No wasted time or stiff poses. Directions are clear and movement-based so you look natural and get back to enjoying your day.</p>
+    </div>
+    <div>
+        <h3>3. Immediate Turnaround</h3>
+        <p>Edited, full-resolution files delivered within 24 hours, with same-night previews for proposals. If necessary, unlimited revisions until you're completely satisfied.</p>
+    </div>
+</div>
+    <h2>Package Options</h2>
+    <div id="options">
+        <div>
+            <h3>Proposal Session - $349</h3>
+            <ul>
+                <li>Location & weather planning</li>
+                <li>Guaranteed on-time</li>
+                <li>Strategic coordination - "hiding in plain sight"</li>
+                <li>Up to 30-minute session. Produces 15-20 images.</li>
+                <li>Same-night delivery of standout photos.<br />Perfect for friends & family, Instagram Stories.</li>
+                <li>24-hour delivery</li>
+                <li>Full-resolution images</li>
+                <li>Unlimited revisions</li>
+            </ul>
+            <button data-cal-link="blake-sanie-dy66kr/30min"
+    data-cal-namespace="30min"
+    data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"light"}'>Check Availability & Book</button>
+        </div>
+        <div>
+            <h3>"Save-the-Date" Session - $399</h3>
+            <ul>
+                <li>Location & weather planning</li>
+                <li>1 hour session. Produces ~50 images</li>
+                <li>48-hour delivery</li>
+                <li>Full-resolution images</li>
+                <li>Unlimited revisions</li>
+                <li><strong>25% discount when booked with proposal session</strong></li>
+            </ul>
+            <button
+            
+              data-cal-link="blake-sanie-dy66kr/save-the-date-photography-session"
+data-cal-namespace="save-the-date-photography-session"
+ data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"light"}'
+            >Check Availability & Book</button>
+        </div>
+    </div>
+    <div id="carousel">
+        <Carousel speed={45}>
+ {images.map(({ src }) => (
+        <Image
+          src={src}
+          alt="Chicago engagement photography"
+          width={600 / src.height * src.width}
+          placeholder="color"
+          loading="lazy"
+        />
+      ))}
+    </Carousel>
+    </div>
+
+    <h2>Frequently Asked Questions</h2>
+<div id="faq">
+    <div>
+        <h3>What happens if the weather doesn't cooperate?</h3>
+        <p>I monitor conditions closely leading up to the session. If extreme weather hits, we can shift the timeline slightly or reschedule without fuss.</p>
+    </div>
+    <div>
+        <h3>Do you help with proposal planning?</h3>
+        <p>Yes. I map out exact coordinates, timing, and positioning beforehand so you can focus entirely on the moment while I cover it undetected.</p>
+    </div>
+    <div>
+        <h3>Where are the best engagement photo locations in Chicago?</h3>
+        <p>From Milton Lee Olive Park skyline views and the Lincoln Park Boardwalk to North Avenue Beach or the Art Institute South Garden, we'll pick the backdrop that fits your style best.</p>
+    </div>
+    <div>
+        <h3>Are location-based permits required?</h3>
+        <p>It's possible. Permits are location-specific and range in price; If required for the session, permits may be due at the client's expense.</p>
+    </div>
+</div>
+    
+    <!-- <div id="gallery">
+        {images.map(({ src }) => (
+        <Image
+          src={src}
+          alt="Chicago engagement photography"
+          width={600}
+          placeholder="color"
+          loading="lazy"
+        />
+      ))}
+    </div> -->
+    <footer>
+        <a href="https://www.instagram.com/blakesanie.jpg" target="_blank">Find Blake on Instagram</a>
+        <a href="mailto:blake@sanie.com" target="_blank">Email</a>
+    </footer>
+</CommonHead>
+
+<style is:global>
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Assistant", sans-serif;
+    }
+    body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 16px;
+    }
+
+    a, 
+a:visited, 
+a:hover, 
+a:active {
+  color: black;          /* Replace with your preferred link color */
+  text-decoration: none;   /* Removes the default underline if desired */
+}
+</style>
+
+<style>
+    h1, h2, h3, h4, h5, h6 {
+        text-align: center;
+    }
+    #hero {
+        position: relative;
+        height: min(100vh - 100px, 50vh + 500px, 200vw);
+        height: min(100svh - 100px, 50svh + 500px, 200vw);
+        width: 100%;
+        /* max-width: 1400px; */
+        /* max-height: 800px; */
+        overflow: hidden;
+    }
+    #hero img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: 50% 61%;
+    }
+    #hero #title {
+        position: absolute;
+        bottom: 40%;
+        left: 0;
+        width: 100%;
+        color: white;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2em;
+    }
+    #hero #action {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        bottom: 1em;
+    }
+    button {
+        color: black;
+        outline: none;
+        border: none;
+        padding: 0.6em 0.8em;
+        font-size: 1.1em;
+        font-weight: 600;
+        border-radius: 0.6em;
+        cursor: pointer;
+        background-color: rgba(255, 255, 255, 1);
+    }
+    #hero button {
+        box-shadow: 0 1.5em 2.5em 1em rgba(0,0,0,0.4);
+    }
+    h1 {
+        font-size: min(min(2.2em, 26px + 3vw - 12px), 4vh + 4px);
+        font-size: min(min(2.2em, 26px + 3vw - 12px), 4svh + 4px);
+        font-weight: 300;
+        max-width: 700px;
+    }
+    h1 span {
+        font-size: 1.5em;
+        font-weight: 600;
+    }
+
+    #carousel {
+        max-width: 100%;
+        overflow: hidden;
+        margin-top: 2em;
+        margin-bottom: 1em;
+    }
+
+    #carousel img {
+        height: 300px;
+        width: auto;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    #gallery {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 3px;
+    }
+    #gallery img {
+        position: relative;
+        flex: 1;
+        max-width: 240px;
+        object-fit: cover;
+        margin: 3px;
+    }
+
+    h2 {
+        padding: 1.2em 1rem 0.6em 1rem;
+        font-size: 2em;
+        font-weight: 600;
+    }
+
+    p {
+        padding: 0.5em 1rem;
+        font-size: 1em;
+        font-weight: 400;
+        max-width: 600px;
+        text-indent: 1em;
+
+        line-height: 150%;
+    }
+
+    #options {
+        display: flex;
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1em;
+        padding: 1em 1rem;
+    }
+
+    #options > div {
+        width: 50%;
+        flex: 1;
+        background-color: #f8f8f8;
+        padding: 1em;
+        border-radius: 1em;
+        min-width: min(300px, 100%);
+        max-width: 24em;
+        display:flex;
+        flex-direction: column;
+        align-items:center;
+    }
+
+    h3 {
+font-size: 1.4em;
+        font-weight: 700;
+        padding: 1em 1rem 0.5em 1rem;
+    }
+
+    #options h3 {
+        
+        margin-bottom: 0.6em;
+    }
+
+     ul {
+        padding-left: 1em;
+        max-width: 600px;
+    }
+
+     li {
+        padding: 0.2em 0;
+    }
+
+    #options button {
+        background-color: rgb(39, 132, 169);
+        color: white;
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+    }
+
+    #options ul {
+        flex: 1;
+    }
+
+    footer {
+        margin-top: 3em;
+        width: 100%;
+        padding: 2rem 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        background-color: #eee;
+        justify-content: center;
+        gap: 2em;
+    }
+</style>
+
+<script is:inline>
+  (function (C, A, L) {
+    let p = function (a, ar) { a.q.push(ar); };
+    let d = C.document;
+    C.Cal = C.Cal || function () {
+      let cal = C.Cal;
+      let ar = arguments;
+      if (!cal.loaded) {
+        cal.ns = {};
+        cal.q = cal.q || [];
+        d.head.appendChild(d.createElement("script")).src = A;
+        cal.loaded = true;
+      }
+      if (ar[0] === L) {
+        const api = function () { p(api, arguments); };
+        const namespace = ar[1];
+        api.q = api.q || [];
+        if (typeof namespace === "string") {
+          cal.ns[namespace] = cal.ns[namespace] || api;
+          p(cal.ns[namespace], ar);
+          p(cal, ["initNamespace", namespace]);
+        } else p(cal, ar);
+        return;
+      }
+      p(cal, ar);
+    };
+  })(window, "https://app.cal.com/embed/embed.js", "init");
+
+  // Global Config
+  Cal.config = Cal.config || {};
+  Cal.config.forwardQueryParams = true;
+
+  // Initialize Namespaces
+  Cal("init", "30min", { origin: "https://app.cal.com" });
+  Cal("init", "save-the-date-photography-session", { origin: "https://app.cal.com" });
+  Cal("init", { origin: "https://app.cal.com" });
+
+  // UI Configurations
+  Cal.ns["30min"]("ui", { "theme": "light", "hideEventTypeDetails": false, "layout": "month_view" });
+  Cal.ns["save-the-date-photography-session"]("ui", { "theme": "light", "hideEventTypeDetails": false, "layout": "month_view" });
+  Cal("ui", { "theme": "light", "hideEventTypeDetails": false, "layout": "month_view" });
+</script>

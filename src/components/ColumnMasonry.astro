@@ -1,0 +1,71 @@
+---
+interface Props {
+  /** Viewport width at which the layout changes from one column to two. */
+  firstCascadeWidth: number;
+  /** Additional viewport width required for each subsequent column. */
+  cascadeInterval: number;
+  class?: string;
+  gap?: string;
+}
+
+const { firstCascadeWidth, cascadeInterval, class: className, gap = "1rem" } = Astro.props;
+
+if (
+  !Number.isFinite(firstCascadeWidth) ||
+  !Number.isFinite(cascadeInterval) ||
+  firstCascadeWidth <= 0 ||
+  cascadeInterval <= 0
+) {
+  throw new Error("ColumnMasonry widths must be greater than zero");
+}
+
+// Numeric props make a stable selector that keeps each instance's breakpoints
+// isolated when multiple masonry containers appear on the same page.
+const cascadeId = `cm-${firstCascadeWidth}-${cascadeInterval}`;
+
+// Eight columns covers desktop layouts while keeping the generated CSS small.
+// The component remains one column below the first breakpoint. Rules are
+// scoped to this component's cascade parameters so instances never mix.
+const cascadeRules = Array.from({ length: 7 }, (_, index) => {
+  const columns = index + 2;
+  const minWidth = firstCascadeWidth + index * cascadeInterval;
+  const selector = `[data-column-masonry="${cascadeId}"] > *`;
+  const gutterSubtraction = Array(columns - 1)
+    .fill("var(--column-masonry-gap)")
+    .join(" - ");
+  const itemWidth = `calc((100% - ${gutterSubtraction}) / ${columns})`;
+  return `@media (min-width: ${minWidth}px) { ${selector} { flex-basis: ${itemWidth} !important; width: ${itemWidth} !important; } }`;
+}).join("\n");
+---
+
+<div
+  class:list={["column-masonry", className]}
+  data-column-masonry={cascadeId}
+  style={`--column-masonry-gap: ${gap}`}
+>
+  <slot />
+</div>
+
+<style is:inline>
+  .column-masonry {
+    /* The page controls this element's width. Flex keeps the first row full
+       before wrapping, while the item basis below divides that width evenly. */
+    width: 100%;
+    max-width: 100%;
+    margin-inline: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--column-masonry-gap);
+  }
+
+  .column-masonry > * {
+    box-sizing: border-box;
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+</style>
+
+<style is:inline set:html={cascadeRules}></style>
