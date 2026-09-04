@@ -1,4 +1,9 @@
 ---
+interface Props {
+  n?: number;
+  color?: string;
+}
+
 let n = Astro.props.n || 5;
 const color = Astro.props.color || "white";
 ---

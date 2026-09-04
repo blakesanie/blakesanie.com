@@ -1,4 +1,12 @@
 ---
+interface Props {
+  style?: string | Record<string, string | number>;
+  class?: string;
+  textColor?: string;
+  noBackdropFilter?: boolean;
+  flangeColor?: string;
+}
+
 const { style, noBackdropFilter, flangeColor } = Astro.props;
 import { Icon } from "astro-icon/components";
 ---

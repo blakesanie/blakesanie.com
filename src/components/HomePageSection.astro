@@ -2,16 +2,35 @@
 // @ts-ignore
 import Image from "./Image/index.astro";
 import SmartHref from "./HeaderAndFooter/SmartHref.astro";
+import type { ImageMetadata } from "astro";
 
 interface LinkInterface {
-  target: string;
+  target?: string;
   href: string;
   label: string;
   class?: string;
+  nofollow?: boolean;
 }
 
-const links: LinkInterface[] = Astro.props.links;
-let { text, imageSrc, imageFilepath, style, class: className, ...props } = Astro.props;
+interface Props {
+  links?: LinkInterface[];
+  text?: string | string[];
+  imageSrc?: string | ImageMetadata;
+  imageFilepath?: string;
+  style?: Record<string, string | number>;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  links = [],
+  text,
+  imageSrc,
+  imageFilepath,
+  style = {},
+  class: className,
+  ...props
+} = Astro.props;
 ---
 
 <div style={{ ...style }} class:list={["section", className]} {...props}>

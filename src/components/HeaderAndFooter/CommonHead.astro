@@ -7,13 +7,31 @@ import fs from "fs";
 import { getImage } from "astro:assets";
 import path from "node:path";
 import sharp from "sharp";
+import type { ImageMetadata } from "astro";
 
-const title = Astro.props.title ? Astro.props.title + " | Blake Sanie" : "Blake Sanie";
+interface Props {
+  /** Page title, appended with the site name for SEO metadata. */
+  title?: string;
+  /** Optional source image used to generate the Open Graph image. */
+  image?: string | ImageMetadata;
+  imageAlt?: string;
+  description?: string;
+  noIndex?: boolean;
+  noFollow?: boolean;
+  redirect?: boolean;
+  themeColor?: string;
+  /** Class-list value forwarded to the document body. */
+  bodyClasslist?: Record<string, boolean> | Record<string, boolean>[];
+}
+
+const props = Astro.props;
+
+const title = props.title ? props.title + " | Blake Sanie" : "Blake Sanie";
 
 let image: { src: string } | null = null;
-if (Astro.props.image) {
+if (props.image) {
   image = await getImage({
-    src: Astro.props.image,
+    src: props.image,
     width: 1200,
     format: "webp",
     quality: 75,
@@ -24,7 +42,7 @@ if (Astro.props.image) {
   const ogBg = fs.readFileSync("src/assets/portfolio_alias/Manhattan Bridge.jpg");
   const b64 = ogBg.toString("base64");
 
-  const arrowSvg = Astro.props.redirect
+  const arrowSvg = props.redirect
     ? {
         type: "svg",
         props: {
@@ -67,14 +85,14 @@ if (Astro.props.image) {
                 {
                   type: "div",
                   props: {
-                    children: [Astro.props.title || "Blake Sanie", arrowSvg],
+                    children: [props.title || "Blake Sanie", arrowSvg],
                     style: { display: "flex" },
                   },
                 },
                 {
                   type: "div",
                   props: {
-                    children: Astro.props.title
+                    children: props.title
                       ? "Blake Sanie"
                       : [
                           "Software Engineer. Photographer.",
@@ -86,7 +104,7 @@ if (Astro.props.image) {
                     style: {
                       display: "flex",
                       flexDirection: "column",
-                      fontSize: Astro.props.title ? 60 : 40,
+                      fontSize: props.title ? 60 : 40,
                       opacity: 0.4,
                       fontWeight: 400,
                     },
@@ -130,8 +148,8 @@ if (Astro.props.image) {
   const pngBuffer = resvg.render().asPng();
 
   // 1. Sanitize the title for a safe URL filename
-  const safeTitle = Astro.props.title
-    ? Astro.props.title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")
+  const safeTitle = props.title
+    ? props.title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")
     : "default";
   const filename = `${safeTitle}-og.webp`;
 
@@ -155,11 +173,11 @@ if (Astro.props.image) {
   };
 }
 
-const { noIndex } = Astro.props;
+const { noIndex } = props;
 
-const imageAlt = Astro.props?.imageAlt || "Open Graph Thumbnail Image for blakesanie.com";
+const imageAlt = props.imageAlt || "Open Graph Thumbnail Image for blakesanie.com";
 const description =
-  Astro.props.description || "Software Engineer. Photographer. Ironman. Lifelong Student.";
+  props.description || "Software Engineer. Photographer. Ironman. Lifelong Student.";
 ---
 
 <html lang="en">
@@ -173,7 +191,7 @@ const description =
       title={title}
       description={description}
       noindex={noIndex ? true : false}
-      nofollow={Astro.props.noFollow ? Astro.props.noFollow : noIndex ? true : false}
+      nofollow={props.noFollow ? props.noFollow : noIndex ? true : false}
       charset="utf-8"
       openGraph={{
         basic: {
@@ -192,7 +210,7 @@ const description =
       extend={{}}
     />
     <meta name="google-site-verification" content="ePB1GvvA8L5Hza96sGcmDLw_jIzjhQ2JhXbIAg_8hlA" />
-    <meta name="theme-color" content={Astro.props.themeColor} />
+    <meta name="theme-color" content={props.themeColor} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link
       rel="apple-touch-icon-precomposed"
@@ -276,5 +294,5 @@ const description =
   </head>
 
   <!-- <Fragment set:html={svg} /> -->
-  <body class:list={Astro.props.bodyClasslist}><slot /></body>
+  <body class:list={props.bodyClasslist}><slot /></body>
 </html>

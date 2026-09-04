@@ -1,4 +1,12 @@
 ---
+interface AnchorTree {
+  [key: string]: string | AnchorTree;
+}
+
+interface Props {
+  tree: AnchorTree;
+}
+
 const links = [];
 const dirs = [];
 for (const pair of Object.entries(Astro.props.tree)) {
