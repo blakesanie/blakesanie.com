@@ -23,7 +23,8 @@ const images = Object.entries(imageModules)
             <h1>Blake Sanie<br /><span>Timeless, candid engagement photography across Chicago.</span></h1>
         </div>
         <div id="action">
-<button>Check Availability & Book</button>
+<button data-cal-link="blake-sanie-dy66kr"
+  data-cal-config='{"layout":"month_view","theme":"light"}'>Check Availability & Book</button>
         </div>
                     
     </div>
@@ -34,7 +35,7 @@ const images = Object.entries(imageModules)
 <div id="process">
     <div>
         <h3>1. Location & Strategy</h3>
-        <p>We pick the right spot and exact time for breathtaking pictures in alignment with your day's plans - all while maintaining the element of surprise and candid emotion.</p>
+        <p>We pick the right spot and exact time for breathtaking pictures in alignment with your day's plans - all while maintaining the element of surprise and candid emotion. Execution plan is coordinated clearly over text and/or phone.</p>
     </div>
     <div>
         <h3>2. Fast, Focused Session</h3>
@@ -59,21 +60,30 @@ const images = Object.entries(imageModules)
                 <li>Full-resolution images</li>
                 <li>Unlimited revisions</li>
             </ul>
+            <button data-cal-link="blake-sanie-dy66kr/30min"
+    data-cal-namespace="30min"
+    data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"light"}'>Check Availability & Book</button>
         </div>
         <div>
             <h3>"Save-the-Date" Session - $400</h3>
             <ul>
                 <li>Location & weather planning</li>
                 <li>1 hour session. Produces ~50 images</li>
-                <li>48 hour delivery</li>
+                <li>48-hour delivery</li>
                 <li>Full-resolution images</li>
                 <li>Unlimited revisions</li>
                 <li><strong>25% discount when booked with proposal session</strong></li>
             </ul>
+            <button
+            
+              data-cal-link="blake-sanie-dy66kr/save-the-date-photography-session"
+data-cal-namespace="save-the-date-photography-session"
+ data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"light"}'
+            >Check Availability & Book</button>
         </div>
     </div>
     <div id="carousel">
-        <Carousel>
+        <Carousel speed={45}>
  {images.map(({ src }) => (
         <Image
           src={src}
@@ -102,7 +112,7 @@ const images = Object.entries(imageModules)
     </div>
     <div>
         <h3>Are location-based permits required?</h3>
-        <p>It's possible. Though I'm familiar with the permit process, permits are location-specific and range in price, thus coming at the client's expense.</p>
+        <p>It's possible. Permits are location-specific and range in price; If required for the session, permits may be due at the client's expense.</p>
     </div>
 </div>
     
@@ -154,9 +164,11 @@ a:active {
     }
     #hero {
         position: relative;
-        height: calc(100vh - 100px);
+        height: min(100vh - 100px, 50vh + 500px, 200vw);
+        height: min(100svh - 100px, 50svh + 500px, 200vw);
         width: 100%;
-        max-height: 800px;
+        /* max-width: 1400px; */
+        /* max-height: 800px; */
         overflow: hidden;
     }
     #hero img {
@@ -190,6 +202,7 @@ a:active {
         bottom: 1em;
     }
     button {
+        color: black;
         outline: none;
         border: none;
         padding: 0.6em 0.8em;
@@ -198,10 +211,13 @@ a:active {
         border-radius: 0.6em;
         cursor: pointer;
         background-color: rgba(255, 255, 255, 1);
+    }
+    #hero button {
         box-shadow: 0 1.5em 2.5em 1em rgba(0,0,0,0.4);
     }
     h1 {
         font-size: min(min(2.2em, 26px + 3vw - 12px), 4vh + 4px);
+        font-size: min(min(2.2em, 26px + 3vw - 12px), 4svh + 4px);
         font-weight: 300;
         max-width: 700px;
     }
@@ -214,6 +230,7 @@ a:active {
         max-width: 100%;
         overflow: hidden;
         margin-top: 2em;
+        margin-bottom: 1em;
     }
 
     #carousel img {
@@ -282,6 +299,9 @@ a:active {
         border-radius: 1em;
         min-width: min(300px, 100%);
         max-width: 24em;
+        display:flex;
+        flex-direction: column;
+        align-items:center;
     }
 
     h3 {
@@ -304,6 +324,17 @@ font-size: 1.4em;
         padding: 0.2em 0;
     }
 
+    #options button {
+        background-color: rgb(39, 132, 169);
+        color: white;
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+    }
+
+    #options ul {
+        flex: 1;
+    }
+
     footer {
         margin-top: 3em;
         width: 100%;
@@ -315,3 +346,46 @@ font-size: 1.4em;
         gap: 2em;
     }
 </style>
+
+<script is:inline>
+  (function (C, A, L) {
+    let p = function (a, ar) { a.q.push(ar); };
+    let d = C.document;
+    C.Cal = C.Cal || function () {
+      let cal = C.Cal;
+      let ar = arguments;
+      if (!cal.loaded) {
+        cal.ns = {};
+        cal.q = cal.q || [];
+        d.head.appendChild(d.createElement("script")).src = A;
+        cal.loaded = true;
+      }
+      if (ar[0] === L) {
+        const api = function () { p(api, arguments); };
+        const namespace = ar[1];
+        api.q = api.q || [];
+        if (typeof namespace === "string") {
+          cal.ns[namespace] = cal.ns[namespace] || api;
+          p(cal.ns[namespace], ar);
+          p(cal, ["initNamespace", namespace]);
+        } else p(cal, ar);
+        return;
+      }
+      p(cal, ar);
+    };
+  })(window, "https://app.cal.com/embed/embed.js", "init");
+
+  // Global Config
+  Cal.config = Cal.config || {};
+  Cal.config.forwardQueryParams = true;
+
+  // Initialize Namespaces
+  Cal("init", "30min", { origin: "https://app.cal.com" });
+  Cal("init", "save-the-date-photography-session", { origin: "https://app.cal.com" });
+  Cal("init", { origin: "https://app.cal.com" });
+
+  // UI Configurations
+  Cal.ns["30min"]("ui", { "theme": "light", "hideEventTypeDetails": false, "layout": "month_view" });
+  Cal.ns["save-the-date-photography-session"]("ui", { "theme": "light", "hideEventTypeDetails": false, "layout": "month_view" });
+  Cal("ui", { "theme": "light", "hideEventTypeDetails": false, "layout": "month_view" });
+</script>
