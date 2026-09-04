@@ -1,0 +1,87 @@
+---
+import CommonHead from "../../../components/HeaderAndFooter/CommonHead.astro";
+import HeroImage from "../../../assets/client_alias/Emma-and-Chris/DSC08285.jpg";
+import Image from "../../../components/Image/index.astro";
+import ColumnMasonry from "../../../components/ColumnMasonry.astro"
+import type { ImageMetadata } from "astro";
+
+const imageModules = import.meta.glob<{ default: ImageMetadata }>(
+  "../../../assets/client_alias/Emma-and-Chris/*.{jpg,jpeg,png,webp,avif}",
+  { eager: true },
+);
+const images = Object.entries(imageModules)
+  .sort(([first], [second]) => first.localeCompare(second))
+  .map(([filepath, module]) => ({ filepath, src: module.default }));
+---
+
+<CommonHead title={"Engagement Photography"} description="Chicago Engagement Photographer">
+    <div id="hero">
+        <Image src={HeroImage} alt="" widths={[2000, 1200, 800, 600]} placeholder="blur" />
+        <div>
+            <h1>Blake Sanie<br /><span>Chicago Engagement Photography Sessions</span></h1>
+        </div>
+    </div>
+    <ColumnMasonry firstCascadeWidth={200} cascadeInterval={200} gap={"10px"}>
+        {
+      images.map(({ src }) => (
+        <Image
+          src={src}
+          alt="Chicago engagement photography"
+          width={600}
+          placeholder="color"
+          loading="lazy"
+        />
+      ))
+    }
+    </ColumnMasonry>
+</CommonHead>
+
+<style is:global>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: "Assistant", sans-serif;
+        font-size: 16px;
+    }
+    #hero {
+        position: relative;
+        height: calc(100vh - 100px);
+        width: 100%;
+    }
+    #hero img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: 50% 65%;
+    }
+    #hero div {
+        position: absolute;
+        bottom: 50%;
+        left: 0;
+        width: 100%;
+        color: white;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        padding: 2em;
+    }
+    h1 {
+        font-size: min(3em, 28px + 2vw - 6px);
+        font-weight: 300;
+        max-width: 700px;
+    }
+    h1 span {
+        font-size: 1.5em;
+        font-weight: 600;
+    }
+</style>

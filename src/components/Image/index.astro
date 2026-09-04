@@ -83,6 +83,10 @@ try {
   let h = height;
   let srcString = typeof src == "string" ? src : null;
   let imageMetadata = await srcToImageMetadata(src);
+  // Imported Vite images include their original source path in metadata. Use
+  // it for placeholders when callers do not provide a separate filepath.
+  // Explicit filepath still wins for strings, aliases, and stable cache keys.
+  const placeholderFilepath = filepath ?? imageMetadata?.src.split("?")[0];
   if (imageMetadata) {
     if (w) w = Math.min(w, imageMetadata.width);
     if (h) h = Math.min(h, imageMetadata.height);
@@ -123,26 +127,28 @@ try {
   }
   // 3. Delegate placeholder operations to the parallelized disk cache pipeline
   if (placeholder === "color") {
-    if (!filepath && !placeholderColor) {
+    if (!placeholderFilepath && !placeholderColor) {
       throw Error("[Image Component] filepath missing for color placeholder");
     }
-    const colorMap = filepath && !placeholderColor ? await getImageColors([filepath]) : {};
-    const dominant = placeholderColor || (filepath ? colorMap[filepath] : undefined);
+    const colorMap =
+      placeholderFilepath && !placeholderColor ? await getImageColors([placeholderFilepath]) : {};
+    const dominant =
+      placeholderColor || (placeholderFilepath ? colorMap[placeholderFilepath] : undefined);
     if (dominant) {
       placeholderStyle = {
         "background-color": `rgb(${dominant.r}, ${dominant.g}, ${dominant.b})`,
       };
     } else {
-      console.error("[Image Component] Failed to get dominant color for", filepath);
+      console.error("[Image Component] Failed to get dominant color for", placeholderFilepath);
     }
   } else if (placeholder === "blur") {
-    if (!filepath)
+    if (!placeholderFilepath)
       throw Error(
         "[Image Component] filepath missing for blur placeholder: " +
           JSON.stringify(Astro.props, null, 2),
       );
-    const blurMap = await getImageBlurPlaceholders([filepath]);
-    const base64Uri = blurMap[filepath];
+    const blurMap = await getImageBlurPlaceholders([placeholderFilepath]);
+    const base64Uri = blurMap[placeholderFilepath];
 
     if (base64Uri) {
       placeholderStyle = {
@@ -151,7 +157,7 @@ try {
         "background-position": "center",
       };
     } else {
-      console.error("[Image Component] Failed to get blur placeholder for", filepath);
+      console.error("[Image Component] Failed to get blur placeholder for", placeholderFilepath);
     }
   }
 } catch (error) {

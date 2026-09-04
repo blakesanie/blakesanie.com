@@ -1,0 +1,61 @@
+---
+interface Props {
+  /** Viewport width at which the layout changes from one column to two. */
+  firstCascadeWidth: number;
+  /** Additional viewport width required for each subsequent column. */
+  cascadeInterval: number;
+  class?: string;
+  gap?: string;
+}
+
+const { firstCascadeWidth, cascadeInterval, class: className, gap = "1rem" } = Astro.props;
+
+if (
+  !Number.isFinite(firstCascadeWidth) ||
+  !Number.isFinite(cascadeInterval) ||
+  firstCascadeWidth <= 0 ||
+  cascadeInterval <= 0
+) {
+  throw new Error("ColumnMasonry widths must be greater than zero");
+}
+
+// Numeric props make a stable selector that keeps each instance's breakpoints
+// isolated when multiple masonry containers appear on the same page.
+const cascadeId = `cm-${firstCascadeWidth}-${cascadeInterval}`;
+
+// Eight columns covers desktop layouts while keeping the generated CSS small.
+// The component remains one column below the first breakpoint.
+const cascadeRules = Array.from({ length: 7 }, (_, index) => {
+  const columns = index + 2;
+  const minWidth = firstCascadeWidth + index * cascadeInterval;
+  const gutterSubtraction = Array(columns - 1)
+    .fill("var(--column-masonry-gap)")
+    .join(" - ");
+  return `@media (min-width: ${minWidth}px) { [data-column-masonry="${cascadeId}"] > * { flex-basis: calc((100% - ${gutterSubtraction}) / ${columns}); } }`;
+}).join("\n");
+---
+
+<div
+  class:list={["column-masonry", className]}
+  data-column-masonry={cascadeId}
+  style={`--column-masonry-gap: ${gap}`}
+>
+  <slot />
+</div>
+
+<style is:inline>
+  .column-masonry {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: var(--column-masonry-gap);
+  }
+
+  .column-masonry > * {
+    box-sizing: border-box;
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+</style>
+
+<style is:inline set:html={cascadeRules}></style>
